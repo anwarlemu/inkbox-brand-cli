@@ -1,50 +1,52 @@
-# Agentcard: what good looks like
+# Inkbox: what good looks like
 
-Read by `agentcard-ds review` every time, next to the reference screenshots in `brand/reference/`.
+Read by `inkbox-ds review` every time, next to the reference screenshots in `brand/reference/` (the console's own
+screens from its design).
 
 ## The idea
 
-Agentcard lets AI agents buy anything online. The logomark is a hand drawn in horizontal lines, reaching to pay;
-the same lines run through the brand as stepped bands, scan lines and the striped wordmark. The site feels like a
-desk of small, well-made objects: raised keys you could press, windows with title bars, cards with real weight. It
-is playful in its imagery and exact in its type.
+Inkbox gives AI agents their own identity: a mailbox, a phone line, iMessage, a tunnel and a vault. Its mascot is a
+soft purple octopus. The console is calm and quiet: white pages, a lilac rail, deep purple ink, and one muted purple
+for every action. It reads like a well-kept mail client, not a dashboard of charts.
 
-## The site
+## The console
 
-- Two grounds. The electric blue (#0000FF) is a ground: the hero, the footer, the panel a screen or code sits on.
-  Everything else is white sections on a warm paper page. Where blue meets white, four stepped bands walk from one
-  to the other: a staircase, never a smooth gradient.
-- Blue is also the color of action and labels on white: the blue key, eyebrows, tags, a selected tab, a link's
-  underline. Text is ink (#171818), never pure black; secondary text is ink at 68 percent.
-- Two faces. Headings, labels, buttons, tabs, code and small print are set in Neue Haas Grotesk Display (Helvetica
-  Neue where it is not installed) at 500, tracked tight: -0.055em at the 72px hero, -0.035em at 36px, -0.02em
-  below. Body text is Inter at 16px (19px for a lead). Nothing is bold; nothing is in caps except a small tag.
-- Section headings are centered with a 19px description under them at 70 percent ink. Inner pages open with a
-  blue eyebrow and a 52px title.
-- Every button and tab is a raised key: 40px tall, 8px corners, a border a shade darker than its fill, a light line
-  inside the top, a darker one inside the bottom, a soft drop. A press sinks it. The main action is the blue key on
-  white and the white key (blue text) on the blue. Tabs sit in a sunken track and the blue key glides to the chosen
-  one.
-- Cards are white with a 16 percent ink hairline and 12px corners. A card that names an app or file wears a 32px
-  window bar: sky with blue marks, an arrow, a name like `team.dir`, and `[*]`. The product cards are larger, 20px
-  corners, with a hard 7px offset shadow. Screens and code sit on a blue panel.
-- Inputs are square (no corners) with a 35 percent ink border and 18px text.
-- Navigation is a bare header (the wordmark, one Get started key) and, on the brand's own pages, a floating glass
-  dock. The footer is the blue ground with link columns in the display face and sky headings.
-- Imagery is the site's own and may be bold (3D objects, phones, real screens); the system around it stays calm.
+- One ground. Pages are white. The left rail is white with a hairline at its edge; an agent's workspace adds a second,
+  lilac rail (#F4F2F6) beside it. The lilac is also the ground of a table's head and foot, a field's well, a channel
+  card and the tab track.
+- Ink is a deep purple (#3E2A53), never black. Secondary copy is #70637E; dates, table heads and descriptions are the
+  muted purple #998EA5. The action purple (#74629D) is for the main action, links, rail labels and email previews.
+  Pink (#F9B1B5) is the one accent: BETA and ADMIN marks, a channel's icon tile, the selected radio.
+- One face: Inter. Body and controls are 14px regular; page and dialog titles 20px regular; tabs and card titles
+  medium; only an empty state's title is bold. Keys, hosts and IDs are IBM Plex Mono; code blocks use the system
+  monospace in a light editor theme. No caps except BETA and ADMIN; no tracking.
+- The main action is a 40px purple pill. Other actions: the lilac pill beside it, the 36px white outline key with
+  8px corners for actions inside content, a 38px lilac key in a page head, ghost glyphs for row actions.
+- Fields are 40px with 8px corners and a lilac-gray edge (#D2C9DB). Raised white things (a selected tab, a table body,
+  a select) carry Shadow/S: a 1px ring and a short drop. Corners: 4px tags, 6px tiles, 8px almost everything, 10px
+  table heads, tab tracks and banners, 16px dialogs.
+- Navigation is the rail: 38px rows with a filled 22px glyph and a 14px label; the current row sits on the lilac.
+  A page opens with a head: a 20px title, a 14px muted line, a hairline under it.
+- Tables are three pieces: a lilac head, a white body with Shadow/S and 64px rows, a lilac pagination bar.
+- Dialogs are white with 16px corners over the page tinted with the ink at 12 percent and lightly blurred.
+- Icons are filled (Phosphor fill weight) in ink or #5B4C6A; chevrons, close and plus are line glyphs.
+- Empty states have the octopus with five glyph circles around it, a 22px bold title and a pill action.
 
 ## Always
 
 - Keep what each screen is for: its main action stays the most prominent thing, its key information easy to scan.
-- For new pages, follow the user's brief. When only restyling existing UI, preserve its words, links, images, elements and behavior.
-- Text contrast at least 4.5:1; touch targets at least 44px on phones; visible focus on every control.
-- Motion is small and quick (160 to 260ms, a strong ease-out), never ease-in; in-out only for something that travels
-  on screen (a tab's key). Everything stills with reduced motion.
+- For new pages, follow the user's brief. When only restyling existing UI, preserve its words, links, images, elements
+  and behavior.
+- Visible focus on every control; touch targets at least 44px on phones. The muted purples are the design's own
+  values and sit under 4.5:1 on white: keep them for secondary information (dates, heads, hints), never for the only
+  copy of something a person must read.
+- Motion is small and quick (150 to 300ms, a strong ease-out), never ease-in. Nothing animates on keyboard actions;
+  icons never move on hover. Everything stills with reduced motion.
 
 ## Refuse
 
-- Gradients behind text, glows, purple or teal accents, rounded pill buttons, soft gray cards, bold headings, all
-  caps labels, a smooth fade between the blue and white grounds, blue used as decoration everywhere.
+- Black or gray text, a dark theme, gradients, glows, bright saturated accents, square main actions, bold titles,
+  heavy shadows, outlined cards inside cards, more than one purple pill in a view.
 
 ## Voice (for any text the agent must write, such as an alt text)
 

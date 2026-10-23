@@ -1,8 +1,8 @@
-# agentcard-ds (working on the harness itself)
+# inkbox-ds (working on the harness itself)
 
-This repo is the CLI that applies the Agentcard design system to any site and keeps agents on it. `README.md` says how
-it is used. Apps that install it get a different contract, written from `brand/contract.md`. Agentcard has a site
-only (`"surfaces": ["site"]` in `brand/brand.json`): every project gets the site's look.
+This repo is the CLI that applies the Inkbox design system to any project and keeps agents on it. `README.md` says how
+it is used. Apps that install it get a different contract, written from `brand/contract.md`. Inkbox has one look, the
+console's (`"surfaces": ["site"]` in `brand/brand.json` is the engine's single-look mode): every project gets it.
 
 ## Loop
 
@@ -14,23 +14,25 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 
 ## Where things are
 
-- `registry/`: the component library. `components/ui|site|blocks|visuals`, `lib/` (cn, surface), `hooks/`,
-  `docs/<item>.md` (frontmatter: type, surface, kinds, files...) and `examples/<item>.tsx` (exports `Site` or
-  `Block`, plus named states). `scripts/build-registry.ts` (`npm run registry`) validates every item, derives files
-  and dependencies from imports, adds the theme item from the brand tokens, writes one JSON file per item and an index
-  into `apps/www/public/r`, type-checks the library and runs the value check over it.
-- `apps/www/`: the docs site (Next.js), deployed to the Vercel project `agentcard-ds` (Agencidev team) with
-  `vercel deploy --prod --scope agencidev-dev` from the repo root; it renders every item from source.
+- `registry/`: the component library, one item per shadcn/ui component (every one of them, rebuilt in the Inkbox
+  style, no shadcn code): `components/ui`, `lib/` (cn, surface), `hooks/`, `docs/<item>.md` (frontmatter: type,
+  surface, kinds, files...) and `examples/<item>.tsx` (exports `Preview` first, then named states).
+  `scripts/build-registry.ts` (`npm run registry`) validates every item, derives files and dependencies from imports,
+  adds the theme item from the brand tokens, writes one JSON file per item and an index into `apps/www/public/r`,
+  type-checks the library and runs the value check over it. Primitives: `radix-ui`, `cmdk`, `sonner`; icons are
+  Phosphor (`@phosphor-icons/react/ssr`, the `...Icon` names, fill weight for the console's glyphs).
+- `apps/www/`: the docs site (Next.js), laid out as the console (a rail and page heads), deployed to the Vercel project
+  `inkbox-ds` (Agencidev team) with `vercel deploy --prod --scope agencidev-dev` from the repo root; it renders every
+  item from source.
 - `src/library/`: loading registry items (`registry.ts`) and swap mode (`swap.ts`); `src/commands/add.ts` (add, list).
 - `brand/`: the only brand-specific content. `tokens.css` is the single source of values (`:root`). `site.css` is the
-  base layer (type defaults, phone steps, the blue hero and its stepped bands). `elements.json` holds how each kind of
-  element is styled, with `match` data for detection and a `source`. `reference/` holds the brand's own pages as
-  screenshots (used by `review`). `brand.json` holds names, fonts, the home touches and the library's variant names.
-  `logo/` holds the lockup and the mark.
-- Reference for the look: the live https://www.agentcard.sh, measured as rendered (computed styles). The source is
-  `anwarlemu/agentcard-website` (private; clone it read-only into a scratch folder with `gh repo clone`; never write
-  to it). The live site is ahead of that repo's main, so values come from the rendered page and structure from the
-  source. When the brand changes, re-measure, update `brand/`, and recapture `brand/reference/`.
+  base layer (type defaults). `elements.json` holds how each kind of element is styled, with `match` data for
+  detection and a `source`. `reference/` holds the console's screens from the design (used by `review`). `brand.json`
+  holds names, fonts and the library's variant names. `logo/` holds the octopus mark, the octopus art and the wordmark.
+- Reference for the look: the Figma file "Inkbox (Copy) (Copy)" (`KtJhYsxU4hqtBzqqbFuMWy`), section "New" (node
+  427:2715): the console's screens. Values were measured from its 1x renders and layer geometry (the Figma MCP was
+  rate limited on the Starter plan, so colors are sampled, type is fitted to text layer widths, radii and sizes come
+  from the geometry). When the design changes, re-measure, update `brand/`, and recapture `brand/reference/`.
 - `src/project/`: stack detection, main stylesheet and layouts, screens and the files each is drawn from.
 - `src/convert/`: converts style values by role in every file type (CSS, templates, scripts, Tailwind, native).
 - `src/install/`: the brand stylesheet and fonts, contract, hooks (Claude Code, Codex, Cursor), pre-commit.
@@ -45,7 +47,7 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - Element styles use only brand tokens and follow the animation rules (no ease-in, no `transition: all`, 150 to 300ms);
   the tests check every value.
 - Restyle only: nothing the CLI writes may change a project's copy, elements or structure. The only markup it asks for
-  is `data-ds-hero` on the home hero and `data-ds-ground="blue"` on a header over it.
+  is none: Inkbox has no markup touches.
 - Library items use only brand token classes (the value check runs over `registry/` in CI), follow the animation
   rules, take data through props (no Next imports, auth or analytics), and have a docs entry and an example.
 - Apps install the `release` branch: a compiled tree (no source, intake or dev dependencies) so installs take
@@ -58,5 +60,5 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 ## Do not
 
 - Kill processes by pattern (`pkill -f "next dev"`): the owner's other dev servers run on :3000.
-- Modify `~/Desktop/TRIAGE/Work/Agencidev/agentcard-website` or any other brand's repo.
+- Modify any other brand's repo (agentcard, opencommerce, context-dev) or the Figma file.
 - Commit `build`, `dist` or `node_modules`.

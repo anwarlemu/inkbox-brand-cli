@@ -2,23 +2,27 @@
 
 Each is in force today; each names where it lives, so a change is one edit.
 
-1. Source. Values were measured from the rendered https://www.agentcard.sh on 2026-10-17 (computed styles), with the
-   agentcard-website source (main at 5b5c801) for names and structure. The live site is ahead of that branch (its
-   blue is #0000FF; the branch has #1520B8 and #2E3AE8). `brand/tokens.css`, `brand/elements.json`.
-2. Agentcard has a site only: every project, including an app or dashboard, gets the site's look. `brand/brand.json`
-   (`surfaces`).
-3. The display face is Neue Haas Grotesk Display, named in the stack and not shipped (it needs a webfont licence), so
-   it renders as Helvetica Neue on Apple devices and Helvetica or Arial elsewhere, as on agentcard.sh. Only Inter is
-   loaded. `brand/tokens.css` (`--ds-font-display`), `brand/brand.json` (`fonts`).
-4. The one markup touch on a restyled site is `data-ds-hero` on the home hero: the blue ground, white type and the four
-   stepped bands into the page below. Nothing else gets the blue ground automatically. `brand/site.css`,
-   `brand/brand.json` (`touches`).
-5. Section headings are centered with their description below, as on agentcard.sh's home. `brand/elements.json`.
-6. Muted text tokens are solid colors composited on white (ink at 80, 68, 60 and 45 percent), so they read the same on
-   any white and pass AA; on the blue ground, text uses white at 72 percent. `brand/tokens.css`.
-7. Small tags are the one place type is set in caps, so the value check allows uppercase. `brand/brand.json` (`type`).
-8. Fields are square (no corners), as on agentcard.sh's forms. `brand/elements.json` (input).
-9. Code is set in the display face, as on agentcard.sh's code windows. `brand/tokens.css` (`--ds-font-mono`).
-10. The logo is the new lockup supplied on 2026-10-17 (`brand/logo/lockup.svg`, `brand/logo/mark.svg`).
-11. Review passes at 7 on every score. `brand/brand.json`.
-12. The repo is public, so installs need no token. Make it private if the brand's files should not be public.
+1. Source. Values come from the Figma file "Inkbox (Copy) (Copy)", section "New" (node 427:2715), the console's
+   screens, measured on 2026-10-23. The Figma MCP stopped after 16 calls (Starter plan limit), so colors were sampled
+   from its 1x renders, type sizes and weights were fitted to its text layers' widths (Inter, no tracking), and sizes
+   and radii come from the layer geometry. Shared styles were read directly: Shadow/S, Line/S Bottom and the 4, 8, 12,
+   16 and 24 spacing variables. `brand/tokens.css`, `brand/elements.json`.
+2. Inkbox has one look, the console's, applied to every project (`"surfaces": ["site"]` is the engine's single-look
+   mode). There is no dark theme in the design. `brand/brand.json`.
+3. The muted purples (#998EA5 for table heads and dates, #9E94A9 for placeholders and descriptions) are the design's
+   own values and sit near 3:1 on white, under WCAG AA for small text. They are kept as measured; the guidance limits
+   them to secondary information. Darken `--ds-color-text-muted` and `--ds-color-text-subtle` to pass AA.
+4. Hover and focus states are not in the design. Hovers darken the lilac a step (#ECE9F0) or the purple a step
+   (#67568E); focus is a 2px purple outline on controls and a purple edge with a soft ring on fields.
+5. Components the design does not show (menus, popovers, tooltips, calendar, charts, carousel, toasts and others)
+   extend its patterns: white panels with Shadow/S and 8px corners, 14px Inter, lilac highlights, filled glyphs.
+   Each component's docs entry says what it is drawn from.
+6. Icons are Phosphor (the design uses another set): fill weight for the console's solid glyphs, regular for line
+   glyphs (chevrons, close, plus), duotone for copy.
+7. Keys, hosts and IDs are IBM Plex Mono; code blocks use the system monospace in the editor's light theme, as the
+   event catalog shows.
+8. Primitives come from Radix (`radix-ui`), `cmdk` and `sonner`; no shadcn code. Calendar, chart, carousel,
+   resizable, input OTP and the drawer are written by hand.
+9. The logo is the octopus mark and the wordmark from inkbox.ai (`brand/logo/`), recolored to the ink.
+10. Review passes at 7 on every score. `brand/brand.json`.
+11. The repo is public, so installs need no token. Make it private if the brand's files should not be public.

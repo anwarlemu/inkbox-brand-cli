@@ -17,10 +17,10 @@
 			},
 			"tailwind": "bg-surface text-fg font-sans text-body leading-body",
 			"rules": [
-				"White sections on the paper page; ink text in Inter at 16px.",
-				"Blue is a ground (the hero, a panel, the footer) and the color of actions and labels; never a gradient behind text."
+				"White, Inter at 14px in the deep purple ink.",
+				"The left rail is white with a hairline at its edge; a second rail (an agent workspace) is lilac."
 			],
-			"source": "src/app/globals.css:405 (html, body)"
+			"source": "Figma 427:2715 (Dashboard - empty state)"
 		},
 		"column": {
 			"name": "Content column",
@@ -41,10 +41,9 @@
 			},
 			"tailwind": "w-full max-w-(--ds-frame-column) mx-auto",
 			"rules": [
-				"Content sits in a 1200px column with at least 40px of gutter (20px on phones).",
-				"Reading text, forms and FAQ lists narrow to 680px (--ds-layout-text)."
+				"Pages fill the width beside the rail with 24px sides; reading text stops at 680px."
 			],
-			"source": "src/app/globals.css:1520 (.v7-section)"
+			"source": "Figma 427:2715 (Email, Vault)"
 		},
 		"section": {
 			"name": "Section",
@@ -59,20 +58,16 @@
 				]
 			},
 			"css": {
-				"padding-block": "var(--ds-space-20) var(--ds-space-28)",
-				"background-color": "var(--ds-color-bg-default)"
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-3)",
+				"padding-block": "var(--ds-space-6)"
 			},
-			"states": {
-				"@media (max-width: 47.9375rem)": {
-					"padding-block": "var(--ds-space-12) var(--ds-space-16)"
-				}
-			},
-			"tailwind": "pt-20 pb-28 max-md:pt-12 max-md:pb-16 bg-surface",
+			"tailwind": "flex flex-col gap-3 py-6",
 			"rules": [
-				"White sections, 80px above and about 110px below; 50px and 65px on phones.",
-				"A section on the blue ground is a deliberate band (the hero, a closing panel): white type, the white key, sky labels."
+				"A block of a page: a 14px label (Signature headers) over its content, 24px from the next block."
 			],
-			"source": "src/app/globals.css:1520 (.v7-section)"
+			"source": "Figma 427:2715 (Webhooks - Event catalog)"
 		},
 		"section-heading": {
 			"name": "Section heading",
@@ -90,22 +85,18 @@
 				]
 			},
 			"css": {
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-h2)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"letter-spacing": "var(--ds-tracking-tighter)",
-				"line-height": "var(--ds-leading-display)",
-				"color": "var(--ds-color-text-default)",
-				"text-align": "center",
-				"text-wrap": "balance"
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-default)"
 			},
-			"tailwind": "font-display text-h2 font-medium tracking-tighter leading-display text-fg text-center text-balance",
+			"tailwind": "font-sans text-body font-normal leading-body text-fg",
 			"rules": [
-				"Centered, display face at 500, 36px (28px on phones), tracked tight.",
-				"The description sits under it, centered, at 19px and 70 percent ink.",
-				"The page title of an inner page (Pricing, About) is the 52px step (h1)."
+				"A section inside a page is named in 14px regular ink (Channels, Signature headers, Tunnel TLS mode).",
+				"A page or dialog title is 20px regular (page-title)."
 			],
-			"source": "src/app/globals.css:1585 (.v7-heading-center)"
+			"source": "Figma 427:2715 (Create Agent Identity: Channels)"
 		},
 		"section-description": {
 			"name": "Section description",
@@ -127,23 +118,18 @@
 				]
 			},
 			"css": {
-				"max-width": "var(--ds-layout-heading)",
-				"margin-inline": "auto",
-				"font-size": "var(--ds-text-body-lg)",
-				"line-height": "var(--ds-leading-snug)",
-				"letter-spacing": "var(--ds-tracking-tight)",
-				"color": "var(--ds-color-text-muted)",
-				"text-align": "center"
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-muted)"
 			},
-			"tailwind": "max-w-(--ds-layout-heading) mx-auto text-body-lg leading-snug tracking-tight text-fg-muted text-center",
+			"tailwind": "text-body leading-body text-fg-muted",
 			"rules": [
-				"19px Inter at 70 percent ink, centered under the heading, 14px below it.",
-				"One or two lines; never wider than about 670px."
+				"14px in the muted purple under a title or a field label."
 			],
-			"source": "src/app/globals.css:1586 (.v7-heading-center > p)"
+			"source": "Figma 427:2715 (Vault: Enter a vault key...)"
 		},
 		"hero": {
-			"name": "Hero",
+			"name": "Page head",
 			"match": {
 				"words": [
 					"hero",
@@ -154,21 +140,21 @@
 				]
 			},
 			"css": {
-				"padding-block": "var(--ds-space-32) var(--ds-space-24)",
-				"background-color": "var(--ds-color-bg-brand)",
-				"color": "var(--ds-color-text-on-brand)",
-				"text-align": "center"
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-0-5)",
+				"padding": "var(--ds-space-4) var(--ds-space-6)",
+				"border-bottom": "1px solid var(--ds-color-border-subtle)",
+				"background-color": "var(--ds-color-bg-default)"
 			},
-			"tailwind": "pt-32 pb-24 bg-brand text-on-brand text-center",
+			"tailwind": "flex flex-col gap-0.5 px-6 py-4 border-b border-line-subtle bg-surface",
 			"rules": [
-				"The blue ground, full bleed: white type, the white key as the main action.",
-				"Add data-ds-hero to the hero section: it gives the blue ground and the four stepped bands into the white page below.",
-				"Its imagery stays the site's own; nothing is added behind the headline."
+				"The console has no hero: a page opens with its head, a 20px title and a 14px muted line, ruled off from the page."
 			],
-			"source": "src/app/globals.css:483 (.on-blue), src/components/band-divider.tsx"
+			"source": "Figma 427:2715 (Vault, Webhooks heads)"
 		},
 		"hero-title": {
-			"name": "Hero title",
+			"name": "Page title",
 			"match": {
 				"tags": [
 					"h1"
@@ -181,21 +167,19 @@
 			},
 			"css": {
 				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-hero)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"letter-spacing": "var(--ds-tracking-display)",
-				"line-height": "var(--ds-leading-tight)",
-				"text-wrap": "balance"
+				"font-size": "var(--ds-text-h3)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-heading)",
+				"color": "var(--ds-color-text-default)"
 			},
-			"tailwind": "font-display text-hero font-medium tracking-display leading-tight text-balance",
+			"tailwind": "font-display text-h3 font-normal leading-heading text-fg",
 			"rules": [
-				"72px display at 500, tracked to -0.055em, leading 1; 40px on phones.",
-				"White on the blue hero; ink on a white page (an inner page title is 52px)."
+				"20px regular ink; never bold, never tracked."
 			],
-			"source": "agentcard.sh home h1 (computed)"
+			"source": "Figma 427:2715 (Vault, Email, Create Agent Identity)"
 		},
 		"hero-subtitle": {
-			"name": "Hero subtitle",
+			"name": "Page description",
 			"match": {
 				"tags": [
 					"p"
@@ -211,21 +195,18 @@
 				]
 			},
 			"css": {
-				"max-width": "var(--ds-layout-heading)",
-				"margin-inline": "auto",
-				"font-size": "var(--ds-text-body-lg)",
-				"line-height": "var(--ds-leading-snug)",
-				"color": "var(--ds-color-text-on-brand-muted)"
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-muted)"
 			},
-			"tailwind": "max-w-(--ds-layout-heading) mx-auto text-body-lg leading-snug text-fg-on-brand-muted",
+			"tailwind": "text-body leading-body text-fg-muted",
 			"rules": [
-				"19px Inter, white at 72 percent on the blue (70 percent ink on white).",
-				"One line where it fits."
+				"14px muted purple, one line under the title."
 			],
-			"source": "src/app/globals.css:483 (.on-blue --text-muted)"
+			"source": "Figma 427:2715 (Vault: Zero-knowledge encrypted secret store for your agents.)"
 		},
 		"eyebrow": {
-			"name": "Eyebrow",
+			"name": "Rail label",
 			"match": {
 				"words": [
 					"eyebrow",
@@ -238,19 +219,16 @@
 				]
 			},
 			"css": {
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-caption)",
-				"letter-spacing": "var(--ds-tracking-label)",
-				"line-height": "1.5",
-				"color": "var(--ds-color-text-label)",
-				"text-transform": "none"
+				"font-size": "var(--ds-text-body-sm)",
+				"line-height": "var(--ds-leading-tight)",
+				"color": "var(--ds-color-text-label)"
 			},
-			"tailwind": "font-display text-caption tracking-label text-fg-label normal-case",
+			"tailwind": "text-body-sm leading-tight text-fg-label",
 			"rules": [
-				"12px display face in blue (sky on the blue ground), sentence case, never caps.",
-				"Above a page title or a section group: \"The company\", \"Team\"."
+				"13px regular in the action purple, above a group of rail rows (Channels, Shared).",
+				"Sentence case; never caps."
 			],
-			"source": "src/app/globals.css:1509 (.v7-eyebrow)"
+			"source": "Figma 427:2715 (rail: Channels, Shared)"
 		},
 		"card": {
 			"name": "Card",
@@ -271,23 +249,21 @@
 			"css": {
 				"display": "flex",
 				"flex-direction": "column",
-				"gap": "var(--ds-space-3)",
-				"padding": "var(--ds-space-6)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"border-radius": "var(--ds-radius-card)",
-				"background-color": "var(--ds-color-bg-default)",
-				"box-shadow": "var(--ds-shadow-card)"
+				"gap": "var(--ds-space-2)",
+				"padding": "var(--ds-space-3-5)",
+				"border": "1px solid var(--ds-color-border-field)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-default)"
 			},
-			"tailwind": "flex flex-col gap-3 p-6 border border-hairline rounded-card bg-surface shadow-card",
+			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-control bg-surface",
 			"rules": [
-				"White, a 16 percent ink hairline, 12px corners and a soft drop under a light inner top.",
-				"A card that names an app or a file wears a window bar on top (window).",
-				"The large product cards are the raised card: 20px corners and a hard 7px offset shadow."
+				"White with the field edge and 8px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
+				"A card inside a dialog sits on the lilac with no edge (a channel card)."
 			],
-			"source": "src/app/globals.css:3557 (.v7-trail li)"
+			"source": "Figma 427:2715 (Webhooks: Trigger, Delivery, Response contract)"
 		},
 		"card-raised": {
-			"name": "Raised card",
+			"name": "Raised panel",
 			"match": {
 				"words": [
 					"feature",
@@ -299,21 +275,18 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-3)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"border-radius": "var(--ds-radius-shell)",
+				"border-radius": "var(--ds-radius-control)",
 				"background-color": "var(--ds-color-bg-default)",
-				"box-shadow": "var(--ds-shadow-raised)"
+				"box-shadow": "var(--ds-shadow-s)"
 			},
-			"tailwind": "p-3 border border-hairline rounded-shell bg-surface shadow-raised",
+			"tailwind": "rounded-control bg-surface shadow-s",
 			"rules": [
-				"The product card: 20px corners, a 12px inset frame around its media, and a hard 7px offset shadow at 10 percent ink.",
-				"Copy sits beside or under the media: a 36px title, a 19px line at 60 percent, then the blue key."
+				"A white panel lifted by Shadow/S, a 1px ring and a short drop: a table body, a selected tab, a select trigger."
 			],
-			"source": "src/app/globals.css:1693 (.v7-sol)"
+			"source": "Figma 427:2715 (Email: table body)"
 		},
 		"window": {
-			"name": "Window",
+			"name": "Lilac panel",
 			"match": {
 				"words": [
 					"window",
@@ -324,21 +297,18 @@
 				]
 			},
 			"css": {
-				"overflow": "hidden",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"border-radius": "var(--ds-radius-card)",
-				"background-color": "var(--ds-color-bg-default)",
-				"box-shadow": "var(--ds-shadow-card)"
+				"padding": "var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-subtle)"
 			},
-			"tailwind": "overflow-hidden border border-hairline rounded-card bg-surface shadow-card",
+			"tailwind": "p-3.5 rounded-control bg-subtle",
 			"rules": [
-				"A card with a 32px title bar: an arrow mark, a file-like name (pricing.plan, team.dir) and [*] at the right.",
-				"The bar is sky with blue marks; the one window that matters most gets the blue bar with white marks."
+				"A grouped block on the lilac with 8px corners (Initialize vault, a channel card)."
 			],
-			"source": "src/app/globals.css:4011 (.v7-windowbar)"
+			"source": "Figma 427:2715 (Vault: Initialize vault)"
 		},
 		"window-bar": {
-			"name": "Window bar",
+			"name": "Code head",
 			"match": {
 				"words": [
 					"windowbar",
@@ -351,22 +321,19 @@
 			"css": {
 				"display": "flex",
 				"align-items": "center",
-				"justify-content": "space-between",
-				"gap": "var(--ds-space-3)",
-				"min-height": "var(--ds-space-8)",
-				"padding-inline": "var(--ds-space-2-5)",
-				"border-bottom": "1px solid var(--ds-color-border-window)",
-				"background-color": "var(--ds-color-window-bar)",
-				"color": "var(--ds-color-window-bar-fg)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-micro)"
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-3)",
+				"border-bottom": "1px solid var(--ds-color-border-code)",
+				"background-color": "var(--ds-color-bg-code-head)",
+				"color": "var(--ds-color-code-head-fg)",
+				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "flex items-center justify-between gap-3 min-h-8 px-2.5 border-b border-line-window bg-window-bar text-window-bar-fg font-display text-micro",
+			"tailwind": "flex items-center gap-2 h-10 px-3 border-b border-line-code bg-code-head text-code-head-fg text-body",
 			"rules": [
-				"32px, sky ground, blue marks in the 10px display face, a 25 percent blue line under it.",
-				"Left: the arrow and the window's name; right: [*]. On the featured window: blue ground, white marks."
+				"The gray head of a code block: the language at the left, a purple copy glyph at the right."
 			],
-			"source": "src/app/globals.css:4011 (.v7-windowbar)"
+			"source": "Figma 427:2715 (Webhooks: JSON)"
 		},
 		"card-title": {
 			"name": "Card title",
@@ -386,19 +353,16 @@
 				]
 			},
 			"css": {
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-h3)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"letter-spacing": "var(--ds-tracking-tight)",
-				"line-height": "var(--ds-leading-display)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-body)",
 				"color": "var(--ds-color-text-default)"
 			},
-			"tailwind": "font-display text-h3 font-medium tracking-tight leading-display text-fg",
+			"tailwind": "text-body font-normal leading-body text-fg",
 			"rules": [
-				"24px display at 500, tracked tight. A product card's title is the 36px step at 400.",
-				"Its description is 14px Inter at 68 percent ink."
+				"14px regular ink (Trigger); a channel card title is 16px medium."
 			],
-			"source": "src/app/globals.css (.v7-offer-head h3)"
+			"source": "Figma 427:2715 (Webhooks: Trigger)"
 		},
 		"body-text": {
 			"name": "Body text",
@@ -424,10 +388,9 @@
 			},
 			"tailwind": "text-body leading-body text-fg",
 			"rules": [
-				"16px Inter, leading 1.6, ink. A lead paragraph is 19px.",
-				"Lines no wider than about 70 characters."
+				"14px ink; secondary copy under a title in #70637E."
 			],
-			"source": "src/app/globals.css:405"
+			"source": "Figma 427:2715 (Inbox: message body)"
 		},
 		"caption": {
 			"name": "Caption",
@@ -448,15 +411,15 @@
 				]
 			},
 			"css": {
-				"font-size": "var(--ds-text-body-sm)",
-				"line-height": "1.55",
+				"font-size": "var(--ds-text-caption)",
+				"line-height": "var(--ds-leading-body)",
 				"color": "var(--ds-color-text-muted)"
 			},
-			"tailwind": "text-body-sm leading-[1.55] text-fg-muted",
+			"tailwind": "text-caption leading-body text-fg-muted",
 			"rules": [
-				"14px Inter at 68 percent ink: card descriptions, list details, small print."
+				"12px muted for small print (Will be displayed as, reCAPTCHA notes)."
 			],
-			"source": "src/app/globals.css (.v7-offer-head p)"
+			"source": "Figma 427:2715 (Login footer)"
 		},
 		"link": {
 			"name": "Link",
@@ -472,23 +435,21 @@
 				]
 			},
 			"css": {
-				"color": "inherit",
-				"text-decoration-line": "underline",
-				"text-decoration-color": "var(--ds-color-text-brand)",
-				"text-underline-offset": "0.2em",
-				"transition": "color var(--ds-duration-fast) var(--ds-easing-out), text-decoration-color var(--ds-duration-fast) var(--ds-easing-out)"
+				"color": "var(--ds-color-text-brand)",
+				"text-decoration": "none",
+				"transition": "color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "text-fg-brand no-underline transition-colors duration-150 ease-out hover:underline underline-offset-4",
+			"rules": [
+				"Links are the action purple with no underline until hover (Forgot password?, Generate a random key instead).",
+				"A link inside muted copy is underlined in the same color as the copy (Manage agents.)."
+			],
+			"source": "Figma 427:2715 (Login, Vault)",
 			"states": {
 				":hover": {
-					"color": "var(--ds-color-text-brand)"
+					"text-decoration": "underline"
 				}
-			},
-			"tailwind": "underline decoration-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand",
-			"rules": [
-				"Inline links keep the text color with a blue underline; hover turns the text blue.",
-				"Navigation and footer links have no underline."
-			],
-			"source": "agentcard.sh /about (computed)"
+			}
 		},
 		"button-primary": {
 			"name": "Primary button",
@@ -513,40 +474,38 @@
 				"display": "inline-flex",
 				"align-items": "center",
 				"justify-content": "center",
-				"gap": "var(--ds-space-2-5)",
-				"padding": "var(--ds-space-3) var(--ds-space-5)",
-				"border-radius": "var(--ds-radius-control)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-5)",
+				"border": "0",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-action-primary)",
+				"color": "var(--ds-color-action-primary-fg)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
 				"font-weight": "var(--ds-font-weight-regular)",
 				"line-height": "1",
 				"white-space": "nowrap",
 				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
-				"border": "1px solid var(--ds-color-border-brand-edge)",
-				"background-color": "var(--ds-color-action-primary)",
-				"color": "var(--ds-color-action-primary-fg)",
-				"box-shadow": "var(--ds-shadow-key-brand)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-primary text-on-primary font-sans text-body font-normal leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-primary-hover active:scale-97",
+			"rules": [
+				"The main action is a 40px purple pill with a 14px regular white label and a 20px glyph 8px from it.",
+				"One per view (Create Agent, Log in); a dialog's action spans its width."
+			],
+			"source": "Figma 427:2715 (Create Agent, Enable iMessage, Log in)",
 			"states": {
 				":hover": {
 					"background-color": "var(--ds-color-action-primary-hover)"
 				},
 				":active": {
-					"transform": "translateY(1px)",
-					"box-shadow": "var(--ds-shadow-pressed)"
+					"scale": "0.97"
 				}
-			},
-			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-line-brand-edge bg-primary text-on-primary font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key-brand transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-primary-hover active:translate-y-px active:shadow-pressed",
-			"rules": [
-				"The blue key: 40px tall, 8px corners, 14px display face, a border a shade darker than the fill, a light inner top, a darker inner bottom and a soft blue drop.",
-				"Hover lightens a shade; a press sinks it 1px and swaps the shadow for the pressed well.",
-				"On the blue ground the main action is the white key (button-on-brand)."
-			],
-			"source": "src/app/globals.css:4186 (blue keys)"
+			}
 		},
 		"button-secondary": {
-			"name": "Secondary button",
+			"name": "Outline button",
 			"match": {
 				"tags": [
 					"button",
@@ -568,39 +527,38 @@
 				"display": "inline-flex",
 				"align-items": "center",
 				"justify-content": "center",
-				"gap": "var(--ds-space-2-5)",
-				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"gap": "var(--ds-space-1)",
+				"height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border": "1px solid var(--ds-color-border-field)",
 				"border-radius": "var(--ds-radius-control)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"font-weight": "var(--ds-font-weight-regular)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-brand)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-medium)",
 				"line-height": "1",
 				"white-space": "nowrap",
 				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"background-color": "var(--ds-color-bg-default)",
-				"color": "var(--ds-color-text-default)",
-				"box-shadow": "var(--ds-shadow-key)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "inline-flex items-center justify-center gap-1 h-9 px-2.5 border border-line-field rounded-control bg-surface text-fg-brand font-sans text-body font-medium leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-subtle active:scale-97",
+			"rules": [
+				"Other actions are the 36px white key with 8px corners, the field edge and a medium purple label (View as formatted).",
+				"Beside the main action on a form, use the lilac pill instead (Continue with GitHub)."
+			],
+			"source": "Figma 427:2715 (Modal - Created: View as formatted, Copy as markdown)",
 			"states": {
 				":hover": {
-					"background-color": "var(--ds-color-sky-wash)"
+					"background-color": "var(--ds-color-bg-subtle)"
 				},
 				":active": {
-					"transform": "translateY(1px)",
-					"box-shadow": "var(--ds-shadow-pressed)"
+					"scale": "0.97"
 				}
-			},
-			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-surface text-fg font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
-			"rules": [
-				"The white key on white: ink text, a 16 percent ink border and the same bevel in gray.",
-				"Hover warms to the pale sky; a press sinks it."
-			],
-			"source": "src/app/globals.css:1920 (white keys on paper)"
+			}
 		},
 		"button-on-brand": {
-			"name": "Button on the blue",
+			"name": "Lilac pill",
 			"match": {
 				"tags": [
 					"button",
@@ -618,39 +576,35 @@
 				"display": "inline-flex",
 				"align-items": "center",
 				"justify-content": "center",
-				"gap": "var(--ds-space-2-5)",
-				"padding": "var(--ds-space-3) var(--ds-space-5)",
-				"border-radius": "var(--ds-radius-control)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"font-weight": "var(--ds-font-weight-regular)",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-5)",
+				"border": "0",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-subtle)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
 				"line-height": "1",
 				"white-space": "nowrap",
-				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"background-color": "var(--ds-color-white)",
-				"color": "var(--ds-color-text-brand)",
-				"box-shadow": "var(--ds-shadow-key)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-subtle text-fg font-sans text-body leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-subtle-hover active:scale-97",
+			"rules": [
+				"The alternative beside the main action: the same pill in lilac with ink text (Continue with GitHub, Continue with Google)."
+			],
+			"source": "Figma 427:2715 (Login)",
 			"states": {
 				":hover": {
-					"background-color": "var(--ds-color-sky-wash)"
+					"background-color": "var(--ds-color-bg-subtle-hover)"
 				},
 				":active": {
-					"transform": "translateY(1px)",
-					"box-shadow": "var(--ds-shadow-pressed)"
+					"scale": "0.97"
 				}
-			},
-			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-white text-fg-brand font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
-			"rules": [
-				"The white key with blue text: the main action on the blue ground (the hero, the footer, a blue panel).",
-				"Hover warms to the pale sky; a press sinks it."
-			],
-			"source": "src/app/globals.css:4195 (white keys)"
+			}
 		},
 		"header": {
-			"name": "Header",
+			"name": "Rail",
 			"match": {
 				"tags": [
 					"header"
@@ -668,21 +622,23 @@
 				]
 			},
 			"css": {
-				"background-color": "transparent",
-				"color": "inherit",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-caption)",
-				"border": "0"
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"width": "var(--ds-layout-rail)",
+				"padding": "var(--ds-space-3)",
+				"border-right": "1px solid var(--ds-color-border-subtle)",
+				"background-color": "var(--ds-color-bg-default)"
 			},
-			"tailwind": "bg-transparent text-inherit font-display text-caption border-0",
+			"tailwind": "flex flex-col gap-1 w-(--ds-layout-rail) p-3 border-r border-line-subtle bg-surface",
 			"rules": [
-				"A bare bar: the wordmark at the left, one Get started key at the right, 20px from the top; no background, no rule.",
-				"Over the blue hero its marks are white and its key is the white key; on a white page the wordmark is blue."
+				"Navigation lives in a 288px white rail at the left: the lockup, then rows grouped under purple labels, help and the account at the foot.",
+				"There is no top bar on a desktop screen."
 			],
-			"source": "src/app/globals.css:1110 (.v7-space-header)"
+			"source": "Figma 427:2715 (Dashboard - empty state: rail)"
 		},
 		"header-action": {
-			"name": "Header action",
+			"name": "Head action",
 			"match": {
 				"tags": [
 					"a",
@@ -705,40 +661,28 @@
 			"css": {
 				"display": "inline-flex",
 				"align-items": "center",
-				"justify-content": "center",
 				"gap": "var(--ds-space-2-5)",
-				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3)",
 				"border-radius": "var(--ds-radius-control)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"line-height": "1",
-				"white-space": "nowrap",
-				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"background-color": "var(--ds-color-white)",
-				"color": "var(--ds-color-text-brand)",
-				"box-shadow": "var(--ds-shadow-key)"
+				"background-color": "var(--ds-color-bg-subtle)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "inline-flex items-center gap-2.5 h-9.5 px-3 rounded-control bg-subtle text-fg text-body transition-colors duration-150 ease-out hover:bg-subtle-hover",
+			"rules": [
+				"An action in a page head is the 38px lilac key with a 22px glyph (Tunnel quickstart)."
+			],
+			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)",
 			"states": {
 				":hover": {
-					"background-color": "var(--ds-color-sky-wash)"
-				},
-				":active": {
-					"transform": "translateY(1px)",
-					"box-shadow": "var(--ds-shadow-pressed)"
+					"background-color": "var(--ds-color-bg-subtle-hover)"
 				}
-			},
-			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-white text-fg-brand font-display text-body-sm font-medium leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
-			"rules": [
-				"The header's one action is the white key with blue text at 500, on the blue hero and on white alike.",
-				"Other header links are nav links."
-			],
-			"source": "src/app/globals.css:4108 (.v7-get-started-face)"
+			}
 		},
 		"nav-link": {
-			"name": "Nav link",
+			"name": "Rail row",
 			"match": {
 				"tags": [
 					"a",
@@ -759,35 +703,32 @@
 			"css": {
 				"display": "flex",
 				"align-items": "center",
-				"gap": "var(--ds-space-2)",
-				"padding": "var(--ds-space-2) var(--ds-space-3-5)",
-				"border-radius": "var(--ds-radius-sm)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"line-height": "1",
-				"color": "inherit",
+				"gap": "var(--ds-space-2-5)",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3)",
+				"border-radius": "var(--ds-radius-control)",
+				"color": "var(--ds-color-text-nav)",
+				"font-size": "var(--ds-text-body)",
 				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "flex items-center gap-2.5 h-9.5 px-3 rounded-control text-fg text-body no-underline transition-colors duration-150 ease-out hover:bg-subtle aria-[current=page]:bg-subtle",
+			"rules": [
+				"38px rows with 8px corners: a 22px filled glyph in ink, 10px, a 14px regular ink label.",
+				"The current row sits on the lilac (white on the lilac rail). Glyphs never move."
+			],
+			"source": "Figma 427:2715 (rail: Agent Workspace, Email, Vault)",
 			"states": {
 				":hover": {
-					"background-color": "var(--ds-color-wash-hover)"
+					"background-color": "var(--ds-color-bg-subtle)"
 				},
 				"[aria-current=page]": {
-					"background-color": "var(--ds-color-white)",
-					"color": "var(--ds-color-text-brand)",
-					"box-shadow": "var(--ds-shadow-key)"
+					"background-color": "var(--ds-color-bg-subtle)"
 				}
-			},
-			"tailwind": "flex items-center gap-2 px-3.5 py-2 rounded-sm font-display text-body-sm leading-none text-inherit transition-colors duration-150 ease-out hover:bg-wash-hover aria-[current=page]:bg-white aria-[current=page]:text-fg-brand aria-[current=page]:shadow-key",
-			"rules": [
-				"14px display face in a 6px-cornered key; hover is a light wash.",
-				"The current page is the white key with blue text, as in the brand's dock."
-			],
-			"source": "src/app/globals.css:4052 (.v7-dock-bar a)"
+			}
 		},
 		"nav-dock": {
-			"name": "Glass nav",
+			"name": "Second rail",
 			"match": {
 				"words": [
 					"dock",
@@ -799,23 +740,18 @@
 				]
 			},
 			"css": {
-				"padding": "calc(var(--ds-space-1) - 1px)",
-				"border": "1px solid var(--ds-color-border-on-brand)",
-				"border-radius": "var(--ds-radius-control)",
-				"background-color": "var(--ds-color-bg-glass)",
-				"background-image": "var(--ds-glass-sheen)",
-				"box-shadow": "var(--ds-shadow-floating)",
-				"backdrop-filter": "var(--ds-glass-blur)",
-				"color": "var(--ds-color-white)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)"
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"width": "var(--ds-layout-rail)",
+				"padding": "var(--ds-space-3)",
+				"background-color": "var(--ds-color-bg-subtle)"
 			},
-			"tailwind": "p-[3px] border border-line-on-brand rounded-control bg-glass bg-(image:--ds-glass-sheen) shadow-floating [backdrop-filter:var(--ds-glass-blur)] text-white font-display text-body-sm",
+			"tailwind": "flex flex-col gap-1 w-(--ds-layout-rail) p-3 bg-subtle",
 			"rules": [
-				"A floating bar of glass: ink at 42 percent under a light sheen, blurred, 8px corners, white marks.",
-				"Its links are nav links; the current one is the white key."
+				"An agent's workspace adds a lilac rail of its own beside the white one; its current row is white."
 			],
-			"source": "src/app/globals.css:4049 (.v7-dock-nav)"
+			"source": "Figma 427:2715 (Agent Workspace - Inbox: second rail)"
 		},
 		"chip": {
 			"name": "Tag",
@@ -832,25 +768,23 @@
 			"css": {
 				"display": "inline-flex",
 				"align-items": "center",
-				"padding": "var(--ds-space-0-5) var(--ds-space-2)",
-				"border": "1px solid var(--ds-color-border-brand)",
-				"border-radius": "0",
-				"color": "var(--ds-color-text-brand)",
-				"font-family": "var(--ds-font-display)",
+				"padding": "1px var(--ds-space-1)",
+				"border-radius": "var(--ds-radius-xs)",
+				"background-color": "var(--ds-color-tag-blue)",
+				"color": "var(--ds-color-tag-blue-fg)",
 				"font-size": "var(--ds-text-micro)",
-				"letter-spacing": "var(--ds-tracking-caps)",
-				"text-transform": "uppercase",
-				"line-height": "1.75"
+				"font-weight": "var(--ds-font-weight-medium)",
+				"line-height": "var(--ds-leading-snug)"
 			},
-			"tailwind": "inline-flex items-center px-2 py-0.5 border border-line-brand rounded-none text-fg-brand font-display text-micro tracking-caps uppercase leading-[1.75]",
+			"tailwind": "inline-flex items-center px-1 py-px rounded-xs bg-tag-blue text-tag-blue-fg text-micro font-medium leading-snug",
 			"rules": [
-				"A small tag: 10px display caps tracked wide, blue on white with a blue border and square corners (Added, Fixed, New).",
-				"Tags are the one place type is set in caps."
+				"Tags are 11px medium on a pale blue, purple or gray with 4px corners (Email, Signed, Fire-and-forget).",
+				"A BETA or ADMIN mark is a pink edge with 12px pink text instead."
 			],
-			"source": "src/app/globals.css (.v7-upd-tag)"
+			"source": "Figma 427:2715 (Webhooks - Event catalog: tags)"
 		},
 		"stat": {
-			"name": "Stat",
+			"name": "Status well",
 			"match": {
 				"words": [
 					"stat",
@@ -863,21 +797,23 @@
 				]
 			},
 			"css": {
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-h2)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"letter-spacing": "var(--ds-tracking-tight)",
-				"line-height": "var(--ds-leading-tight)",
-				"font-variant-numeric": "tabular-nums"
+				"display": "inline-flex",
+				"align-items": "center",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-status-success-bg)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "font-display text-h2 font-medium tracking-tight leading-tight tabular-nums",
+			"tailwind": "inline-flex items-center h-9.5 px-3.5 rounded-control bg-success-bg text-fg text-body",
 			"rules": [
-				"A figure in the 36px display step at 500 (a price, a count), its unit beside it in 14px Inter."
+				"A state is shown as a 38px well with 8px corners: green for active, gray for idle, blue for a mode (Active, Idle, Edge)."
 			],
-			"source": "src/app/globals.css (.v7-offer-figure)"
+			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)"
 		},
 		"code-window": {
-			"name": "Code window",
+			"name": "Code block",
 			"match": {
 				"tags": [
 					"pre"
@@ -894,23 +830,23 @@
 			},
 			"css": {
 				"overflow": "hidden",
+				"border": "1px solid var(--ds-color-border-code)",
 				"border-radius": "var(--ds-radius-control)",
 				"background-color": "var(--ds-color-bg-code)",
-				"color": "var(--ds-color-text-on-brand-muted)",
-				"font-family": "var(--ds-font-mono)",
-				"font-size": "var(--ds-text-caption)",
-				"line-height": "1.55",
-				"box-shadow": "var(--ds-shadow-code)"
+				"color": "var(--ds-color-code-text)",
+				"font-family": "var(--ds-font-code)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)"
 			},
-			"tailwind": "overflow-hidden rounded-control bg-code text-fg-on-brand-muted font-mono text-caption leading-[1.55] shadow-code",
+			"tailwind": "overflow-hidden border border-line-code rounded-control bg-code text-code-text font-code text-body leading-body",
 			"rules": [
-				"Ink ground, 8px corners, code in the 12px display face at 88 percent white, a deep drop under it.",
-				"A code window usually sits on a blue panel (media-frame)."
+				"Code is light: an off-white body with the editor's gray edge and head, line numbers in teal, red keys and blue values.",
+				"Never a dark code block."
 			],
-			"source": "src/app/globals.css (.v7-intg-code)"
+			"source": "Figma 427:2715 (Webhooks: Signature headers)"
 		},
 		"media-frame": {
-			"name": "Media panel",
+			"name": "Media frame",
 			"match": {
 				"tags": [
 					"img",
@@ -931,16 +867,15 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-8)",
-				"border-radius": "var(--ds-radius-panel)",
-				"background-color": "var(--ds-color-bg-brand)"
+				"overflow": "hidden",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-subtle)"
 			},
-			"tailwind": "p-8 rounded-panel bg-brand",
+			"tailwind": "overflow-hidden rounded-control bg-subtle",
 			"rules": [
-				"Screens, code and demos sit on a blue panel with 12px corners and 32px of padding.",
-				"Phone screens and app windows inside it keep their own look."
+				"Images and previews sit in 8px corners on the lilac."
 			],
-			"source": "src/app/globals.css (.v7-intg-stage)"
+			"source": "Figma 427:2715 (extrapolated from the lilac panels)"
 		},
 		"table": {
 			"name": "Table",
@@ -958,19 +893,20 @@
 			},
 			"css": {
 				"width": "100%",
-				"border-collapse": "collapse",
-				"font-size": "var(--ds-text-body-sm)",
+				"border-collapse": "separate",
+				"border-spacing": "0",
+				"font-size": "var(--ds-text-body)",
 				"color": "var(--ds-color-text-default)"
 			},
-			"tailwind": "w-full border-collapse text-body-sm text-fg [&_th]:font-display [&_th]:text-caption [&_th]:text-fg-muted [&_th]:font-normal [&_td]:border-b [&_td]:border-line",
+			"tailwind": "w-full border-separate border-spacing-0 text-body text-fg",
 			"rules": [
-				"14px Inter rows with a 14 percent ink rule under each; headers in the 12px display face at 68 percent ink.",
-				"No zebra stripes, no vertical rules."
+				"The head is a 48px lilac bar with 10px corners and 14px muted labels; the body a separate white panel with Shadow/S, 64px rows ruled by Line/S Bottom; the foot a 42px lilac bar.",
+				"An agent handle in a cell is rose (#8C5659)."
 			],
-			"source": "agentcard-website src/content/guides (stack tables)"
+			"source": "Figma 427:2715 (Email: Mailboxes table)"
 		},
 		"faq": {
-			"name": "FAQ",
+			"name": "Collapsible row",
 			"match": {
 				"tags": [
 					"details"
@@ -983,19 +919,19 @@
 				]
 			},
 			"css": {
-				"border-bottom": "1px solid var(--ds-color-border-default)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"font-weight": "var(--ds-font-weight-medium)",
-				"letter-spacing": "-0.01em"
+				"display": "flex",
+				"align-items": "center",
+				"justify-content": "space-between",
+				"gap": "var(--ds-space-3)",
+				"padding-block": "var(--ds-space-3)",
+				"font-size": "var(--ds-text-body)",
+				"color": "var(--ds-color-text-default)"
 			},
-			"tailwind": "border-b border-line font-display text-body-sm font-medium tracking-[-0.01em]",
+			"tailwind": "flex items-center justify-between gap-3 py-3 text-body text-fg",
 			"rules": [
-				"Questions in a 680px list: 14px display at 500, a 14 percent rule between, a drawn + that turns to an x when open.",
-				"The answer is 14px Inter at 68 percent ink, sliding open in 200ms.",
-				"On the brand's page the list sits in a window with topic tabs above it."
+				"A disclosure is a 14px ink row with a caret at its right (Advanced settings - tunnel mode, phone state, line sharing)."
 			],
-			"source": "src/app/globals.css:1015 (.faq-list)"
+			"source": "Figma 427:2715 (Modal - Create Agent)"
 		},
 		"tabs": {
 			"name": "Tabs",
@@ -1013,32 +949,29 @@
 				]
 			},
 			"css": {
-				"display": "grid",
-				"grid-auto-flow": "column",
-				"grid-auto-columns": "1fr",
-				"gap": "var(--ds-space-1)",
-				"padding": "var(--ds-space-1)",
-				"border": "1px solid var(--ds-color-border-hairline)",
-				"border-radius": "var(--ds-radius-card)",
-				"background-color": "var(--ds-color-bg-subtle)",
-				"box-shadow": "var(--ds-shadow-well)"
+				"display": "inline-flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10-5)",
+				"padding": "var(--ds-space-0-5)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-subtle)"
 			},
+			"tailwind": "inline-flex items-center gap-2 h-10.5 p-0.5 rounded-panel bg-subtle",
+			"rules": [
+				"A 42px lilac track with 10px corners; 38px tabs with a 14px medium ink label; the selected tab is a white key with 8px corners and Shadow/S."
+			],
+			"source": "Figma 427:2715 (Email: Mailboxes, Contact rules, Custom domains)",
 			"states": {
 				"[aria-selected=true]": {
-					"background-color": "var(--ds-color-action-primary)",
-					"color": "var(--ds-color-action-primary-fg)",
-					"box-shadow": "var(--ds-shadow-key-brand)"
+					"background-color": "var(--ds-color-bg-default)",
+					"box-shadow": "var(--ds-shadow-s)",
+					"border-radius": "var(--ds-radius-control)"
 				}
-			},
-			"tailwind": "grid grid-flow-col auto-cols-fr gap-1 p-1 border border-hairline rounded-card bg-subtle shadow-well",
-			"rules": [
-				"A sunken track (12px corners, 4px inset) of equal 40px tabs in the 14px display face.",
-				"The selected tab is the blue key with white text, and the key glides between tabs (260ms, in-out)."
-			],
-			"source": "src/app/globals.css:1192 (.plan-tabs)"
+			}
 		},
 		"input": {
-			"name": "Input",
+			"name": "Field",
 			"match": {
 				"tags": [
 					"input",
@@ -1053,33 +986,35 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-2-5) var(--ds-space-3)",
-				"border": "1px solid var(--ds-color-border-strong)",
-				"border-radius": "0",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-3-5)",
+				"border": "1px solid var(--ds-color-border-field)",
+				"border-radius": "var(--ds-radius-control)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
 				"font-family": "var(--ds-font-sans)",
-				"font-size": "var(--ds-text-h5)",
-				"line-height": "var(--ds-leading-snug)"
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-tight)",
+				"transition": "border-color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out)"
 			},
+			"tailwind": "h-10 px-3.5 border border-line-field rounded-control bg-surface text-fg font-sans text-body leading-tight outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger",
+			"rules": [
+				"40px fields with 8px corners and the lilac-gray edge on white; 14px ink text 14px in; a light purple placeholder.",
+				"A rejected value takes the red edge and a red message under it."
+			],
+			"source": "Figma 427:2715 (Form- Input)",
 			"states": {
 				":focus-visible": {
-					"outline": "2px solid var(--ds-color-focus-ring)",
-					"outline-offset": "-1px"
+					"border-color": "var(--ds-color-border-brand)",
+					"box-shadow": "var(--ds-shadow-focus)"
 				},
 				"[aria-invalid=true]": {
 					"border-color": "var(--ds-color-status-danger)"
 				}
-			},
-			"tailwind": "px-3 py-2.5 border border-line-strong rounded-none bg-surface text-fg font-sans text-h5 leading-snug outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring aria-invalid:border-danger",
-			"rules": [
-				"Square fields: a 35 percent ink border, no corners, 18px Inter, 10px by 12px padding.",
-				"Focus draws a 2px blue outline just inside the edge. Labels use the 12px display face above the control; invalid fields use the danger border."
-			],
-			"source": "src/app/globals.css (.v7-gate-field input)"
+			}
 		},
 		"logo-strip": {
-			"name": "Merchant line",
+			"name": "Logo row",
 			"match": {
 				"words": [
 					"logos",
@@ -1093,20 +1028,22 @@
 				]
 			},
 			"css": {
-				"border-block": "1px solid var(--ds-color-border-on-brand-strong)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-caption)",
-				"white-space": "nowrap"
+				"display": "flex",
+				"flex-wrap": "wrap",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"padding": "var(--ds-space-0-5)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-subtle)"
 			},
-			"tailwind": "border-y border-line-on-brand-strong font-display text-caption whitespace-nowrap",
+			"tailwind": "flex flex-wrap items-center gap-2 p-0.5 rounded-panel bg-subtle",
 			"rules": [
-				"A running line of names between two rules, separated by a small star; on the blue footer, white with 45 percent white rules.",
-				"Logos in a grid sit in small white windows, one pale tint per bar."
+				"A row of tools or partners is a lilac track of 24px logo tiles with 14px ink names (Where does this agent run?)."
 			],
-			"source": "src/app/globals.css (.v7-foot-line)"
+			"source": "Figma 427:2715 (Modal - Created)"
 		},
 		"footer": {
-			"name": "Footer",
+			"name": "Rail foot",
 			"match": {
 				"tags": [
 					"footer"
@@ -1120,18 +1057,17 @@
 				]
 			},
 			"css": {
-				"background-color": "var(--ds-color-bg-brand)",
-				"color": "var(--ds-color-text-on-brand)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-caption)"
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"padding": "var(--ds-space-3)",
+				"border-top": "1px solid var(--ds-color-border-subtle)"
 			},
-			"tailwind": "bg-brand text-on-brand font-display text-caption",
+			"tailwind": "flex flex-col gap-1 p-3 border-t border-line-subtle",
 			"rules": [
-				"The blue ground, after four stepped bands from the white page above.",
-				"The wordmark in white, its line in 14px; link columns in the 12px display face, headings in sky, links white.",
-				"It may end with the striped wordmark across the full width."
+				"The rail ends with help, the organization (with an ADMIN mark), the account and Collapse, ruled off above."
 			],
-			"source": "src/app/globals.css (.v7-foot)"
+			"source": "Figma 427:2715 (rail foot)"
 		},
 		"menu-panel": {
 			"name": "Menu panel",
@@ -1151,21 +1087,19 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-1)",
-				"border": "1px solid var(--ds-color-border-hairline)",
 				"border-radius": "var(--ds-radius-control)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
-				"box-shadow": "var(--ds-shadow-tooltip)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)"
+				"box-shadow": "var(--ds-shadow-floating)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "rounded-control border border-hairline bg-surface p-1 font-display text-body-sm text-fg shadow-tooltip outline-none",
-			"states": {},
+			"tailwind": "rounded-control bg-surface p-1 font-sans text-body text-fg shadow-floating outline-none",
 			"rules": [
-				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Menus keep keyboard focus, disabled states, and selection behavior."
+				"Menus and select lists are white with 8px corners, the Shadow/S ring and a soft drop, 4px inside."
 			],
-			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+			"source": "Figma 427:2715 (extrapolated from Shadow/S and the select trigger)",
+			"states": {}
 		},
 		"menu-item": {
 			"name": "Menu item",
@@ -1184,38 +1118,29 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-2) var(--ds-space-2-5)",
-				"border-radius": "var(--ds-radius-menu)",
-				"background-color": "transparent",
-				"color": "var(--ds-color-text-secondary)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"line-height": "var(--ds-leading-snug)",
-				"outline": "none"
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"min-height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border-radius": "var(--ds-radius-sm)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg",
-			"states": {
-				":hover": {
-					"background-color": "var(--ds-color-wash-hover)",
-					"color": "var(--ds-color-text-default)"
-				},
-				"[data-highlighted]": {
-					"background-color": "var(--ds-color-wash-hover)",
-					"color": "var(--ds-color-text-default)"
-				},
-				"[data-disabled]": {
-					"opacity": "0.4",
-					"pointer-events": "none"
-				}
-			},
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-sm text-fg text-body outline-none transition-colors duration-150 ease-out data-[highlighted]:bg-subtle",
 			"rules": [
-				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Menus keep keyboard focus, disabled states, and selection behavior."
+				"36px rows with 6px corners, a 20px glyph in the softer purple, 14px ink; the highlighted row sits on the lilac."
 			],
-			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+			"source": "Figma 427:2715 (extrapolated from the rail rows)",
+			"states": {
+				"[data-highlighted]": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				}
+			}
 		},
 		"glass-menu": {
-			"name": "Glass menu",
+			"name": "Floating panel",
 			"match": {
 				"words": [
 					"glass-menu",
@@ -1225,27 +1150,18 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-1)",
-				"border": "1px solid var(--ds-color-border-hairline)",
 				"border-radius": "var(--ds-radius-control)",
-				"background-color": "var(--ds-color-bg-glass)",
-				"color": "var(--ds-color-text-on-brand)",
-				"box-shadow": "var(--ds-shadow-floating)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
-				"border-color": "var(--ds-color-border-on-brand)",
-				"background-image": "var(--ds-glass-sheen)",
-				"backdrop-filter": "var(--ds-glass-blur)"
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-floating)"
 			},
-			"tailwind": "rounded-control border border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) p-1 font-display text-body-sm text-on-brand shadow-floating [backdrop-filter:var(--ds-glass-blur)] outline-none",
-			"states": {},
+			"tailwind": "rounded-control bg-surface p-1 shadow-floating",
 			"rules": [
-				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Glass rows use the dock\u2019s lit hover edge and white text."
+				"The console has no glass: floating panels are the white menu panel."
 			],
-			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+			"source": "Figma 427:2715 (extrapolated)"
 		},
 		"glass-menu-item": {
-			"name": "Glass menu item",
+			"name": "Floating panel item",
 			"match": {
 				"words": [
 					"glass-menu-item",
@@ -1254,33 +1170,20 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-3) calc(var(--ds-space-3) - 1px)",
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"min-height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
 				"border-radius": "var(--ds-radius-sm)",
-				"background-color": "transparent",
-				"color": "var(--ds-color-text-on-brand)",
-				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-caption)",
-				"line-height": "1",
-				"outline": "none"
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "rounded-sm px-2.75 py-3 font-display text-caption leading-none text-on-brand outline-none data-[highlighted]:bg-wash-glass-hover data-[highlighted]:shadow-glass-hover",
-			"states": {
-				":hover": {
-					"background-color": "var(--ds-color-wash-glass-hover)",
-					"box-shadow": "var(--ds-shadow-glass-hover)",
-					"color": "var(--ds-color-text-on-brand)"
-				},
-				"[data-highlighted]": {
-					"background-color": "var(--ds-color-wash-glass-hover)",
-					"box-shadow": "var(--ds-shadow-glass-hover)",
-					"color": "var(--ds-color-text-on-brand)"
-				}
-			},
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-sm text-fg text-body",
 			"rules": [
-				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Glass rows use the dock\u2019s lit hover edge and white text."
+				"As a menu item."
 			],
-			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+			"source": "Figma 427:2715 (extrapolated)"
 		},
 		"popover-panel": {
 			"name": "Popover panel",
@@ -1291,22 +1194,17 @@
 				]
 			},
 			"css": {
-				"padding": "var(--ds-space-4)",
-				"border": "1px solid var(--ds-color-border-hairline)",
+				"padding": "var(--ds-space-3-5)",
 				"border-radius": "var(--ds-radius-control)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
-				"box-shadow": "var(--ds-shadow-tooltip)",
-				"font-family": "var(--ds-font-sans)",
-				"font-size": "var(--ds-text-body-sm)"
+				"box-shadow": "var(--ds-shadow-floating)"
 			},
-			"tailwind": "rounded-control border border-hairline bg-surface p-4 font-sans text-body-sm text-fg shadow-tooltip outline-none",
-			"states": {},
+			"tailwind": "rounded-control bg-surface p-3.5 text-fg shadow-floating",
 			"rules": [
-				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Menus keep keyboard focus, disabled states, and selection behavior."
+				"Popovers are the white menu panel with 14px inside."
 			],
-			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+			"source": "Figma 427:2715 (extrapolated from Shadow/S)"
 		}
 	}
 }

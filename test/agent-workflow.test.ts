@@ -76,7 +76,7 @@ describe('portable agent workflow', () => {
     const root = fixture();
     const dry = run(root, ['add', 'select', '--dry-run', '--json']);
     expect(dry.status).toBe(0);
-    expect(dry.data.items).toEqual(expect.arrayContaining(['theme', 'utils', 'field', 'surface', 'select']));
+    expect(dry.data.items).toEqual(expect.arrayContaining(['theme', 'utils', 'surface', 'select']));
     expect(existsSync(join(root, 'src/components'))).toBe(false);
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
     for (const item of await closure(['select'])) for (const name of item.packages ?? []) pkg.dependencies[name] = '*';

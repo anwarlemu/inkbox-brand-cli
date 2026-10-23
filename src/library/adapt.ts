@@ -46,12 +46,15 @@ const BUTTON_VARIANTS = (surface: Surface): [RegExp, string][] => {
 			];
 };
 const DANGER = /^(destructive|danger|delete|remove|error|negative|critical|red)$/i;
-const SIZES: [RegExp, string][] = [
+/** The library's default button size name (brand.json variants.site.size; md when unset). */
+const defaultSize = () => brand().variants.site.size ?? 'md';
+const SIZES = (): [RegExp, string][] => [
 	[/icon/i, 'icon'],
 	[/^(xs|sm|small|compact|mini|tiny)$/i, 'sm'],
-	[/./, 'md'],
+	[/./, defaultSize()],
 ];
-const BADGE_VARIANTS: [RegExp, string][] = [
+// Badge roles, renamed to the library's own variants where brand.json says so (variants.site.badges).
+const BADGE_ROLES: [RegExp, string][] = [
 	[/^(primary|brand|info|blue|accent|new)$/i, 'brand'],
 	[/^(success|green|positive|ok|active|live)$/i, 'success'],
 	[/^(warning|yellow|amber|orange|pending|caution)$/i, 'warning'],
@@ -60,6 +63,7 @@ const BADGE_VARIANTS: [RegExp, string][] = [
 	[/^(chip|pill|outline-pill)$/i, 'chip'],
 	[/./, 'default'],
 ];
+const BADGE_VARIANTS = (): [RegExp, string][] => BADGE_ROLES.map(([re, role]) => [re, brand().variants.site.badges?.[role] ?? role]);
 
 /** Every name a component can be handed and the adapter knows how to pass on. */
 const PASS = new Set(['className', 'children', 'ref', 'id', 'style', 'title', 'onClick', 'onChange', 'onBlur', 'onFocus', 'disabled', 'type', 'name', 'value', 'defaultValue', 'placeholder', 'required', 'htmlFor', 'asChild', 'tabIndex', 'role', 'form']);
@@ -88,7 +92,7 @@ function button({ c, surface, local, values }: Ctx): Adapter | undefined {
 	const key = c.name.toUpperCase();
 	const prelude = [
 		mapLiteral(`DS_${key}_VARIANT`, variants, BUTTON_VARIANTS(surface), variantsFor(surface).outlined),
-		mapLiteral(`DS_${key}_SIZE`, sizes, SIZES, 'md'),
+		mapLiteral(`DS_${key}_SIZE`, sizes, SIZES(), defaultSize()),
 		`const DS_${key}_DANGER = new Set<string>(${JSON.stringify([...new Set(variants)].filter((v) => DANGER.test(v)))});`,
 	].join('\n');
 	const v = a.get('variant');
@@ -106,7 +110,7 @@ function button({ c, surface, local, values }: Ctx): Adapter | undefined {
 		...a.forwards.filter((f) => !(loading && f.startsWith('disabled='))),
 		a.ref,
 		`variant={(DS_${key}_VARIANT[${variantKey(v)}] ?? "${variantsFor(surface).outlined}") as DsComponentProps<typeof ${local}>["variant"]}`,
-		`size={(DS_${key}_SIZE[${variantKey(s)}] ?? "md") as DsComponentProps<typeof ${local}>["size"]}`,
+		`size={(DS_${key}_SIZE[${variantKey(s)}] ?? "${defaultSize()}") as DsComponentProps<typeof ${local}>["size"]}`,
 		classes.length ? `className={[${classes.join(', ')}].filter(Boolean).join(" ") || undefined}` : '',
 		a.get('asChild') && !c.params.identifier ? 'asChild={asChild}' : '',
 		disabled,
@@ -122,7 +126,7 @@ function badge({ c, local, values }: Ctx): Adapter | undefined {
 	const a = access(c);
 	const prop = ['variant', 'tone', 'intent', 'color'].find((p) => a.get(p) && (values[p]?.length || c.params.names.includes(p))) ?? 'variant';
 	const key = c.name.toUpperCase();
-	const prelude = mapLiteral(`DS_${key}_VARIANT`, [...(values[prop] ?? []), 'default'], BADGE_VARIANTS, 'default');
+	const prelude = mapLiteral(`DS_${key}_VARIANT`, [...(values[prop] ?? []), 'default'], BADGE_VARIANTS(), 'default');
 	const v = a.get(prop);
 	const attrs = [a.spread, ...a.forwards, a.ref, `variant={(DS_${key}_VARIANT[${variantKey(v)}] ?? "default") as DsComponentProps<typeof ${local}>["variant"]}`, a.get('className') ? `className={${a.get('className')}}` : ''].filter(Boolean);
 	const children = a.get('children') ?? (c.params.identifier ? `${c.params.identifier}.children` : undefined);
@@ -218,7 +222,7 @@ function isLook(cls: string, control: boolean) {
 }
 
 /** The library item's classes for one look: a cva's base, the variant and size picked, and the compounds that match. */
-export function libraryClasses(content: string, exportName: string, pickVariant: (values: string[]) => string | undefined, size = 'md'): string | undefined {
+export function libraryClasses(content: string, exportName: string, pickVariant: (values: string[]) => string | undefined, size = defaultSize()): string | undefined {
 	let ast: any;
 	try {
 		ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });

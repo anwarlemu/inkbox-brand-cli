@@ -24,7 +24,7 @@ export type BrandConfig = {
 	/** Type rules the check enforces beyond tokens: `caps` allows uppercase (a brand that sets small tags in caps), `bold`
 	 * allows semibold and bold (a brand with a bold weight in its scale). */
 	type?: { caps?: boolean; bold?: boolean };
-	variants: { site: { filled: string; outlined: string; quiet?: string; onBrand: string; card: string }; product?: { filled: string; black: string; outlined: string; ghost: string; onBrand: string; card: string } };
+	variants: { site: { filled: string; outlined: string; quiet?: string; onBrand: string; card: string; size?: string; badges?: Record<string, string> }; product?: { filled: string; black: string; outlined: string; ghost: string; onBrand: string; card: string } };
 };
 
 let config: BrandConfig | undefined;

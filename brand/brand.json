@@ -24,7 +24,10 @@
 				"variable": "--font-plex-mono",
 				"options": {
 					"display": "swap",
-					"weight": ["400", "500"]
+					"weight": [
+						"400",
+						"500"
+					]
 				}
 			}
 		],
@@ -37,11 +40,20 @@
 	},
 	"variants": {
 		"site": {
-			"filled": "primary",
+			"filled": "default",
 			"outlined": "outline",
 			"quiet": "ghost",
 			"onBrand": "secondary",
-			"card": "default"
+			"card": "default",
+			"size": "default",
+			"badges": {
+				"brand": "default",
+				"success": "success",
+				"warning": "gray",
+				"destructive": "destructive",
+				"tag": "blue",
+				"chip": "outline"
+			}
 		}
 	}
 }

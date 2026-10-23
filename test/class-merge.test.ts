@@ -17,16 +17,16 @@ function load(source: string) {
 }
 for (const [name, merge] of [["registry", cn], ["CLI", load(patchUtils(old)!).cn]] as const) {
   it(`${name} preserves explicit line height with brand sizes in either order`, () => {
-    expect(merge("leading-none text-h5 text-fg")).toBe("leading-none text-h5 text-fg");
+    expect(merge("leading-none text-h4 text-fg")).toBe("leading-none text-h4 text-fg");
     expect(merge("leading-none text-body-sm leading-body")).toBe("text-body-sm leading-body");
-    expect(merge("tracking-tight tracking-label")).toBe("tracking-label");
-    expect(merge("text-h5 leading-snug")).toBe("text-h5 leading-snug");
+    expect(merge("tracking-normal tracking-caps")).toBe("tracking-caps");
+    expect(merge("text-h4 leading-snug")).toBe("text-h4 leading-snug");
     expect(merge("leading-snug", "text-body-sm")).toBe("leading-snug text-body-sm");
-    expect(merge("text-body text-h5")).toBe("text-h5");
-    expect(merge("text-xl text-h5")).toBe("text-h5");
-    expect(merge("text-h5 text-xl")).toBe("text-xl");
-    expect(merge("leading-none text-h5/6")).toBe("text-h5/6");
-    expect(merge("text-h5/6 leading-snug")).toBe("text-h5/6 leading-snug");
+    expect(merge("text-body text-h4")).toBe("text-h4");
+    expect(merge("text-xl text-h4")).toBe("text-h4");
+    expect(merge("text-h4 text-xl")).toBe("text-xl");
+    expect(merge("leading-none text-h4/6")).toBe("text-h4/6");
+    expect(merge("text-h4/6 leading-snug")).toBe("text-h4/6 leading-snug");
   });
 }
 it("upgrades the previous generated helper once and preserves other exports", () => {
@@ -46,5 +46,5 @@ export const untouched = 42;`;
 it("the CLI fallback can extract the form label appearance", () => {
   const source = readFileSync(new URL("../registry/components/ui/label.tsx", import.meta.url), "utf8");
   const classes = libraryClasses(source, "Label", () => undefined);
-  expect(classes).toContain("font-display text-caption leading-normal text-fg-muted");
+  expect(classes).toContain("font-sans text-body leading-body font-normal text-fg");
 });

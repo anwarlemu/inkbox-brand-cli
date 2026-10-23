@@ -1,15 +1,25 @@
 "use client";
 
+import * as React from "react";
 import { EnvelopeSimpleIcon, PhoneIcon, ChatCircleIcon } from "@phosphor-icons/react/ssr";
 
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function Preview() {
+  const [state, setState] = React.useState("any");
+  const [saved, setSaved] = React.useState<string>();
   return (
-    <div className="grid w-full max-w-114.5 gap-1">
+    <form
+      className="grid w-full max-w-114.5 gap-1"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setSaved(String(new FormData(event.currentTarget).get("state")));
+      }}
+    >
       <Label htmlFor="any-state">Phone number state</Label>
-      <Select defaultValue="any">
+      <Select name="state" value={state} onValueChange={setState}>
         <SelectTrigger id="any-state">
           <SelectValue placeholder="Choose a state" />
         </SelectTrigger>
@@ -32,7 +42,13 @@ export function Preview() {
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+      <div className="mt-3 flex items-center gap-3">
+        <Button type="submit">Save</Button>
+        <p aria-live="polite" className="text-body text-fg-muted">
+          {saved ? `Saved: ${saved}` : ""}
+        </p>
+      </div>
+    </form>
   );
 }
 

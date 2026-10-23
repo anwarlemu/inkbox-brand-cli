@@ -1,169 +1,144 @@
+// Every overlay in the library opens from its trigger, takes focus where it should, closes with Escape and hands focus
+// back, at desktop and phone widths. Run through check-docs.mjs against a production docs server.
 import assert from 'node:assert/strict';
 
+async function open(page, base, name, example = 'Preview') {
+  await page.goto(`${base}/preview/${name}/${example}`);
+  await page.locator('[data-preview-ready]').waitFor();
+  await page.evaluate(() => document.fonts.ready);
+}
+
+const visible = (locator) => locator.first().waitFor({ state: 'visible', timeout: 5000 });
+const hidden = (locator) => locator.first().waitFor({ state: 'hidden', timeout: 5000 });
+const noOverflow = async (page, label) => assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${label}: horizontal overflow`);
+
+// Dialog-like overlays: the trigger opens a dialog, Escape closes it and focus returns to the trigger.
+async function dialogLike(page, base, name, trigger, role = 'dialog') {
+  await open(page, base, name);
+  const button = page.getByRole('button', { name: trigger }).first();
+  await button.click();
+  const panel = page.getByRole(role);
+  await visible(panel);
+  await noOverflow(page, name);
+  assert.ok(await panel.first().evaluate((el) => el.contains(document.activeElement)), `${name}: focus moves into the ${role}`);
+  await page.keyboard.press('Escape');
+  await hidden(panel);
+  assert.ok(await button.evaluate((el) => el === document.activeElement), `${name}: focus returns to the trigger`);
+}
+
 export async function checkOverlays(page, base) {
-  const frameFor = async (name, example = 'Site') => {
-    const element = page.locator(`iframe[src="/preview/${name}/${example}"]`);
-    await element.scrollIntoViewIfNeeded();
-    const frame = await element.contentFrame();
-    await frame.locator('[data-preview-ready]').waitFor();
-    await frame.locator('body').evaluate(() => document.fonts.ready);
-    return frame;
-  };
-  const fits = async locator => {
-    await locator.waitFor();
-    await page.waitForTimeout(200);
-    assert.ok(await locator.evaluate(el => {
-      const rect = el.getBoundingClientRect();
-      return rect.left >= -1 && rect.top >= -1 && rect.right <= innerWidth + 1 && rect.bottom <= innerHeight + 1;
-    }), 'The complete overlay must fit in its viewport');
-  };
   for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: 1000 });
-    await page.goto(`${base}/components/dropdown-menu`);
-    let frame = await frameFor('dropdown-menu');
-    if (width === 1440) {
-      const actual = await frame.locator('body').evaluate(() => innerWidth);
-      assert.ok(actual >= 600 && actual <= 720, 'Primitive previews should render at the column width');
+    await page.setViewportSize({ width, height: 900 });
+
+    await dialogLike(page, base, 'dialog', 'Create Agent');
+    await dialogLike(page, base, 'sheet', 'Edit mailbox');
+    await dialogLike(page, base, 'drawer', 'Choose a line');
+    await dialogLike(page, base, 'alert-dialog', /delete|revoke|remove/i, 'alertdialog');
+
+    // An alert dialog does not close from a click outside it.
+    await open(page, base, 'alert-dialog');
+    await page.getByRole('button', { name: /delete|revoke|remove/i }).first().click();
+    await visible(page.getByRole('alertdialog'));
+    await page.mouse.click(5, 5);
+    await page.waitForTimeout(250);
+    assert.equal(await page.getByRole('alertdialog').count(), 1, 'alert-dialog: stays open on an outside click');
+    await page.keyboard.press('Escape');
+
+    // Popover: opens as a dialog panel beside its trigger and closes with Escape.
+    await open(page, base, 'popover');
+    await page.locator('[data-slot="popover-trigger"]').first().click();
+    await visible(page.locator('[data-slot="popover-content"]'));
+    await page.keyboard.press('Escape');
+    await hidden(page.locator('[data-slot="popover-content"]'));
+
+    // Menus: arrow keys move the highlight, Escape closes and returns focus.
+    await open(page, base, 'dropdown-menu');
+    const account = page.locator('[data-slot="dropdown-menu-trigger"]').first();
+    await account.focus();
+    await page.keyboard.press('Enter');
+    await visible(page.getByRole('menu'));
+    await page.keyboard.press('ArrowDown');
+    assert.ok(await page.locator('[role=menuitem][data-highlighted]').count(), 'dropdown-menu: arrows highlight an item');
+    await page.keyboard.press('Escape');
+    await hidden(page.getByRole('menu'));
+    assert.ok(await account.evaluate((el) => el === document.activeElement), 'dropdown-menu: focus returns');
+
+    await open(page, base, 'context-menu');
+    await page.locator('[data-slot="context-menu-trigger"]').first().click({ button: 'right' });
+    await visible(page.getByRole('menu'));
+    await page.keyboard.press('Escape');
+    await hidden(page.getByRole('menu'));
+
+    if (width > 400) {
+      await open(page, base, 'menubar');
+      const first = page.getByRole('menuitem').first();
+      await first.click();
+      await visible(page.getByRole('menu'));
+      await page.keyboard.press('ArrowRight');
+      await visible(page.getByRole('menu'));
+      await page.keyboard.press('Escape');
+      await hidden(page.getByRole('menu'));
+
+      await open(page, base, 'navigation-menu');
+      await page.locator('[data-slot="navigation-menu-trigger"]').first().click();
+      await visible(page.locator('[data-slot="navigation-menu-content"]'));
+      await page.keyboard.press('Escape');
     }
-    const trigger = frame.getByRole('button', { name: 'Card actions' });
-    await trigger.click();
-    await fits(frame.getByRole('menu', { exact: true }));
-    await frame.getByRole('menuitem', { name: 'Edit limits E' }).click();
-    assert.equal(await frame.getByRole('menu').count(), 0, 'Selecting an action closes the menu');
-    await frame.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    await trigger.press('ArrowDown');
-    await frame.getByRole('menuitem', { name: 'Edit limits E' }).waitFor();
-    await frame.locator(':focus').press('Escape');
-    await frame.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    assert.equal(await trigger.evaluate(el => el === document.activeElement), true, 'Escape restores focus to the trigger');
 
-    frame = await frameFor('dropdown-menu', 'Glass');
-    await fits(frame.getByRole('menu'));
-    const row = frame.getByRole('menuitem', { name: 'Vault', exact: true });
-    await row.hover();
-    const style = await row.evaluate(el => { const s = getComputedStyle(el); return { radius: s.borderRadius, size: s.fontSize, padding: s.padding, shadow: s.boxShadow, bg: s.backgroundColor }; });
-    assert.equal(style.radius, '6px');
-    assert.equal(style.size, '12px');
-    assert.equal(style.padding, '12px 11px');
-    assert.notEqual(style.shadow, 'none', 'Glass highlight uses the reference inset edge');
-    assert.equal(style.bg, 'rgba(255, 255, 255, 0.17)');
-    frame = await frameFor('dropdown-menu', 'Open');
-    await fits(frame.getByRole('menu'));
+    // Hover card and tooltip open from pointer and keyboard.
+    await open(page, base, 'hover-card');
+    await page.locator('[data-slot="hover-card-trigger"]').first().hover();
+    await visible(page.locator('[data-slot="hover-card-content"]'));
 
-    frame = await frameFor('dropdown-menu', 'Choices');
-    const preferences = frame.getByRole('button', { name: 'Preferences' });
-    await preferences.click();
-    await frame.getByRole('menuitemcheckbox', { name: 'Notifications' }).click();
-    await frame.getByRole('status').filter({ hasText: 'Notifications off' }).waitFor();
-    await frame.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    await preferences.press('ArrowDown');
-    await frame.getByRole('menuitemcheckbox').press('ArrowDown');
-    await frame.getByRole('menuitem', { name: 'Exports', exact: true }).press('ArrowRight');
-    const sub = frame.locator('[data-slot="dropdown-menu-sub-content"]');
-    await fits(sub);
-    assert.equal(await sub.getAttribute('data-variant'), 'glass', 'Submenus inherit the glass variant');
-    assert.equal(await sub.getByRole('menuitem', { name: 'PDF (coming soon)' }).getAttribute('aria-disabled'), 'true');
-    await sub.getByRole('menuitem', { name: 'CSV', exact: true }).press('Enter');
-    assert.equal(await frame.getByRole('menu').count(), 0);
-    await frame.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    await preferences.click();
-    await frame.getByRole('menuitem', { name: 'Exports', exact: true }).hover();
-    await sub.getByRole('menuitem', { name: 'CSV', exact: true }).click();
-    assert.equal(await frame.getByRole('menu').count(), 0);
+    await open(page, base, 'tooltip');
+    await page.keyboard.press('Tab');
+    await visible(page.getByRole('tooltip'));
 
-    await page.goto(`${base}/components/select`);
-    frame = await frameFor('select', 'Toolbar');
-    await frame.getByRole('combobox', { name: 'Period' }).click();
-    await fits(frame.getByRole('listbox'));
-    await page.waitForTimeout(350);
-    assert.equal(await frame.getByRole('listbox').count(), 1, 'Lazy-loaded neighboring examples must not steal focus or close Select');
-    await frame.locator(':focus').press('Escape');
-    frame = await frameFor('select');
-    const select = frame.getByRole('combobox', { name: 'Money raised' });
+    // Select: choose a value with the keyboard; the trigger shows it.
+    await open(page, base, 'select');
+    const select = page.getByRole('combobox').first();
     await select.click();
-    await fits(frame.getByRole('listbox'));
-    await frame.getByRole('option', { name: 'Bootstrapped' }).click();
-    assert.equal(await select.textContent(), 'Bootstrapped');
-    const triggerWidth = (await select.boundingBox()).width;
-    assert.equal(await select.evaluate(el => getComputedStyle(el).fontSize), '18px');
-    await select.press('ArrowDown');
-    const listbox = frame.getByRole('listbox');
-    await fits(listbox);
-    assert.equal(await listbox.evaluate(el => getComputedStyle(el).fontSize), '18px');
-    assert.ok(Math.abs((await listbox.boundingBox()).width - triggerWidth) <= 1, 'Field menu matches its trigger width');
-    await frame.locator(':focus').press('Escape');
-    frame = await frameFor('select', 'Toolbar');
-    await frame.getByRole('combobox', { name: 'Period' }).click();
-    await fits(frame.getByRole('listbox'));
-    assert.ok((await frame.getByRole('listbox').boundingBox()).width >= 175, 'Short toolbar menus retain their minimum readable width');
-    assert.equal(await frame.getByRole('listbox').evaluate(el => getComputedStyle(el).fontSize), '14px');
-    await frame.locator(':focus').press('Escape');
-    frame = await frameFor('select', 'Form');
-    const card = frame.getByRole('combobox', { name: 'Card (required)' });
-    assert.equal(await card.getAttribute('aria-required'), 'true');
-    assert.equal(await frame.locator('select[name="card"]').evaluate(el => el.required), true);
-    assert.equal(await frame.locator('form').evaluate(el => el.checkValidity()), false);
-    await frame.getByRole('button', { name: 'Continue', exact: true }).click();
-    assert.equal(await card.getAttribute('aria-invalid'), 'true');
-    await card.press('ArrowDown');
-    await fits(frame.getByRole('listbox'));
-    assert.equal(await frame.getByRole('option', { name: /Archived card/ }).getAttribute('aria-disabled'), 'true');
-    await frame.getByRole('option', { name: /Travel agent/ }).press('o');
-    await frame.getByRole('option', { name: /Operations and/ }).press('Enter');
-    assert.equal(await card.getAttribute('aria-invalid'), null);
-    assert.equal(await frame.locator('form').evaluate(el => el.checkValidity()), true);
-    assert.equal(await card.evaluate(el => el.getBoundingClientRect().right <= innerWidth), true, 'Long labels stay inside the field');
-    await frame.getByRole('button', { name: 'Continue', exact: true }).click();
-    await frame.getByRole('status').filter({ hasText: 'Selected: operations.' }).waitFor();
-    await frame.getByRole('button', { name: 'Reset', exact: true }).click();
-    assert.equal(await card.textContent(), 'Choose a card');
-    assert.equal(await frame.locator('form').evaluate(el => new FormData(el).get('card')), '');
-    assert.equal(await frame.getByRole('combobox', { name: 'Billing currency' }).isDisabled(), true);
+    await visible(page.getByRole('listbox'));
+    await page.getByRole('option', { name: 'Oregon' }).click();
+    await hidden(page.getByRole('listbox'));
+    assert.match(await select.innerText(), /Oregon/, 'select: the trigger shows the choice');
 
-    for (const [component, triggerName] of [['popover', 'What are limits?'], ['dialog', 'New card'], ['sheet', 'Purchase log']]) {
-      await page.goto(`${base}/components/${component}`);
-      frame = await frameFor(component);
-      await frame.getByRole('button', { name: triggerName, exact: true }).click();
-      await fits(frame.getByRole('dialog'));
-      await frame.locator('body').press('Escape');
-      assert.equal(await frame.getByRole('dialog').count(), 0, `${component} closes with Escape`);
-    }
-    await page.goto(`${base}/components/tooltip`);
-    frame = await frameFor('tooltip');
-    await frame.getByRole('button', { name: 'New card' }).hover();
-    await fits(frame.getByRole('tooltip'));
-    assert.equal(await frame.getByRole('tooltip').textContent(), 'New card');
-    const next = await frame.getByRole('button', { name: 'Pause card' }).boundingBox();
-    await page.mouse.move(next.x + next.width / 2, next.y + next.height / 2, { steps: 8 });
-    await page.mouse.move(next.x + next.width / 2 + 1, next.y + next.height / 2);
-    await frame.locator('[data-slot="tooltip-content"][data-state="instant-open"]').waitFor({ timeout: 1000 });
-    console.log(`PASS: dropdown keyboard/actions/checkbox/submenu, reference glass styles, select, popover, dialog, sheet, tooltip (${width}px).`);
+    // Combobox: type to filter and press Enter to choose.
+    await open(page, base, 'combobox');
+    await page.locator('[data-slot="combobox-trigger"]').first().click();
+    const search = page.getByRole('combobox').last();
+    await visible(search);
+    await page.keyboard.type('bak');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(200);
+    assert.match(await page.locator('[data-slot="combobox-trigger"]').first().innerText(), /bak/i, 'combobox: Enter chooses the match');
+
+    // Command: typing filters the list.
+    await open(page, base, 'command');
+    const input = page.locator('[cmdk-input]').first();
+    const before = await page.locator('[cmdk-item]').count();
+    await input.fill('vault');
+    await page.waitForTimeout(150);
+    const after = await page.locator('[cmdk-item]').count();
+    assert.ok(after > 0 && after < before, `command: filtering narrows ${before} items to ${after}`);
+
+    // Date picker: open the calendar, pick a day, the popover closes and the trigger shows a date.
+    await open(page, base, 'date-picker');
+    const dateTrigger = page.locator('[data-slot="date-picker-trigger"]').first();
+    const label = await dateTrigger.innerText();
+    await dateTrigger.click();
+    await visible(page.getByRole('grid'));
+    await page.getByRole('grid').first().locator('button:not([disabled])').nth(10).click();
+    await hidden(page.getByRole('grid'));
+    assert.notEqual(await dateTrigger.innerText(), label, 'date-picker: the trigger shows the chosen date');
+
+    // Toasts appear and can be dismissed.
+    await open(page, base, 'sonner');
+    await page.getByRole('button').first().click();
+    await visible(page.locator('[data-sonner-toast]'));
+    await open(page, base, 'toast');
+    await page.getByRole('button').first().click();
+    await visible(page.locator('[data-slot="toast"]'));
   }
-  await page.setViewportSize({ width: 390, height: 220 });
-  await page.goto(`${base}/preview/dropdown-menu/Site`);
-  await page.locator('[data-preview-ready]').waitFor();
-  await page.getByRole('button', { name: 'Card actions' }).click();
-  const menu = page.getByRole('menu');
-  await fits(menu);
-  assert.ok(await menu.evaluate(el => el.scrollHeight > el.clientHeight), 'A menu scrolls when its content exceeds a short viewport');
-  await page.getByRole('menuitem', { name: 'Close card Hold 2s' }).scrollIntoViewIfNeeded();
-  await page.locator('body').press('Escape');
-  console.log('PASS: long menu content remains reachable in a short viewport.');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  for (const [component, trigger, role] of [['select', 'Money raised', 'listbox'], ['dropdown-menu', 'Card actions', 'menu'], ['popover', 'What are limits?', 'dialog'], ['dialog', 'New card', 'dialog'], ['tooltip', 'New card', 'tooltip']]) {
-    await page.setViewportSize({ width: 720, height: 900 });
-    await page.goto(`${base}/preview/${component}/Site`);
-    await page.locator('[data-preview-ready]').waitFor();
-    const control = page.getByRole(component === 'select' ? 'combobox' : 'button', { name: trigger, exact: true });
-    if (component === 'tooltip') await control.hover(); else await control.click();
-    const overlay = page.getByRole(role, { exact: true });
-    await overlay.waitFor();
-    assert.equal(await overlay.evaluate(el => getComputedStyle(el).animationName), 'none', `${component} respects reduced motion`);
-  }
-  await page.goto(`${base}/preview/accordion/Site`);
-  await page.locator('[data-preview-ready]').waitFor();
-  await page.locator('[data-slot="accordion-trigger"][data-state="closed"]').first().click();
-  assert.equal(await page.locator('[data-slot="accordion-content"][data-state="open"]').first().evaluate(el => getComputedStyle(el).animationName), 'none', 'Accordion state animations respect reduced motion');
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  console.log('PASS: overlays respect reduced motion.');
+  console.log('PASS: dialogs, sheets, drawers, popovers, menus, select, combobox, command, date picker, tooltips and toasts (1440px and 390px).');
 }

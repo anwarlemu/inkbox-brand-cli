@@ -33,6 +33,13 @@
 		],
 		"native": "Add Inter (all text) and IBM Plex Mono (keys, hosts, IDs and code) to the app as fonts and set them on its text styles"
 	},
+	"icons": {
+		"name": "Phosphor",
+		"packages": [
+			"@phosphor-icons/react",
+			"phosphor-react-native"
+		]
+	},
 	"touches": {},
 	"type": {
 		"caps": false,

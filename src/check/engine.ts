@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'no
 import { join, relative } from 'node:path';
 import { brand, cli, isOwnFile } from '../lib/brand.js';
 import { MARKUP, SCRIPT, STYLES, styledFiles } from '../project/detect.js';
-import { type RawFinding, runRules } from './rules.js';
+import { checkIcons, type RawFinding, runRules } from './rules.js';
 import { lineOf, loadSource } from './source.js';
 
 export type Finding = { file: string; line: number; column: number; rule: string; message: string; hint: string; snippet: string; fix?: { start: number; end: number; text: string }; overridden?: string };
@@ -19,6 +19,8 @@ export function checkText(relPath: string, text: string): { findings: Finding[];
 	let raw: RawFinding[] = [];
 	try {
 		raw = runRules(file);
+		// Scripts and the script blocks of templates: imports are read from the full text (templates keep only styles).
+		if (SCRIPT.test(relPath) || MARKUP.test(relPath)) checkIcons(text, (f) => raw.push(f));
 	} catch (error) {
 		raw = [{ rule: 'crash', message: `check crashed: ${(error as Error).message}`, hint: 'Report this to the design system owners.', offset: 0 }];
 	}

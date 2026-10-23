@@ -152,6 +152,22 @@ export function checkCodeColor(value: string, offset: number, push: (f: RawFindi
 	}
 }
 
+// Icon libraries other than the brand's, by package name (old Phosphor builds included).
+const ICON_PACKAGE = /^(lucide(-[\w-]+)?|@lucide\/|@heroicons\/|@tabler\/icons|react-icons|@radix-ui\/react-icons|react-feather|feather-icons|@fortawesome\/|@mui\/icons-material|@material-ui\/icons|@material-symbols\/|@iconify\/|@iconify-icon\/|ionicons|@ionic\/icons|@expo\/vector-icons|react-native-vector-icons|@remixicon\/|remixicon|@primer\/octicons|@hugeicons\/|iconoir-react|@mynaui\/icons|boxicons|bootstrap-icons|react-bootstrap-icons|@carbon\/icons|@untitled-ui\/icons|@icons-pack\/|phosphor-react$|phosphor-icons$|@phosphor-icons\/(web|core)$)/;
+const MODULE = /(?:\bfrom\s*|\bimport\s*\(?\s*|\brequire\s*\(\s*)(['"])([^'"\n]+)\1/g;
+
+/** Imports of an icon library that is not the brand's. */
+export function checkIcons(text: string, push: (f: RawFinding) => void) {
+	const icons = brand().icons;
+	if (!icons) return;
+	for (const m of text.matchAll(MODULE)) {
+		const source = m[2];
+		if (icons.packages.some((p) => source === p || source.startsWith(`${p}/`)) || !ICON_PACKAGE.test(source)) continue;
+		const offset = (m.index ?? 0) + m[0].length - source.length - 1;
+		push({ rule: 'icon-pack', message: `Icon library \`${source}\``, hint: `Every icon is ${icons.name}: import the matching glyph from ${icons.packages.map((p) => `\`${p}\``).join(' (web) or ')} (native).`, offset, length: source.length });
+	}
+}
+
 /** Runs every rule on a parsed file. */
 export function runRules(file: SourceFile): RawFinding[] {
 	const out: RawFinding[] = [];

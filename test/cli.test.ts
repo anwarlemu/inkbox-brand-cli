@@ -195,6 +195,15 @@ describe('check', () => {
 		expect(checkText('a.tsx', 'export const A = () => <p className="bg-surface text-fg-muted p-4 rounded-control" style={{ color: "var(--ds-color-brand)" }}>x</p>;').findings).toEqual([]);
 		expect(checkText('a.css', '.a { color: var(--ds-color-nope); }').findings[0].rule).toBe('unknown-token');
 	});
+	it('allows only the brand icon set', () => {
+		const rules = (path: string, text: string) => checkText(path, text).findings.map((f) => f.rule);
+		expect(rules('a.tsx', 'import { Mail } from "lucide-react";\nimport { XMarkIcon } from "@heroicons/react/24/solid";')).toEqual(['icon-pack', 'icon-pack']);
+		expect(checkText('a.tsx', 'import { Mail } from "lucide-react";').findings[0]).toMatchObject({ line: 1, snippet: 'lucide-react' });
+		expect(rules('a.vue', '<script setup>\nimport { Mail } from "lucide-vue-next";\n</script>\n<template><Mail /></template>')).toEqual(['icon-pack']);
+		expect(rules('a.js', 'const { Feather } = require("@expo/vector-icons");')).toEqual(['icon-pack']);
+		expect(rules('a.tsx', 'import { Horse } from "phosphor-react";')).toEqual(['icon-pack']);
+		expect(rules('a.tsx', 'import { TrayIcon } from "@phosphor-icons/react/ssr";\nimport { House } from "phosphor-react-native";\nimport { cn } from "@/lib/utils";')).toEqual([]);
+	});
 	it('accepts a swatch that prints its own value', () => {
 		expect(checkText('brand.html', '<div style="background:#08090A"></div><code>#08090A</code>').findings).toHaveLength(0);
 		expect(checkText('page.html', '<div style="background:#08090A"></div><p>Hello</p>').findings.length).toBeGreaterThan(0);

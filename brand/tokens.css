@@ -81,6 +81,8 @@
 	--ds-color-border-field: #D2C9DB;
 	--ds-color-border-row: rgb(102 102 99 / 0.12);
 	--ds-color-border-ring: rgb(23 47 41 / 0.12);
+	/* Shadow/S's drop, for a raised panel drawn without box-shadow (a table body built from cells). */
+	--ds-color-shadow-drop: rgb(23 47 41 / 0.08);
 	--ds-color-border-brand: #74629D;
 	--ds-color-border-pink: #F9B1B5;
 	/* A code block's edge, its head's rule and its indent guides (the editor theme's gray). */

@@ -22,8 +22,10 @@ npm run ci           # build, limits, registry, tests; must pass before you push
   type-checks the library and runs the value check over it. Primitives: `radix-ui`, `cmdk`, `sonner`; icons are
   Phosphor (`@phosphor-icons/react/ssr`, the `...Icon` names, fill weight for the console's glyphs).
 - `apps/www/`: the docs site (Next.js), laid out as the console (a rail and page heads), deployed to the Vercel project
-  `inkbox-ds` (Agencidev team) with `vercel deploy --prod --scope agencidev-dev` from the repo root; it renders every
-  item from source.
+  `inkbox-ds` (Agencidev team, root apps/www, install `cd ../.. && npm install`, toolbar off: its script breaks the sandboxed
+  preview frames) with `vercel deploy --prod --scope agencidev-dev` from the repo root; it renders every item from
+  source. Browser checks: `DOCS_URL=<url> npm run test:docs`, `test:library`, `test:reference` (against the Figma
+  measurements in `test/fixtures/reference-styles.json`). In `next dev`, use localhost: Next blocks 127.0.0.1.
 - `src/library/`: loading registry items (`registry.ts`) and swap mode (`swap.ts`); `src/commands/add.ts` (add, list).
 - `brand/`: the only brand-specific content. `tokens.css` is the single source of values (`:root`). `site.css` is the
   base layer (type defaults). `elements.json` holds how each kind of element is styled, with `match` data for

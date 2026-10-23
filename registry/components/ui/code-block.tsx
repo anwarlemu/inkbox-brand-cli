@@ -122,6 +122,16 @@ function tokenize(code: string, language: string): { kind: Kind; text: string }[
   return out.map((t) => (t.kind === "string" ? { ...t, kind: "key" as Kind } : t));
 }
 
+/** Draws the editor's indent guides: each two spaces of leading indentation becomes a cell with a hairline in it. */
+function withGuides(line: { kind: Kind; text: string }[]): { kind: Kind | "guide"; text: string }[] {
+  const first = line[0];
+  const indent = first?.kind === "plain" ? (first.text.match(/^ +/)?.[0].length ?? 0) : 0;
+  const levels = Math.floor(indent / 2);
+  if (!levels) return line;
+  const rest = first.text.slice(levels * 2);
+  return [...Array.from({ length: levels }, () => ({ kind: "guide" as const, text: "  " })), ...(rest ? [{ kind: "plain" as Kind, text: rest }] : []), ...line.slice(1)];
+}
+
 /**
  * The code itself. Pass the text as `code` and its `language` (json, tsx, ts, css, bash); line numbers show by default.
  * `wrap` breaks long lines instead of scrolling; `maxHeight` scrolls a long file inside the block.
@@ -145,7 +155,7 @@ function CodeBlockContent({ code, language = "tsx", lineNumbers = true, wrap = f
       className={cn("m-0 overflow-auto bg-code py-3 font-code text-body leading-5 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", className)}
       {...props}
     >
-      <code className={cn("grid", wrap ? "min-w-0" : "min-w-max")}>
+      <code className={cn("grid", wrap ? "grid-cols-[minmax(0,1fr)]" : "min-w-max")}>
         {lines.map((line, i) => (
           <span key={i} className={cn("grid", lineNumbers ? "grid-cols-[3rem_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)] pl-4", wrap && "min-w-0")}>
             {lineNumbers && (
@@ -153,12 +163,19 @@ function CodeBlockContent({ code, language = "tsx", lineNumbers = true, wrap = f
                 {i + 1}
               </span>
             )}
-            <span className={cn("pr-4", wrap ? "break-all whitespace-pre-wrap" : "whitespace-pre")}>
-              {line.length ? line.map((t, j) => (
-                <span key={j} className={COLOR[t.kind]}>
-                  {t.text}
-                </span>
-              )) : "\u200b"}
+            <span className={cn("pr-4", wrap ? "whitespace-pre-wrap [overflow-wrap:anywhere]" : "whitespace-pre")}>
+              {line.length ? withGuides(line).map((t, j) =>
+                t.kind === "guide" ? (
+                  <span key={j} className="relative inline-block w-[2ch]">
+                    <span aria-hidden className="absolute inset-y-0 left-[1ch] w-px bg-line-code" />
+                    {"  "}
+                  </span>
+                ) : (
+                  <span key={j} className={COLOR[t.kind]}>
+                    {t.text}
+                  </span>
+                ),
+              ) : "\u200b"}
             </span>
           </span>
         ))}

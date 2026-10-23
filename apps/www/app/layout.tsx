@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   title: { default: `${registryName} design system`, template: `%s | ${registryName} design system` },
   alternates: { types: { "text/markdown": "/agents.md", "text/plain": "/llms.txt" } },
   description: `Components, design tokens and CLI guidance for building ${registryName} interfaces.`,
-  icons: { icon: "/logo-mark.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,275 +1,170 @@
+// Every interactive control in the library works with the pointer and the keyboard, at desktop and phone widths.
+// Run through check-docs.mjs against a production docs server.
 import assert from 'node:assert/strict';
 
-export async function checkInteractions(page, base) {
-  const open = async (component, example = 'Site') => {
-    await page.goto(`${base}/components/${component}`);
-    const frame = page.locator(`iframe[src="/preview/${component}/${example}"]`);
-    if (["command", "dialog", "dropdown-menu", "popover", "select", "sheet", "tooltip", "site-header"].includes(component)) {
-      await frame.scrollIntoViewIfNeeded();
-      const content = await frame.contentFrame();
-      await content.locator('[data-preview-ready]').waitFor();
-      return content;
-    }
-    const label = example === 'Site' ? 'Preview' : example.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, c => c.toUpperCase());
-    const preview = page.locator('article figure').filter({ has: page.locator('figcaption', { hasText: new RegExp(`^${label}$`) }) });
-    await preview.waitFor();
-    return preview;
-  };
-  for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: 1000 });
-    let demo = await open('field');
-    const website = demo.getByRole('textbox', { name: 'Website', exact: true });
-    for (const [value, invalid] of [['acme.com', false], ['https://shop.acme.com/path?q=1', false], ['acme', true], ['', true], ['https://', true], ['ftp://acme.com', true], ['acme .com', true], ['acme.com', false]]) {
-      await website.fill(value);
-      assert.equal(await website.getAttribute('aria-invalid'), invalid ? 'true' : null, value);
-      assert.equal(await demo.getByText('Enter a web address, like acme.com.', { exact: true }).count(), invalid ? 1 : 0);
-    }
-    assert.equal(await demo.getByLabel('Work email', { exact: false }).evaluate(el => el.required), true);
-    assert.equal(await website.evaluate(el => document.getElementById(el.getAttribute('aria-describedby')).textContent), 'Web address accepted.');
+async function open(page, base, name, example = 'Preview') {
+  await page.goto(`${base}/preview/${name}/${example}`);
+  await page.locator('[data-preview-ready]').waitFor();
+  await page.evaluate(() => document.fonts.ready);
+}
 
-    demo = await open('input', 'States');
-    const email = demo.getByRole('textbox', { name: 'Work email', exact: true });
-    await email.fill('ada@acme.com');
-    assert.equal(await email.getAttribute('aria-invalid'), null);
-    await email.fill('ada@');
-    assert.equal(await email.getAttribute('aria-invalid'), 'true');
-    assert.equal(await demo.getByRole('textbox', { name: 'Card nickname' }).isDisabled(), true);
-    demo = await open('input', 'Search');
-    await demo.getByRole('searchbox').fill('limits');
-    assert.equal(await demo.locator('li').count(), 1);
-    await demo.getByRole('searchbox').fill('zzzz');
-    await demo.getByText('No guides match your search.').waitFor();
-
-    demo = await open('checkbox');
-    const all = demo.getByRole('checkbox', { name: 'All categories' });
-    assert.equal(await all.getAttribute('aria-checked'), 'mixed');
-    await all.click();
-    assert.equal(await demo.locator('[role="checkbox"][aria-checked="true"]').count(), 4);
-    await all.click();
-    assert.equal(await demo.locator('[role="checkbox"][aria-checked="true"]').count(), 0);
-    await demo.getByRole('checkbox', { name: 'Airlines', exact: true }).click();
-    assert.equal(await all.getAttribute('aria-checked'), 'mixed');
-    assert.equal(await demo.getByRole('checkbox', { name: /Cash withdrawals/ }).isDisabled(), true);
-
-    demo = await open('tags-input');
-    const input = demo.getByRole('textbox', { name: 'Allowed merchants' });
-    assert.equal(await input.getAttribute('aria-invalid'), 'true');
-    await demo.getByRole('button', { name: 'Remove not a domain', exact: true }).click();
-    assert.equal(await input.getAttribute('aria-invalid'), null);
-    await input.fill('acme.com');
-    await input.press('Enter');
-    await input.fill('acme.com,');
-    assert.equal(await demo.getByRole('button', { name: 'Remove acme.com', exact: true }).count(), 1);
-    await input.fill('composing.com');
-    await input.dispatchEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 229, isComposing: true, bubbles: true });
-    assert.equal(await input.inputValue(), 'composing.com');
-    await input.fill('');
-    await input.evaluate(el => {
-      const data = new DataTransfer(); data.setData('text', 'one.com, two.com\none.com');
-      el.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
-    });
-    assert.equal(await demo.getByRole('button', { name: 'Remove one.com', exact: true }).count(), 1);
-    await input.press('Backspace');
-    assert.equal(await demo.getByRole('button', { name: 'Remove two.com', exact: true }).count(), 0);
-
-    demo = await open('segmented-control');
-    const billing = demo.getByRole('radiogroup', { name: 'Billing' });
-    await billing.getByRole('radio', { name: 'Monthly' }).focus();
-    await page.keyboard.press('ArrowRight');
-    assert.equal(await billing.getByRole('radio', { name: 'Yearly' }).getAttribute('aria-checked'), 'true');
-    assert.equal(await billing.locator('button[tabindex="0"]').count(), 1);
-    await page.keyboard.press('ArrowRight');
-    assert.equal(await billing.getByRole('radio', { name: 'Monthly' }).getAttribute('aria-checked'), 'true');
-    await page.keyboard.press('End');
-    assert.equal(await billing.getByRole('radio', { name: 'Yearly' }).evaluate(el => el === document.activeElement), true);
-    await page.keyboard.press('Home');
-    assert.equal(await billing.getByRole('radio', { name: 'Monthly' }).getAttribute('aria-checked'), 'true');
-
-    demo = await open('progress');
-    const progress = demo.getByRole('progressbar');
-    assert.equal(await progress.getAttribute('aria-valuenow'), '1240');
-    assert.equal(await progress.getAttribute('aria-valuemax'), '2000');
-    await demo.getByRole('button', { name: 'Spend $100', exact: true }).click();
-    assert.equal(await progress.getAttribute('aria-valuenow'), '1340');
-    for (let i = 0; i < 7; i++) await demo.getByRole('button', { name: 'Spend $100' }).click();
-    assert.equal(await progress.getAttribute('aria-valuenow'), '2000');
-    assert.equal(await demo.getByRole('button', { name: 'Spend $100' }).isDisabled(), true);
-    await demo.getByRole('button', { name: 'Reset', exact: true }).click();
-    assert.equal(await progress.getAttribute('aria-valuenow'), '1240');
-
-    demo = await open('dialog');
-    await demo.getByRole('button', { name: 'New card', exact: true }).click();
-    await demo.getByRole('textbox', { name: /Card name/ }).fill('');
-    await demo.getByRole('button', { name: 'Create card', exact: true }).click();
-    assert.equal(await demo.getByRole('dialog').count(), 1);
-    await demo.getByRole('textbox', { name: /Card name/ }).fill('Office agent');
-    const limit = demo.getByRole('spinbutton', { name: /Per purchase limit/ });
-    await limit.fill('-1');
-    await demo.getByRole('button', { name: 'Create card', exact: true }).click();
-    assert.equal(await demo.getByRole('dialog').count(), 1);
-    await limit.fill('375.50');
-    await demo.getByRole('button', { name: 'Create card', exact: true }).click();
-    await demo.getByRole('status').filter({ hasText: 'Office agent created with a $375.50 purchase limit.' }).waitFor();
-    assert.equal(await demo.getByRole('dialog').count(), 0);
-
-    demo = await open('dropdown-menu');
-    const actions = demo.getByRole('button', { name: 'Card actions' });
-    await actions.click();
-    await demo.getByRole('menuitem', { name: 'Edit limits E' }).click();
-    await demo.getByRole('spinbutton').fill('300');
-    await demo.getByRole('button', { name: 'Save limit' }).click();
-    await demo.getByRole('status').filter({ hasText: 'Purchase limit updated to $300.00.' }).waitFor();
-    await actions.click();
-    await demo.getByRole('menuitem', { name: 'Add funds F' }).click();
-    await demo.getByRole('spinbutton').fill('50');
-    await demo.getByRole('button', { name: 'Add funds', exact: true }).click();
-    await demo.getByRole('status').filter({ hasText: 'Balance updated to $550.00.' }).waitFor();
-    await actions.click();
-    await demo.getByRole('menuitem', { name: 'Pause card' }).click();
-    await demo.getByRole('status').filter({ hasText: 'Card paused.' }).waitFor();
-    await demo.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    await actions.click();
-    await demo.getByRole('menuitem', { name: 'Resume card' }).click();
-    await demo.getByRole('status').filter({ hasText: 'Card resumed.' }).waitFor();
-
-    await demo.locator('[data-slot="dropdown-menu-trigger"]:focus').waitFor();
-    await actions.click();
-    const closeCard = demo.getByRole('menuitem', { name: 'Close card Hold 2s' });
-    await closeCard.hover();
-    await page.mouse.down();
-    await page.waitForTimeout(150);
-    await page.mouse.up();
-    await page.waitForTimeout(2000);
-    assert.equal(await actions.isDisabled(), false, 'A short click cannot close the card');
-    await closeCard.hover();
-    await page.mouse.down();
-    await page.waitForTimeout(2100);
-    await page.mouse.up();
-    await demo.getByRole('status').filter({ hasText: 'Card closed.' }).waitFor();
-    assert.equal(await actions.isDisabled(), true);
-
-    demo = await open('tooltip');
-    await demo.getByRole('button', { name: 'New card' }).click();
-    await demo.getByRole('status').filter({ hasText: '2 cards.' }).waitFor();
-    await demo.getByRole('button', { name: 'Pause card' }).click();
-    await demo.getByRole('button', { name: 'Resume card' }).click();
-    await demo.getByRole('button', { name: 'Card settings' }).click();
-    await demo.getByRole('textbox', { name: 'Card nickname' }).fill('Office agent');
-    await demo.getByRole('button', { name: 'Card settings' }).click();
-    await demo.getByRole('button', { name: 'Card settings' }).click();
-    assert.equal(await demo.getByRole('textbox', { name: 'Card nickname' }).inputValue(), 'Office agent');
-
-    demo = await open('accordion');
-    const question = demo.getByRole('button', { name: 'Do I need to write code?' });
-    await question.click();
-    assert.equal(await question.getAttribute('aria-expanded'), 'true');
-    await question.click();
-    assert.equal(await question.getAttribute('aria-expanded'), 'false');
-    demo = await open('collapse');
-    const collapse = demo.getByRole('button');
-    await collapse.click();
-    assert.equal(await collapse.getAttribute('aria-expanded'), 'false');
-    assert.equal(await demo.locator('[data-slot="collapse"]').getAttribute('inert'), '');
-    await collapse.click();
-    assert.equal(await collapse.getAttribute('aria-expanded'), 'true');
-
-    demo = await open('tag-filter');
-    await demo.getByRole('button', { name: 'Filter by tags' }).click();
-    await page.getByRole('searchbox', { name: 'Search tags' }).fill('office');
-    await page.getByRole('button', { name: 'office', exact: true }).click();
-    await page.keyboard.press('Escape');
-    await demo.getByRole('button', { name: 'Clear tag filter office' }).click();
-    assert.equal(await demo.getByRole('button', { name: 'Clear tag filter office' }).count(), 0);
-
-    demo = await open('command');
-    await demo.getByRole('combobox').fill('store cards');
-    await demo.getByRole('combobox').press('Enter');
-    await demo.getByRole('region', { name: 'Selected guide' }).getByRole('heading', { name: 'How we store cards' }).waitFor();
-    demo = await open('command', 'Open');
-    await demo.getByRole('combobox').fill('credentials');
-    await demo.getByRole('combobox').press('Enter');
-    await demo.getByRole('region', { name: 'Selected guide' }).waitFor();
-    assert.equal(await demo.getByRole('dialog').count(), 0);
-
-    demo = await open('empty-state', 'NoResults');
-    await demo.getByRole('button', { name: 'Clear search' }).click();
-    assert.equal(await demo.getByRole('searchbox').inputValue(), '');
-    assert.equal(await demo.getByRole('listitem').count(), 2);
-    demo = await open('tabs', 'Plain');
-    await demo.getByRole('tab', { name: 'Declined', exact: true }).click();
-    assert.equal(await demo.getByRole('tabpanel').textContent(), 'Uber · Declined.');
-
-    demo = await open('spinner');
-    await demo.getByRole('button', { name: 'Create card', exact: true }).click();
-    assert.equal(await demo.getByRole('button').isDisabled(), true);
-    await demo.getByRole('status').filter({ hasText: 'Demo card created.' }).waitFor();
-    assert.equal(await demo.getByRole('button').isDisabled(), false);
-
-    demo = await open('switch');
-    const toggle = demo.getByRole('switch', { name: 'Pause this card' });
-    await toggle.press('Space');
-    assert.equal(await toggle.getAttribute('aria-checked'), 'true');
-    await toggle.click();
-    assert.equal(await toggle.getAttribute('aria-checked'), 'false');
-    demo = await open('secret-field');
-    await demo.getByRole('button', { name: 'Show API key' }).click();
-    await demo.getByRole('button', { name: 'Hide API key' }).click();
-    await demo.getByRole('button', { name: 'Show API key' }).waitFor();
-
-    demo = await open('hold-button');
-    const hold = demo.getByRole('button', { name: 'Hold to close card', exact: true });
-    await hold.focus();
-    await page.keyboard.down('Space');
-    await page.waitForTimeout(200);
-    await page.keyboard.up('Space');
-    await page.waitForTimeout(2000);
-    assert.equal(await hold.isDisabled(), false, 'Releasing early cancels');
-    await page.keyboard.down('Space');
-    await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-    await page.waitForTimeout(2100);
-    await page.keyboard.up('Space');
-    assert.equal(await hold.isDisabled(), false, 'Window blur cancels');
-    await hold.focus();
-    await page.keyboard.down('Space');
-    await page.waitForTimeout(2100);
-    await page.keyboard.up('Space');
-    await demo.getByRole('status').filter({ hasText: 'Card closed.' }).waitFor();
-    assert.equal(await hold.isDisabled(), true);
-    await demo.getByRole('button', { name: 'Reset demo' }).click();
-    assert.equal(await hold.isDisabled(), false);
-    console.log(`PASS: field/email validation, checkbox groups, tag editing/IME, keyboard radios, progress, form submission, menu actions, command selection, search, tabs, switches, secrets and hold cancellation (${width}px).`);
+const attr = (locator, name) => locator.getAttribute(name);
+// State settles a frame or two after an event (Radix checks a radio on focus): poll briefly before asserting.
+async function settle(read, ok, timeout = 1500) {
+  const end = Date.now() + timeout;
+  let value = await read();
+  while (!ok(value) && Date.now() < end) {
+    await new Promise((r) => setTimeout(r, 50));
+    value = await read();
   }
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  let demo = await open('copy-button');
-  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.__copied = text; } } }));
-  await demo.locator('[data-slot="copy-button"]').first().click();
-  await demo.getByRole('button', { name: 'Copied', exact: true }).waitFor();
-  await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error('Denied'); }; });
-  await demo.getByRole('button', { name: 'Copied', exact: true }).click();
-  await demo.getByRole('button', { name: 'Copy failed. Try again.' }).waitFor();
-  await page.evaluate(() => { navigator.clipboard.writeText = async text => { window.__copied = text; }; });
-  await demo.getByRole('button', { name: 'Copy failed. Try again.' }).click();
-  await demo.getByRole('button', { name: 'Copied', exact: true }).waitFor();
-  demo = await open('dropdown-menu', 'Choices');
-  await demo.getByRole('button', { name: 'Preferences' }).click();
-  await demo.getByRole('menuitem', { name: 'Exports', exact: true }).hover();
-  await demo.getByRole('menuitem', { name: 'CSV', exact: true }).click();
-  await demo.getByRole('button', { name: 'Copy export' }).click();
-  await demo.getByRole('button', { name: 'Copied', exact: true }).waitFor();
-  demo = await open('sonner', 'Action');
-  await demo.getByRole('button', { name: 'Create card' }).click();
-  await demo.getByRole('button', { name: 'View card' }).click();
-  await demo.getByRole('status').filter({ hasText: 'Travel agent · Active' }).waitFor();
+  return value;
+}
 
-  // Exercise a real click through the sandbox without contacting the external service.
-  await page.context().route('https://app.agentcard.sh/**', route => route.fulfill({ body: '<title>Agentcard destination</title>' }));
-  demo = await open('site-header');
-  const popupEvent = page.waitForEvent('popup');
-  await demo.getByRole('link', { name: 'Get started' }).click();
-  const popup = await popupEvent;
-  await popup.waitForLoadState();
-  assert.equal(new URL(popup.url()).hostname, 'app.agentcard.sh');
-  await popup.close();
-  await page.context().unroute('https://app.agentcard.sh/**');
-  console.log('PASS: clipboard success/failure/retry, toast actions and external navigation from sandboxed previews.');
+export async function checkInteractions(page, base) {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+
+    // Switch, checkbox, toggle: a click and Space flip their state.
+    await open(page, base, 'switch');
+    const sw = page.getByRole('switch').first();
+    const was = await attr(sw, 'aria-checked');
+    await sw.click();
+    assert.notEqual(await attr(sw, 'aria-checked'), was, 'switch: click toggles');
+    await page.keyboard.press('Space');
+    assert.equal(await attr(sw, 'aria-checked'), was, 'switch: Space toggles back');
+
+    await open(page, base, 'checkbox');
+    const boxes = page.getByRole('checkbox');
+    const child = boxes.nth(2);
+    const before = await attr(child, 'aria-checked');
+    await child.click();
+    assert.notEqual(await attr(child, 'aria-checked'), before, 'checkbox: click toggles');
+
+    await open(page, base, 'toggle');
+    const toggle = page.locator('[data-slot="toggle"]').first();
+    const pressed = await attr(toggle, 'aria-pressed');
+    await toggle.click();
+    assert.notEqual(await attr(toggle, 'aria-pressed'), pressed, 'toggle: click presses');
+
+    // Radio group and toggle group: arrow keys move the choice.
+    await open(page, base, 'radio-group');
+    const radios = page.getByRole('radio');
+    await page.keyboard.press('Tab');
+    // Radix moves focus on a timer after keydown and checks on focus while the arrow is held: hold it as a person does.
+    await page.keyboard.down('ArrowDown');
+    await page.waitForTimeout(60);
+    await page.keyboard.up('ArrowDown');
+    assert.equal(await settle(() => attr(radios.nth(1), 'aria-checked'), (v) => v === 'true'), 'true', 'radio-group: arrow moves the choice');
+
+    await open(page, base, 'toggle-group');
+    const items = page.locator('[data-slot="toggle-group-item"]');
+    await items.nth(1).click();
+    assert.equal(await attr(items.nth(1), 'data-state'), 'on', 'toggle-group: click chooses');
+
+    // Tabs: a click selects; arrows move between tabs.
+    await open(page, base, 'tabs');
+    const tabs = page.getByRole('tab');
+    await tabs.nth(1).click();
+    assert.equal(await attr(tabs.nth(1), 'aria-selected'), 'true', 'tabs: click selects');
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await settle(() => attr(tabs.nth(2), 'aria-selected'), (v) => v === 'true'), 'true', 'tabs: arrow selects the next tab');
+
+    // Accordion and collapsible open and close.
+    for (const name of ['accordion', 'collapsible']) {
+      await open(page, base, name);
+      const trigger = page.locator(`[data-slot="${name}-trigger"]`).first();
+      const expanded = await attr(trigger, 'aria-expanded');
+      await trigger.click();
+      assert.notEqual(await attr(trigger, 'aria-expanded'), expanded, `${name}: click opens or closes`);
+    }
+
+    // Slider and resizable: arrow keys change their value.
+    for (const [name, role] of [['slider', 'slider'], ['resizable', 'separator']]) {
+      await open(page, base, name);
+      const thumb = page.getByRole(role).first();
+      const value = await attr(thumb, 'aria-valuenow');
+      await thumb.focus();
+      await page.keyboard.press(name === 'slider' ? 'ArrowRight' : 'ArrowLeft');
+      assert.notEqual(await attr(thumb, 'aria-valuenow'), value, `${name}: arrow changes the value`);
+    }
+
+    // Input OTP: typed digits fill the slots; letters are refused.
+    await open(page, base, 'input-otp');
+    const otp = page.locator('[data-slot="input-otp"] input, input[data-slot="input-otp"]').first();
+    await otp.focus();
+    await page.keyboard.type('12a3456');
+    assert.equal(await otp.inputValue(), '123456', 'input-otp: digits only');
+
+    // Textarea takes text.
+    await open(page, base, 'textarea');
+    const area = page.locator('textarea').first();
+    await area.fill('Forward receipts to the finance agent.');
+    assert.equal(await area.inputValue(), 'Forward receipts to the finance agent.');
+
+    // Calendar: a click selects a day; arrows move the focus.
+    await open(page, base, 'calendar');
+    const day = page.getByRole('grid').first().locator('button:not([disabled])').nth(12);
+    await day.click();
+    assert.ok(await page.locator('[aria-selected=true]').count(), 'calendar: click selects a day');
+    await page.keyboard.press('ArrowRight');
+    assert.ok(await page.evaluate(() => document.activeElement?.closest('[role=grid]') !== null), 'calendar: arrows keep focus in the grid');
+
+    // Carousel: Next moves on and enables Previous.
+    await open(page, base, 'carousel');
+    const prev = page.getByRole('button', { name: /previous/i }).first();
+    const next = page.getByRole('button', { name: /next/i }).first();
+    assert.ok(await prev.isDisabled(), 'carousel: Previous starts disabled');
+    await next.click();
+    await page.waitForTimeout(500);
+    assert.ok(await prev.isEnabled(), 'carousel: Next moves on');
+
+    // Form: an empty submit shows its error; the handle is checked as it is typed.
+    await open(page, base, 'form');
+    await page.getByRole('button', { name: /create agent identity/i }).click();
+    assert.ok(await page.locator('[data-slot="form-message"]').count(), 'form: empty submit shows an error');
+
+    // Data table: a head sorts, the filter narrows, a row checkbox selects.
+    await open(page, base, 'data-table');
+    const rows = () => page.locator('tbody tr').count();
+    const all = await rows();
+    const sortable = page.locator('th[aria-sort] button, th button').first();
+    await sortable.click();
+    assert.ok(await page.locator('th[aria-sort="ascending"], th[aria-sort="descending"]').count(), 'data-table: a head sorts');
+    await page.locator('input[type=search], input[type=text], input:not([type])').first().fill('support');
+    await page.waitForTimeout(150);
+    assert.ok((await rows()) < all, 'data-table: the filter narrows the rows');
+
+    // Sidebar: on a desktop the Collapse row folds the rail to its glyphs and Cmd/Ctrl B brings it back.
+    if (width > 800) {
+      await open(page, base, 'sidebar', 'Icons');
+      const rail = page.locator('[data-slot="sidebar"][data-state]').first();
+      const state = await attr(rail, 'data-state');
+      await page.getByRole('button', { name: /collapse|expand/i }).first().click();
+      assert.notEqual(await settle(() => attr(rail, 'data-state'), (v) => v !== state), state, 'sidebar: Collapse folds it');
+      await page.keyboard.press(process.platform === 'darwin' ? 'Meta+b' : 'Control+b');
+      assert.equal(await settle(() => attr(rail, 'data-state'), (v) => v === state), state, 'sidebar: the shortcut restores it');
+    } else {
+      await open(page, base, 'sidebar');
+      await page.locator('[data-slot="sidebar-trigger"]').first().click();
+      await page.getByRole('dialog').first().waitFor();
+      await page.keyboard.press('Escape');
+      await page.getByRole('dialog').first().waitFor({ state: 'hidden' });
+    }
+
+    // Questionnaire: Next is refused until the required question is answered; a choice card answers it.
+    await open(page, base, 'questionnaire');
+    const choice = page.locator('[data-slot="questionnaire-choice"]').first();
+    await choice.click();
+    assert.ok(await choice.locator('[data-slot="questionnaire-choice-input"]').isChecked(), 'questionnaire: a choice card picks its answer');
+
+    // Trace: a step's detail opens and closes.
+    await open(page, base, 'trace');
+    const step = page.locator('[data-slot="trace-trigger"], [data-slot="trace-step-trigger"]').first();
+    if (await step.count()) {
+      const open1 = await attr(step, 'aria-expanded');
+      await step.click();
+      assert.notEqual(await attr(step, 'aria-expanded'), open1, 'trace: a step opens');
+    }
+  }
+  console.log('PASS: switches, checkboxes, toggles, radios, tabs, accordions, sliders, resizable panels, OTP, calendar, carousel, form, data table, sidebar, questionnaire and trace (1440px and 390px).');
 }

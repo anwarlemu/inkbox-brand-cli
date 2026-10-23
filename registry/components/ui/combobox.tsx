@@ -98,7 +98,8 @@ function Combobox(props: ComboboxSingleProps | ComboboxMultipleProps) {
       commit(values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
       setSearch("");
     } else {
-      commit(values[0] === value ? [] : [value]);
+      // Picking the chosen value again keeps it; ComboboxClear empties the field.
+      commit([value]);
       setOpen(false);
     }
   };

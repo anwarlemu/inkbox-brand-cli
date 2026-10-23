@@ -1,941 +1,373 @@
 {
-  "captured": "2026-10-18",
-  "reference": "https://agentcard.sh (redirects to https://agentcard.com)",
-  "viewport": {
-    "width": 1440,
-    "height": 1000
+ "reference": "Figma \"Inkbox (Copy) (Copy)\", section \"New\" (node 427:2715), the console screens",
+ "captured": "2026-10-23",
+ "method": "Colors sampled from the 1x renders, type fitted to text layer widths, sizes and radii from layer geometry",
+ "viewport": {
+  "width": 1440,
+  "height": 1000
+ },
+ "checks": [
+  {
+   "id": "button-primary",
+   "name": "button",
+   "example": "Preview",
+   "selector": "[data-slot=button][data-variant=default]",
+   "source": "Figma 427:2715 Create Agent, Enable iMessage",
+   "expected": {
+    "height": "40px",
+    "backgroundColor": "#74629D",
+    "color": "#FFFFFF",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "paddingLeft": "20px"
+   },
+   "width": 1440
   },
-  "checks": [
-    {
-      "id": "textarea",
-      "name": "textarea",
-      "example": "Site",
-      "selector": "textarea",
-      "route": "get-started",
-      "referenceSelector": ".audit-textarea",
-      "fixture": "<form class=\"v7-gate-body\"><label class=\"v7-gate-field\"><span>Brief</span><textarea class=\"audit-textarea\" placeholder=\"Brief\"></textarea></label></form>",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "fontWeight": "400",
-        "padding": "10px 12px",
-        "minHeight": "84px",
-        "borderRadius": "0px",
-        "borderWidth": "1px",
-        "resize": "vertical",
-        "placeholderColor": "oklab(0.207929 -0.00148161 -0.000452757 / 0.5)"
-      },
-      "width": 1440
-    },
-    {
-      "id": "field",
-      "name": "field",
-      "example": "Site",
-      "selector": "[data-slot=label]",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field > span",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18px",
-        "fontWeight": "400"
-      },
-      "width": 1440
-    },
-    {
-      "id": "input",
-      "name": "input",
-      "example": "Site",
-      "selector": "input",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field input",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "padding": "10px 12px",
-        "minHeight": "44px",
-        "borderRadius": "0px",
-        "borderWidth": "1px",
-        "placeholderColor": "rgb(23, 24, 24)"
-      },
-      "width": 1440
-    },
-    {
-      "id": "label",
-      "name": "label",
-      "example": "Site",
-      "selector": "label",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field > span",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18px",
-        "fontWeight": "400"
-      },
-      "width": 1440
-    },
-    {
-      "id": "select",
-      "name": "select",
-      "example": "Site",
-      "selector": "[data-slot=select-trigger]",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field select",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "minHeight": "44px",
-        "borderWidth": "1px",
-        "borderRadius": "0px",
-        "color": "rgb(23, 24, 24)"
-      },
-      "width": 1440
-    },
-    {
-      "id": "button",
-      "name": "button",
-      "example": "Site",
-      "selector": "[data-slot=button]",
-      "route": "",
-      "referenceSelector": ".v7-sol-copy .v7-button",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "400",
-        "padding": "0px 22px",
-        "height": "40px",
-        "borderRadius": "8px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "badge",
-      "name": "badge",
-      "example": "Site",
-      "selector": "[data-slot=badge].uppercase",
-      "route": "updates",
-      "referenceSelector": ".v7-upd-tag",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "17.5px",
-        "padding": "3px 8px 2px",
-        "borderRadius": "0px",
-        "letterSpacing": "1.4px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "card",
-      "name": "card",
-      "example": "Raised",
-      "selector": "[data-slot=card]",
-      "route": "",
-      "referenceSelector": ".v7-sol",
-      "expected": {
-        "borderRadius": "20px",
-        "padding": "12px",
-        "borderWidth": "1px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "window",
-      "name": "window",
-      "example": "Site",
-      "selector": "[data-slot=window-bar]",
-      "route": "",
-      "referenceSelector": ".v7-windowbar",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "16px",
-        "height": "32px",
-        "padding": "0px 10px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "accordion",
-      "name": "accordion",
-      "example": "Site",
-      "selector": "[data-slot=accordion-trigger]",
-      "route": "",
-      "referenceSelector": ".faq-list summary",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "500",
-        "lineHeight": "16.8px",
-        "padding": "20px 14px",
-        "letterSpacing": "-0.14px",
-        "borderRadius": "6px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "accordion-rule",
-      "name": "accordion",
-      "example": "Site",
-      "selector": "[data-slot=accordion-item]",
-      "route": "",
-      "referenceSelector": ".faq-list details",
-      "expected": {
-        "borderBottomColor": "color(srgb 0.0901961 0.0941176 0.0941176 / 0.2)"
-      },
-      "width": 1440
-    },
-    {
-      "id": "faq",
-      "name": "faq",
-      "example": "Site",
-      "selector": "[data-slot=accordion-trigger]",
-      "route": "",
-      "referenceSelector": ".faq-list summary",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "500",
-        "lineHeight": "16.8px",
-        "padding": "20px 14px",
-        "letterSpacing": "-0.14px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "tabs",
-      "name": "tabs",
-      "example": "Site",
-      "selector": "[data-slot=tabs-trigger]",
-      "route": "pricing",
-      "referenceSelector": ".plan-tab",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "22.4px",
-        "height": "40px",
-        "padding": "0px 16px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "segmented-control",
-      "name": "segmented-control",
-      "example": "Site",
-      "selector": "[role=radio]",
-      "route": "pricing",
-      "referenceSelector": ".plan-tab",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "22.4px",
-        "height": "40px",
-        "padding": "0px 16px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "page-header",
-      "name": "page-header",
-      "example": "Site",
-      "selector": "h1",
-      "route": "about",
-      "referenceSelector": ".v7-about-head h1",
-      "expected": {
-        "fontSize": "52px",
-        "lineHeight": "54.6px",
-        "fontWeight": "500",
-        "letterSpacing": "-1.04px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "site-header",
-      "name": "site-header",
-      "example": "Site",
-      "selector": "[data-slot=button]",
-      "route": "",
-      "referenceSelector": ".v7-get-started-face",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "14px",
-        "fontWeight": "500",
-        "padding": "0px 22px",
-        "height": "40px",
-        "borderRadius": "8px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "site-footer",
-      "name": "site-footer",
-      "example": "Site",
-      "selector": "[data-slot=site-footer] nav",
-      "route": "",
-      "referenceSelector": ".v7-foot-sitemap",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "19.2px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "marquee",
-      "name": "marquee",
-      "example": "Site",
-      "selector": "[data-slot=marquee]",
-      "route": "",
-      "referenceSelector": ".v7-foot-line",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "19.2px",
-        "borderTopColor": "color(srgb 1 1 1 / 0.45)",
-        "borderBottomColor": "color(srgb 1 1 1 / 0.45)"
-      },
-      "width": 1440
-    },
-    {
-      "id": "updates-feed",
-      "name": "updates-feed",
-      "example": "Site",
-      "selector": "[data-slot=updates-feed] section > div > div > span",
-      "route": "updates",
-      "referenceSelector": ".v7-upd-tag",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "17.5px",
-        "padding": "3px 8px 2px",
-        "letterSpacing": "1.4px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "prose-h2",
-      "name": "prose",
-      "example": "Site",
-      "selector": "h2",
-      "route": "terms",
-      "referenceSelector": ".v7-prose h2",
-      "expected": {
-        "fontSize": "24px",
-        "fontWeight": "500",
-        "lineHeight": "28.8px",
-        "letterSpacing": "-0.48px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "team-directory",
-      "name": "team-directory",
-      "example": "Site",
-      "selector": "[data-slot=window] li b",
-      "route": "about",
-      "referenceSelector": ".v7-about-cell b",
-      "expected": {
-        "fontSize": "16px",
-        "lineHeight": "20.8px",
-        "fontWeight": "500"
-      },
-      "width": 1440
-    },
-    {
-      "id": "avatar",
-      "name": "avatar",
-      "example": "Site",
-      "selector": "[data-slot=avatar]",
-      "route": "about",
-      "referenceSelector": ".is-founders .v7-about-cell img",
-      "expected": {
-        "width": "64px",
-        "height": "64px",
-        "borderRadius": "0px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "band-divider",
-      "name": "band-divider",
-      "example": "Site",
-      "selector": "[data-slot=band-divider]",
-      "route": "",
-      "referenceSelector": ".band-divider",
-      "expected": {
-        "height": "36px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "code-window",
-      "name": "code-window",
-      "example": "Site",
-      "selector": "pre",
-      "route": "",
-      "referenceSelector": ".v7-intg-code pre",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18.6px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "integration-code",
-      "name": "integrations",
-      "example": "Site",
-      "selector": "pre",
-      "route": "",
-      "referenceSelector": ".v7-intg-code pre",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18.6px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "feature-rows",
-      "name": "feature-rows",
-      "example": "Site",
-      "selector": "[data-slot=feature-rows] > li",
-      "route": "vault",
-      "referenceSelector": ".v7-feat",
-      "expected": {
-        "borderRadius": "20px",
-        "borderWidth": "1px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "product-grid",
-      "name": "product-grid",
-      "example": "Site",
-      "selector": "[data-slot=product-grid] > *",
-      "route": "",
-      "referenceSelector": ".v7-sol",
-      "expected": {
-        "borderRadius": "20px",
-        "borderWidth": "1px",
-        "padding": "12px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "pricing",
-      "name": "pricing",
-      "example": "Site",
-      "selector": "[data-slot=window] h3",
-      "route": "pricing",
-      "referenceSelector": ".v7-offer-head h3",
-      "expected": {
-        "fontSize": "24px",
-        "lineHeight": "26.4px",
-        "fontWeight": "500",
-        "letterSpacing": "-0.48px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "testimonials",
-      "name": "testimonials",
-      "example": "Site",
-      "selector": "blockquote > p:last-child",
-      "route": "",
-      "referenceSelector": ".v7-case blockquote p:last-child",
-      "expected": {
-        "fontSize": "24px",
-        "lineHeight": "28.8px",
-        "fontWeight": "500",
-        "letterSpacing": "-0.72px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "logo-strip",
-      "name": "logo-strip",
-      "example": "Site",
-      "selector": "[data-trail-card]",
-      "route": "",
-      "referenceSelector": ".v7-customer",
-      "expected": {
-        "borderRadius": "10px",
-        "borderWidth": "1px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "nav-dock-title",
-      "name": "nav-dock",
-      "example": "Open",
-      "selector": "[data-slot=nav-dock] ul a > span:first-child",
-      "route": "",
-      "referenceSelector": ".v7-dock-card a strong",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "12px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "nav-dock-description",
-      "name": "nav-dock",
-      "example": "Open",
-      "selector": "[data-slot=nav-dock] ul a > span:last-child",
-      "route": "",
-      "referenceSelector": ".v7-dock-card a span",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "20.3px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "nav-dock-row",
-      "name": "nav-dock",
-      "example": "Open",
-      "selector": "[data-slot=nav-dock] ul a",
-      "route": "",
-      "referenceSelector": ".v7-dock-card a",
-      "expected": {
-        "padding": "12px 11px",
-        "borderRadius": "6px"
-      },
-      "width": 1440
-    },
-    {
-      "id": "textarea",
-      "name": "textarea",
-      "example": "Site",
-      "selector": "textarea",
-      "route": "get-started",
-      "referenceSelector": ".audit-textarea",
-      "fixture": "<form class=\"v7-gate-body\"><label class=\"v7-gate-field\"><span>Brief</span><textarea class=\"audit-textarea\" placeholder=\"Brief\"></textarea></label></form>",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "fontWeight": "400",
-        "padding": "10px 12px",
-        "minHeight": "84px",
-        "borderRadius": "0px",
-        "borderWidth": "1px",
-        "resize": "vertical",
-        "placeholderColor": "oklab(0.207929 -0.00148161 -0.000452757 / 0.5)"
-      },
-      "width": 390
-    },
-    {
-      "id": "field",
-      "name": "field",
-      "example": "Site",
-      "selector": "[data-slot=label]",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field > span",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18px",
-        "fontWeight": "400"
-      },
-      "width": 390
-    },
-    {
-      "id": "input",
-      "name": "input",
-      "example": "Site",
-      "selector": "input",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field input",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "padding": "10px 12px",
-        "minHeight": "44px",
-        "borderRadius": "0px",
-        "borderWidth": "1px",
-        "placeholderColor": "rgb(23, 24, 24)"
-      },
-      "width": 390
-    },
-    {
-      "id": "label",
-      "name": "label",
-      "example": "Site",
-      "selector": "label",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field > span",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "18px",
-        "fontWeight": "400"
-      },
-      "width": 390
-    },
-    {
-      "id": "select",
-      "name": "select",
-      "example": "Site",
-      "selector": "[data-slot=select-trigger]",
-      "route": "get-started",
-      "referenceSelector": ".v7-gate-field select",
-      "expected": {
-        "fontSize": "18px",
-        "lineHeight": "23.4px",
-        "minHeight": "44px",
-        "borderWidth": "1px",
-        "borderRadius": "0px",
-        "color": "rgb(23, 24, 24)"
-      },
-      "width": 390
-    },
-    {
-      "id": "button",
-      "name": "button",
-      "example": "Site",
-      "selector": "[data-slot=button]",
-      "route": "",
-      "referenceSelector": ".v7-sol-copy .v7-button",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "400",
-        "padding": "0px 22px",
-        "height": "40px",
-        "borderRadius": "8px"
-      },
-      "width": 390
-    },
-    {
-      "id": "badge",
-      "name": "badge",
-      "example": "Site",
-      "selector": "[data-slot=badge].uppercase",
-      "route": "updates",
-      "referenceSelector": ".v7-upd-tag",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "17.5px",
-        "padding": "3px 8px 2px",
-        "borderRadius": "0px",
-        "letterSpacing": "1.4px"
-      },
-      "width": 390
-    },
-    {
-      "id": "card",
-      "name": "card",
-      "example": "Raised",
-      "selector": "[data-slot=card]",
-      "route": "",
-      "referenceSelector": ".v7-sol",
-      "expected": {
-        "borderRadius": "20px",
-        "padding": "12px",
-        "borderWidth": "1px"
-      },
-      "width": 390
-    },
-    {
-      "id": "window",
-      "name": "window",
-      "example": "Site",
-      "selector": "[data-slot=window-bar]",
-      "route": "",
-      "referenceSelector": ".v7-windowbar",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "16px",
-        "height": "32px",
-        "padding": "0px 10px"
-      },
-      "width": 390
-    },
-    {
-      "id": "accordion",
-      "name": "accordion",
-      "example": "Site",
-      "selector": "[data-slot=accordion-trigger]",
-      "route": "",
-      "referenceSelector": ".faq-list summary",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "500",
-        "lineHeight": "16.8px",
-        "padding": "20px 14px",
-        "letterSpacing": "-0.14px",
-        "borderRadius": "6px"
-      },
-      "width": 390
-    },
-    {
-      "id": "accordion-rule",
-      "name": "accordion",
-      "example": "Site",
-      "selector": "[data-slot=accordion-item]",
-      "route": "",
-      "referenceSelector": ".faq-list details",
-      "expected": {
-        "borderBottomColor": "color(srgb 0.0901961 0.0941176 0.0941176 / 0.2)"
-      },
-      "width": 390
-    },
-    {
-      "id": "faq",
-      "name": "faq",
-      "example": "Site",
-      "selector": "[data-slot=accordion-trigger]",
-      "route": "",
-      "referenceSelector": ".faq-list summary",
-      "expected": {
-        "fontSize": "14px",
-        "fontWeight": "500",
-        "lineHeight": "16.8px",
-        "padding": "20px 14px",
-        "letterSpacing": "-0.14px"
-      },
-      "width": 390
-    },
-    {
-      "id": "tabs",
-      "name": "tabs",
-      "example": "Site",
-      "selector": "[data-slot=tabs-trigger]",
-      "route": "pricing",
-      "referenceSelector": ".plan-tab",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "22.4px",
-        "height": "40px"
-      },
-      "width": 390,
-      "note": "The pricing page removes side padding on narrow full-width tabs. Standalone controls retain their 16px touch gutter; typography and height are shared."
-    },
-    {
-      "id": "segmented-control",
-      "name": "segmented-control",
-      "example": "Site",
-      "selector": "[role=radio]",
-      "route": "pricing",
-      "referenceSelector": ".plan-tab",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "22.4px",
-        "height": "40px"
-      },
-      "width": 390,
-      "note": "The pricing page removes side padding on narrow full-width tabs. Standalone controls retain their 16px touch gutter; typography and height are shared."
-    },
-    {
-      "id": "page-header",
-      "name": "page-header",
-      "example": "Site",
-      "selector": "h1",
-      "route": "about",
-      "referenceSelector": ".v7-about-head h1",
-      "expected": {
-        "fontSize": "34px",
-        "lineHeight": "35.7px",
-        "fontWeight": "500",
-        "letterSpacing": "-0.68px"
-      },
-      "width": 390
-    },
-    {
-      "id": "site-header",
-      "name": "site-header",
-      "example": "Site",
-      "selector": "[data-slot=button]",
-      "route": "",
-      "referenceSelector": ".v7-get-started-face",
-      "expected": {
-        "fontSize": "14px",
-        "lineHeight": "14px",
-        "fontWeight": "500",
-        "padding": "0px 22px",
-        "height": "40px",
-        "borderRadius": "8px"
-      },
-      "width": 390
-    },
-    {
-      "id": "site-footer",
-      "name": "site-footer",
-      "example": "Site",
-      "selector": "[data-slot=site-footer] nav",
-      "route": "",
-      "referenceSelector": ".v7-foot-sitemap",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "19.2px"
-      },
-      "width": 390
-    },
-    {
-      "id": "marquee",
-      "name": "marquee",
-      "example": "Site",
-      "selector": "[data-slot=marquee]",
-      "route": "",
-      "referenceSelector": ".v7-foot-line",
-      "expected": {
-        "fontSize": "12px",
-        "lineHeight": "19.2px",
-        "borderTopColor": "color(srgb 1 1 1 / 0.45)",
-        "borderBottomColor": "color(srgb 1 1 1 / 0.45)"
-      },
-      "width": 390
-    },
-    {
-      "id": "updates-feed",
-      "name": "updates-feed",
-      "example": "Site",
-      "selector": "[data-slot=updates-feed] section > div > div > span",
-      "route": "updates",
-      "referenceSelector": ".v7-upd-tag",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "17.5px",
-        "padding": "3px 8px 2px",
-        "letterSpacing": "1.4px"
-      },
-      "width": 390
-    },
-    {
-      "id": "prose-h2",
-      "name": "prose",
-      "example": "Site",
-      "selector": "h2",
-      "route": "terms",
-      "referenceSelector": ".v7-prose h2",
-      "expected": {
-        "fontSize": "20px",
-        "fontWeight": "500",
-        "lineHeight": "24px",
-        "letterSpacing": "-0.4px"
-      },
-      "width": 390
-    },
-    {
-      "id": "team-directory",
-      "name": "team-directory",
-      "example": "Site",
-      "selector": "[data-slot=window] li b",
-      "route": "about",
-      "referenceSelector": ".v7-about-cell b",
-      "expected": {
-        "fontSize": "16px",
-        "lineHeight": "20.8px",
-        "fontWeight": "500"
-      },
-      "width": 390
-    },
-    {
-      "id": "avatar",
-      "name": "avatar",
-      "example": "Site",
-      "selector": "[data-slot=avatar]",
-      "route": "about",
-      "referenceSelector": ".is-founders .v7-about-cell img",
-      "expected": {
-        "width": "64px",
-        "height": "64px",
-        "borderRadius": "0px"
-      },
-      "width": 390
-    },
-    {
-      "id": "band-divider",
-      "name": "band-divider",
-      "example": "Site",
-      "selector": "[data-slot=band-divider]",
-      "route": "",
-      "referenceSelector": ".band-divider",
-      "expected": {
-        "height": "36px"
-      },
-      "width": 390
-    },
-    {
-      "id": "code-window",
-      "name": "code-window",
-      "example": "Site",
-      "selector": "pre",
-      "route": "",
-      "referenceSelector": ".v7-intg-code pre",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "15.5px"
-      },
-      "width": 390
-    },
-    {
-      "id": "integration-code",
-      "name": "integrations",
-      "example": "Site",
-      "selector": "pre",
-      "route": "",
-      "referenceSelector": ".v7-intg-code pre",
-      "expected": {
-        "fontSize": "10px",
-        "lineHeight": "15.5px"
-      },
-      "width": 390
-    },
-    {
-      "id": "feature-rows",
-      "name": "feature-rows",
-      "example": "Site",
-      "selector": "[data-slot=feature-rows] > li",
-      "route": "vault",
-      "referenceSelector": ".v7-feat",
-      "expected": {
-        "borderRadius": "20px",
-        "borderWidth": "1px"
-      },
-      "width": 390
-    },
-    {
-      "id": "product-grid",
-      "name": "product-grid",
-      "example": "Site",
-      "selector": "[data-slot=product-grid] > *",
-      "route": "",
-      "referenceSelector": ".v7-sol",
-      "expected": {
-        "borderRadius": "20px",
-        "borderWidth": "1px",
-        "padding": "12px"
-      },
-      "width": 390
-    },
-    {
-      "id": "pricing",
-      "name": "pricing",
-      "example": "Site",
-      "selector": "[data-slot=window] h3",
-      "route": "pricing",
-      "referenceSelector": ".v7-offer-head h3",
-      "expected": {
-        "fontSize": "20px",
-        "lineHeight": "22px",
-        "fontWeight": "500",
-        "letterSpacing": "-0.4px"
-      },
-      "width": 390
-    },
-    {
-      "id": "testimonials",
-      "name": "testimonials",
-      "example": "Site",
-      "selector": "blockquote > p:last-child",
-      "route": "",
-      "referenceSelector": ".v7-case blockquote p:last-child",
-      "expected": {
-        "fontSize": "20px",
-        "lineHeight": "24px",
-        "fontWeight": "500",
-        "letterSpacing": "-0.6px"
-      },
-      "width": 390
-    },
-    {
-      "id": "logo-strip",
-      "name": "logo-strip",
-      "example": "Site",
-      "selector": "[data-trail-card]",
-      "route": "",
-      "referenceSelector": ".v7-customer",
-      "expected": {
-        "borderRadius": "10px",
-        "borderWidth": "1px"
-      },
-      "width": 390
-    }
-  ]
+  {
+   "id": "button-outline",
+   "name": "button",
+   "example": "Preview",
+   "selector": "[data-slot=button][data-variant=outline]",
+   "source": "Figma 427:2715 View as formatted",
+   "expected": {
+    "height": "36px",
+    "borderTopColor": "#D2C9DB",
+    "borderTopLeftRadius": "8px",
+    "color": "#74629D",
+    "fontWeight": "500"
+   },
+   "width": 1440
+  },
+  {
+   "id": "button-soft",
+   "name": "button",
+   "example": "Preview",
+   "selector": "[data-slot=button][data-variant=soft]",
+   "source": "Figma 427:2715 Tunnel quickstart",
+   "expected": {
+    "height": "38px",
+    "backgroundColor": "#F4F2F6",
+    "borderTopLeftRadius": "8px",
+    "color": "#3E2A53"
+   },
+   "width": 1440
+  },
+  {
+   "id": "button-secondary",
+   "name": "button",
+   "example": "Preview",
+   "selector": "[data-slot=button][data-variant=secondary]",
+   "source": "Figma 427:2715 Continue with GitHub",
+   "expected": {
+    "height": "40px",
+    "backgroundColor": "#F4F2F6",
+    "color": "#3E2A53"
+   },
+   "width": 1440
+  },
+  {
+   "id": "input",
+   "name": "input",
+   "example": "Preview",
+   "selector": "input[data-slot=input]",
+   "source": "Figma 427:2715 Form- Input",
+   "expected": {
+    "height": "40px",
+    "borderTopLeftRadius": "8px",
+    "borderTopColor": "#D2C9DB",
+    "fontSize": "14px",
+    "paddingLeft": "14px",
+    "color": "#3E2A53",
+    "placeholderColor": "#9E94A9"
+   },
+   "width": 1440
+  },
+  {
+   "id": "label",
+   "name": "label",
+   "example": "Preview",
+   "selector": "[data-slot=label]",
+   "source": "Figma 427:2715 Login: Email address",
+   "expected": {
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "lineHeight": "21px",
+    "color": "#3E2A53"
+   },
+   "width": 1440
+  },
+  {
+   "id": "tabs-list",
+   "name": "tabs",
+   "example": "Preview",
+   "selector": "[data-slot=tabs-list]",
+   "source": "Figma 427:2715 Email tabs",
+   "expected": {
+    "height": "42px",
+    "backgroundColor": "#F4F2F6",
+    "borderTopLeftRadius": "10px",
+    "paddingTop": "2px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "tabs-active",
+   "name": "tabs",
+   "example": "Preview",
+   "selector": "[data-slot=tabs-trigger][data-state=active]",
+   "source": "Figma 427:2715 Email tabs: Mailboxes",
+   "expected": {
+    "height": "38px",
+    "backgroundColor": "#FFFFFF",
+    "borderTopLeftRadius": "8px",
+    "fontWeight": "500",
+    "fontSize": "14px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "dialog",
+   "name": "dialog",
+   "example": "Preview",
+   "selector": "[data-slot=dialog-content]",
+   "source": "Figma 427:2715 Modal - Create Agent",
+   "expected": {
+    "width": "534px",
+    "borderTopLeftRadius": "16px",
+    "backgroundColor": "#FFFFFF"
+   },
+   "width": 1440,
+   "click": "[data-slot=dialog-trigger]"
+  },
+  {
+   "id": "dialog-title",
+   "name": "dialog",
+   "example": "Preview",
+   "selector": "[data-slot=dialog-title]",
+   "source": "Figma 427:2715 Create Agent Identity",
+   "expected": {
+    "fontSize": "20px",
+    "fontWeight": "400",
+    "color": "#3E2A53"
+   },
+   "width": 1440,
+   "click": "[data-slot=dialog-trigger]"
+  },
+  {
+   "id": "switch",
+   "name": "switch",
+   "example": "Preview",
+   "selector": "[data-slot=switch][data-state=unchecked]",
+   "source": "Figma 427:2715 Toggle (off)",
+   "expected": {
+    "width": "44px",
+    "height": "24px",
+    "backgroundColor": "#B1ADBB"
+   },
+   "width": 1440
+  },
+  {
+   "id": "switch-on",
+   "name": "switch",
+   "example": "Preview",
+   "selector": "[data-slot=switch][data-state=checked]",
+   "source": "Figma 427:2715 Toggle (on)",
+   "expected": {
+    "width": "44px",
+    "height": "24px",
+    "backgroundColor": "#74629D"
+   },
+   "width": 1440
+  },
+  {
+   "id": "radio-selected",
+   "name": "radio-group",
+   "example": "Preview",
+   "selector": "[data-slot=radio-group-item][data-state=checked]",
+   "source": "Figma 427:2715 Tunnel TLS mode: Edge (default)",
+   "expected": {
+    "width": "18px",
+    "height": "18px",
+    "borderTopColor": "#F9B1B5"
+   },
+   "width": 1440
+  },
+  {
+   "id": "select-trigger",
+   "name": "select",
+   "example": "Preview",
+   "selector": "[data-slot=select-trigger]",
+   "source": "Figma 427:2715 Any State",
+   "expected": {
+    "height": "40px",
+    "borderTopLeftRadius": "8px",
+    "backgroundColor": "#FFFFFF",
+    "fontSize": "14px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "badge-beta",
+   "name": "badge",
+   "example": "Preview",
+   "selector": "[data-slot=badge][class*=border-pink]",
+   "source": "Figma 427:2715 BETA, ADMIN",
+   "expected": {
+    "color": "#F9B1B5",
+    "borderTopColor": "#F9B1B5",
+    "fontSize": "12px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "badge-included",
+   "name": "badge",
+   "example": "Preview",
+   "selector": "[data-slot=badge][class*=border-success]",
+   "source": "Figma 427:2715 Included",
+   "expected": {
+    "color": "#1CA721",
+    "borderTopColor": "#1CA721",
+    "fontSize": "14px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "alert-warning",
+   "name": "alert",
+   "example": "Warning",
+   "selector": "[data-slot=alert]",
+   "source": "Figma 427:2715 Copy this API key now",
+   "expected": {
+    "backgroundColor": "#F6E8C9",
+    "borderTopLeftRadius": "10px",
+    "color": "#4A2F0B"
+   },
+   "width": 1440
+  },
+  {
+   "id": "alert-info",
+   "name": "alert",
+   "example": "Info",
+   "selector": "[data-slot=alert]",
+   "source": "Figma 427:2715 Vault: zero-knowledge note",
+   "expected": {
+    "backgroundColor": "#C9EBF6",
+    "borderTopLeftRadius": "8px",
+    "color": "#0D4152"
+   },
+   "width": 1440
+  },
+  {
+   "id": "table-head",
+   "name": "table",
+   "example": "Preview",
+   "selector": "[data-slot=table-head]",
+   "source": "Figma 427:2715 Email: table head",
+   "expected": {
+    "color": "#998EA5",
+    "fontSize": "14px",
+    "backgroundColor": "#F4F2F6"
+   },
+   "width": 1440
+  },
+  {
+   "id": "table-head-height",
+   "name": "table",
+   "example": "Preview",
+   "selector": "[data-slot=table-header] tr",
+   "source": "Figma 427:2715 Table Header 48px",
+   "expected": {
+    "height": "48px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "table-row",
+   "name": "table",
+   "example": "Preview",
+   "selector": "[data-slot=table-body] [data-slot=table-row]",
+   "source": "Figma 427:2715 Table Row 64px",
+   "expected": {
+    "height": "64px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "pagination-current",
+   "name": "pagination",
+   "example": "Preview",
+   "selector": "[data-slot=pagination-link][aria-current=page]",
+   "source": "Figma 427:2715 pagination: 1",
+   "expected": {
+    "backgroundColor": "#FFFFFF",
+    "color": "#3E2A53",
+    "fontSize": "14px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "code-block-head",
+   "name": "code-block",
+   "example": "Preview",
+   "selector": "[data-slot=code-block-header]",
+   "source": "Figma 427:2715 Webhooks: JSON head",
+   "expected": {
+    "height": "40px",
+    "backgroundColor": "#F0F0F0"
+   },
+   "width": 1440
+  },
+  {
+   "id": "empty-title",
+   "name": "empty",
+   "example": "Preview",
+   "selector": "[data-slot=empty-title]",
+   "source": "Figma 427:2715 Create Your First Agent",
+   "expected": {
+    "fontSize": "22px",
+    "fontWeight": "700",
+    "color": "#3E2A53"
+   },
+   "width": 1440
+  },
+  {
+   "id": "sidebar",
+   "name": "sidebar",
+   "example": "Preview",
+   "selector": "[data-slot=sidebar-container], [data-slot=sidebar-inner]",
+   "source": "Figma 427:2715 rail 288px",
+   "expected": {
+    "width": "288px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "sidebar-row",
+   "name": "sidebar",
+   "example": "Preview",
+   "selector": "[data-slot=sidebar-menu-button]",
+   "source": "Figma 427:2715 rail rows",
+   "expected": {
+    "height": "38px",
+    "fontSize": "14px",
+    "borderTopLeftRadius": "8px",
+    "color": "#3E2A53"
+   },
+   "width": 1440
+  },
+  {
+   "id": "card",
+   "name": "card",
+   "example": "Preview",
+   "selector": "[data-slot=card]",
+   "source": "Figma 427:2715 Webhooks: Trigger card",
+   "expected": {
+    "borderTopColor": "#D2C9DB",
+    "borderTopLeftRadius": "8px",
+    "backgroundColor": "#FFFFFF"
+   },
+   "width": 1440
+  }
+ ]
 }

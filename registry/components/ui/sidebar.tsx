@@ -300,7 +300,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }: React.Comp
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
-        "absolute top-2 right-3 flex size-6 items-center justify-center rounded-xs text-icon-secondary outline-none transition-colors duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-2 right-3 flex size-6 cursor-pointer items-center justify-center rounded-xs text-icon-secondary outline-none transition-colors duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         className,
       )}
       {...props}
@@ -324,7 +324,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 // label 9px after it, at the design's 44px. Hover washes the row; the current row takes the lilac (white on the lilac
 // rail). Narrowed to icons, the row is a 38px square around its glyph.
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2.25 overflow-hidden rounded-control pr-3 pl-2.75 text-left font-sans text-fg outline-none transition-[background-color,color] duration-150 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-data-[collapsible=icon]/sidebar:size-9.5! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
+  "peer/menu-button flex w-full cursor-pointer items-center gap-2.25 overflow-hidden rounded-control pr-3 pl-2.75 text-left font-sans text-fg outline-none transition-[background-color,color] duration-150 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-data-[collapsible=icon]/sidebar:size-9.5! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
   {
     variants: {
       variant: {
@@ -384,7 +384,7 @@ function SidebarMenuAction({ className, asChild = false, showOnHover = false, ..
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
-        "absolute top-1.25 right-1.5 flex size-7 items-center justify-center rounded-sm text-icon-secondary outline-none transition-[background-color,color,opacity] duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-1.25 right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-sm text-icon-secondary outline-none transition-[background-color,color,opacity] duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         "peer-data-[size=sm]/menu-button:top-0.5 peer-data-[size=lg]/menu-button:top-2.5",
         showOnHover && "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-fg md:opacity-0",
         className,
@@ -454,7 +454,7 @@ function SidebarMenuSubButton({ asChild = false, size = "md", isActive = false, 
       data-active={isActive || undefined}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "flex h-8 min-w-0 items-center gap-2 overflow-hidden rounded-control px-2.5 font-sans text-fg-secondary outline-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle data-[active=true]:text-fg group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
+        "flex h-8 min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-control px-2.5 font-sans text-fg-secondary outline-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle data-[active=true]:text-fg group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
         size === "sm" ? "text-body-sm" : "text-body",
         className,
       )}

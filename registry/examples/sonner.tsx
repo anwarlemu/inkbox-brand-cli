@@ -23,7 +23,7 @@ export function Preview() {
       <Button variant="outline" onClick={() => toast.success("Agent created", { description: "@test-agent is ready to send its first email." })}>
         Success
       </Button>
-      <Button variant="outline" onClick={() => toast.error("Handle not available", { description: "robert-baked-design is taken. Try another." })}>
+      <Button variant="outline" onClick={() => toast.error("Handle not available", { description: "acme-support is taken. Try another." })}>
         Error
       </Button>
       <Button variant="outline" onClick={() => toast.warning("Copy this API key now", { description: "For security, the full key cannot be shown again." })}>

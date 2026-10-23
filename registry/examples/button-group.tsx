@@ -23,7 +23,7 @@ export function WithField() {
   return (
     <div className="grid w-full max-w-115 gap-4">
       <ButtonGroup className="w-full">
-        <Input aria-label="Mailbox name" defaultValue="robert-baked-design" />
+        <Input aria-label="Mailbox name" defaultValue="acme-support" />
         <ButtonGroupText>@inboxmail.com</ButtonGroupText>
       </ButtonGroup>
       <ButtonGroup className="w-full">

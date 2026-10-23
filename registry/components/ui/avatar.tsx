@@ -5,7 +5,7 @@ import { Avatar as AvatarPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-// The console's avatars (Figma 427:2715). `square` is the rail's person tile (Robert Ligthart, @baked): a 22px tile
+// The console's avatars (Figma 427:2715). `square` is the rail's person tile (Robert Ligthart, @acme): a 22px tile
 // with 4px corners in the avatar blue and a white 14px initial. `circle` is the agent's portrait (@test-agent is
 // ready!). Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.
 function Avatar({ className, size = "default", shape = "square", ...props }: React.ComponentProps<typeof AvatarPrimitive.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {

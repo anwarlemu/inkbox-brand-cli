@@ -15,11 +15,11 @@ function Items({ onRun }: { onRun?: () => void }) {
         <CommandGroup heading="Agents">
           <CommandItem onSelect={onRun}>
             <RobotIcon weight="fill" />
-            @baked
+            @acme
           </CommandItem>
           <CommandItem onSelect={onRun}>
             <RobotIcon weight="fill" />
-            @robert-baked-design
+            @acme-support
           </CommandItem>
           <CommandItem onSelect={onRun}>
             <PlusIcon />

@@ -5,7 +5,7 @@ export function Preview() {
     <Accordion type="single" collapsible defaultValue="tunnel" className="w-full max-w-120">
       <AccordionItem value="tunnel">
         <AccordionTrigger>What does the tunnel do?</AccordionTrigger>
-        <AccordionContent>It gives each agent a stable hostname (baked.inkboxwire.com) and routes inbound traffic to wherever the agent runs, with TLS at the edge or passed through.</AccordionContent>
+        <AccordionContent>It gives each agent a stable hostname (acme.inkboxwire.com) and routes inbound traffic to wherever the agent runs, with TLS at the edge or passed through.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="phone">
         <AccordionTrigger>Can one agent have a phone number and iMessage?</AccordionTrigger>
@@ -24,7 +24,7 @@ export function Multiple() {
     <Accordion type="multiple" defaultValue={["email", "calls"]} className="w-full max-w-120">
       <AccordionItem value="email">
         <AccordionTrigger>Email</AccordionTrigger>
-        <AccordionContent>robert-baked-design@inboxmail.com receives and sends mail for this agent.</AccordionContent>
+        <AccordionContent>acme-support@inboxmail.com receives and sends mail for this agent.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="calls">
         <AccordionTrigger>Calls and texts</AccordionTrigger>

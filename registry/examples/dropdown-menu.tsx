@@ -101,7 +101,7 @@ export function RowActions() {
     <div className="flex justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Actions for @baked">
+          <Button variant="ghost" size="icon" aria-label="Actions for @acme">
             <DotsThreeIcon weight="bold" />
           </Button>
         </DropdownMenuTrigger>

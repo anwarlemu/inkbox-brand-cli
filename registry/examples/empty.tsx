@@ -65,7 +65,7 @@ export function Icon() {
       </EmptyMedia>
       <EmptyHeader>
         <EmptyTitle>No emails to display</EmptyTitle>
-        <EmptyDescription>New mail for @baked lands here.</EmptyDescription>
+        <EmptyDescription>New mail for @acme lands here.</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );

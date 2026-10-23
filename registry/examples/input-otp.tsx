@@ -25,7 +25,7 @@ export function Preview() {
         </InputOTPGroup>
       </InputOTP>
       <p className="text-caption text-fg-muted" aria-live="polite">
-        {done ? "Code entered. Checking it now." : "Enter the 6-digit code we sent to robert@baked.design."}
+        {done ? "Code entered. Checking it now." : "Enter the 6-digit code we sent to robert@acme.com."}
       </p>
     </div>
   );

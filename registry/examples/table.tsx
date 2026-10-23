@@ -5,7 +5,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const MAILBOXES = [
-  { address: "baked@inkboxmail.com", agent: "@baked", webhooks: "None", storage: "0%", created: "Jul 27, 2026" },
+  { address: "acme@inkboxmail.com", agent: "@acme", webhooks: "None", storage: "0%", created: "Jul 27, 2026" },
   { address: "support@inkboxmail.com", agent: "@support-desk", webhooks: "2", storage: "4%", created: "Jul 29, 2026" },
   { address: "ops@inkboxmail.com", agent: "@ops-runner", webhooks: "1", storage: "12%", created: "Aug 2, 2026" },
 ];

@@ -17,11 +17,11 @@ function EditMailbox() {
       <div className="grid gap-4 px-6">
         <div className="grid gap-1">
           <Label htmlFor="sheet-name">Display name</Label>
-          <Input id="sheet-name" defaultValue="Baked support" />
+          <Input id="sheet-name" defaultValue="Acme support" />
         </div>
         <div className="grid gap-1">
           <Label htmlFor="sheet-reply">Reply-to address</Label>
-          <Input id="sheet-reply" type="email" placeholder="support@baked.design" />
+          <Input id="sheet-reply" type="email" placeholder="support@acme.com" />
         </div>
       </div>
       <SheetFooter>

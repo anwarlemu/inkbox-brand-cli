@@ -19,7 +19,7 @@ export function Preview() {
         <DialogBody className="grid gap-3">
           <div className="grid gap-1">
             <Label htmlFor="handle">Agent handle</Label>
-            <Input id="handle" placeholder="robert-baked-design" />
+            <Input id="handle" placeholder="acme-support" />
           </div>
           <div className="grid gap-1">
             <Label htmlFor="display">Agent display name</Label>

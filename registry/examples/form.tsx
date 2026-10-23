@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 type Values = { handle: string; displayName: string; description: string; phone: boolean; imessage: boolean; a2a: boolean; tls: "edge" | "passthrough" };
 
-const TAKEN = ["baked", "support", "robert-baked-design"];
+const TAKEN = ["acme", "support", "acme-support"];
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // The availability check a real form would make against the API: here, a short wait and a fixed list.
@@ -153,7 +153,7 @@ export function Preview() {
                 </Badge>
               </div>
               <InputGroup>
-                <InputGroupInput aria-label="Mailbox" value={handle || "robert-baked-design"} readOnly />
+                <InputGroupInput aria-label="Mailbox" value={handle || "acme-support"} readOnly />
                 <InputGroupAddon align="inline-end" variant="segment">
                   @inboxmail.com
                 </InputGroupAddon>
@@ -200,7 +200,7 @@ export function Preview() {
               <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
                 <GlobeIcon weight="fill" className="size-5.5" />
               </span>
-              {handle || "robert-baked-design"}.inkboxwire.com
+              {handle || "acme-support"}.inkboxwire.com
             </p>
           </div>
 

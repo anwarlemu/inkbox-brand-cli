@@ -6,7 +6,7 @@ export function Preview() {
   return (
     <div className="grid w-full max-w-100 gap-4">
       <div className="relative">
-        <Input aria-label="Agent handle" defaultValue="robert-baked-design" className="pr-10" />
+        <Input aria-label="Agent handle" defaultValue="acme-support" className="pr-10" />
         <Spinner className="absolute top-1/2 right-3 -translate-y-1/2 text-fg-brand" />
       </div>
       <Button disabled className="w-full">

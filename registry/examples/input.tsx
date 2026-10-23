@@ -14,8 +14,8 @@ export function States() {
   return (
     <div className="grid w-full max-w-100 gap-3">
       <Input aria-label="Agent display name" placeholder="Agent display name" />
-      <Input aria-label="Agent handle" defaultValue="robert-baked-design" aria-invalid />
-      <Input aria-label="Mailbox" defaultValue="robert-baked-design" readOnly />
+      <Input aria-label="Agent handle" defaultValue="acme-support" aria-invalid />
+      <Input aria-label="Mailbox" defaultValue="acme-support" readOnly />
       <Input aria-label="Disabled" placeholder="Disabled" disabled />
     </div>
   );

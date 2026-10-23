@@ -8,7 +8,7 @@ export function Preview() {
           <BubbleContent>Hi, can you send me the invoice for August?</BubbleContent>
         </Bubble>
         <Bubble variant="secondary">
-          <BubbleContent>The one from baked@inkboxmail.com.</BubbleContent>
+          <BubbleContent>The one from acme@inkboxmail.com.</BubbleContent>
         </Bubble>
       </BubbleGroup>
       <Bubble align="end">
@@ -29,7 +29,7 @@ export function Variants() {
         <BubbleContent>Shared iMessage line connected.</BubbleContent>
       </Bubble>
       <Bubble variant="outline">
-        <BubbleContent>Quoted: Your agent will be reachable at robert-baked-design.inkboxwire.com</BubbleContent>
+        <BubbleContent>Quoted: Your agent will be reachable at acme-support.inkboxwire.com</BubbleContent>
       </Bubble>
       <Bubble variant="destructive" align="end">
         <BubbleContent>Not delivered. The recipient blocks unknown senders.</BubbleContent>

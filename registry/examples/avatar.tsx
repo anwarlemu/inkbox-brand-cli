@@ -13,9 +13,9 @@ export function Preview() {
       </div>
       <div className="flex h-9.5 items-center gap-2.5 px-3">
         <Avatar size="sm">
-          <AvatarFallback>B</AvatarFallback>
+          <AvatarFallback>A</AvatarFallback>
         </Avatar>
-        <span className="text-body text-fg">@baked</span>
+        <span className="text-body text-fg">@acme</span>
       </div>
     </div>
   );
@@ -53,7 +53,7 @@ export function WithBadge() {
   return (
     <div className="flex items-center gap-4">
       <Avatar>
-        <AvatarFallback>B</AvatarFallback>
+        <AvatarFallback>A</AvatarFallback>
         <AvatarBadge />
       </Avatar>
       <Avatar size="lg" shape="circle">
@@ -74,7 +74,7 @@ export function Group() {
         <AvatarFallback>R</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback>B</AvatarFallback>
+        <AvatarFallback>A</AvatarFallback>
       </Avatar>
       <Avatar>
         <AvatarFallback>M</AvatarFallback>

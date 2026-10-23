@@ -17,7 +17,7 @@ function ChooseLine({ onChoose }: { onChoose?: () => void }) {
     <>
       <DrawerHeader>
         <DrawerTitle>iMessage line</DrawerTitle>
-        <DrawerDescription>Choose how recipients connect to @baked.</DrawerDescription>
+        <DrawerDescription>Choose how recipients connect to @acme.</DrawerDescription>
       </DrawerHeader>
       <div role="radiogroup" aria-label="iMessage line" className="grid gap-2 px-6">
         {LINES.map((l) => (

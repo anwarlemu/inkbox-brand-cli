@@ -9,7 +9,7 @@ export function Preview() {
         <TraceIcon>
           <EnvelopeSimpleIcon weight="fill" />
         </TraceIcon>
-        <TraceTitle>Read 3 new emails in baked@inkboxmail.com</TraceTitle>
+        <TraceTitle>Read 3 new emails in acme@inkboxmail.com</TraceTitle>
         <TraceDescription>0.8s</TraceDescription>
       </TraceLine>
       <TraceCollapsible defaultOpen>

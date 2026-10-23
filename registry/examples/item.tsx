@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle } from "@/components/ui/item";
 
 const EMAILS = [
-  { from: "Ray Liao", when: "Yesterday", subject: "Inkbox A2A: publish your Agent Card and connect by...", preview: "Hello @baked, This is Ray, cofounder of Inkbox. This update is written for you..." },
-  { from: "Ray Liao", when: "Jul 31", subject: "Agent-to-Agent on Inkbox: you can now delegate...", preview: "Hello @baked, This is Ray, cofounder of Inkbox. This week we took A2A across..." },
-  { from: "Ray Liao", when: "Jul 31", subject: "Agent-to-Agent on Inkbox: you can now delegate...", preview: "Hello @baked, This is Ray, cofounder of Inkbox. Two new capabilities, with exact..." },
+  { from: "Ray Liao", when: "Yesterday", subject: "Inkbox A2A: publish your Agent Card and connect by...", preview: "Hello @acme, This is Ray, cofounder of Inkbox. This update is written for you..." },
+  { from: "Ray Liao", when: "Jul 31", subject: "Agent-to-Agent on Inkbox: you can now delegate...", preview: "Hello @acme, This is Ray, cofounder of Inkbox. This week we took A2A across..." },
+  { from: "Ray Liao", when: "Jul 31", subject: "Agent-to-Agent on Inkbox: you can now delegate...", preview: "Hello @acme, This is Ray, cofounder of Inkbox. Two new capabilities, with exact..." },
 ];
 
 export function Preview() {
@@ -92,7 +92,7 @@ export function Variants() {
           <EnvelopeIcon weight="fill" />
         </ItemMedia>
         <ItemContent>
-          <ItemTitle>baked@inkboxmail.com</ItemTitle>
+          <ItemTitle>acme@inkboxmail.com</ItemTitle>
           <ItemDescription>Created Jul 27, 2026</ItemDescription>
         </ItemContent>
         <ItemActions>

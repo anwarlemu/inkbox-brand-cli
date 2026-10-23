@@ -4,9 +4,9 @@ export function Preview() {
   return (
     <article className="w-full max-w-160">
       <TypographyH3>Tunnel</TypographyH3>
-      <TypographyMuted>Stable hostname routing inbound traffic to @baked.</TypographyMuted>
+      <TypographyMuted>Stable hostname routing inbound traffic to @acme.</TypographyMuted>
       <TypographyP>
-        Each agent gets a public host such as <TypographyInlineCode>baked.inkboxwire.com</TypographyInlineCode>. Traffic reaches the agent wherever it runs, with TLS handled at the edge by default.
+        Each agent gets a public host such as <TypographyInlineCode>acme.inkboxwire.com</TypographyInlineCode>. Traffic reaches the agent wherever it runs, with TLS handled at the edge by default.
       </TypographyP>
       <TypographyBlockquote>Direct card URLs stay public whether or not you list in the directory. Listing only controls discovery.</TypographyBlockquote>
       <TypographyList>

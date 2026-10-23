@@ -48,12 +48,12 @@ export function Preview() {
       >
         <QuestionnaireProgress />
         <QuestionnaireItem name="channel" required>
-          <QuestionnaireTitle>Where should @baked tell you about new mail?</QuestionnaireTitle>
+          <QuestionnaireTitle>Where should @acme tell you about new mail?</QuestionnaireTitle>
           <QuestionnaireDescription>Choose a channel, or type another one.</QuestionnaireDescription>
           <QuestionnaireChoices>
             <QuestionnaireChoice value="email">
               <span className="font-medium">Email</span>
-              <QuestionnaireChoiceDescription>A note to robert@baked.design</QuestionnaireChoiceDescription>
+              <QuestionnaireChoiceDescription>A note to robert@acme.com</QuestionnaireChoiceDescription>
             </QuestionnaireChoice>
             <QuestionnaireChoice value="phone">
               <span className="font-medium">Phone</span>

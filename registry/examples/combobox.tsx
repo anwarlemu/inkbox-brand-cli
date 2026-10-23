@@ -23,8 +23,8 @@ import {
 import { Label } from "@/components/ui/label";
 
 const AGENTS = [
-  { value: "baked", label: "@baked" },
-  { value: "robert-baked-design", label: "@robert-baked-design" },
+  { value: "acme", label: "@acme" },
+  { value: "acme-support", label: "@acme-support" },
   { value: "support-desk", label: "@support-desk" },
   { value: "ops-runner", label: "@ops-runner" },
   { value: "test-agent-233", label: "@test-agent-233" },
@@ -34,7 +34,7 @@ const AGENTS = [
 const EVENTS = ["message.received", "message.sent", "message.delivered", "message.bounced", "call.started", "call.ended", "imessage.received", "tunnel.connected", "tunnel.disconnected"];
 
 export function Preview() {
-  const [agent, setAgent] = React.useState<string | null>("baked");
+  const [agent, setAgent] = React.useState<string | null>("acme");
   return (
     <div className="grid w-full max-w-80 gap-1">
       <Label id="agent-label">Agent</Label>
@@ -171,7 +171,7 @@ export function Groups() {
 export function States() {
   return (
     <div className="grid w-full max-w-80 gap-3">
-      <Combobox items={AGENTS} defaultValue="baked" disabled>
+      <Combobox items={AGENTS} defaultValue="acme" disabled>
         <ComboboxTrigger aria-label="Disabled agent" />
       </Combobox>
       <div className="grid gap-1">

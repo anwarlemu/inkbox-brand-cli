@@ -9,7 +9,7 @@ function DeleteAgent() {
   return (
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Delete @baked?</AlertDialogTitle>
+        <AlertDialogTitle>Delete @acme?</AlertDialogTitle>
         <AlertDialogDescription>Its mailbox, phone line and tunnel are deleted with it. Messages it sent stay with their recipients. This cannot be undone.</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>

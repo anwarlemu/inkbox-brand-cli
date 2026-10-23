@@ -55,7 +55,7 @@ export function Preview() {
                 <MessageScrollerItem key={entry.id}>
                   <Message align={entry.from === "agent" ? "end" : "start"}>
                     <MessageContent>
-                      <MessageHeader>{entry.from === "agent" ? "@baked" : "Ray Liao"}</MessageHeader>
+                      <MessageHeader>{entry.from === "agent" ? "@acme" : "Ray Liao"}</MessageHeader>
                       <Bubble variant={entry.from === "agent" ? "default" : "secondary"} align={entry.from === "agent" ? "end" : "start"}>
                         <BubbleContent>{entry.text}</BubbleContent>
                       </Bubble>

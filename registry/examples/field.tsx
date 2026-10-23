@@ -41,10 +41,10 @@ export function Invalid() {
   return (
     <Field data-invalid="true" className="max-w-100">
       <FieldLabel htmlFor="handle">Agent handle</FieldLabel>
-      <Input id="handle" defaultValue="robert-baked-design" aria-invalid aria-describedby="handle-error" />
+      <Input id="handle" defaultValue="acme-support" aria-invalid aria-describedby="handle-error" />
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption leading-body text-fg">
         Will be displayed as
-        <span className="rounded-sm bg-subtle px-1.5 py-0.5">@robert-baked-design</span>
+        <span className="rounded-sm bg-subtle px-1.5 py-0.5">@acme-support</span>
         <FieldError id="handle-error">(is not available)</FieldError>
       </div>
     </Field>

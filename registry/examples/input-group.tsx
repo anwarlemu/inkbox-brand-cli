@@ -8,7 +8,7 @@ import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 
 export function Preview() {
-  const [handle, setHandle] = React.useState("robert-baked-design");
+  const [handle, setHandle] = React.useState("acme-support");
   return (
     <div className="grid w-full max-w-114.5 gap-1">
       <Label htmlFor="mailbox">Mailbox</Label>
@@ -26,31 +26,31 @@ export function HandleCheck() {
   return (
     <div className="grid w-full max-w-100.5 gap-3">
       <InputGroup>
-        <InputGroupInput aria-label="Checking handle" defaultValue="robert-baked-design" />
+        <InputGroupInput aria-label="Checking handle" defaultValue="acme-support" />
         <InputGroupAddon align="inline-end">
           <SpinnerIcon className="animate-spin-steady text-fg-faint" aria-label="Checking" />
         </InputGroupAddon>
       </InputGroup>
       <div className="grid gap-1">
         <InputGroup>
-          <InputGroupInput aria-label="Available handle" defaultValue="robert-baked-design" />
+          <InputGroupInput aria-label="Available handle" defaultValue="acme-support" />
           <InputGroupAddon align="inline-end">
             <CheckCircleIcon weight="fill" className="text-success" aria-label="Available" />
           </InputGroupAddon>
         </InputGroup>
         <p className="flex items-center gap-2 text-caption text-fg-secondary">
-          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@robert-baked-design</span>
+          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@acme-support</span>
         </p>
       </div>
       <div className="grid gap-1">
         <InputGroup>
-          <InputGroupInput aria-label="Taken handle" defaultValue="robert-baked-design" aria-invalid aria-describedby="taken" />
+          <InputGroupInput aria-label="Taken handle" defaultValue="acme-support" aria-invalid aria-describedby="taken" />
           <InputGroupAddon align="inline-end">
             <XCircleIcon weight="fill" className="text-danger-strong" aria-hidden />
           </InputGroupAddon>
         </InputGroup>
         <p id="taken" className="flex items-center gap-2 text-caption text-fg-secondary">
-          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@robert-baked-design</span>
+          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@acme-support</span>
           <span className="text-danger">(is not available)</span>
         </p>
       </div>
@@ -91,7 +91,7 @@ export function Addons() {
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupInput aria-label="Read-only mailbox" readOnly defaultValue="robert-baked-design" />
+        <InputGroupInput aria-label="Read-only mailbox" readOnly defaultValue="acme-support" />
         <InputGroupAddon align="inline-end" variant="segment">
           @inboxmail.com
         </InputGroupAddon>

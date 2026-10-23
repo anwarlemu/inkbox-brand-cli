@@ -13,7 +13,7 @@ export function Preview() {
 export function States() {
   return (
     <div className="grid w-full max-w-100.5 gap-3">
-      <Textarea aria-label="Note" defaultValue="Answers billing questions for Baked Design and forwards anything about refunds to Robert." />
+      <Textarea aria-label="Note" defaultValue="Answers billing questions for Acme and forwards anything about refunds to Robert." />
       <Textarea aria-label="Invalid note" defaultValue="" placeholder="Required" aria-invalid />
       <Textarea aria-label="Read-only" readOnly defaultValue="Created by the Inkbox CLI on Jul 27, 2026." />
       <Textarea aria-label="Disabled" disabled placeholder="Disabled" />

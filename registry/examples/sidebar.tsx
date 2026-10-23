@@ -229,9 +229,9 @@ export function SecondRail() {
             <SidebarMenuItem>
               <SidebarMenuButton aria-haspopup="menu">
                 <Avatar size="sm" className="m-px size-5">
-                  <AvatarFallback className="text-body-sm">B</AvatarFallback>
+                  <AvatarFallback className="text-body-sm">A</AvatarFallback>
                 </Avatar>
-                <span className="ml-0.5 flex-1">@baked</span>
+                <span className="ml-0.5 flex-1">@acme</span>
                 <CaretDownIcon weight="bold" className="size-4 text-fg" />
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -257,7 +257,7 @@ export function SecondRail() {
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <PageHead title="Inbox" description="baked@inkboxmail.com" />
+        <PageHead title="Inbox" description="acme@inkboxmail.com" />
       </SidebarInset>
     </SidebarProvider>
   );

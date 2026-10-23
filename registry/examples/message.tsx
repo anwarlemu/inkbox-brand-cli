@@ -23,10 +23,10 @@ export function Preview() {
         </MessageContent>
       </Message>
       <Message align="end">
-        <MessageAvatar>B</MessageAvatar>
+        <MessageAvatar>A</MessageAvatar>
         <MessageContent>
           <MessageHeader>
-            @baked <time dateTime="2026-08-08T19:18">7:18 PM</time>
+            @acme <time dateTime="2026-08-08T19:18">7:18 PM</time>
           </MessageHeader>
           <Bubble align="end">
             <BubbleContent>Done. It is listed in the public directory now.</BubbleContent>

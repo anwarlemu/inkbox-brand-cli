@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 
 function RenameForm({ onDone }: { onDone?: () => void }) {
-  const [name, setName] = React.useState("Baked support");
+  const [name, setName] = React.useState("Acme support");
   return (
     <form
       className="grid gap-3"
@@ -20,7 +20,7 @@ function RenameForm({ onDone }: { onDone?: () => void }) {
     >
       <PopoverHeader>
         <PopoverTitle>Display name</PopoverTitle>
-        <PopoverDescription>Shown as the sender on baked@inkboxmail.com.</PopoverDescription>
+        <PopoverDescription>Shown as the sender on acme@inkboxmail.com.</PopoverDescription>
       </PopoverHeader>
       <div className="grid gap-1">
         <Label htmlFor="display-name">Name</Label>

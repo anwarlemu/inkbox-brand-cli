@@ -9,7 +9,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 
 type Mailbox = { address: string; agent: string; webhooks: number; storage: number; created: Date; status: "active" | "paused" };
 
-const AGENTS = ["baked", "support-desk", "ops-runner", "robert-baked-design", "test-agent-233", "billing-bot"];
+const AGENTS = ["acme", "support-desk", "ops-runner", "acme-support", "test-agent-233", "billing-bot"];
 const MAILBOXES: Mailbox[] = Array.from({ length: 23 }, (_, i) => {
   const agent = AGENTS[i % AGENTS.length];
   return { address: `${agent}${i > 5 ? `-${i}` : ""}@inkboxmail.com`, agent, webhooks: (i * 7) % 4, storage: (i * 13) % 61, created: new Date(2026, 6, 27 + (i % 20)), status: i % 5 === 3 ? "paused" : "active" };

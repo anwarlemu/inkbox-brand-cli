@@ -95,7 +95,7 @@ export function DocsRail({ entries }: { entries: Entry[] }) {
         </Link>
         <div className="relative mx-3 mb-3 mt-3 lg:mt-1">
           <MagnifyingGlassIcon aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4.5 -translate-y-1/2 text-fg-muted" />
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" className="h-9 pl-9" />
+          <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" className="h-9 pl-9" />
         </div>
         <div className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain px-3 pb-6 [scrollbar-width:thin]">
           <Groups entries={entries} query={query} onNavigate={close} />

@@ -31,7 +31,7 @@ function ButtonGroupText({ className, asChild = false, ...props }: React.Compone
   return (
     <Comp
       data-slot="button-group-text"
-      className={cn("flex items-center gap-2 rounded-control border border-line-field bg-subtle px-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5", className)}
+      className={cn("flex items-center gap-2 rounded-control border border-line-field bg-subtle px-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5", className)}
       {...props}
     />
   );

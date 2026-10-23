@@ -14,7 +14,7 @@ type Entry = { name: string; title: string };
 // A rail row, as the console draws one (Agent Workspace, Email, Vault): 38px tall with 8px corners, a 22px glyph 10px
 // from a 14px regular ink label; the current page sits on the lilac. Hover washes the row; there is no motion.
 const ROW =
-  "flex h-9.5 items-center gap-2.5 rounded-control px-3 text-body leading-tight text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-subtle motion-reduce:transition-none [&_svg]:size-5.5 [&_svg]:shrink-0";
+  "flex h-9.5 items-center gap-2.5 rounded-control px-3 text-body leading-tight text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-subtle motion-reduce:transition-none [&_svg]:size-6 [&_svg]:shrink-0";
 
 const PAGES = [
   { href: "/", label: "Introduction", icon: BookOpenTextIcon },

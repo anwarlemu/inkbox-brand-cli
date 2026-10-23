@@ -88,7 +88,7 @@ function InputGroupButton({ className, type = "button", variant = "ghost", size 
 }
 
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
-  return <span className={cn("flex items-center gap-2 font-sans text-body leading-tight text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5", className)} {...props} />;
+  return <span className={cn("flex items-center gap-2 font-sans text-body leading-tight text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5", className)} {...props} />;
 }
 
 function InputGroupInput({ className, ...props }: React.ComponentProps<"input">) {

@@ -29,7 +29,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex h-9.5 shrink-0 items-center justify-center gap-2 rounded-control px-2.25 font-sans text-body leading-tight font-medium whitespace-nowrap text-fg outline-none transition-[background-color,box-shadow,color] duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:text-fg-muted data-[state=active]:bg-surface data-[state=active]:shadow-s data-[state=active]:hover:text-fg motion-reduce:transition-none in-data-[full=true]:flex-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+        "inline-flex h-9.5 shrink-0 items-center justify-center gap-2 rounded-control px-2.25 font-sans text-body leading-tight font-medium whitespace-nowrap text-fg outline-none transition-[background-color,box-shadow,color] duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:text-fg-muted data-[state=active]:bg-surface data-[state=active]:shadow-s data-[state=active]:hover:text-fg motion-reduce:transition-none in-data-[full=true]:flex-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
         className,
       )}
       {...props}

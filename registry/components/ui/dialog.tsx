@@ -56,7 +56,7 @@ function DialogContent({ className, children, showClose = true, ...props }: Reac
             data-slot="dialog-close"
             className="absolute top-5 right-5 inline-flex size-7 items-center justify-center rounded-control text-fg-faint outline-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
           >
-            <XIcon className="size-5" weight="bold" />
+            <XIcon className="size-5.5" weight="bold" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

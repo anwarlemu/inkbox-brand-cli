@@ -34,7 +34,7 @@ function Attachment({ className, state = "done", size = "default", orientation =
 }
 
 const attachmentMediaVariants = cva(
-  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-pink text-rose group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-xs group-data-[state=error]/attachment:bg-subtle group-data-[state=error]/attachment:text-danger [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-7 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-4",
+  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-pink text-rose group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-xs group-data-[state=error]/attachment:bg-subtle group-data-[state=error]/attachment:text-danger [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-7 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {

@@ -15,11 +15,11 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
       data-slot="sonner"
       className="toaster group"
       icons={{
-        success: <CheckCircleIcon weight="fill" className="size-5 text-success" />,
-        info: <InfoIcon weight="fill" className="size-5 text-info" />,
-        warning: <WarningIcon weight="fill" className="size-5 text-warning" />,
-        error: <XCircleIcon weight="fill" className="size-5 text-danger-strong" />,
-        loading: <SpinnerGapIcon className="size-5 animate-spin-steady text-fg-muted" />,
+        success: <CheckCircleIcon weight="fill" className="size-5.5 text-success" />,
+        info: <InfoIcon weight="fill" className="size-5.5 text-info" />,
+        warning: <WarningIcon weight="fill" className="size-5.5 text-warning" />,
+        error: <XCircleIcon weight="fill" className="size-5.5 text-danger-strong" />,
+        loading: <SpinnerGapIcon className="size-5.5 animate-spin-steady text-fg-muted" />,
         close: <XIcon className="size-3.5" />,
       }}
       toastOptions={{

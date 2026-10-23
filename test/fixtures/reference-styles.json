@@ -1,0 +1,941 @@
+{
+  "captured": "2026-10-18",
+  "reference": "https://agentcard.sh (redirects to https://agentcard.com)",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "checks": [
+    {
+      "id": "textarea",
+      "name": "textarea",
+      "example": "Site",
+      "selector": "textarea",
+      "route": "get-started",
+      "referenceSelector": ".audit-textarea",
+      "fixture": "<form class=\"v7-gate-body\"><label class=\"v7-gate-field\"><span>Brief</span><textarea class=\"audit-textarea\" placeholder=\"Brief\"></textarea></label></form>",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "fontWeight": "400",
+        "padding": "10px 12px",
+        "minHeight": "84px",
+        "borderRadius": "0px",
+        "borderWidth": "1px",
+        "resize": "vertical",
+        "placeholderColor": "oklab(0.207929 -0.00148161 -0.000452757 / 0.5)"
+      },
+      "width": 1440
+    },
+    {
+      "id": "field",
+      "name": "field",
+      "example": "Site",
+      "selector": "[data-slot=label]",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field > span",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18px",
+        "fontWeight": "400"
+      },
+      "width": 1440
+    },
+    {
+      "id": "input",
+      "name": "input",
+      "example": "Site",
+      "selector": "input",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field input",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "padding": "10px 12px",
+        "minHeight": "44px",
+        "borderRadius": "0px",
+        "borderWidth": "1px",
+        "placeholderColor": "rgb(23, 24, 24)"
+      },
+      "width": 1440
+    },
+    {
+      "id": "label",
+      "name": "label",
+      "example": "Site",
+      "selector": "label",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field > span",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18px",
+        "fontWeight": "400"
+      },
+      "width": 1440
+    },
+    {
+      "id": "select",
+      "name": "select",
+      "example": "Site",
+      "selector": "[data-slot=select-trigger]",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field select",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "minHeight": "44px",
+        "borderWidth": "1px",
+        "borderRadius": "0px",
+        "color": "rgb(23, 24, 24)"
+      },
+      "width": 1440
+    },
+    {
+      "id": "button",
+      "name": "button",
+      "example": "Site",
+      "selector": "[data-slot=button]",
+      "route": "",
+      "referenceSelector": ".v7-sol-copy .v7-button",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "padding": "0px 22px",
+        "height": "40px",
+        "borderRadius": "8px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "badge",
+      "name": "badge",
+      "example": "Site",
+      "selector": "[data-slot=badge].uppercase",
+      "route": "updates",
+      "referenceSelector": ".v7-upd-tag",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "17.5px",
+        "padding": "3px 8px 2px",
+        "borderRadius": "0px",
+        "letterSpacing": "1.4px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "card",
+      "name": "card",
+      "example": "Raised",
+      "selector": "[data-slot=card]",
+      "route": "",
+      "referenceSelector": ".v7-sol",
+      "expected": {
+        "borderRadius": "20px",
+        "padding": "12px",
+        "borderWidth": "1px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "window",
+      "name": "window",
+      "example": "Site",
+      "selector": "[data-slot=window-bar]",
+      "route": "",
+      "referenceSelector": ".v7-windowbar",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "16px",
+        "height": "32px",
+        "padding": "0px 10px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "accordion",
+      "name": "accordion",
+      "example": "Site",
+      "selector": "[data-slot=accordion-trigger]",
+      "route": "",
+      "referenceSelector": ".faq-list summary",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "16.8px",
+        "padding": "20px 14px",
+        "letterSpacing": "-0.14px",
+        "borderRadius": "6px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "accordion-rule",
+      "name": "accordion",
+      "example": "Site",
+      "selector": "[data-slot=accordion-item]",
+      "route": "",
+      "referenceSelector": ".faq-list details",
+      "expected": {
+        "borderBottomColor": "color(srgb 0.0901961 0.0941176 0.0941176 / 0.2)"
+      },
+      "width": 1440
+    },
+    {
+      "id": "faq",
+      "name": "faq",
+      "example": "Site",
+      "selector": "[data-slot=accordion-trigger]",
+      "route": "",
+      "referenceSelector": ".faq-list summary",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "16.8px",
+        "padding": "20px 14px",
+        "letterSpacing": "-0.14px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "tabs",
+      "name": "tabs",
+      "example": "Site",
+      "selector": "[data-slot=tabs-trigger]",
+      "route": "pricing",
+      "referenceSelector": ".plan-tab",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "22.4px",
+        "height": "40px",
+        "padding": "0px 16px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "segmented-control",
+      "name": "segmented-control",
+      "example": "Site",
+      "selector": "[role=radio]",
+      "route": "pricing",
+      "referenceSelector": ".plan-tab",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "22.4px",
+        "height": "40px",
+        "padding": "0px 16px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "page-header",
+      "name": "page-header",
+      "example": "Site",
+      "selector": "h1",
+      "route": "about",
+      "referenceSelector": ".v7-about-head h1",
+      "expected": {
+        "fontSize": "52px",
+        "lineHeight": "54.6px",
+        "fontWeight": "500",
+        "letterSpacing": "-1.04px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "site-header",
+      "name": "site-header",
+      "example": "Site",
+      "selector": "[data-slot=button]",
+      "route": "",
+      "referenceSelector": ".v7-get-started-face",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "14px",
+        "fontWeight": "500",
+        "padding": "0px 22px",
+        "height": "40px",
+        "borderRadius": "8px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "site-footer",
+      "name": "site-footer",
+      "example": "Site",
+      "selector": "[data-slot=site-footer] nav",
+      "route": "",
+      "referenceSelector": ".v7-foot-sitemap",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "19.2px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "marquee",
+      "name": "marquee",
+      "example": "Site",
+      "selector": "[data-slot=marquee]",
+      "route": "",
+      "referenceSelector": ".v7-foot-line",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "19.2px",
+        "borderTopColor": "color(srgb 1 1 1 / 0.45)",
+        "borderBottomColor": "color(srgb 1 1 1 / 0.45)"
+      },
+      "width": 1440
+    },
+    {
+      "id": "updates-feed",
+      "name": "updates-feed",
+      "example": "Site",
+      "selector": "[data-slot=updates-feed] section > div > div > span",
+      "route": "updates",
+      "referenceSelector": ".v7-upd-tag",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "17.5px",
+        "padding": "3px 8px 2px",
+        "letterSpacing": "1.4px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "prose-h2",
+      "name": "prose",
+      "example": "Site",
+      "selector": "h2",
+      "route": "terms",
+      "referenceSelector": ".v7-prose h2",
+      "expected": {
+        "fontSize": "24px",
+        "fontWeight": "500",
+        "lineHeight": "28.8px",
+        "letterSpacing": "-0.48px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "team-directory",
+      "name": "team-directory",
+      "example": "Site",
+      "selector": "[data-slot=window] li b",
+      "route": "about",
+      "referenceSelector": ".v7-about-cell b",
+      "expected": {
+        "fontSize": "16px",
+        "lineHeight": "20.8px",
+        "fontWeight": "500"
+      },
+      "width": 1440
+    },
+    {
+      "id": "avatar",
+      "name": "avatar",
+      "example": "Site",
+      "selector": "[data-slot=avatar]",
+      "route": "about",
+      "referenceSelector": ".is-founders .v7-about-cell img",
+      "expected": {
+        "width": "64px",
+        "height": "64px",
+        "borderRadius": "0px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "band-divider",
+      "name": "band-divider",
+      "example": "Site",
+      "selector": "[data-slot=band-divider]",
+      "route": "",
+      "referenceSelector": ".band-divider",
+      "expected": {
+        "height": "36px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "code-window",
+      "name": "code-window",
+      "example": "Site",
+      "selector": "pre",
+      "route": "",
+      "referenceSelector": ".v7-intg-code pre",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18.6px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "integration-code",
+      "name": "integrations",
+      "example": "Site",
+      "selector": "pre",
+      "route": "",
+      "referenceSelector": ".v7-intg-code pre",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18.6px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "feature-rows",
+      "name": "feature-rows",
+      "example": "Site",
+      "selector": "[data-slot=feature-rows] > li",
+      "route": "vault",
+      "referenceSelector": ".v7-feat",
+      "expected": {
+        "borderRadius": "20px",
+        "borderWidth": "1px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "product-grid",
+      "name": "product-grid",
+      "example": "Site",
+      "selector": "[data-slot=product-grid] > *",
+      "route": "",
+      "referenceSelector": ".v7-sol",
+      "expected": {
+        "borderRadius": "20px",
+        "borderWidth": "1px",
+        "padding": "12px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "pricing",
+      "name": "pricing",
+      "example": "Site",
+      "selector": "[data-slot=window] h3",
+      "route": "pricing",
+      "referenceSelector": ".v7-offer-head h3",
+      "expected": {
+        "fontSize": "24px",
+        "lineHeight": "26.4px",
+        "fontWeight": "500",
+        "letterSpacing": "-0.48px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "testimonials",
+      "name": "testimonials",
+      "example": "Site",
+      "selector": "blockquote > p:last-child",
+      "route": "",
+      "referenceSelector": ".v7-case blockquote p:last-child",
+      "expected": {
+        "fontSize": "24px",
+        "lineHeight": "28.8px",
+        "fontWeight": "500",
+        "letterSpacing": "-0.72px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "logo-strip",
+      "name": "logo-strip",
+      "example": "Site",
+      "selector": "[data-trail-card]",
+      "route": "",
+      "referenceSelector": ".v7-customer",
+      "expected": {
+        "borderRadius": "10px",
+        "borderWidth": "1px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "nav-dock-title",
+      "name": "nav-dock",
+      "example": "Open",
+      "selector": "[data-slot=nav-dock] ul a > span:first-child",
+      "route": "",
+      "referenceSelector": ".v7-dock-card a strong",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "12px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "nav-dock-description",
+      "name": "nav-dock",
+      "example": "Open",
+      "selector": "[data-slot=nav-dock] ul a > span:last-child",
+      "route": "",
+      "referenceSelector": ".v7-dock-card a span",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "20.3px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "nav-dock-row",
+      "name": "nav-dock",
+      "example": "Open",
+      "selector": "[data-slot=nav-dock] ul a",
+      "route": "",
+      "referenceSelector": ".v7-dock-card a",
+      "expected": {
+        "padding": "12px 11px",
+        "borderRadius": "6px"
+      },
+      "width": 1440
+    },
+    {
+      "id": "textarea",
+      "name": "textarea",
+      "example": "Site",
+      "selector": "textarea",
+      "route": "get-started",
+      "referenceSelector": ".audit-textarea",
+      "fixture": "<form class=\"v7-gate-body\"><label class=\"v7-gate-field\"><span>Brief</span><textarea class=\"audit-textarea\" placeholder=\"Brief\"></textarea></label></form>",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "fontWeight": "400",
+        "padding": "10px 12px",
+        "minHeight": "84px",
+        "borderRadius": "0px",
+        "borderWidth": "1px",
+        "resize": "vertical",
+        "placeholderColor": "oklab(0.207929 -0.00148161 -0.000452757 / 0.5)"
+      },
+      "width": 390
+    },
+    {
+      "id": "field",
+      "name": "field",
+      "example": "Site",
+      "selector": "[data-slot=label]",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field > span",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18px",
+        "fontWeight": "400"
+      },
+      "width": 390
+    },
+    {
+      "id": "input",
+      "name": "input",
+      "example": "Site",
+      "selector": "input",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field input",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "padding": "10px 12px",
+        "minHeight": "44px",
+        "borderRadius": "0px",
+        "borderWidth": "1px",
+        "placeholderColor": "rgb(23, 24, 24)"
+      },
+      "width": 390
+    },
+    {
+      "id": "label",
+      "name": "label",
+      "example": "Site",
+      "selector": "label",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field > span",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "18px",
+        "fontWeight": "400"
+      },
+      "width": 390
+    },
+    {
+      "id": "select",
+      "name": "select",
+      "example": "Site",
+      "selector": "[data-slot=select-trigger]",
+      "route": "get-started",
+      "referenceSelector": ".v7-gate-field select",
+      "expected": {
+        "fontSize": "18px",
+        "lineHeight": "23.4px",
+        "minHeight": "44px",
+        "borderWidth": "1px",
+        "borderRadius": "0px",
+        "color": "rgb(23, 24, 24)"
+      },
+      "width": 390
+    },
+    {
+      "id": "button",
+      "name": "button",
+      "example": "Site",
+      "selector": "[data-slot=button]",
+      "route": "",
+      "referenceSelector": ".v7-sol-copy .v7-button",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "padding": "0px 22px",
+        "height": "40px",
+        "borderRadius": "8px"
+      },
+      "width": 390
+    },
+    {
+      "id": "badge",
+      "name": "badge",
+      "example": "Site",
+      "selector": "[data-slot=badge].uppercase",
+      "route": "updates",
+      "referenceSelector": ".v7-upd-tag",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "17.5px",
+        "padding": "3px 8px 2px",
+        "borderRadius": "0px",
+        "letterSpacing": "1.4px"
+      },
+      "width": 390
+    },
+    {
+      "id": "card",
+      "name": "card",
+      "example": "Raised",
+      "selector": "[data-slot=card]",
+      "route": "",
+      "referenceSelector": ".v7-sol",
+      "expected": {
+        "borderRadius": "20px",
+        "padding": "12px",
+        "borderWidth": "1px"
+      },
+      "width": 390
+    },
+    {
+      "id": "window",
+      "name": "window",
+      "example": "Site",
+      "selector": "[data-slot=window-bar]",
+      "route": "",
+      "referenceSelector": ".v7-windowbar",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "16px",
+        "height": "32px",
+        "padding": "0px 10px"
+      },
+      "width": 390
+    },
+    {
+      "id": "accordion",
+      "name": "accordion",
+      "example": "Site",
+      "selector": "[data-slot=accordion-trigger]",
+      "route": "",
+      "referenceSelector": ".faq-list summary",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "16.8px",
+        "padding": "20px 14px",
+        "letterSpacing": "-0.14px",
+        "borderRadius": "6px"
+      },
+      "width": 390
+    },
+    {
+      "id": "accordion-rule",
+      "name": "accordion",
+      "example": "Site",
+      "selector": "[data-slot=accordion-item]",
+      "route": "",
+      "referenceSelector": ".faq-list details",
+      "expected": {
+        "borderBottomColor": "color(srgb 0.0901961 0.0941176 0.0941176 / 0.2)"
+      },
+      "width": 390
+    },
+    {
+      "id": "faq",
+      "name": "faq",
+      "example": "Site",
+      "selector": "[data-slot=accordion-trigger]",
+      "route": "",
+      "referenceSelector": ".faq-list summary",
+      "expected": {
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "16.8px",
+        "padding": "20px 14px",
+        "letterSpacing": "-0.14px"
+      },
+      "width": 390
+    },
+    {
+      "id": "tabs",
+      "name": "tabs",
+      "example": "Site",
+      "selector": "[data-slot=tabs-trigger]",
+      "route": "pricing",
+      "referenceSelector": ".plan-tab",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "22.4px",
+        "height": "40px"
+      },
+      "width": 390,
+      "note": "The pricing page removes side padding on narrow full-width tabs. Standalone controls retain their 16px touch gutter; typography and height are shared."
+    },
+    {
+      "id": "segmented-control",
+      "name": "segmented-control",
+      "example": "Site",
+      "selector": "[role=radio]",
+      "route": "pricing",
+      "referenceSelector": ".plan-tab",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "22.4px",
+        "height": "40px"
+      },
+      "width": 390,
+      "note": "The pricing page removes side padding on narrow full-width tabs. Standalone controls retain their 16px touch gutter; typography and height are shared."
+    },
+    {
+      "id": "page-header",
+      "name": "page-header",
+      "example": "Site",
+      "selector": "h1",
+      "route": "about",
+      "referenceSelector": ".v7-about-head h1",
+      "expected": {
+        "fontSize": "34px",
+        "lineHeight": "35.7px",
+        "fontWeight": "500",
+        "letterSpacing": "-0.68px"
+      },
+      "width": 390
+    },
+    {
+      "id": "site-header",
+      "name": "site-header",
+      "example": "Site",
+      "selector": "[data-slot=button]",
+      "route": "",
+      "referenceSelector": ".v7-get-started-face",
+      "expected": {
+        "fontSize": "14px",
+        "lineHeight": "14px",
+        "fontWeight": "500",
+        "padding": "0px 22px",
+        "height": "40px",
+        "borderRadius": "8px"
+      },
+      "width": 390
+    },
+    {
+      "id": "site-footer",
+      "name": "site-footer",
+      "example": "Site",
+      "selector": "[data-slot=site-footer] nav",
+      "route": "",
+      "referenceSelector": ".v7-foot-sitemap",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "19.2px"
+      },
+      "width": 390
+    },
+    {
+      "id": "marquee",
+      "name": "marquee",
+      "example": "Site",
+      "selector": "[data-slot=marquee]",
+      "route": "",
+      "referenceSelector": ".v7-foot-line",
+      "expected": {
+        "fontSize": "12px",
+        "lineHeight": "19.2px",
+        "borderTopColor": "color(srgb 1 1 1 / 0.45)",
+        "borderBottomColor": "color(srgb 1 1 1 / 0.45)"
+      },
+      "width": 390
+    },
+    {
+      "id": "updates-feed",
+      "name": "updates-feed",
+      "example": "Site",
+      "selector": "[data-slot=updates-feed] section > div > div > span",
+      "route": "updates",
+      "referenceSelector": ".v7-upd-tag",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "17.5px",
+        "padding": "3px 8px 2px",
+        "letterSpacing": "1.4px"
+      },
+      "width": 390
+    },
+    {
+      "id": "prose-h2",
+      "name": "prose",
+      "example": "Site",
+      "selector": "h2",
+      "route": "terms",
+      "referenceSelector": ".v7-prose h2",
+      "expected": {
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "lineHeight": "24px",
+        "letterSpacing": "-0.4px"
+      },
+      "width": 390
+    },
+    {
+      "id": "team-directory",
+      "name": "team-directory",
+      "example": "Site",
+      "selector": "[data-slot=window] li b",
+      "route": "about",
+      "referenceSelector": ".v7-about-cell b",
+      "expected": {
+        "fontSize": "16px",
+        "lineHeight": "20.8px",
+        "fontWeight": "500"
+      },
+      "width": 390
+    },
+    {
+      "id": "avatar",
+      "name": "avatar",
+      "example": "Site",
+      "selector": "[data-slot=avatar]",
+      "route": "about",
+      "referenceSelector": ".is-founders .v7-about-cell img",
+      "expected": {
+        "width": "64px",
+        "height": "64px",
+        "borderRadius": "0px"
+      },
+      "width": 390
+    },
+    {
+      "id": "band-divider",
+      "name": "band-divider",
+      "example": "Site",
+      "selector": "[data-slot=band-divider]",
+      "route": "",
+      "referenceSelector": ".band-divider",
+      "expected": {
+        "height": "36px"
+      },
+      "width": 390
+    },
+    {
+      "id": "code-window",
+      "name": "code-window",
+      "example": "Site",
+      "selector": "pre",
+      "route": "",
+      "referenceSelector": ".v7-intg-code pre",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "15.5px"
+      },
+      "width": 390
+    },
+    {
+      "id": "integration-code",
+      "name": "integrations",
+      "example": "Site",
+      "selector": "pre",
+      "route": "",
+      "referenceSelector": ".v7-intg-code pre",
+      "expected": {
+        "fontSize": "10px",
+        "lineHeight": "15.5px"
+      },
+      "width": 390
+    },
+    {
+      "id": "feature-rows",
+      "name": "feature-rows",
+      "example": "Site",
+      "selector": "[data-slot=feature-rows] > li",
+      "route": "vault",
+      "referenceSelector": ".v7-feat",
+      "expected": {
+        "borderRadius": "20px",
+        "borderWidth": "1px"
+      },
+      "width": 390
+    },
+    {
+      "id": "product-grid",
+      "name": "product-grid",
+      "example": "Site",
+      "selector": "[data-slot=product-grid] > *",
+      "route": "",
+      "referenceSelector": ".v7-sol",
+      "expected": {
+        "borderRadius": "20px",
+        "borderWidth": "1px",
+        "padding": "12px"
+      },
+      "width": 390
+    },
+    {
+      "id": "pricing",
+      "name": "pricing",
+      "example": "Site",
+      "selector": "[data-slot=window] h3",
+      "route": "pricing",
+      "referenceSelector": ".v7-offer-head h3",
+      "expected": {
+        "fontSize": "20px",
+        "lineHeight": "22px",
+        "fontWeight": "500",
+        "letterSpacing": "-0.4px"
+      },
+      "width": 390
+    },
+    {
+      "id": "testimonials",
+      "name": "testimonials",
+      "example": "Site",
+      "selector": "blockquote > p:last-child",
+      "route": "",
+      "referenceSelector": ".v7-case blockquote p:last-child",
+      "expected": {
+        "fontSize": "20px",
+        "lineHeight": "24px",
+        "fontWeight": "500",
+        "letterSpacing": "-0.6px"
+      },
+      "width": 390
+    },
+    {
+      "id": "logo-strip",
+      "name": "logo-strip",
+      "example": "Site",
+      "selector": "[data-trail-card]",
+      "route": "",
+      "referenceSelector": ".v7-customer",
+      "expected": {
+        "borderRadius": "10px",
+        "borderWidth": "1px"
+      },
+      "width": 390
+    }
+  ]
+}

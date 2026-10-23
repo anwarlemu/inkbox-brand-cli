@@ -1,0 +1,10 @@
+build/
+dist/
+node_modules/
+.stage/
+.stage2/
+apps/www/.next/
+registry.json
+.vercel
+.env*
+.claude/worktrees/

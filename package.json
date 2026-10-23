@@ -1,0 +1,52 @@
+{
+  "name": "inkbox-ds",
+  "version": "2.0.0",
+  "description": "Components, design tokens and checks for building Inkbox pages and interfaces.",
+  "type": "module",
+  "bin": {
+    "inkbox-ds": "./bin.js"
+  },
+  "files": [
+    "bin.js",
+    "dist",
+    "brand",
+    "build",
+    "r"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build-brand.mjs",
+    "test": "vitest run",
+    "ci": "npm run build && node scripts/ci-limits.mjs && npm run registry && vitest run",
+    "prepare": "node -e \"process.exit(process.env.VERCEL ? 0 : 1)\" || (tsc -p tsconfig.json && node scripts/build-brand.mjs)",
+    "release": "sh scripts/release.sh",
+    "registry": "tsx scripts/build-registry.ts",
+    "doctor": "npm run doctor --workspace www --",
+    "test:docs": "node scripts/check-docs.mjs",
+    "test:library": "node scripts/check-library.mjs",
+    "test:reference": "node scripts/check-reference.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
+    "@babel/parser": "^7.29.9",
+    "commander": "^15.0.0",
+    "picocolors": "^1.1.1",
+    "zod": "^4.6.5"
+  },
+  "optionalDependencies": {
+    "playwright-core": "^1.63.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3",
+    "yaml": "^2.8.1"
+  },
+  "workspaces": [
+    "apps/www"
+  ]
+}

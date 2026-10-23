@@ -1,0 +1,1312 @@
+{
+	"site": {
+		"page": {
+			"name": "Page",
+			"match": {
+				"tags": [
+					"html",
+					"body"
+				]
+			},
+			"css": {
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)"
+			},
+			"tailwind": "bg-surface text-fg font-sans text-body leading-body",
+			"rules": [
+				"White sections on the paper page; ink text in Inter at 16px.",
+				"Blue is a ground (the hero, a panel, the footer) and the color of actions and labels; never a gradient behind text."
+			],
+			"source": "src/app/globals.css:405 (html, body)"
+		},
+		"column": {
+			"name": "Content column",
+			"match": {
+				"words": [
+					"container",
+					"wrapper",
+					"wrap",
+					"inner",
+					"content",
+					"max"
+				]
+			},
+			"css": {
+				"width": "100%",
+				"max-width": "var(--ds-frame-column)",
+				"margin-inline": "auto"
+			},
+			"tailwind": "w-full max-w-(--ds-frame-column) mx-auto",
+			"rules": [
+				"Content sits in a 1200px column with at least 40px of gutter (20px on phones).",
+				"Reading text, forms and FAQ lists narrow to 680px (--ds-layout-text)."
+			],
+			"source": "src/app/globals.css:1520 (.v7-section)"
+		},
+		"section": {
+			"name": "Section",
+			"match": {
+				"tags": [
+					"section"
+				],
+				"words": [
+					"section",
+					"block",
+					"band"
+				]
+			},
+			"css": {
+				"padding-block": "var(--ds-space-20) var(--ds-space-28)",
+				"background-color": "var(--ds-color-bg-default)"
+			},
+			"states": {
+				"@media (max-width: 47.9375rem)": {
+					"padding-block": "var(--ds-space-12) var(--ds-space-16)"
+				}
+			},
+			"tailwind": "pt-20 pb-28 max-md:pt-12 max-md:pb-16 bg-surface",
+			"rules": [
+				"White sections, 80px above and about 110px below; 50px and 65px on phones.",
+				"A section on the blue ground is a deliberate band (the hero, a closing panel): white type, the white key, sky labels."
+			],
+			"source": "src/app/globals.css:1520 (.v7-section)"
+		},
+		"section-heading": {
+			"name": "Section heading",
+			"match": {
+				"tags": [
+					"h2"
+				],
+				"words": [
+					"title",
+					"heading",
+					"headline"
+				],
+				"context": [
+					"section"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-h2)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"letter-spacing": "var(--ds-tracking-tighter)",
+				"line-height": "var(--ds-leading-display)",
+				"color": "var(--ds-color-text-default)",
+				"text-align": "center",
+				"text-wrap": "balance"
+			},
+			"tailwind": "font-display text-h2 font-medium tracking-tighter leading-display text-fg text-center text-balance",
+			"rules": [
+				"Centered, display face at 500, 36px (28px on phones), tracked tight.",
+				"The description sits under it, centered, at 19px and 70 percent ink.",
+				"The page title of an inner page (Pricing, About) is the 52px step (h1)."
+			],
+			"source": "src/app/globals.css:1585 (.v7-heading-center)"
+		},
+		"section-description": {
+			"name": "Section description",
+			"match": {
+				"tags": [
+					"p"
+				],
+				"words": [
+					"subtitle",
+					"sub",
+					"lead",
+					"description",
+					"intro",
+					"desc",
+					"lede"
+				],
+				"context": [
+					"section"
+				]
+			},
+			"css": {
+				"max-width": "var(--ds-layout-heading)",
+				"margin-inline": "auto",
+				"font-size": "var(--ds-text-body-lg)",
+				"line-height": "var(--ds-leading-snug)",
+				"letter-spacing": "var(--ds-tracking-tight)",
+				"color": "var(--ds-color-text-muted)",
+				"text-align": "center"
+			},
+			"tailwind": "max-w-(--ds-layout-heading) mx-auto text-body-lg leading-snug tracking-tight text-fg-muted text-center",
+			"rules": [
+				"19px Inter at 70 percent ink, centered under the heading, 14px below it.",
+				"One or two lines; never wider than about 670px."
+			],
+			"source": "src/app/globals.css:1586 (.v7-heading-center > p)"
+		},
+		"hero": {
+			"name": "Hero",
+			"match": {
+				"words": [
+					"hero",
+					"masthead",
+					"jumbotron",
+					"banner-hero",
+					"splash"
+				]
+			},
+			"css": {
+				"padding-block": "var(--ds-space-32) var(--ds-space-24)",
+				"background-color": "var(--ds-color-bg-brand)",
+				"color": "var(--ds-color-text-on-brand)",
+				"text-align": "center"
+			},
+			"tailwind": "pt-32 pb-24 bg-brand text-on-brand text-center",
+			"rules": [
+				"The blue ground, full bleed: white type, the white key as the main action.",
+				"Add data-ds-hero to the hero section: it gives the blue ground and the four stepped bands into the white page below.",
+				"Its imagery stays the site's own; nothing is added behind the headline."
+			],
+			"source": "src/app/globals.css:483 (.on-blue), src/components/band-divider.tsx"
+		},
+		"hero-title": {
+			"name": "Hero title",
+			"match": {
+				"tags": [
+					"h1"
+				],
+				"words": [
+					"hero-title",
+					"headline",
+					"display"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-hero)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"letter-spacing": "var(--ds-tracking-display)",
+				"line-height": "var(--ds-leading-tight)",
+				"text-wrap": "balance"
+			},
+			"tailwind": "font-display text-hero font-medium tracking-display leading-tight text-balance",
+			"rules": [
+				"72px display at 500, tracked to -0.055em, leading 1; 40px on phones.",
+				"White on the blue hero; ink on a white page (an inner page title is 52px)."
+			],
+			"source": "agentcard.sh home h1 (computed)"
+		},
+		"hero-subtitle": {
+			"name": "Hero subtitle",
+			"match": {
+				"tags": [
+					"p"
+				],
+				"words": [
+					"hero-sub",
+					"subtitle",
+					"tagline",
+					"lead"
+				],
+				"context": [
+					"hero"
+				]
+			},
+			"css": {
+				"max-width": "var(--ds-layout-heading)",
+				"margin-inline": "auto",
+				"font-size": "var(--ds-text-body-lg)",
+				"line-height": "var(--ds-leading-snug)",
+				"color": "var(--ds-color-text-on-brand-muted)"
+			},
+			"tailwind": "max-w-(--ds-layout-heading) mx-auto text-body-lg leading-snug text-fg-on-brand-muted",
+			"rules": [
+				"19px Inter, white at 72 percent on the blue (70 percent ink on white).",
+				"One line where it fits."
+			],
+			"source": "src/app/globals.css:483 (.on-blue --text-muted)"
+		},
+		"eyebrow": {
+			"name": "Eyebrow",
+			"match": {
+				"words": [
+					"eyebrow",
+					"kicker",
+					"overline",
+					"label",
+					"tag",
+					"pretitle",
+					"badge"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-caption)",
+				"letter-spacing": "var(--ds-tracking-label)",
+				"line-height": "1.5",
+				"color": "var(--ds-color-text-label)",
+				"text-transform": "none"
+			},
+			"tailwind": "font-display text-caption tracking-label text-fg-label normal-case",
+			"rules": [
+				"12px display face in blue (sky on the blue ground), sentence case, never caps.",
+				"Above a page title or a section group: \"The company\", \"Team\"."
+			],
+			"source": "src/app/globals.css:1509 (.v7-eyebrow)"
+		},
+		"card": {
+			"name": "Card",
+			"match": {
+				"tags": [
+					"article"
+				],
+				"words": [
+					"card",
+					"tile",
+					"panel",
+					"box",
+					"feature",
+					"item",
+					"plan"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-3)",
+				"padding": "var(--ds-space-6)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-card)",
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-card)"
+			},
+			"tailwind": "flex flex-col gap-3 p-6 border border-hairline rounded-card bg-surface shadow-card",
+			"rules": [
+				"White, a 16 percent ink hairline, 12px corners and a soft drop under a light inner top.",
+				"A card that names an app or a file wears a window bar on top (window).",
+				"The large product cards are the raised card: 20px corners and a hard 7px offset shadow."
+			],
+			"source": "src/app/globals.css:3557 (.v7-trail li)"
+		},
+		"card-raised": {
+			"name": "Raised card",
+			"match": {
+				"words": [
+					"feature",
+					"product",
+					"plan",
+					"offer",
+					"tile-lg",
+					"showcase"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-3)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-shell)",
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-raised)"
+			},
+			"tailwind": "p-3 border border-hairline rounded-shell bg-surface shadow-raised",
+			"rules": [
+				"The product card: 20px corners, a 12px inset frame around its media, and a hard 7px offset shadow at 10 percent ink.",
+				"Copy sits beside or under the media: a 36px title, a 19px line at 60 percent, then the blue key."
+			],
+			"source": "src/app/globals.css:1693 (.v7-sol)"
+		},
+		"window": {
+			"name": "Window",
+			"match": {
+				"words": [
+					"window",
+					"terminal",
+					"dir",
+					"case",
+					"file"
+				]
+			},
+			"css": {
+				"overflow": "hidden",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-card)",
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-card)"
+			},
+			"tailwind": "overflow-hidden border border-hairline rounded-card bg-surface shadow-card",
+			"rules": [
+				"A card with a 32px title bar: an arrow mark, a file-like name (pricing.plan, team.dir) and [*] at the right.",
+				"The bar is sky with blue marks; the one window that matters most gets the blue bar with white marks."
+			],
+			"source": "src/app/globals.css:4011 (.v7-windowbar)"
+		},
+		"window-bar": {
+			"name": "Window bar",
+			"match": {
+				"words": [
+					"windowbar",
+					"titlebar",
+					"window-bar",
+					"title-bar",
+					"chrome"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"justify-content": "space-between",
+				"gap": "var(--ds-space-3)",
+				"min-height": "var(--ds-space-8)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border-bottom": "1px solid var(--ds-color-border-window)",
+				"background-color": "var(--ds-color-window-bar)",
+				"color": "var(--ds-color-window-bar-fg)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-micro)"
+			},
+			"tailwind": "flex items-center justify-between gap-3 min-h-8 px-2.5 border-b border-line-window bg-window-bar text-window-bar-fg font-display text-micro",
+			"rules": [
+				"32px, sky ground, blue marks in the 10px display face, a 25 percent blue line under it.",
+				"Left: the arrow and the window's name; right: [*]. On the featured window: blue ground, white marks."
+			],
+			"source": "src/app/globals.css:4011 (.v7-windowbar)"
+		},
+		"card-title": {
+			"name": "Card title",
+			"match": {
+				"tags": [
+					"h3",
+					"h4"
+				],
+				"words": [
+					"card-title",
+					"title",
+					"name",
+					"heading"
+				],
+				"context": [
+					"card"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-h3)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"letter-spacing": "var(--ds-tracking-tight)",
+				"line-height": "var(--ds-leading-display)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "font-display text-h3 font-medium tracking-tight leading-display text-fg",
+			"rules": [
+				"24px display at 500, tracked tight. A product card's title is the 36px step at 400.",
+				"Its description is 14px Inter at 68 percent ink."
+			],
+			"source": "src/app/globals.css (.v7-offer-head h3)"
+		},
+		"body-text": {
+			"name": "Body text",
+			"match": {
+				"tags": [
+					"p",
+					"li"
+				],
+				"words": [
+					"text",
+					"body",
+					"copy",
+					"desc",
+					"description",
+					"summary",
+					"excerpt"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "text-body leading-body text-fg",
+			"rules": [
+				"16px Inter, leading 1.6, ink. A lead paragraph is 19px.",
+				"Lines no wider than about 70 characters."
+			],
+			"source": "src/app/globals.css:405"
+		},
+		"caption": {
+			"name": "Caption",
+			"match": {
+				"tags": [
+					"small",
+					"figcaption",
+					"time"
+				],
+				"words": [
+					"caption",
+					"meta",
+					"note",
+					"date",
+					"small",
+					"fine",
+					"hint"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body-sm)",
+				"line-height": "1.55",
+				"color": "var(--ds-color-text-muted)"
+			},
+			"tailwind": "text-body-sm leading-[1.55] text-fg-muted",
+			"rules": [
+				"14px Inter at 68 percent ink: card descriptions, list details, small print."
+			],
+			"source": "src/app/globals.css (.v7-offer-head p)"
+		},
+		"link": {
+			"name": "Link",
+			"match": {
+				"tags": [
+					"a"
+				],
+				"words": [
+					"link",
+					"more",
+					"arrow",
+					"readmore"
+				]
+			},
+			"css": {
+				"color": "inherit",
+				"text-decoration-line": "underline",
+				"text-decoration-color": "var(--ds-color-text-brand)",
+				"text-underline-offset": "0.2em",
+				"transition": "color var(--ds-duration-fast) var(--ds-easing-out), text-decoration-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"states": {
+				":hover": {
+					"color": "var(--ds-color-text-brand)"
+				}
+			},
+			"tailwind": "underline decoration-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand",
+			"rules": [
+				"Inline links keep the text color with a blue underline; hover turns the text blue.",
+				"Navigation and footer links have no underline."
+			],
+			"source": "agentcard.sh /about (computed)"
+		},
+		"button-primary": {
+			"name": "Primary button",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn-primary",
+					"primary",
+					"cta",
+					"get-started",
+					"signup",
+					"start",
+					"solid",
+					"filled",
+					"main"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2-5)",
+				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
+				"border": "1px solid var(--ds-color-border-brand-edge)",
+				"background-color": "var(--ds-color-action-primary)",
+				"color": "var(--ds-color-action-primary-fg)",
+				"box-shadow": "var(--ds-shadow-key-brand)"
+			},
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-action-primary-hover)"
+				},
+				":active": {
+					"transform": "translateY(1px)",
+					"box-shadow": "var(--ds-shadow-pressed)"
+				}
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-line-brand-edge bg-primary text-on-primary font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key-brand transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-primary-hover active:translate-y-px active:shadow-pressed",
+			"rules": [
+				"The blue key: 40px tall, 8px corners, 14px display face, a border a shade darker than the fill, a light inner top, a darker inner bottom and a soft blue drop.",
+				"Hover lightens a shade; a press sinks it 1px and swaps the shadow for the pressed well.",
+				"On the blue ground the main action is the white key (button-on-brand)."
+			],
+			"source": "src/app/globals.css:4186 (blue keys)"
+		},
+		"button-secondary": {
+			"name": "Secondary button",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn-secondary",
+					"secondary",
+					"outline",
+					"ghost",
+					"btn-ghost",
+					"learn",
+					"demo",
+					"explore",
+					"btn"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2-5)",
+				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"box-shadow": "var(--ds-shadow-key)"
+			},
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-sky-wash)"
+				},
+				":active": {
+					"transform": "translateY(1px)",
+					"box-shadow": "var(--ds-shadow-pressed)"
+				}
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-surface text-fg font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
+			"rules": [
+				"The white key on white: ink text, a 16 percent ink border and the same bevel in gray.",
+				"Hover warms to the pale sky; a press sinks it."
+			],
+			"source": "src/app/globals.css:1920 (white keys on paper)"
+		},
+		"button-on-brand": {
+			"name": "Button on the blue",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn"
+				],
+				"context": [
+					"section-blue",
+					"on-brand"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2-5)",
+				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"background-color": "var(--ds-color-white)",
+				"color": "var(--ds-color-text-brand)",
+				"box-shadow": "var(--ds-shadow-key)"
+			},
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-sky-wash)"
+				},
+				":active": {
+					"transform": "translateY(1px)",
+					"box-shadow": "var(--ds-shadow-pressed)"
+				}
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-white text-fg-brand font-display text-body-sm font-normal leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
+			"rules": [
+				"The white key with blue text: the main action on the blue ground (the hero, the footer, a blue panel).",
+				"Hover warms to the pale sky; a press sinks it."
+			],
+			"source": "src/app/globals.css:4195 (white keys)"
+		},
+		"header": {
+			"name": "Header",
+			"match": {
+				"tags": [
+					"header"
+				],
+				"words": [
+					"header",
+					"nav",
+					"navbar",
+					"topbar",
+					"site-header",
+					"masthead"
+				],
+				"roles": [
+					"banner"
+				]
+			},
+			"css": {
+				"background-color": "transparent",
+				"color": "inherit",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-caption)",
+				"border": "0"
+			},
+			"tailwind": "bg-transparent text-inherit font-display text-caption border-0",
+			"rules": [
+				"A bare bar: the wordmark at the left, one Get started key at the right, 20px from the top; no background, no rule.",
+				"Over the blue hero its marks are white and its key is the white key; on a white page the wordmark is blue."
+			],
+			"source": "src/app/globals.css:1110 (.v7-space-header)"
+		},
+		"header-action": {
+			"name": "Header action",
+			"match": {
+				"tags": [
+					"a",
+					"button"
+				],
+				"words": [
+					"btn",
+					"cta",
+					"login",
+					"signin",
+					"sign-in",
+					"demo",
+					"get-started",
+					"signup"
+				],
+				"context": [
+					"header"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2-5)",
+				"padding": "var(--ds-space-3) var(--ds-space-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out), transform var(--ds-duration-fast) var(--ds-easing-out)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"background-color": "var(--ds-color-white)",
+				"color": "var(--ds-color-text-brand)",
+				"box-shadow": "var(--ds-shadow-key)"
+			},
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-sky-wash)"
+				},
+				":active": {
+					"transform": "translateY(1px)",
+					"box-shadow": "var(--ds-shadow-pressed)"
+				}
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2.5 h-10 px-5 rounded-control border border-hairline bg-white text-fg-brand font-display text-body-sm font-medium leading-none whitespace-nowrap shadow-key transition-[background-color,color,box-shadow,transform] duration-150 ease-out hover:bg-sky-wash active:translate-y-px active:shadow-pressed",
+			"rules": [
+				"The header's one action is the white key with blue text at 500, on the blue hero and on white alike.",
+				"Other header links are nav links."
+			],
+			"source": "src/app/globals.css:4108 (.v7-get-started-face)"
+		},
+		"nav-link": {
+			"name": "Nav link",
+			"match": {
+				"tags": [
+					"a",
+					"button"
+				],
+				"words": [
+					"nav-link",
+					"menu-link",
+					"nav-item",
+					"link",
+					"menu-item"
+				],
+				"context": [
+					"header",
+					"nav"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"padding": "var(--ds-space-2) var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-sm)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"line-height": "1",
+				"color": "inherit",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-wash-hover)"
+				},
+				"[aria-current=page]": {
+					"background-color": "var(--ds-color-white)",
+					"color": "var(--ds-color-text-brand)",
+					"box-shadow": "var(--ds-shadow-key)"
+				}
+			},
+			"tailwind": "flex items-center gap-2 px-3.5 py-2 rounded-sm font-display text-body-sm leading-none text-inherit transition-colors duration-150 ease-out hover:bg-wash-hover aria-[current=page]:bg-white aria-[current=page]:text-fg-brand aria-[current=page]:shadow-key",
+			"rules": [
+				"14px display face in a 6px-cornered key; hover is a light wash.",
+				"The current page is the white key with blue text, as in the brand's dock."
+			],
+			"source": "src/app/globals.css:4052 (.v7-dock-bar a)"
+		},
+		"nav-dock": {
+			"name": "Glass nav",
+			"match": {
+				"words": [
+					"dock",
+					"nav-pill",
+					"pill-nav",
+					"floating-nav",
+					"navpill",
+					"bottom-nav"
+				]
+			},
+			"css": {
+				"padding": "calc(var(--ds-space-1) - 1px)",
+				"border": "1px solid var(--ds-color-border-on-brand)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-glass)",
+				"background-image": "var(--ds-glass-sheen)",
+				"box-shadow": "var(--ds-shadow-floating)",
+				"backdrop-filter": "var(--ds-glass-blur)",
+				"color": "var(--ds-color-white)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)"
+			},
+			"tailwind": "p-[3px] border border-line-on-brand rounded-control bg-glass bg-(image:--ds-glass-sheen) shadow-floating [backdrop-filter:var(--ds-glass-blur)] text-white font-display text-body-sm",
+			"rules": [
+				"A floating bar of glass: ink at 42 percent under a light sheen, blurred, 8px corners, white marks.",
+				"Its links are nav links; the current one is the white key."
+			],
+			"source": "src/app/globals.css:4049 (.v7-dock-nav)"
+		},
+		"chip": {
+			"name": "Tag",
+			"match": {
+				"words": [
+					"chip",
+					"pill",
+					"tag",
+					"badge",
+					"token",
+					"label"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"padding": "var(--ds-space-0-5) var(--ds-space-2)",
+				"border": "1px solid var(--ds-color-border-brand)",
+				"border-radius": "0",
+				"color": "var(--ds-color-text-brand)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-micro)",
+				"letter-spacing": "var(--ds-tracking-caps)",
+				"text-transform": "uppercase",
+				"line-height": "1.75"
+			},
+			"tailwind": "inline-flex items-center px-2 py-0.5 border border-line-brand rounded-none text-fg-brand font-display text-micro tracking-caps uppercase leading-[1.75]",
+			"rules": [
+				"A small tag: 10px display caps tracked wide, blue on white with a blue border and square corners (Added, Fixed, New).",
+				"Tags are the one place type is set in caps."
+			],
+			"source": "src/app/globals.css (.v7-upd-tag)"
+		},
+		"stat": {
+			"name": "Stat",
+			"match": {
+				"words": [
+					"stat",
+					"metric",
+					"number",
+					"figure",
+					"kpi",
+					"count",
+					"value"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-h2)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"letter-spacing": "var(--ds-tracking-tight)",
+				"line-height": "var(--ds-leading-tight)",
+				"font-variant-numeric": "tabular-nums"
+			},
+			"tailwind": "font-display text-h2 font-medium tracking-tight leading-tight tabular-nums",
+			"rules": [
+				"A figure in the 36px display step at 500 (a price, a count), its unit beside it in 14px Inter."
+			],
+			"source": "src/app/globals.css (.v7-offer-figure)"
+		},
+		"code-window": {
+			"name": "Code window",
+			"match": {
+				"tags": [
+					"pre"
+				],
+				"words": [
+					"code",
+					"terminal",
+					"snippet",
+					"codeblock",
+					"console",
+					"editor",
+					"window"
+				]
+			},
+			"css": {
+				"overflow": "hidden",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-code)",
+				"color": "var(--ds-color-text-on-brand-muted)",
+				"font-family": "var(--ds-font-mono)",
+				"font-size": "var(--ds-text-caption)",
+				"line-height": "1.55",
+				"box-shadow": "var(--ds-shadow-code)"
+			},
+			"tailwind": "overflow-hidden rounded-control bg-code text-fg-on-brand-muted font-mono text-caption leading-[1.55] shadow-code",
+			"rules": [
+				"Ink ground, 8px corners, code in the 12px display face at 88 percent white, a deep drop under it.",
+				"A code window usually sits on a blue panel (media-frame)."
+			],
+			"source": "src/app/globals.css (.v7-intg-code)"
+		},
+		"media-frame": {
+			"name": "Media panel",
+			"match": {
+				"tags": [
+					"img",
+					"video",
+					"picture",
+					"figure",
+					"iframe"
+				],
+				"words": [
+					"screenshot",
+					"image",
+					"media",
+					"preview",
+					"shot",
+					"visual",
+					"frame",
+					"mockup"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-8)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-brand)"
+			},
+			"tailwind": "p-8 rounded-panel bg-brand",
+			"rules": [
+				"Screens, code and demos sit on a blue panel with 12px corners and 32px of padding.",
+				"Phone screens and app windows inside it keep their own look."
+			],
+			"source": "src/app/globals.css (.v7-intg-stage)"
+		},
+		"table": {
+			"name": "Table",
+			"match": {
+				"tags": [
+					"table"
+				],
+				"words": [
+					"table",
+					"comparison",
+					"compare",
+					"pricing-table",
+					"grid"
+				]
+			},
+			"css": {
+				"width": "100%",
+				"border-collapse": "collapse",
+				"font-size": "var(--ds-text-body-sm)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "w-full border-collapse text-body-sm text-fg [&_th]:font-display [&_th]:text-caption [&_th]:text-fg-muted [&_th]:font-normal [&_td]:border-b [&_td]:border-line",
+			"rules": [
+				"14px Inter rows with a 14 percent ink rule under each; headers in the 12px display face at 68 percent ink.",
+				"No zebra stripes, no vertical rules."
+			],
+			"source": "agentcard-website src/content/guides (stack tables)"
+		},
+		"faq": {
+			"name": "FAQ",
+			"match": {
+				"tags": [
+					"details"
+				],
+				"words": [
+					"faq",
+					"accordion",
+					"question",
+					"qa"
+				]
+			},
+			"css": {
+				"border-bottom": "1px solid var(--ds-color-border-default)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"letter-spacing": "-0.01em"
+			},
+			"tailwind": "border-b border-line font-display text-body-sm font-medium tracking-[-0.01em]",
+			"rules": [
+				"Questions in a 680px list: 14px display at 500, a 14 percent rule between, a drawn + that turns to an x when open.",
+				"The answer is 14px Inter at 68 percent ink, sliding open in 200ms.",
+				"On the brand's page the list sits in a window with topic tabs above it."
+			],
+			"source": "src/app/globals.css:1015 (.faq-list)"
+		},
+		"tabs": {
+			"name": "Tabs",
+			"match": {
+				"roles": [
+					"tab",
+					"tablist"
+				],
+				"words": [
+					"tab",
+					"tabs",
+					"segment",
+					"toggle",
+					"switcher"
+				]
+			},
+			"css": {
+				"display": "grid",
+				"grid-auto-flow": "column",
+				"grid-auto-columns": "1fr",
+				"gap": "var(--ds-space-1)",
+				"padding": "var(--ds-space-1)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-card)",
+				"background-color": "var(--ds-color-bg-subtle)",
+				"box-shadow": "var(--ds-shadow-well)"
+			},
+			"states": {
+				"[aria-selected=true]": {
+					"background-color": "var(--ds-color-action-primary)",
+					"color": "var(--ds-color-action-primary-fg)",
+					"box-shadow": "var(--ds-shadow-key-brand)"
+				}
+			},
+			"tailwind": "grid grid-flow-col auto-cols-fr gap-1 p-1 border border-hairline rounded-card bg-subtle shadow-well",
+			"rules": [
+				"A sunken track (12px corners, 4px inset) of equal 40px tabs in the 14px display face.",
+				"The selected tab is the blue key with white text, and the key glides between tabs (260ms, in-out)."
+			],
+			"source": "src/app/globals.css:1192 (.plan-tabs)"
+		},
+		"input": {
+			"name": "Input",
+			"match": {
+				"tags": [
+					"input",
+					"textarea",
+					"select"
+				],
+				"words": [
+					"input",
+					"field",
+					"search",
+					"email"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-2-5) var(--ds-space-3)",
+				"border": "1px solid var(--ds-color-border-strong)",
+				"border-radius": "0",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-h5)",
+				"line-height": "var(--ds-leading-snug)"
+			},
+			"states": {
+				":focus-visible": {
+					"outline": "2px solid var(--ds-color-focus-ring)",
+					"outline-offset": "-1px"
+				},
+				"[aria-invalid=true]": {
+					"border-color": "var(--ds-color-status-danger)"
+				}
+			},
+			"tailwind": "px-3 py-2.5 border border-line-strong rounded-none bg-surface text-fg font-sans text-h5 leading-snug outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring aria-invalid:border-danger",
+			"rules": [
+				"Square fields: a 35 percent ink border, no corners, 18px Inter, 10px by 12px padding.",
+				"Focus draws a 2px blue outline just inside the edge. Labels use the 12px display face above the control; invalid fields use the danger border."
+			],
+			"source": "src/app/globals.css (.v7-gate-field input)"
+		},
+		"logo-strip": {
+			"name": "Merchant line",
+			"match": {
+				"words": [
+					"logos",
+					"logo-strip",
+					"clients",
+					"customers",
+					"trusted",
+					"marquee",
+					"partners",
+					"brands"
+				]
+			},
+			"css": {
+				"border-block": "1px solid var(--ds-color-border-on-brand-strong)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-caption)",
+				"white-space": "nowrap"
+			},
+			"tailwind": "border-y border-line-on-brand-strong font-display text-caption whitespace-nowrap",
+			"rules": [
+				"A running line of names between two rules, separated by a small star; on the blue footer, white with 45 percent white rules.",
+				"Logos in a grid sit in small white windows, one pale tint per bar."
+			],
+			"source": "src/app/globals.css (.v7-foot-line)"
+		},
+		"footer": {
+			"name": "Footer",
+			"match": {
+				"tags": [
+					"footer"
+				],
+				"words": [
+					"footer",
+					"site-footer"
+				],
+				"roles": [
+					"contentinfo"
+				]
+			},
+			"css": {
+				"background-color": "var(--ds-color-bg-brand)",
+				"color": "var(--ds-color-text-on-brand)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-caption)"
+			},
+			"tailwind": "bg-brand text-on-brand font-display text-caption",
+			"rules": [
+				"The blue ground, after four stepped bands from the white page above.",
+				"The wordmark in white, its line in 14px; link columns in the 12px display face, headings in sky, links white.",
+				"It may end with the striped wordmark across the full width."
+			],
+			"source": "src/app/globals.css (.v7-foot)"
+		},
+		"menu-panel": {
+			"name": "Menu panel",
+			"match": {
+				"words": [
+					"dropdown-menu",
+					"dropdown-content",
+					"dropdown-menu-content",
+					"menu-panel",
+					"menu-content",
+					"select-content"
+				],
+				"roles": [
+					"menu",
+					"listbox"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-1)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"box-shadow": "var(--ds-shadow-tooltip)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)"
+			},
+			"tailwind": "rounded-control border border-hairline bg-surface p-1 font-display text-body-sm text-fg shadow-tooltip outline-none",
+			"states": {},
+			"rules": [
+				"Use the floating panel and display labels; keep the existing interaction and placement.",
+				"Menus keep keyboard focus, disabled states, and selection behavior."
+			],
+			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+		},
+		"menu-item": {
+			"name": "Menu item",
+			"match": {
+				"words": [
+					"dropdown-item",
+					"dropdown-menu-item",
+					"menu-item",
+					"select-item"
+				],
+				"roles": [
+					"menuitem",
+					"menuitemcheckbox",
+					"menuitemradio",
+					"option"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-2) var(--ds-space-2-5)",
+				"border-radius": "var(--ds-radius-menu)",
+				"background-color": "transparent",
+				"color": "var(--ds-color-text-secondary)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"line-height": "var(--ds-leading-snug)",
+				"outline": "none"
+			},
+			"tailwind": "rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-wash-hover)",
+					"color": "var(--ds-color-text-default)"
+				},
+				"[data-highlighted]": {
+					"background-color": "var(--ds-color-wash-hover)",
+					"color": "var(--ds-color-text-default)"
+				},
+				"[data-disabled]": {
+					"opacity": "0.4",
+					"pointer-events": "none"
+				}
+			},
+			"rules": [
+				"Use the floating panel and display labels; keep the existing interaction and placement.",
+				"Menus keep keyboard focus, disabled states, and selection behavior."
+			],
+			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+		},
+		"glass-menu": {
+			"name": "Glass menu",
+			"match": {
+				"words": [
+					"glass-menu",
+					"glass-dropdown",
+					"dock-card"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-1)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-glass)",
+				"color": "var(--ds-color-text-on-brand)",
+				"box-shadow": "var(--ds-shadow-floating)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-body-sm)",
+				"border-color": "var(--ds-color-border-on-brand)",
+				"background-image": "var(--ds-glass-sheen)",
+				"backdrop-filter": "var(--ds-glass-blur)"
+			},
+			"tailwind": "rounded-control border border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) p-1 font-display text-body-sm text-on-brand shadow-floating [backdrop-filter:var(--ds-glass-blur)] outline-none",
+			"states": {},
+			"rules": [
+				"Use the floating panel and display labels; keep the existing interaction and placement.",
+				"Glass rows use the dock\u2019s lit hover edge and white text."
+			],
+			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+		},
+		"glass-menu-item": {
+			"name": "Glass menu item",
+			"match": {
+				"words": [
+					"glass-menu-item",
+					"glass-dropdown-item",
+					"dock-card-item"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-3) calc(var(--ds-space-3) - 1px)",
+				"border-radius": "var(--ds-radius-sm)",
+				"background-color": "transparent",
+				"color": "var(--ds-color-text-on-brand)",
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-caption)",
+				"line-height": "1",
+				"outline": "none"
+			},
+			"tailwind": "rounded-sm px-2.75 py-3 font-display text-caption leading-none text-on-brand outline-none data-[highlighted]:bg-wash-glass-hover data-[highlighted]:shadow-glass-hover",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-wash-glass-hover)",
+					"box-shadow": "var(--ds-shadow-glass-hover)",
+					"color": "var(--ds-color-text-on-brand)"
+				},
+				"[data-highlighted]": {
+					"background-color": "var(--ds-color-wash-glass-hover)",
+					"box-shadow": "var(--ds-shadow-glass-hover)",
+					"color": "var(--ds-color-text-on-brand)"
+				}
+			},
+			"rules": [
+				"Use the floating panel and display labels; keep the existing interaction and placement.",
+				"Glass rows use the dock\u2019s lit hover edge and white text."
+			],
+			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+		},
+		"popover-panel": {
+			"name": "Popover panel",
+			"match": {
+				"words": [
+					"popover-content",
+					"popover-panel"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-4)",
+				"border": "1px solid var(--ds-color-border-hairline)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"box-shadow": "var(--ds-shadow-tooltip)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body-sm)"
+			},
+			"tailwind": "rounded-control border border-hairline bg-surface p-4 font-sans text-body-sm text-fg shadow-tooltip outline-none",
+			"states": {},
+			"rules": [
+				"Use the floating panel and display labels; keep the existing interaction and placement.",
+				"Menus keep keyboard focus, disabled states, and selection behavior."
+			],
+			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
+		}
+	}
+}

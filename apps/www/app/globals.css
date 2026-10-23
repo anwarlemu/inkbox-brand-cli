@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "../../../build/tokens.css";
+@import "../../../build/theme.css";
+
+@source "../../../registry";
+
+/* The base layer of brand/site.css, so the library's utilities win over these defaults. */
+@layer base {
+  html {
+    color-scheme: light;
+    scrollbar-gutter: stable;
+    overflow-x: clip;
+    background-color: var(--ds-color-bg-page);
+  }
+
+  body {
+    background-color: var(--ds-color-bg-default);
+    color: var(--ds-color-text-default);
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-text-body);
+    line-height: var(--ds-leading-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :where(h1, h2, h3, h4) {
+    font-family: var(--ds-font-display);
+    font-weight: var(--ds-font-weight-heading);
+    line-height: var(--ds-leading-heading);
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--ds-color-ring-tint);
+  }
+}

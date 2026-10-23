@@ -1,0 +1,392 @@
+{
+  "checkedAt": "2026-10-18",
+  "reference": "https://agentcard.sh",
+  "resolvedReference": "https://agentcard.com",
+  "method": "Live DOM and computed styles at desktop size, published CSS for textarea, repository CSS where guide pages are unavailable, and interaction/overflow checks for every library example at desktop and phone sizes. This is not a pixel-identical certification of every extension.",
+  "components": [
+    {
+      "name": "about-page",
+      "basis": "composition",
+      "reference": "agentcard-website src/app/about; agentcard.sh /about (computed)",
+      "notes": "Composed from the audited site components; content and media are supplied by the application."
+    },
+    {
+      "name": "accordion",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (.faq-list, .v7-page summary, .v7-page details > p); live https://www.agentcard.sh/ (#faq .faq-list, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "avatar",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/company-page.tsx (PersonCard), src/app/globals.css (.v7-about-cell img, .is-founders .v7-about-cell img); live https://www.agentcard.sh/about",
+      "notes": "Square grayscale photos match /about; initials are a fallback extension."
+    },
+    {
+      "name": "badge",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (.v7-upd-tag, .is-added, .is-improved, .is-fixed; .v7-guide-prose code for the chip); live https://www.agentcard.sh/updates",
+      "notes": "Added, Improved and Fixed tags match /updates. Status badges and chips are extensions."
+    },
+    {
+      "name": "band-divider",
+      "basis": "live",
+      "reference": "agentcard-website src/components/band-divider.tsx; src/app/globals.css:527 (.band-divider, .band-step); agentcard.sh / (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "banner",
+      "basis": "repository",
+      "reference": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-note, .v7-guide-note-body, .v7-guide-cta-title, --guide-shadow); src/components/v7/guide-body.tsx (note)",
+      "notes": "Checked against agentcard-website source. The public /guides routes currently return 404."
+    },
+    {
+      "name": "button",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css:4159 (V7 buttons and tabs, one bevel)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "card",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (.v7-trail li, .v7-sol); live https://www.agentcard.sh/",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "checkbox",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (--bevel-blue, --bevel-muted)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "code-window",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/integrations.tsx (CodePane), src/app/globals.css:3341 (.v7-intg-code); agentcard.sh / (computed: .v7-intg-stage [class*=code])",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "collapse",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (the FAQ's slide, .faq-list details::details-content)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "command",
+      "basis": "repository",
+      "reference": "Repository reference; public guide pages currently unavailable. agentcard-website src/components/v7/guide-search.tsx; src/app/globals.css (.v7-guide-search-layer, .v7-guide-search-panel, .v7-guide-search-field, .v7-guide-search-results, .v7-guide-search-group, .v7-guide-search-keys)",
+      "notes": "Checked against agentcard-website source. The public /guides routes currently return 404."
+    },
+    {
+      "name": "copy-button",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/command-copy.tsx; src/app/globals.css (.v7-command)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "cta",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css:1288 (.cta, an earlier closing stage); built from the hero's ground and the band divider (agentcard.sh has no closing CTA)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "dialog",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-windowbar); src/components/v7/window-mark.tsx",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "docs-link",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (links); live https://www.agentcard.sh/",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "dropdown-menu",
+      "basis": "live",
+      "reference": "https://agentcard.com/ (.v7-dock-card); white menu and extra item types are extensions",
+      "notes": "Glass panel and rows measured against the Products dock. The white menu and extra item types are extensions."
+    },
+    {
+      "name": "empty-state",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-windowbar)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "faq",
+      "basis": "live",
+      "reference": "agentcard-website src/components/faq.tsx, src/app/globals.css:932 (.faq2, .faq-list); agentcard.sh / (.faq-card, .faq-tabs, .faq-list, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "feature-rows",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/feature-rows.tsx; agentcard.sh/vault and /issuing (computed: .v7-feat, .v7-feat-stage, .v7-feat-pill, .v7-feats.is-4)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "field",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (.v7-gate-field); live https://www.agentcard.sh/get-started",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "hero",
+      "basis": "composition",
+      "reference": "agentcard-website src/components/v7/immersive-hero.tsx; src/app/globals.css:4100 (.v7-immersive, .v7-pricing-scan); agentcard.sh / (computed)",
+      "notes": "Portable layout uses the live blue ground, scanlines and typography. It does not reproduce the homepage WebGL scene."
+    },
+    {
+      "name": "hold-button",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (--bevel-white); principles (keys sink on press)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "home-page",
+      "basis": "composition",
+      "reference": "agentcard-website src/app/page.tsx; agentcard.sh / (computed)",
+      "notes": "Composed from the audited site components; content and media are supplied by the application."
+    },
+    {
+      "name": "input",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (.v7-gate-field input, .v7-guide-search); live https://www.agentcard.sh/get-started (computed)",
+      "notes": "Form field measured on /get-started. Search appearance comes from guide source code."
+    },
+    {
+      "name": "integrations",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/integrations.tsx; agentcard.sh / (.v7-intg-row, .v7-intg-tab, .v7-intg-stage, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "kbd",
+      "basis": "repository",
+      "reference": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-search-keys kbd, .v7-guide-search kbd)",
+      "notes": "Checked against agentcard-website source. The public /guides routes currently return 404."
+    },
+    {
+      "name": "label",
+      "basis": "live",
+      "reference": "https://agentcard.com/get-started (.v7-gate-field > span); control variant is an extension",
+      "notes": "Default matches /get-started labels. The control variant is an extension for inline checkbox and switch labels."
+    },
+    {
+      "name": "logo-strip",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/products-showcase.tsx (Customers); agentcard.sh / (.v7-customers, .v7-customer, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "logo",
+      "basis": "live",
+      "reference": "agentcard-brand-cli brand/logo (lockup.svg, mark.svg); agentcard.sh / (header a, 160x28)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "marquee",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/site-footer.tsx (.v7-foot-line); src/app/globals.css:5073; agentcard.sh / (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "nav-dock",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/section-dock.tsx; src/app/globals.css:4048 (.v7-dock-nav, .v7-dock-card, .v7-dock-go, .v7-mbar); agentcard.sh / (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "page-header",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css:1808 (.v7-about, .v7-about-head); agentcard.sh /about and /get-started (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "popover",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "pricing-page",
+      "basis": "composition",
+      "reference": "agentcard-website src/app/pricing; agentcard.sh /pricing (computed)",
+      "notes": "Composed from the audited site components; content and media are supplied by the application."
+    },
+    {
+      "name": "pricing",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/pricing-plans.tsx; agentcard.sh /pricing (.plan-tabs, .v7-offer-card, .v7-offer-list, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "product-grid",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/products-showcase.tsx (SolutionCard); agentcard.sh / (.v7-sol, .v7-sol-lead, .v7-sol-half, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "progress",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.plan-tabs, --bevel-blue)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "prose",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css:1808 (.v7-about-sheet), 2199 (.v7-guide-prose); agentcard.sh/terms and /card-terms (computed: .v7-about-head, .v7-prose)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "scroll-area",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (--bevel-white)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "secret-field",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-guide-search, .v7-command button)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "section",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css:1520 (.v7-section), :1585 (.v7-heading-center), :1509 (.v7-eyebrow); agentcard.sh / and /about (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "segmented-control",
+      "basis": "live",
+      "reference": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "select",
+      "basis": "live",
+      "reference": "https://agentcard.com/get-started (native field); Radix menu extends repository guide styles",
+      "notes": "Field measured on /get-started. The live site uses a native browser menu; the portable Radix menu is an extension using the guide selection wash, not a reproduction of an operating-system menu."
+    },
+    {
+      "name": "separator",
+      "basis": "live",
+      "reference": "agentcard-website src/app/globals.css (--line); live https://www.agentcard.sh/get-started",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "sheet",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-guide-nav, .v7-windowbar); live https://www.agentcard.sh (.v7-gate::backdrop)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "site-footer",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/site-footer.tsx; src/app/globals.css:5049 (.v7-foot); agentcard.sh / (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "site-header",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/space-header.tsx; src/app/globals.css:4102 (.v7-space-header, .v7-get-started-face); agentcard.sh / and /pricing (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "skeleton",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (--palette-ink 7 percent)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "sonner",
+      "basis": "repository",
+      "reference": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-toast, .v7-toast-icon), src/components/v7/guide-client.tsx (GuideToaster)",
+      "notes": "Checked against agentcard-website source. The public /guides routes currently return 404."
+    },
+    {
+      "name": "spinner",
+      "basis": "extension",
+      "reference": "Extension using the site text colors and reduced-motion behavior; no standalone spinner found on the current public site",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "sticker-field",
+      "basis": "composition",
+      "reference": "agentcard-website src/components/v7/sticker-rails.tsx, src/components/faq-stickers.tsx; src/app/globals.css:899 (.faq-sticker), 1605 (.v7-sticker-rails); agentcard.sh / and /pricing (computed)",
+      "notes": "Decorative image layout uses the reference sticker treatment. It does not reproduce the draggable WebGL scene."
+    },
+    {
+      "name": "striped-wordmark",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/site-footer.tsx (BarGlyph, .v7-foot-glyphs); src/app/globals.css:5085; agentcard.sh / (computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "switch",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (THE PLAN TABS, --bevel-white)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "table",
+      "basis": "repository",
+      "reference": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-table)",
+      "notes": "Checked against agentcard-website source. The public /guides routes currently return 404."
+    },
+    {
+      "name": "tabs",
+      "basis": "live",
+      "reference": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tab, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "tag-filter",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-guide-prose code, .v7-guide-search-field, .v7-guide-search-results)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "tags-input",
+      "basis": "extension",
+      "reference": "Extension from live https://www.agentcard.sh/get-started (.v7-gate-field input); src/app/globals.css (.v7-guide-prose code)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "team-directory",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/company-page.tsx; src/app/globals.css:1808 (.v7-about); agentcard.sh/about (computed: .v7-about-sec, .v7-about-cell)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "testimonials",
+      "basis": "live",
+      "reference": "agentcard-website src/components/v7/products-showcase.tsx (CaseCard), product-trail.tsx; agentcard.sh / (.v7-cases, .v7-trail, .v7-case, computed)",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "textarea",
+      "basis": "live",
+      "reference": "Published CSS on https://agentcard.com/get-started (.v7-gate-field textarea); the current visible form has no textarea",
+      "notes": "Published form CSS. No textarea is present in the currently visible signup form. Square corners, 84px minimum, 18px Inter, 10px/12px padding, 50% ink placeholder and 2px inset focus."
+    },
+    {
+      "name": "tooltip",
+      "basis": "extension",
+      "reference": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+      "notes": "Uses Agentcard tokens and shared patterns; there is no equivalent standalone control on the public site."
+    },
+    {
+      "name": "updates-feed",
+      "basis": "live",
+      "reference": "agentcard.sh/updates (computed: .v7-upd-feed, .v7-upd-day, .v7-upd-tag, .v7-upd-group, .v7-upd-video); not in the agentcard-website source yet",
+      "notes": "Compared with the current public site and its published styles."
+    },
+    {
+      "name": "window",
+      "basis": "live",
+      "reference": "agentcard.sh /pricing (.v7-offer-card .v7-windowbar) and / (.v7-customer), computed; agentcard-website src/components/v7/window-mark.tsx",
+      "notes": "Compared with the current public site and its published styles."
+    }
+  ]
+}

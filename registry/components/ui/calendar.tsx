@@ -142,11 +142,13 @@ function Calendar(props: CalendarProps) {
   const inView = (d: Date) => months.some((m) => m.getMonth() === d.getMonth() && m.getFullYear() === d.getFullYear());
   const tabDay = [focused, initial, today, month].find((d) => d && inView(d))!;
 
+  // Focus the moved-to day, or with autoFocus the day that takes Tab focus (the selection, else today) on mount.
+  const target = focused ?? tabDay;
   React.useEffect(() => {
-    if (!focusPending.current || !focused) return;
+    if (!focusPending.current || !target) return;
     focusPending.current = false;
-    grid.current?.querySelector<HTMLButtonElement>(`[data-day="${focused.toDateString()}"]`)?.focus();
-  }, [focused, month]);
+    grid.current?.querySelector<HTMLButtonElement>(`[data-day="${target.toDateString()}"]`)?.focus();
+  }, [target, month]);
 
   const move = (d: Date) => {
     if (!inView(d)) setMonth(diffDays(d, month) < 0 ? d : addMonths(d, -(numberOfMonths - 1)));

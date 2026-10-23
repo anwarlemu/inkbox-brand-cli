@@ -35,7 +35,7 @@ function MeasuredFrame({ src, label, width, height, onHeightChange }: { src: str
  */
 export function FramePreview({ src, label }: { src: string; label: string }) {
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
-  const [height, setHeight] = React.useState(480);
+  const [height, setHeight] = React.useState(320);
   return (
     <PreviewPanel
       label={label}

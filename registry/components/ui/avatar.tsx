@@ -5,10 +5,9 @@ import { Avatar as AvatarPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-// The console's avatars (Figma 427:2715). `square` is the rail's person tile (Robert Ligthart, @acme): a 22px tile
-// with 4px corners in the avatar blue and a white 14px initial. `circle` is the agent's portrait (@test-agent is
-// ready!). Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.
-function Avatar({ className, size = "default", shape = "square", ...props }: React.ComponentProps<typeof AvatarPrimitive.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {
+// Circular avatars with an avatar-blue fallback and a white initial; `square` remains an explicit shape option.
+// Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.
+function Avatar({ className, size = "default", shape = "circle", ...props }: React.ComponentProps<typeof AvatarPrimitive.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -63,7 +62,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "relative flex size-8 shrink-0 items-center justify-center rounded-sm bg-subtle font-sans text-caption leading-none text-fg-secondary ring-2 ring-surface group-has-data-[shape=circle]/avatar-group:rounded-pill group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-5.5 group-has-data-[size=sm]/avatar-group:rounded-xs [&>svg]:size-4",
+        "relative flex size-8 shrink-0 items-center justify-center rounded-pill bg-subtle font-sans text-caption leading-none text-fg-secondary ring-2 ring-surface group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-5.5 [&>svg]:size-4",
         className,
       )}
       {...props}

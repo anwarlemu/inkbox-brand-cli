@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 // One message in an agent conversation (Figma 427:2715, the inbox and iMessage): a 32px avatar tile (the initial on
-// the avatar blue, 6px corners, as the rail's "R"), the sender's name in 14px ink with the time in 14px muted beside
+// the avatar blue, circular, as the rail's "R"), the sender's name in 14px ink with the time in 14px muted beside
 // it, the bubbles, and a 12px muted footer (Delivered). Outgoing messages (align end) mirror to the right.
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="message-group" className={cn("flex min-w-0 flex-col gap-4", className)} {...props} />;
@@ -18,7 +18,7 @@ function MessageAvatar({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="message-avatar"
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-sm bg-avatar text-body leading-tight font-medium text-white group-has-data-[slot=message-footer]/message:-translate-y-6 *:[img]:size-full *:[img]:object-cover",
+        "flex size-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-pill bg-avatar text-body leading-tight font-medium text-white group-has-data-[slot=message-footer]/message:-translate-y-6 *:[img]:size-full *:[img]:object-cover",
         className,
       )}
       {...props}

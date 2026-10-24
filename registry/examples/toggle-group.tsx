@@ -22,7 +22,7 @@ export function Preview() {
       <ToggleGroup type="single" value={runner} onValueChange={(v) => v && setRunner(v)} aria-labelledby="runner" className="w-full">
         {RUNNERS.map(({ value, label, icon: Icon }) => (
           <ToggleGroupItem key={value} value={value}>
-            <span className="flex size-6 items-center justify-center rounded-sm bg-surface text-fg-brand shadow-s">
+            <span className="flex size-6 items-center justify-center rounded-pill bg-surface text-fg-brand shadow-s">
               <Icon weight="fill" className="size-4" />
             </span>
             {label}

@@ -69,7 +69,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
 
 /** A 48px tile above the title (the console's pink channel tile): put a filled glyph inside. */
 function AlertDialogMedia({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="alert-dialog-media" className={cn("mb-1.5 inline-flex size-12 items-center justify-center rounded-control bg-pink text-rose [&_svg:not([class*='size-'])]:size-7", className)} {...props} />;
+  return <div data-slot="alert-dialog-media" className={cn("mb-1.5 inline-flex size-12 items-center justify-center rounded-pill bg-pink text-rose [&_svg:not([class*='size-'])]:size-7", className)} {...props} />;
 }
 
 function AlertDialogTitle({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {

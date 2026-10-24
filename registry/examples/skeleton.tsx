@@ -20,7 +20,7 @@ export function Preview() {
 export function Row() {
   return (
     <div className="flex w-full max-w-120 items-center gap-4" aria-busy="true" aria-label="Loading mailbox">
-      <Skeleton className="size-5.5 rounded-xs" />
+      <Skeleton className="size-5.5 rounded-pill" />
       <Skeleton className="h-4 flex-1" />
       <Skeleton className="h-10 w-28 rounded-pill" />
     </div>

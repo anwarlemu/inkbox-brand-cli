@@ -5,7 +5,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 function AgentCard() {
   return (
     <div className="flex gap-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-control bg-avatar text-body-lg font-medium text-white">A</span>
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-pill bg-avatar text-body-lg font-medium text-white">A</span>
       <div className="grid min-w-0 gap-1">
         <p className="text-body font-medium text-fg">@acme</p>
         <p className="text-body text-fg-muted">Support agent for Acme. Created Jul 27, 2026.</p>

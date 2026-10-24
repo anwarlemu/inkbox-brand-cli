@@ -39,7 +39,7 @@ export function Preview() {
 }
 
 function Tile({ children }: { children: React.ReactNode }) {
-  return <span className="flex size-7 shrink-0 items-center justify-center rounded-sm bg-pink text-rose">{children}</span>;
+  return <span className="flex size-7 shrink-0 items-center justify-center rounded-pill bg-pink text-rose">{children}</span>;
 }
 
 export function Channel() {

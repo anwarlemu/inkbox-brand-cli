@@ -416,14 +416,14 @@ function SidebarMenuBadge({ className, variant = "mark", ...props }: React.Compo
   );
 }
 
-/** A row's placeholder while the rail loads: a glyph square and a label of varying width on the lilac. */
+/** A row's placeholder while the rail loads: a glyph circle and a label of varying width on the lilac. */
 function SidebarMenuSkeleton({ className, showIcon = false, ...props }: React.ComponentProps<"div"> & { showIcon?: boolean }) {
   // A width between 50 and 90 percent that differs from row to row but is the same on the server and in the browser.
   const id = React.useId();
   const width = `${50 + (([...id].reduce((sum, c) => (sum * 31 + c.charCodeAt(0)) % 997, 7) % 41))}%`;
   return (
     <div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" className={cn("flex h-9.5 items-center gap-2.25 rounded-pill pr-3 pl-2.75", className)} {...props}>
-      {showIcon && <Skeleton className="size-5.5 rounded-sm" data-sidebar="menu-skeleton-icon" />}
+      {showIcon && <Skeleton className="size-5.5 rounded-pill" data-sidebar="menu-skeleton-icon" />}
       <Skeleton className="h-3.5 max-w-(--skeleton-width) flex-1 rounded-xs" data-sidebar="menu-skeleton-text" style={{ "--skeleton-width": width } as React.CSSProperties} />
     </div>
   );

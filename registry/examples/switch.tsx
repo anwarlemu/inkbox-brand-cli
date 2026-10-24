@@ -17,7 +17,7 @@ export function Preview() {
     <div className="grid w-full max-w-121.5 gap-2">
       {rows.map(({ id, label, icon: Icon, checked, set }) => (
         <div key={id} className="flex h-13 items-center gap-2.5 rounded-pill bg-subtle px-3.5">
-          <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
+          <span className="flex size-7 items-center justify-center rounded-pill bg-pink text-rose">
             <Icon weight="fill" className="size-5" />
           </span>
           <Label htmlFor={id} className="flex-1 text-body-lg font-medium">

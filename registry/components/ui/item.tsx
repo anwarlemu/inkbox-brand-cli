@@ -46,7 +46,7 @@ const itemMediaVariants = cva("flex shrink-0 items-center justify-center gap-2 g
     variant: {
       default: "bg-transparent",
       icon: "text-icon-default [&_svg:not([class*='size-'])]:size-6",
-      image: "size-10 overflow-hidden rounded-control [&_img]:size-full [&_img]:object-cover",
+      image: "size-10 overflow-hidden rounded-pill [&_img]:size-full [&_img]:object-cover",
     },
   },
   defaultVariants: { variant: "default" },

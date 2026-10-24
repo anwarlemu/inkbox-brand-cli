@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 // A file attached to a message or an email, drawn as the console's cards (Figma 427:2715): white with the field edge
-// and 8px corners. The file sits in a pink tile with a filled glyph in rose (the channel tiles of Create Agent
-// Identity); its name is 14px medium ink and its size or status 12px muted in IBM Plex Mono. A file still waiting has a
+// and pill corners on horizontal rows. Vertical cards keep their rounded corners. The file sits in a pink tile
+// with a rose glyph; its name is 14px medium ink and its size or status 12px muted in IBM Plex Mono. A waiting file has a
 // dashed edge, one uploading pulses its name softly, one that failed takes the red edge and a red line.
 const attachmentVariants = cva(
   "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-control border border-line-field bg-surface text-fg transition-[background-color,border-color] duration-150 ease-out has-[>[data-slot=attachment-trigger]]:hover:bg-subtle has-[>[data-slot=attachment-trigger]:focus-visible]:outline-2 has-[>[data-slot=attachment-trigger]:focus-visible]:outline-offset-2 has-[>[data-slot=attachment-trigger]:focus-visible]:outline-focus-ring data-[state=error]:border-danger data-[state=idle]:border-dashed motion-reduce:transition-none",
@@ -19,7 +19,7 @@ const attachmentVariants = cva(
         xs: "gap-2 rounded-sm text-body-sm has-data-[slot=attachment-content]:px-2 has-data-[slot=attachment-content]:py-1.5 has-data-[slot=attachment-media]:p-1.5",
       },
       orientation: {
-        horizontal: "min-w-48 items-center",
+        horizontal: "min-w-48 items-center rounded-pill",
         vertical: "w-28 flex-col has-data-[slot=attachment-content]:w-36",
       },
     },
@@ -34,7 +34,7 @@ function Attachment({ className, state = "done", size = "default", orientation =
 }
 
 const attachmentMediaVariants = cva(
-  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-pink text-rose group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-xs group-data-[state=error]/attachment:bg-subtle group-data-[state=error]/attachment:text-danger [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-7 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-4",
+  "relative flex aspect-square w-10 shrink-0 items-center justify-center overflow-hidden rounded-pill bg-pink text-rose group-data-[orientation=vertical]/attachment:w-full group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[orientation=vertical]/attachment:rounded-sm group-data-[orientation=vertical]/attachment:group-data-[size=xs]/attachment:rounded-xs group-data-[state=error]/attachment:bg-subtle group-data-[state=error]/attachment:text-danger [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5 group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-7 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -81,7 +81,7 @@ function AttachmentAction({ className, variant, size = "icon-sm", ...props }: Re
 /** Makes the whole card open the file: a button (or a link with asChild) stretched over it. */
 function AttachmentTrigger({ className, asChild = false, type, ...props }: React.ComponentProps<"button"> & { asChild?: boolean }) {
   const Comp = asChild ? Slot.Root : "button";
-  return <Comp data-slot="attachment-trigger" type={asChild ? undefined : (type ?? "button")} className={cn("absolute inset-0 z-10 cursor-pointer rounded-control outline-none", className)} {...props} />;
+  return <Comp data-slot="attachment-trigger" type={asChild ? undefined : (type ?? "button")} className={cn("absolute inset-0 z-10 cursor-pointer rounded-control group-data-[orientation=horizontal]/attachment:rounded-pill outline-none", className)} {...props} />;
 }
 
 function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {

@@ -139,7 +139,7 @@ export function Preview() {
             <p className="text-body leading-body text-fg">Channels</p>
             <div className="grid gap-3 rounded-control bg-subtle p-3.5">
               <div className="flex items-center gap-2.5">
-                <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
+                <span className="flex size-7 items-center justify-center rounded-pill bg-pink text-rose">
                   <EnvelopeSimpleIcon weight="fill" className="size-5.5" />
                 </span>
                 <span className="flex-1 text-body-lg font-medium text-fg">Email</span>
@@ -162,7 +162,7 @@ export function Preview() {
                 name={name}
                 render={({ field }) => (
                   <FormItem className="flex h-13 items-center gap-2.5 rounded-pill bg-subtle px-3.5">
-                    <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
+                    <span className="flex size-7 items-center justify-center rounded-pill bg-pink text-rose">
                       <Icon weight="fill" className="size-5.5" />
                     </span>
                     <FormLabel className="flex-1 text-body-lg font-medium">{label}</FormLabel>
@@ -193,7 +193,7 @@ export function Preview() {
           <div className="grid gap-2">
             <p className="text-body leading-body text-fg">Your agent will be reachable at:</p>
             <p className="flex h-10 items-center gap-2.5 rounded-pill bg-subtle px-2.5 text-body text-fg">
-              <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
+              <span className="flex size-7 items-center justify-center rounded-pill bg-pink text-rose">
                 <GlobeIcon weight="fill" className="size-5.5" />
               </span>
               {handle || "acme-support"}.inkboxwire.com

@@ -1057,7 +1057,7 @@
 			},
 			"tailwind": "flex flex-wrap items-center gap-2 p-0.5 rounded-panel bg-subtle",
 			"rules": [
-				"A row of tools or partners is a lilac track of 24px logo tiles with 14px ink names (Where does this agent run?)."
+				"A row of tools or partners is a lilac track of 24px circular logo tiles with 14px ink names (Where does this agent run?)."
 			],
 			"source": "Figma 427:2715 (Modal - Created)"
 		},

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 // The console's select (Figma 427:2715, Create Agent Identity: "Any State" under Phone Number, "Shared" under
 // iMessage): a white 40px field with fully rounded corners and the Shadow/S ring instead of an edge, the value in 14px ink 14px
 // in, a 16px bold caret 12px from the right; the placeholder is the light purple. `size="sm"` is 36px. The list is the
-// console's menu: white, 8px corners, the floating shadow, 4px inside; 36px rows with 8px corners, 14px ink, the
+// console's menu: white, 16px corners, the floating shadow, 4px inside; 36px rows with fully rounded corners, 14px ink, the
 // highlighted row on the lilac and a purple check at the right of the chosen one. It opens and closes with a subtle 150ms fade.
 function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
@@ -50,7 +50,7 @@ function SelectContent({ className, children, position = "popper", align = "cent
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-control bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
+          "relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-panel bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           position === "popper" && "w-full min-w-(--radix-select-trigger-width) data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,
         )}

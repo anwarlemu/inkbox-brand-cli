@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 // Site navigation with panels, extrapolated from the console's nav rows (Figma 427:2715: Agent Workspace, Manage
 // Agents): triggers and links are 38px rows with fully rounded corners, 12px of side padding and a 14px regular ink label, the
 // lilac under the pointer and under an open trigger; the trigger's 16px caret turns over when open (on-screen motion,
-// 200ms in-out). The panel opens below in a raised white viewport (8px corners, the floating shadow) that grows from
+// 200ms in-out). The panel opens below in a raised white viewport (16px corners, the floating shadow) that grows from
 // a short fade, with no animated resizing (centered under the menu on phones, at its start from 768px); links inside are nav rows with a 14px title and a 14px muted line.
 function NavigationMenu({ className, children, viewport = true, ...props }: React.ComponentProps<typeof NavigationMenuPrimitive.Root> & { viewport?: boolean }) {
   return (
@@ -48,7 +48,7 @@ function NavigationMenuContent({ className, ...props }: React.ComponentProps<typ
       data-slot="navigation-menu-content"
       className={cn(
         "top-0 left-0 w-full p-1.5 md:absolute md:w-auto",
-        "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-control group-data-[viewport=false]/navigation-menu:bg-surface group-data-[viewport=false]/navigation-menu:shadow-floating group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-fade-out group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-fade-in",
+        "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-panel group-data-[viewport=false]/navigation-menu:bg-surface group-data-[viewport=false]/navigation-menu:shadow-floating group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-fade-out group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-fade-in",
         "data-[motion^=from-]:animate-fade-in data-[motion^=to-]:animate-fade-out",
         className,
       )}
@@ -63,7 +63,7 @@ function NavigationMenuViewport({ className, ...props }: React.ComponentProps<ty
       <NavigationMenuPrimitive.Viewport
         data-slot="navigation-menu-viewport"
         className={cn(
-          "relative mt-1.5 h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width) max-w-[calc(100vw-2rem)] origin-top md:origin-top-left overflow-hidden rounded-control bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in motion-reduce:transition-none",
+          "relative mt-1.5 h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width) max-w-[calc(100vw-2rem)] origin-top md:origin-top-left overflow-hidden rounded-panel bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in motion-reduce:transition-none",
           className,
         )}
         {...props}

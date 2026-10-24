@@ -9,11 +9,11 @@ import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
 // A searchable choice (extrapolated from the Inkbox console, Figma 427:2715: the select trigger "Any State" and the
-// command menu). The trigger is the select's white 40px key with 8px corners and the Shadow/S ring, the value in 14px ink
-// (the placeholder in the light purple) and the bold caret at the right. It opens the menu panel (white, 8px corners,
+// command menu). The trigger is a white 40px pill with the Shadow/S ring, the value in 14px ink
+// (the placeholder in the light purple) and the bold caret at the right. It opens the menu panel (white, 16px corners,
 // the floating shadow) from the trigger: a 44px search row with a magnifying glass, then 36px rows of 14px ink with the
 // highlighted row on the lilac and a purple check beside the chosen ones; groups are headed in 13px purple. For several
-// values, ComboboxChips is the field itself: lilac chips with 6px corners and an x, and a text input that filters as you
+// values, ComboboxChips is a field with 12px corners: lilac pill chips with an x, and an input that filters as you
 // type (Backspace on an empty input removes the last chip). Moving through the rows is instant: it is done by keyboard.
 
 type Item = { value: string; label: string; disabled?: boolean };
@@ -199,7 +199,7 @@ function ComboboxContent({ className, children, align = "start", sideOffset = 6,
           if (chips && chipsRef.current?.contains(e.target as Node)) e.preventDefault();
         }}
         className={cn(
-          "z-50 w-(--radix-popover-trigger-width) min-w-56 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) overflow-hidden rounded-control bg-surface text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
+          "z-50 w-(--radix-popover-trigger-width) min-w-56 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) overflow-hidden rounded-panel bg-surface text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           className,
         )}
         {...props}
@@ -331,7 +331,7 @@ function ComboboxChips({ className, children, ...props }: React.ComponentProps<"
           e.currentTarget.querySelector("input")?.focus();
           setOpen(true);
         }}
-        className={cn(FIELD, "flex-wrap gap-1.5 py-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
+        className={cn(FIELD, "flex-wrap gap-1.5 rounded-control py-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
         {...props}
       >
         {children}

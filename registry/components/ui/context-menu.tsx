@@ -7,14 +7,14 @@ import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react/ssr";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A right-click menu, extrapolated from the console (Figma 427:2715), drawn as the dropdown menu: the panel is a raised white panel (8px corners, the floating
-// shadow) with 4px of padding; items are 36px rows with 8px corners like the rail's nav rows, a 20px glyph in the
+// A right-click menu, extrapolated from the console (Figma 427:2715), drawn as the dropdown menu: the panel is a raised white panel (16px corners, the floating
+// shadow) with 4px of padding; items are 36px rows with fully rounded corners like the rail's nav rows, a 20px glyph in the
 // action-glyph purple 10px from a 14px ink label, and the lilac under the highlighted row. Section labels are 13px in
 // the label purple ("Channels"), separators the rail's hairline, shortcuts 12px muted, destructive items red. The
 // panel grows out of its trigger from 96 percent with a fade; highlighting a row is instant (menus are used by keyboard
 // and many times a day).
 const CONTENT =
-  "z-50 max-h-(--radix-context-menu-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-control bg-surface p-1 text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in";
+  "z-50 max-h-(--radix-context-menu-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in";
 const ITEM =
   "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle data-[inset]:pl-10.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary";
 

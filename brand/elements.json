@@ -1106,16 +1106,16 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-1)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-panel)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
 				"box-shadow": "var(--ds-shadow-floating)",
 				"font-family": "var(--ds-font-sans)",
 				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "rounded-control bg-surface p-1 font-sans text-body text-fg shadow-floating outline-none",
+			"tailwind": "rounded-panel bg-surface p-1 font-sans text-body text-fg shadow-floating outline-none",
 			"rules": [
-				"Menus and select lists are white with 12px corners, the Shadow/S ring and a soft drop, 4px inside."
+				"Menus and select lists are white with 16px corners, the Shadow/S ring and a soft drop, 4px inside."
 			],
 			"source": "Figma 427:2715 (extrapolated from Shadow/S and the select trigger)",
 			"states": {}

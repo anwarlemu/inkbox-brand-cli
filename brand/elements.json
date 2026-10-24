@@ -1169,11 +1169,11 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-1)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-panel)",
 				"background-color": "var(--ds-color-bg-default)",
 				"box-shadow": "var(--ds-shadow-floating)"
 			},
-			"tailwind": "rounded-control bg-surface p-1 shadow-floating",
+			"tailwind": "rounded-panel bg-surface p-1 shadow-floating",
 			"rules": [
 				"The console has no glass: floating panels are the white menu panel."
 			],
@@ -1214,12 +1214,12 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-3-5)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-panel)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
 				"box-shadow": "var(--ds-shadow-floating)"
 			},
-			"tailwind": "rounded-control bg-surface p-3.5 text-fg shadow-floating",
+			"tailwind": "rounded-panel bg-surface p-3.5 text-fg shadow-floating",
 			"rules": [
 				"Popovers are the white menu panel with 14px inside."
 			],

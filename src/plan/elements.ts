@@ -10,7 +10,7 @@ type El = { tag: string; words: string; heads: string; utilities: string; attrs:
 
 export const UTILITY = /[:[\]/]|^-?(text|bg|border|rounded|p[xytrbl]?|m[xytrbl]?|flex|grid|gap|font|tracking|leading|w|h|size|max|min|shadow|items|justify|self|space|inset|top|left|right|bottom|z|opacity|transition|duration|ease|overflow|block|inline|hidden|relative|absolute|fixed|sticky|col|row|order|ring|outline|underline|no-underline|truncate|whitespace|break|cursor|select|pointer|object|aspect|fill|stroke|translate|scale|rotate|animate|sr|not|group|peer|container|mx|my|uppercase|lowercase|capitalize|italic|antialiased|shrink|grow|basis|place|content|list|divide|backdrop|blur|filter)(-|$)/;
 
-function splitClasses(classes: string[]) {
+export function splitClasses(classes: string[]) {
 	const names: string[] = [];
 	const utilities: string[] = [];
 	for (const c of classes) (UTILITY.test(c) && !/^select-(content|item)$/.test(c) ? utilities : names).push(c.toLowerCase());

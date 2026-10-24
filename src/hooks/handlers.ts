@@ -68,8 +68,9 @@ export function preToolUse(root: string, input: HookInput): HookResult {
 	const state = readState(root);
 	const s = session(root, sessionIdOf(input));
 	for (const write of writes) {
-		const after = checkText(write.relPath, write.after);
-		const before = write.before ? checkText(write.relPath, write.before) : { findings: [], overrides: [] };
+		const colorSurface = state?.colors === 'components' ? surfaceOf(write.relPath, { surface: state.surface, mixed: state.mixed, product: 0, site: 0, reasons: [] }) : undefined;
+		const after = checkText(write.relPath, write.after, colorSurface);
+		const before = write.before ? checkText(write.relPath, write.before, colorSurface) : { findings: [], overrides: [] };
 		const introduced = newFindings(before.findings, after.findings);
 		if (introduced.length) {
 			blocked.push(`${write.relPath}: ${introduced.length} off-brand value${introduced.length > 1 ? 's' : ''}`, ...introduced.slice(0, 25).map(formatFinding));
@@ -102,7 +103,7 @@ export function stop(root: string, input: HookInput): HookResult {
 			s.entry.stopBlocks++;
 			s.save();
 			if (s.entry.stopBlocks > 5) return { stderr: `${cli()}: ${own.length} off-brand values remain after 5 tries. Stopping so a person can look; tell the user.` };
-			return { json: { decision: 'block', reason: [`${cli()} check: ${own.length} values in files you changed are not brand tokens. You are not done.`, ...own.slice(0, 30).map(formatFinding), `Fix each (\`${cli()} check --fix\` applies exact matches), then finish.`].join('\n') } };
+			return { json: { decision: 'block', reason: [`${cli()} check: ${own.length} values in files you changed are not brand tokens. You are not done.`, ...own.slice(0, 30).map(formatFinding), `Fix each (\`${cli()} check --fix\` applies safe token fixes), then finish.`].join('\n') } };
 		}
 		const approvals = result.findings.filter((f) => f.rule === 'override-approval');
 		if (approvals.length) return { stdout: `${cli()}: ${approvals.length} ds-override(s) wait for the user's approval (\`${cli()} approve\`). List them in your summary.` };

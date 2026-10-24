@@ -5,6 +5,9 @@ import { brand, cli, isOwnFile } from '../lib/brand.js';
 import { MARKUP, SCRIPT, STYLES, styledFiles } from '../project/detect.js';
 import { checkIcons, type RawFinding, runRules } from './rules.js';
 import { lineOf, loadSource } from './source.js';
+import { componentColorEdits } from '../convert/components.js';
+import { readState } from '../plan/state.js';
+import { type Surface, surfaceOf } from '../project/surface.js';
 
 export type Finding = { file: string; line: number; column: number; rule: string; message: string; hint: string; snippet: string; fix?: { start: number; end: number; text: string }; overridden?: string };
 export type CheckResult = { files: number; findings: Finding[]; overrides: Finding[]; fixed: number; ms: number };
@@ -12,7 +15,7 @@ export type CheckResult = { files: number; findings: Finding[]; overrides: Findi
 /** Files the check reads: styles, templates and scripts. Native code is converted to brand literals and not checked. */
 export const checkable = (rel: string) => STYLES.test(rel) || MARKUP.test(rel) || SCRIPT.test(rel);
 
-export function checkText(relPath: string, text: string): { findings: Finding[]; overrides: Finding[] } {
+export function checkText(relPath: string, text: string, colorSurface?: Surface): { findings: Finding[]; overrides: Finding[] } {
 	const file = loadSource(relPath, text);
 	const findings: Finding[] = [];
 	const overrides: Finding[] = [];
@@ -24,7 +27,14 @@ export function checkText(relPath: string, text: string): { findings: Finding[];
 	} catch (error) {
 		raw = [{ rule: 'crash', message: `check crashed: ${(error as Error).message}`, hint: 'Report this to the design system owners.', offset: 0 }];
 	}
+	const colorEdits = colorSurface ? componentColorEdits(relPath, text, colorSurface) : undefined;
 	for (const r of raw) {
+		if (r.rule === 'raw-color' && colorEdits) {
+			const edit = colorEdits.find((e) => r.offset >= e.start && r.offset < e.end);
+			if (!edit) continue;
+			r.fix = edit;
+			r.hint = `Use the component color: ${edit.text}.`;
+		}
 		const { line, column } = lineOf(file, r.offset);
 		const finding: Finding = { file: relPath, line, column, rule: r.rule, message: r.message, hint: r.hint, snippet: text.slice(r.offset, r.offset + Math.min(r.length ?? 40, 80)).split('\n')[0], fix: r.fix };
 		const reason = file.overrides.fileReason ?? file.overrides.lines.get(line) ?? file.overrides.lines.get(line - 1);
@@ -65,8 +75,10 @@ function expandPath(root: string, rel: string): string[] {
 	return styledFiles(abs).map((f) => relative(root, join(abs, f)));
 }
 
-export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; changed?: boolean } = {}): CheckResult {
+export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; changed?: boolean; colorSurface?: Surface } = {}): CheckResult {
 	const started = performance.now();
+	const state = readState(root);
+	const colorsFor = (rel: string) => opts.colorSurface ?? (state?.colors === 'components' ? surfaceOf(rel, { surface: state.surface, mixed: state.mixed, product: 0, site: 0, reasons: [] }) : undefined);
 	const all = opts.paths?.length ? opts.paths.flatMap((p) => expandPath(root, p)) : opts.changed ? changedFiles(root) : styledFiles(root);
 	const files = all.filter((rel) => checkable(rel) && !isOwnFile(rel) && existsSync(join(root, rel)));
 	const findings: Finding[] = [];
@@ -74,7 +86,7 @@ export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; 
 	let fixed = 0;
 	for (const rel of files) {
 		let text = readFileSync(join(root, rel), 'utf8');
-		let result = checkText(rel, text);
+		let result = checkText(rel, text, colorsFor(rel));
 		if (opts.fix) {
 			const fixes = result.findings.map((f) => f.fix).filter((f): f is NonNullable<Finding['fix']> => !!f);
 			if (fixes.length) {
@@ -82,7 +94,7 @@ export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; 
 				text = applied.text;
 				fixed += applied.applied;
 				writeFileSync(join(root, rel), text);
-				result = checkText(rel, text);
+				result = checkText(rel, text, colorsFor(rel));
 			}
 		}
 		findings.push(...result.findings);

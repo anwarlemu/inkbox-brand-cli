@@ -474,7 +474,7 @@ export function Help({ children, ...props }: any) { return <PopoverPanel classNa
   it('styles portalled parts without replacing refs, state, handlers, placement or variant conditions', () => {
     const out = restyleOverlays(menu, 'site');
     expect(out.parts).toEqual(['dropdown-menu.Content', 'dropdown-menu.Item', 'popover.Content']);
-    expect(out.text).toContain('rounded-control bg-surface');
+    expect(out.text).toContain('rounded-panel bg-surface');
     expect(out.text).toContain('shadow-floating');
     expect(out.text).toContain('data-[highlighted]:bg-subtle');
     expect(out.text).toContain('max-h-(--radix-dropdown-menu-content-available-height)');

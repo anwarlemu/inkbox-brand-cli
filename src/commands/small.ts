@@ -63,7 +63,7 @@ export function check(paths: string[], opts: { fix?: boolean; changed?: boolean;
 			...result.findings.slice(0, 200).map(formatFinding),
 			result.findings.length > 200 ? `...and ${result.findings.length - 200} more` : '',
 			result.findings.length ? color.red(`${result.findings.length} values are not brand tokens (${result.files} files, ${result.ms}ms).`) : color.green(`Every style value is a brand token (${result.files} files, ${result.ms}ms).`),
-			result.fixed ? `Fixed ${result.fixed} exact matches.` : '',
+			result.fixed ? `Applied ${result.fixed} token fixes.` : '',
 		]
 			.filter(Boolean)
 			.join('\n'),

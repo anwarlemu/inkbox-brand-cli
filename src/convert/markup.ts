@@ -27,6 +27,7 @@ export function convertMarkup(text: string, palette: Palette, stats: Stats) {
 		.replace(/(<script\b(?![^>]*\bsrc=)(?![^>]*type=["'](?:application\/(?:ld\+)?json|text\/template)["'])[^>]*>)([\s\S]*?)(<\/script>)/gi, (all, open: string, js: string, close: string) => `${open}${convertScript(js, palette, stats, {})}${close}`)
 		.replace(/(\sstyle\s*=\s*)(["'])([^"']*)\2/gi, (all, head: string, q: string, css: string, offset: number, whole: string) => (specimen(css, whole.slice(offset, offset + 600), whole) ? all : `${head}${q}${convertCss(css, palette, stats)}${q}`))
 		.replace(/(\s(?:fill|stroke|stop-color|color)\s*=\s*)(["'])([^"']+)\2/gi, (all, head: string, q: string, value: string) => {
+			if (palette.preserveColors) return all;
 			const rgba = parseColor(value);
 			if (!rgba) return all;
 			stats.colors++;

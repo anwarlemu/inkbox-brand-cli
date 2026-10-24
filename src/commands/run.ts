@@ -18,7 +18,7 @@ import { type Surface, profile, surfaceOf } from '../project/surface.js';
 import { type State, readState, writeState } from '../plan/state.js';
 import { mainScreens, pickMain, renderBatch, renderTask, taskStatus, touchNote } from '../plan/tasks.js';
 
-// The one command: the first run installs the brand and converts every style value; every run after that prints the
+// The one command: the first run installs the brand and applies component colors and style scales; every run after that prints the
 // next task, until each main screen passes its review and the whole project passes the check.
 
 export type RunOptions = { surface?: string; theme?: string; redo?: boolean; dryRun?: boolean; install?: boolean; json?: boolean };
@@ -90,14 +90,14 @@ function setUp(root: string, opts: RunOptions, previous?: State) {
 	if (!opts.dryRun) recordStyledSelectors(root, layer.styled);
 	const dots = project.framework !== 'native' && (surface === 'site' || mixed) && brand().touches.hero?.script ? installDots(w, project) : [];
 	installAgents(w);
-	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true }).fixed;
+	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true, colorSurface: project.framework === 'native' ? undefined : surface }).fixed;
 	const screens = listScreens(detectProject(root), styledFiles(root), { ...found, surface, mixed });
 	const shell = shellFiles(project, files);
 	const main = pickMain(root, screens, shell);
 	// A site's home gets the brand's touches now (brand.json); the agent only checks them.
 	const touched = !opts.dryRun && screens[0] && (surface === 'site' || mixed) && project.framework !== 'native' ? installTouches(new Writer(root), screens[0].files.filter((f) => !shell.includes(f) || /home|index/i.test(f))) : [];
 	if (screens[0]) screens[0].files = [...new Set([...screens[0].files, ...shell])];
-	const state: State = { version: 2, surface, mixed, theme, appliedAt: new Date().toISOString(), baseUrl: previous?.baseUrl, screens, main, marked: previous?.marked ?? [], skipped: previous?.skipped ?? {}, reviews: previous?.reviews ?? {} };
+	const state: State = { version: 2, colors: project.framework === 'native' ? undefined : 'components', surface, mixed, theme, appliedAt: new Date().toISOString(), baseUrl: previous?.baseUrl, screens, main, marked: previous?.marked ?? [], skipped: previous?.skipped ?? {}, reviews: previous?.reviews ?? {} };
 	if (!opts.dryRun) writeState(root, state);
 	const left = opts.dryRun ? undefined : runCheck(root);
 	const s = converted.stats;
@@ -107,7 +107,8 @@ function setUp(root: string, opts: RunOptions, previous?: State) {
 		[
 			color.bold(`${brand().name} design system ${opts.dryRun ? 'dry run (nothing written)' : previous ? 'applied again' : 'installed and applied'}.`),
 			`  This is ${mixed ? 'a site with product screens (each route gets its own look)' : surface === 'product' ? 'a product: an app people work in' : 'a site: pages people read and act on'}. Evidence: ${found.reasons.slice(0, 4).join('; ') || 'none, so it is treated as a site'}.${opts.surface || !hasProduct() ? '' : ` Wrong? \`${cli()} --surface ${surface === 'site' ? 'product' : 'site'}\`.`}`,
-			`  Converted ${values} style values in ${converted.written.length} files to brand tokens${converted.palette.mode === 'dark' && theme !== 'dark' ? ' (the dark interface becomes the brand\'s light one)' : ''}; ${fixed} more matched exactly.${left ? ` ${left.findings.length} left to change by hand, listed in the tasks.` : ''}`,
+			`  Converted ${values} style values in ${converted.written.length} files to brand tokens${converted.palette.mode === 'dark' && theme !== 'dark' ? ' (identified dark surfaces take the brand\'s light theme)' : ''}; ${fixed} additional token fixes.${left ? ` ${left.findings.length} left to change by hand, listed in the tasks.` : ''}`,
+			...(project.framework === 'native' ? [] : ['  Color tokens apply to identified components and their states. Shared palettes, artwork, charts and unrelated colors are preserved.']),
 			styles.brandCss ? `  Brand stylesheet: ${styles.brandCss}${styles.imported ? `, imported by ${styles.imported}` : styles.linked.length ? `, linked from ${styles.linked.length} pages` : ''}; fonts load ${styles.fonts === 'brand.css' ? 'with it' : `through ${styles.fonts}`}.${dots.length ? ` The hero script loads in ${dots.length} layout${dots.length > 1 ? 's' : ''}.` : ''}` : '  Native app: colors now use the brand values in its own code.',
 			...(swap?.decisions.length ? [`  Identified ${swap.decisions.length} components: ${swap.swapped.length} now render the library's (same names and props), ${swap.styled.length} take a library item's look, ${swap.decisions.filter((d) => d.action === 'refine').length} keep their own with brand values. Each decision and why: .ds/components.json.${swap.utils ? ` ${swap.utils} now merges the brand's classes.` : ''}${swap.checked ? ' The app type-checks as before.' : ''}`] : []),
 			...(swap?.reverted.length ? [color.yellow(`  Kept the app's own ${swap.reverted.map((f: string) => f.split('/').pop()!.replace(/\.(tsx|jsx)$/, '')).join(', ')}: the library's version did not type-check where it is used, so it is restyled instead.`)] : []),

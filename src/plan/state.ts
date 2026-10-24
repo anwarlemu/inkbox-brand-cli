@@ -10,6 +10,8 @@ export type Review = { at: string; url: string; scores: Scores; passed: boolean;
 
 export type State = {
 	version: 2;
+	/** Component colors are applied locally; unrelated palettes/content keep their own colors. */
+	colors?: 'components';
 	surface: Surface;
 	mixed: boolean;
 	theme: 'light' | 'dark';

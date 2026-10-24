@@ -43,6 +43,7 @@ export function convertClasses(value: string, palette: Palette, stats: Stats, th
 			stats.spacing++;
 			return `${variants}${theme ? 'max-w-(--ds-frame-column)' : 'max-w-[var(--ds-frame-column)]'}`;
 		});
+	if (palette.preserveColors) return value;
 	const bgClass = value.match(/(?:^|\s)bg-((?:[a-z]+-(?:50|[1-9]00|950))|\[#[0-9a-fA-F]{3,8}\])(?![\w-])/)?.[1];
 	const background = bgClass ? (bgClass.startsWith('[') ? parseColor(bgClass.slice(1, -1)) : tailwindColor(bgClass)) : undefined;
 	return value.replace(/(?<![\w-])((?:[\w-]+:|\[[^\]\s]+\]:)*)(!?)(-?)(bg|text|border(?:-[xytrblse])?|ring(?:-offset)?|outline|divide|fill|stroke|from|via|to|decoration|placeholder|caret|accent)-((?:[a-z]+-(?:50|[1-9]00|950))|white|black|\[#[0-9a-fA-F]{3,8}\])(?:\/(\d{1,3}|\[[\d.]+%?\]))?(?![\w-])/g, (all, variants: string, bang: string, neg: string, prefix: string, color: string, opacity?: string) => {
@@ -100,6 +101,7 @@ export function convertScript(text: string, palette: Palette, stats: Stats, opts
 	if (opts.tailwind) next = next.replace(/(["'`])((?:(?!\1)[^\n\\])*)\1/g, (all, q: string, body: string) => (/(?:^|\s|:)(?:bg|text|border|ring|fill|stroke|from|via|to|divide|outline|decoration|placeholder|caret|accent)-/.test(body) ? `${q}${convertClasses(body, palette, stats, opts.tailwind === 'theme')}${q}` : all));
 	// A 3D or drawn scene's colors (terrain, materials, shaders, particles) are what it shows, not its styling; only
 	// the plain white or black it draws for a dark page flips with the page.
+	if (palette.preserveColors) return next;
 	if (SCENE.test(text)) return flipNeutrals(next, palette, opts.theme ?? 'site');
 	return convertLiterals(next, palette, stats, (t) => brandLiteral(t, opts.theme ?? 'site'));
 }

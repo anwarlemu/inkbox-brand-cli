@@ -90,7 +90,10 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 
 Running the CLI without a subcommand applies the design system to existing code. It can replace matching React
 components, convert style values, install styles and fonts, and add agent rules and checks. Review the diff before
-continuing. This conversion preserves existing copy and behavior.
+continuing. This conversion preserves existing copy and behavior. It installs color tokens and applies them at
+identified component usage sites, including supported variants and states. Shared palette definitions, chart data,
+artwork, gradients and unrelated colors stay intact. Unknown or dynamic color roles are left for review. The
+installed checks follow the same color scope, including `check --fix`.
 
 ```sh
 npx inkbox-ds --dry-run

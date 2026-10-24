@@ -98,14 +98,14 @@ function convertDecls(css: string, palette: Palette, stats: Stats, selector: str
 		const isVar = p.startsWith('--');
 		const pal = isVar && palette.modes?.get(p) ? themed(palette, palette.modes.get(p)) : palette;
 		let next = !isVar && SCALED.test(p) && palette.vars ? resolveSiteVars(value, palette.vars) : value;
-		if (palette.vars)
+		if (palette.vars && !palette.preserveColors)
 			next = next.replace(/\b(rgba?)\(\s*var\((--[\w-]+)\)\s*(?:[/,]\s*([\d.]+%?)\s*)?\)/g, (m, fn: string, name: string, alpha?: string) => {
 				const channels = palette.vars?.get(name)?.match(/^(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})$/);
 				if (!channels) return m;
 				const a = alpha ? (alpha.endsWith('%') ? Number(alpha.slice(0, -1)) / 100 : Number(alpha)) : 1;
 				return `rgba(${channels[1]}, ${channels[2]}, ${channels[3]}, ${a})`;
 			});
-		if (!/var\(--ds-/.test(next) || /,/.test(next)) {
+		if (!palette.preserveColors && (!/var\(--ds-/.test(next) || /,/.test(next))) {
 			const series = SERIES_NAME.test(isVar ? p : selector) ? (isVar ? p : selector) : undefined;
 			next = next.replace(COLOR_IN_VALUE, (c) => {
 				const rgba = parseColor(c);
@@ -117,7 +117,7 @@ function convertDecls(css: string, palette: Palette, stats: Stats, selector: str
 				return on ? cssColor(on) : mapColor(rgba, family, pal, series, isVar ? p : `${selector} ${p}`);
 			});
 		}
-		if ((p === 'box-shadow' || (isVar && /shadow/.test(p))) && /px/.test(next)) {
+		if (!palette.preserveColors && (p === 'box-shadow' || (isVar && /shadow/.test(p))) && /px/.test(next)) {
 			const shadow = mapShadow(next);
 			if (shadow) {
 				stats.shadows++;
@@ -158,7 +158,7 @@ function convertDecls(css: string, palette: Palette, stats: Stats, selector: str
 		} else if (/^(padding|margin|gap|row-gap|column-gap)(-[a-z]+)*$/.test(p) && /\d(px|rem)/.test(next) && !/calc|clamp|min\(|max\(/.test(next)) {
 			stats.spacing++;
 			next = mapLengths(next, scales().space);
-		} else if (/^(-webkit-)?filter$/.test(p) && palette.mode === 'dark' && palette.target !== 'dark' && /\binvert\((1|100%)?\)/.test(next)) {
+		} else if (!palette.preserveColors && /^(-webkit-)?filter$/.test(p) && palette.mode === 'dark' && palette.target !== 'dark' && /\binvert\((1|100%)?\)/.test(next)) {
 			// Logos whitened for the dark page are drawn dark on the light one.
 			stats.colors++;
 			next = next.replace(/\binvert\((1|100%)?\)/g, 'invert(0)');

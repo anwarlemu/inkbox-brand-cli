@@ -5,14 +5,14 @@ import { cn } from "@/lib/utils";
 
 // The console's cards (Figma 427:2715). `default` is the webhook Trigger and Delivery card: white, a 1px #D2C9DB edge,
 // 12px corners, 14px in; a 14px ink title led by a 16px filled glyph and a 14px muted description. `raised` is the white
-// panel lifted by Shadow/S (a table's body). `muted` is the dialog's channel card: the lilac with no edge, 12px above and
+// panel lifted by Shadow/S (a table's body). `muted` is the dialog's channel card: lilac, 24px corners, no edge, 12px above and
 // below, a 16px medium title (52px tall with a 28px glyph tile). Size sm tightens the insides to 12px.
 const cardVariants = cva("group/card flex flex-col gap-3 rounded-control py-3.5 font-sans text-body leading-body text-fg data-[size=sm]:gap-2 data-[size=sm]:py-3", {
   variants: {
     variant: {
       default: "border border-line-field bg-surface",
       raised: "bg-surface shadow-s",
-      muted: "bg-subtle py-3",
+      muted: "rounded-dialog bg-subtle py-3",
     },
   },
   defaultVariants: { variant: "default" },

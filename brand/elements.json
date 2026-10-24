@@ -258,7 +258,7 @@
 			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-control bg-surface",
 			"rules": [
 				"White with the field edge and 12px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
-				"A card inside a dialog sits on the lilac with no edge (a channel card)."
+				"A channel card inside a dialog sits on the lilac with no edge and 24px corners (rounded-dialog)."
 			],
 			"source": "Figma 427:2715 (Webhooks: Trigger, Delivery, Response contract)"
 		},
@@ -303,7 +303,7 @@
 			},
 			"tailwind": "p-3.5 rounded-control bg-subtle",
 			"rules": [
-				"A grouped block on the lilac with 12px corners (Initialize vault, a channel card)."
+				"A grouped block on the lilac with 12px corners (Initialize vault)."
 			],
 			"source": "Figma 427:2715 (Vault: Initialize vault)"
 		},

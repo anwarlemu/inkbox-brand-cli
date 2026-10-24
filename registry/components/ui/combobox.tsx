@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 // (the placeholder in the light purple) and the bold caret at the right. It opens the menu panel (white, 16px corners,
 // the floating shadow) from the trigger: a 44px search row with a magnifying glass, then 36px rows of 14px ink with the
 // highlighted row on the lilac and a purple check beside the chosen ones; groups are headed in 13px purple. For several
-// values, ComboboxChips is a field with 12px corners: lilac pill chips with an x, and an input that filters as you
+// values, ComboboxChips is a field with 24px corners: lilac pill chips with an x, and an input that filters as you
 // type (Backspace on an empty input removes the last chip). Moving through the rows is instant: it is done by keyboard.
 
 type Item = { value: string; label: string; disabled?: boolean };
@@ -331,7 +331,7 @@ function ComboboxChips({ className, children, ...props }: React.ComponentProps<"
           e.currentTarget.querySelector("input")?.focus();
           setOpen(true);
         }}
-        className={cn(FIELD, "flex-wrap gap-1.5 rounded-control py-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
+        className={cn(FIELD, "flex-wrap gap-1.5 rounded-dialog py-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
         {...props}
       >
         {children}

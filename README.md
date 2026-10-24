@@ -4,6 +4,32 @@ Components, design tokens and a CLI for building Inkbox pages and interfaces.
 
 Reference: https://inkbox-ds.vercel.app
 
+## Consistent CLI workflow
+
+```sh
+npx inkbox-ds info --json
+npx inkbox-ds search button --json
+npx inkbox-ds view button --json
+npx inkbox-ds add button card --dry-run --json
+npx inkbox-ds add button card --json
+npx inkbox-ds add button --diff
+```
+
+For a new app: `npx -y github:anwarlemu/inkbox-brand-cli#release create --template vite --name my-app`.
+For an existing app: `init` sets up the theme; `apply --dry-run` previews a requested restyle.
+`add` also installs agent instructions and portable Claude/Codex skills, so a separate init is optional.
+Use `--cwd <app>` for a different directory. Existing components.json aliases, TS/JS output, local helpers, unrelated registries and local component edits are preserved.
+
+The standard registry works with shadcn 4.22.1:
+
+```sh
+npx inkbox-ds init
+npx inkbox-ds shadcn add @inkbox-ds/theme @inkbox-ds/button
+npx inkbox-ds mcp init --client claude
+```
+
+Include `theme` explicitly when using upstream shadcn to update existing theme aliases. Native `add` handles it automatically. Shared workspace installation, presets, migrations, registry authoring and MCP use the pinned upstream implementation via `shadcn <args...>`. Bundled component discovery works offline; installation needs network access for missing dependencies. Agent hosts must load their MCP configuration before it is available in a session.
+
 ## Install the CLI
 
 Run once from the project root:
@@ -25,14 +51,14 @@ The same guide is installed at `.ds/agent-guide.md`. Agents that do not auto-loa
 
 ## Add components
 
-Run `add` from the target app root. Components require React 19.2+, Tailwind CSS 4, and the `@/*` source alias. For other frameworks, run the bare CLI command to apply the brand instead. In a React and Tailwind 4 app, add the components the page needs:
+Run `add` from the target app root. Components require React 19.2+, Tailwind CSS 4, and valid project configuration. For other frameworks, run the bare CLI command to apply the brand instead. In a React and Tailwind 4 app, add the components the page needs:
 
 ```sh
 npx inkbox-ds add button card field input
 ```
 
 The CLI copies component source, installs dependencies and adds the theme. It uses the project’s `src` folder and
-`@` alias when configured. Read each component’s examples and usage notes before changing it.
+configured aliases and components.json paths. Read each component’s examples and usage notes before changing it.
 
 ```sh
 npx inkbox-ds list --json
@@ -88,7 +114,7 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 
 ## Update an existing interface
 
-Running the CLI without a subcommand applies the design system to existing code. It can replace matching React
+The `apply` command restyles existing code, with color changes scoped to recognized components. It can replace matching React
 components, convert style values, install styles and fonts, and add agent rules and checks. Review the diff before
 continuing. This conversion preserves existing copy and behavior. It installs color tokens and applies them at
 identified component usage sites, including supported variants and states. Shared palette definitions, chart data,
@@ -96,8 +122,8 @@ artwork, gradients and unrelated colors stay intact. Unknown or dynamic color ro
 installed checks follow the same color scope, including `check --fix`.
 
 ```sh
-npx inkbox-ds --dry-run
-npx inkbox-ds
+npx inkbox-ds apply --dry-run
+npx inkbox-ds apply
 ```
 
 Subsequent runs report the next screen to review. `--redo` repeats conversion after an update. Component decisions
@@ -128,3 +154,5 @@ the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without
 
 Run `npm run ci` for the CLI tests and registry checks, `npm run build --workspace www` for the docs build,
 and `DOCS_URL=http://localhost:3000 npm run test:docs` for the browser checks against a running production build.
+
+The explicit `apply` command scopes color conversion to recognized components and preserves unrelated artwork and shared palette data. The legacy bare-command conversion remains for compatibility; use `apply` for new restyling tasks.

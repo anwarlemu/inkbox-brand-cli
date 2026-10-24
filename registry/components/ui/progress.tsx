@@ -1,21 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { Progress as ProgressPrimitive } from "radix-ui";
+import { Progress as ChakraProgress } from "@chakra-ui/react";
 
 import { cn } from "@/lib/utils";
 
 // How far along something is (mailbox storage, an upload): an 8px lilac pill track with the purple filling it from the
 // left. A new value slides the fill there (300ms, the strong ease-out); with reduced motion it jumps.
-function Progress({ className, value, ...props }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+function Progress({ className, value, ...props }: React.ComponentProps<typeof ChakraProgress.Root>) {
   return (
-    <ProgressPrimitive.Root data-slot="progress" value={value} className={cn("relative h-2 w-full overflow-hidden rounded-pill bg-subtle", className)} {...props}>
-      <ProgressPrimitive.Indicator
+    <ChakraProgress.Root unstyled data-slot="progress" value={value} className={cn("relative h-2 w-full overflow-hidden rounded-pill bg-subtle", className)} {...props}>
+      <ChakraProgress.Track className="size-full overflow-hidden rounded-pill bg-transparent">
+      <ChakraProgress.Range
         data-slot="progress-indicator"
         className="size-full flex-1 rounded-pill bg-primary transition-[translate] duration-300 ease-out motion-reduce:transition-none"
         style={{ translate: `-${100 - (value ?? 0)}%` }}
       />
-    </ProgressPrimitive.Root>
+      </ChakraProgress.Track>
+    </ChakraProgress.Root>
   );
 }
 

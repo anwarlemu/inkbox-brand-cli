@@ -1,6 +1,7 @@
+import { componentConfig, componentFile, resolveAlias, tsConfig } from '../install/config.js';
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { brand, tokens } from '../lib/brand.js';
 import { styledFiles, type Project } from '../project/detect.js';
 import type { Surface } from '../project/surface.js';
@@ -34,8 +35,9 @@ function readJson(path: string) {
 /** Where the library's interface components go (components/ds, apart from the app's own), and the aliases they use. */
 export function componentLayout(project: Project): { uiDir: string; aliases: Aliases } | undefined {
 	if (!project.hasAlias) return undefined;
-	const base = project.srcDir ? 'src/' : '';
-	return { uiDir: `${base}components/ds`, aliases: { components: '@/components', ui: '@/components/ds', utils: '@/lib/utils', lib: '@/lib', hooks: '@/hooks' } };
+	const config = componentConfig(project.root, project);
+	const aliases = { ...config.aliases, ui: `${config.aliases.components}/ds`, utils: `${config.aliases.lib}/${brand().bin}-utils` };
+	return { uiDir: relative(project.root, resolveAlias(project.root, aliases.ui)), aliases };
 }
 
 /** The library's file, with its imports rewritten to the app's aliases. */
@@ -93,8 +95,15 @@ export function patchUtils(text: string): string | undefined {
 
 function typeErrors(root: string): Set<string> | undefined {
 	if (!existsSync(join(root, 'tsconfig.json')) || !existsSync(join(root, 'node_modules', 'typescript'))) return undefined;
-	const run = spawnSync(process.execPath, [join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '--noEmit', '-p', 'tsconfig.json'], { cwd: root, encoding: 'utf8', timeout: 180_000 });
-	return new Set(`${run.stdout}`.split('\n').filter((l) => /error TS\d+/.test(l)));
+	const references = tsConfig(root)?.config.references ?? [];
+	const configs = references.length ? references.map(reference => { const path = resolve(root, reference.path); return path.endsWith('.json') ? path : join(path, 'tsconfig.json'); }) : ['tsconfig.json'];
+	const errors = new Set<string>();
+	for (const config of configs) {
+		const run = spawnSync(process.execPath, [join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '--noEmit', '--pretty', 'false', '-p', config], { cwd: root, encoding: 'utf8', timeout: 180_000 });
+		if (run.status === null) return undefined;
+		for (const line of `${run.stdout}\n${run.stderr}`.split('\n').filter(line => /error TS\d+/.test(line))) errors.add(line);
+	}
+	return errors;
 }
 
 const pascal = (name: string) => name.replace(/(^|-)([a-z])/g, (_, __, c: string) => c.toUpperCase());
@@ -159,20 +168,10 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			if (d && d.type !== 'theme') install(d);
 		}
 		for (const f of item.files ?? []) {
-			const rel = f.path.startsWith('components/ui/') ? `${layout.uiDir}/${f.path.slice('components/ui/'.length)}` : `${base}${f.path}`;
-			const exists = existsSync(join(root, rel));
-			if (f.path === 'lib/utils.ts' && exists) {
-				const patched = patchUtils(readFileSync(join(root, rel), 'utf8'));
-				if (patched) {
-					write(rel, patched);
-					result.utils = rel;
-					for (const d of ['clsx', 'tailwind-merge']) if (!installed[d]) packages.add(d);
-				}
-				continue;
-			}
-			if (!exists) {
-				write(rel, retarget(f.content ?? '', layout.aliases));
-				result.added.push(rel);
+			const file = componentFile(root, f, { ...componentConfig(root, project), aliases: layout.aliases });
+			if (!existsSync(join(root, file.path))) {
+				write(file.path, file.content);
+				result.added.push(file.path);
 			}
 		}
 	};

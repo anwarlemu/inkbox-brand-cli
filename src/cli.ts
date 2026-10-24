@@ -3,9 +3,8 @@ import { join } from 'node:path';
 import { Command } from 'commander';
 import { review, snapshot } from './commands/review.js';
 import { run } from './commands/run.js';
-import { init } from './commands/init.js';
-import { guide, show } from './commands/guide.js';
-import { add, list } from './commands/add.js';
+import { guide } from './commands/guide.js';
+import { workflow } from './commands/workflow.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
@@ -28,12 +27,8 @@ program
 	.option('--json', 'JSON output')
 	.action((opts) => run(opts));
 
-program.command('init').description('Install styles, fonts and agent instructions without converting existing UI').option('--dry-run', 'show planned changes').action((_opts, command) => init(command.optsWithGlobals()));
 program.command('guide').description('Read the portable agent workflow').action((_opts, command) => guide(command.optsWithGlobals()));
-program.command('show <item>').description('Read a component’s exports, examples, rules and exact source').action((item, _opts, command) => show(item, command.optsWithGlobals()));
 
-program.command('add <items...>').description('Copy library components into a React + Tailwind project, with what they need').option('--overwrite', 'replace files that already exist').option('--dry-run', 'show what would be written').action((items, _opts, command) => add(items, command.optsWithGlobals()));
-program.command('list').description(`Every component, ${hasProduct() ? 'block' : 'section'} and visual in the library`).option('--json', 'JSON output').action((_opts, command) => list(command.optsWithGlobals()));
 program.command('review [url]').description('Screenshot a page at desktop and phone width and score it against the brand; a task is done when it passes').option('--threshold <n>', 'minimum score').option('--submit <dir>', 'record the scorecard an agent wrote itself (when no separate reviewer is available)').option('--all', 'review every task screen that is not done yet, at once (pass the app\'s address)').option('--any', 'review a page that is not a task').option('--json', 'JSON output').action((url, _opts, command) => review(url, command.optsWithGlobals()));
 program.command('look [target]').description('The brand styling (CSS, Tailwind, states) for every element in a file, or for one element kind').option('--surface <surface>', 'site or product').option('--json', 'JSON output').action((target, _opts, command) => look(target, command.optsWithGlobals()));
 program.command('check [files...]').description('Check component colors and style tokens (used by hooks, pre-commit and CI)').option('--fix', 'apply safe token fixes').option('--changed', 'only files changed in git').option('--json', 'JSON output').action((files, _opts, command) => check(files ?? [], command.optsWithGlobals()));
@@ -71,6 +66,8 @@ program
 		if (result.stderr) process.stderr.write(`${result.stderr}\n`);
 		process.exit(result.exitCode ?? 0);
 	});
+
+workflow(program);
 
 program.parseAsync().catch((error: Error) => {
 	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);

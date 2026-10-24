@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Slot } from "radix-ui";
+import { chakra } from "@chakra-ui/react";
 import { Controller, FormProvider, useFormContext, useFormState, type ControllerProps, type FieldPath, type FieldValues } from "react-hook-form";
 
 import { Label } from "@/components/ui/label";
@@ -57,9 +57,9 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) 
 }
 
 /** Hands the field's id, its description and message ids and aria-invalid to the one control inside it. */
-function FormControl(props: React.ComponentProps<typeof Slot.Root>) {
+function FormControl(props: React.ComponentProps<typeof chakra.div>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-  return <Slot.Root data-slot="form-control" id={formItemId} aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`} aria-invalid={!!error} {...props} />;
+  return <chakra.div data-slot="form-control" id={formItemId} aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`} aria-invalid={!!error} {...props} />;
 }
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {

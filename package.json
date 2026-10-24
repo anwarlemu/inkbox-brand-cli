@@ -1,6 +1,6 @@
 {
   "name": "inkbox-ds",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Components, design tokens and checks for building Inkbox pages and interfaces.",
   "type": "module",
   "bin": {
@@ -22,7 +22,7 @@
     "ci": "npm run build && node scripts/ci-limits.mjs && npm run registry && vitest run",
     "prepare": "node -e \"process.exit(process.env.VERCEL ? 0 : 1)\" || (tsc -p tsconfig.json && node scripts/build-brand.mjs)",
     "release": "sh scripts/release.sh",
-    "registry": "tsx scripts/build-registry.ts",
+    "registry": "tsx scripts/build-registry.ts && node scripts/build-shadcn.mjs",
     "doctor": "npm run doctor --workspace www --",
     "test:docs": "node scripts/check-docs.mjs",
     "test:library": "node scripts/check-library.mjs",
@@ -33,7 +33,11 @@
     "@babel/parser": "^7.29.9",
     "commander": "^15.0.0",
     "picocolors": "^1.1.1",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "get-tsconfig": "4.14.3",
+    "@babel/core": "7.29.7",
+    "@babel/plugin-transform-typescript": "7.29.9",
+    "diff": "^8.0.2"
   },
   "optionalDependencies": {
     "playwright-core": "^1.63.0"
@@ -44,7 +48,9 @@
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^5.0.3",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "@types/babel__core": "^7.20.5",
+    "postcss": "^8.5.23"
   },
   "workspaces": [
     "apps/www"

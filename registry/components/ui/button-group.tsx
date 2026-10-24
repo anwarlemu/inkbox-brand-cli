@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "radix-ui";
+import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -27,7 +27,7 @@ function ButtonGroup({ className, orientation, ...props }: React.ComponentProps<
 }
 
 function ButtonGroupText({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "div";
+  const Comp = asChild ? chakra.div : "div";
   return (
     <Comp
       data-slot="button-group-text"

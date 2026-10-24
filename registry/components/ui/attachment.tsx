@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "radix-ui";
+import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { Button } from "@/components/ui/button";
@@ -80,7 +80,7 @@ function AttachmentAction({ className, variant, size = "icon-sm", ...props }: Re
 
 /** Makes the whole card open the file: a button (or a link with asChild) stretched over it. */
 function AttachmentTrigger({ className, asChild = false, type, ...props }: React.ComponentProps<"button"> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? chakra.button : "button";
   return <Comp data-slot="attachment-trigger" type={asChild ? undefined : (type ?? "button")} className={cn("absolute inset-0 z-10 cursor-pointer rounded-control group-data-[orientation=horizontal]/attachment:rounded-pill outline-none", className)} {...props} />;
 }
 

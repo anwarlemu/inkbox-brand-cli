@@ -1,7 +1,9 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 import { isOwnFile } from '../lib/brand.js';
 import { walkFiles } from '../lib/glob.js';
+import { readComponentConfig, tsConfig } from '../install/config.js';
 
 // What kind of project this is, read from its files: stack, styling, where its main stylesheet and base layouts are.
 
@@ -46,23 +48,28 @@ export function detectProject(root: string): Project {
 	const native = nativePlatform(root);
 	const framework: Project['framework'] = deps.next ? 'next' : deps.astro ? 'astro' : deps.nuxt ? 'nuxt' : deps['@sveltejs/kit'] ? 'sveltekit' : deps.vite ? 'vite' : deps.react ? 'react' : native ? 'native' : existsSync(join(root, 'index.html')) || readdirSync(root).some((f) => f.endsWith('.html')) ? 'static' : 'other';
 	const tw = deps.tailwindcss ?? deps['@tailwindcss/postcss'] ?? deps['@tailwindcss/vite'];
-	const tsconfig = ['tsconfig.json', 'jsconfig.json'].map((f) => join(root, f)).find(existsSync);
+	let tailwindMajor = tw ? Number(tw.match(/(\d+)/)?.[1]) || undefined : undefined;
+	if (tw && !tailwindMajor) {
+		try { tailwindMajor = Number(createRequire(join(root, 'package.json'))('tailwindcss/package.json').version.split('.')[0]); } catch {}
+	}
+	const config = readComponentConfig(root);
+	const compiler = tsConfig(root);
 	const appDir = ['src/app', 'app'].find((d) => existsSync(join(root, d)));
 	const publicDir = ['public', 'static'].find((d) => existsSync(join(root, d))) ?? (existsSync(join(root, 'index.html')) ? '.' : undefined);
 	const project: Project = {
 		root,
 		framework,
-		typescript: existsSync(join(root, 'tsconfig.json')),
-		tailwindMajor: tw ? Number(tw.match(/(\d+)/)?.[1]) || undefined : undefined,
+		typescript: config?.tsx ?? existsSync(join(root, 'tsconfig.json')),
+		tailwindMajor,
 		native,
-		packageManager: existsSync(join(root, 'pnpm-lock.yaml')) ? 'pnpm' : existsSync(join(root, 'yarn.lock')) ? 'yarn' : existsSync(join(root, 'bun.lockb')) || existsSync(join(root, 'bun.lock')) ? 'bun' : 'npm',
+		packageManager: /^(npm|pnpm|yarn|bun)@/.test(pkg.packageManager ?? '') ? pkg.packageManager.split('@')[0] : existsSync(join(root, 'pnpm-lock.yaml')) ? 'pnpm' : existsSync(join(root, 'yarn.lock')) ? 'yarn' : existsSync(join(root, 'bun.lockb')) || existsSync(join(root, 'bun.lock')) ? 'bun' : 'npm',
 		appDir,
 		srcDir: existsSync(join(root, 'src')),
-		hasAlias: tsconfig ? /"@\/\*"/.test(readFileSync(tsconfig, 'utf8')) : false,
+		hasAlias: Object.keys(compiler?.config.compilerOptions?.paths ?? {}).length > 0,
 		layouts: [],
 		publicDir,
 	};
-	project.mainStylesheet = findMainStylesheet(root);
+	project.mainStylesheet = config?.tailwind.css || findMainStylesheet(root);
 	project.layouts = findLayouts(root, project);
 	return project;
 }
@@ -85,7 +92,7 @@ export function findMainStylesheet(root: string): string | undefined {
 			const href = m[0].match(/href=["']([^"']+)["']/)?.[1];
 			if (!href || /^(https?:)?\/\//.test(href)) continue;
 			const rel = href.replace(/^\.?\//, '').split(/[?#]/)[0];
-			if (existsSync(join(root, rel))) linked.set(rel, (linked.get(rel) ?? 0) + (page === 'index.html' ? 2 : 1));
+			if (!isOwnFile(rel) && existsSync(join(root, rel))) linked.set(rel, (linked.get(rel) ?? 0) + (page === 'index.html' ? 2 : 1));
 		}
 	}
 	return [...linked].sort((a, b) => b[1] - a[1])[0]?.[0];

@@ -1,3 +1,4 @@
+import { brand } from '../src/lib/brand.js';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -531,14 +532,14 @@ export function Picker(props: any) { return <Select.Root name="card" value={prop
     try {
       run(dir, 'add', 'dropdown-menu', 'select', 'popover', 'input', 'textarea', 'progress');
       for (const name of ['select', 'input', 'textarea', 'progress']) {
-        expect(readFileSync(join(dir, `components/ui/${name}.tsx`), 'utf8')).toBe(readFileSync(join(ROOT, `registry/components/ui/${name}.tsx`), 'utf8'));
+        expect(readFileSync(join(dir, `components/ui/${name}.tsx`), 'utf8')).toBe(readFileSync(join(ROOT, `registry/components/ui/${name}.tsx`), 'utf8').replaceAll('@/lib/utils', `@/lib/${brand().bin}-utils`));
       }
       const installed = readFileSync(join(dir, 'components/ui/dropdown-menu.tsx'), 'utf8');
-      expect(installed).toBe(readFileSync(join(ROOT, 'registry/components/ui/dropdown-menu.tsx'), 'utf8'));
+      expect(installed).toBe(readFileSync(join(ROOT, 'registry/components/ui/dropdown-menu.tsx'), 'utf8').replaceAll('@/lib/utils', `@/lib/${brand().bin}-utils`));
       expect(installed).toContain('usePortalContainer');
       expect(installed).toContain('shadow-floating');
       expect(existsSync(join(dir, 'lib/surface.tsx'))).toBe(true);
-      expect(readFileSync(join(dir, 'lib/utils.ts'), 'utf8')).toContain('"floating"');
+      expect(readFileSync(join(dir, `lib/${brand().bin}-utils.ts`), 'utf8')).toContain('"floating"');
       expect(readFileSync(join(dir, 'app/_inkbox-ds/brand.css'), 'utf8')).toContain('--ds-shadow-floating');
     } finally { rmSync(dir, { recursive: true }); }
   });

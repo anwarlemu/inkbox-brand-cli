@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Popover as PopoverPrimitive } from "radix-ui";
+import { Popover as ChakraPopover, Portal } from "@chakra-ui/react";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -10,33 +10,37 @@ import { cn } from "@/lib/utils";
 // carry Shadow/S): white with 16px corners and the floating shadow (Shadow/S's ring with a softer, longer drop), 16px of
 // padding, 14px ink text. It grows out of its trigger from 96 percent with a fade (200ms, the strong ease-out) and
 // leaves faster than it came.
-function Popover(props: React.ComponentProps<typeof PopoverPrimitive.Root>) {
-  return <PopoverPrimitive.Root data-slot="popover" {...props} />;
+type PopoverProps = Omit<React.ComponentProps<typeof ChakraPopover.Root>, "onOpenChange"> & { onOpenChange?: (open: boolean) => void };
+function Popover({ onOpenChange, ...props }: PopoverProps) {
+  return <ChakraPopover.Root unstyled data-slot="popover" onOpenChange={(details) => onOpenChange?.(details.open)} {...props} />;
 }
 
-function PopoverTrigger(props: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+function PopoverTrigger(props: React.ComponentProps<typeof ChakraPopover.Trigger>) {
+  return <ChakraPopover.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-function PopoverAnchor(props: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
-  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
+function PopoverAnchor(props: React.ComponentProps<typeof ChakraPopover.Anchor>) {
+  return <ChakraPopover.Anchor data-slot="popover-anchor" {...props} />;
 }
 
-function PopoverContent({ className, align = "center", sideOffset = 6, ...props }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+type PopoverContentProps = Omit<React.ComponentProps<typeof ChakraPopover.Content>, "positioning"> & { align?: "start" | "center" | "end"; sideOffset?: number; onOpenAutoFocus?: (event: { preventDefault(): void }) => void };
+function PopoverContent({ className, align = "center", sideOffset = 6, onOpenAutoFocus: _onOpenAutoFocus, ...props }: PopoverContentProps) {
   const container = usePortalContainer();
+  const portalRef = React.useMemo(() => container ? { current: container } : undefined, [container]);
   return (
-    <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Content
+    <Portal container={portalRef}>
+      <ChakraPopover.Positioner>
+      <ChakraPopover.Content
+        unstyled
         data-slot="popover-content"
-        align={align}
-        sideOffset={sideOffset}
         className={cn(
-          "z-50 flex w-72 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) flex-col gap-3 rounded-panel bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
+          "z-50 flex w-72 max-w-[calc(100vw-2rem)] origin-(--transform-origin) flex-col gap-3 rounded-panel bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           className,
         )}
         {...props}
       />
-    </PopoverPrimitive.Portal>
+      </ChakraPopover.Positioner>
+    </Portal>
   );
 }
 

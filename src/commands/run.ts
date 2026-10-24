@@ -1,3 +1,4 @@
+import { configureRegistry } from '../install/config.js';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -21,7 +22,7 @@ import { mainScreens, pickMain, renderBatch, renderTask, taskStatus, touchNote }
 // The one command: the first run installs the brand and applies component colors and style scales; every run after that prints the
 // next task, until each main screen passes its review and the whole project passes the check.
 
-export type RunOptions = { surface?: string; theme?: string; redo?: boolean; dryRun?: boolean; install?: boolean; json?: boolean };
+export type RunOptions = { colors?: 'components'; surface?: string; theme?: string; redo?: boolean; dryRun?: boolean; install?: boolean; json?: boolean };
 
 export function run(opts: RunOptions) {
 	const root = findProjectRoot();
@@ -36,7 +37,7 @@ export function run(opts: RunOptions) {
  * code is one bundle), so it is copied into node_modules and recorded in package.json, with no install of the whole
  * project's dependencies; a teammate's next install fetches the same source.
  */
-export function selfInstall(root: string, opts: RunOptions) {
+export function selfInstall(root: string, opts: RunOptions, handoff = true) {
 	if (opts.install === false || opts.dryRun || !/[\\/]_npx[\\/]/.test(PKG_ROOT)) return;
 	const b = { ...brand(), source: process.env.DS_SOURCE ?? brand().source };
 	const pkgPath = join(root, 'package.json');
@@ -57,7 +58,9 @@ export function selfInstall(root: string, opts: RunOptions) {
 	if (!existsSync(binLink)) symlinkSync(join('..', b.bin, 'bin.js'), binLink);
 	const local = join(target, 'bin.js');
 	process.stderr.write(`Added ${b.name}'s design system to this project (node_modules/${b.bin}, recorded in package.json).\n`);
-	const handOff = spawnSync(process.execPath, [local, ...process.argv.slice(2), '--no-install'], { cwd: process.cwd(), stdio: 'inherit' });
+	if (!handoff) return;
+	const args = process.argv.slice(2).flatMap((arg, index, all) => arg === '--cwd' || arg === '-c' ? [] : index > 0 && ['--cwd', '-c'].includes(all[index - 1]) ? [] : arg.startsWith('--cwd=') ? [] : [arg]);
+	const handOff = spawnSync(process.execPath, [local, ...args, '--no-install'], { cwd: process.cwd(), stdio: 'inherit' });
 	process.exit(handOff.status ?? 1);
 }
 
@@ -89,6 +92,7 @@ function setUp(root: string, opts: RunOptions, previous?: State) {
 	const layer = project.framework === 'native' ? { count: 0, files: [] as string[], styled: [] } : installElementLayer(w, styledFiles(root), (rel) => (mixed ? surfaceOf(rel, found) : surface));
 	if (!opts.dryRun) recordStyledSelectors(root, layer.styled);
 	const dots = project.framework !== 'native' && (surface === 'site' || mixed) && brand().touches.hero?.script ? installDots(w, project) : [];
+	configureRegistry(w, project, surface);
 	installAgents(w);
 	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true, colorSurface: project.framework === 'native' ? undefined : surface }).fixed;
 	const screens = listScreens(detectProject(root), styledFiles(root), { ...found, surface, mixed });

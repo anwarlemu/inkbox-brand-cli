@@ -93,7 +93,7 @@ function button({ c, surface, local, values }: Ctx): Adapter | undefined {
 	const prelude = [
 		mapLiteral(`DS_${key}_VARIANT`, variants, BUTTON_VARIANTS(surface), variantsFor(surface).outlined),
 		mapLiteral(`DS_${key}_SIZE`, sizes, SIZES(), defaultSize()),
-		`const DS_${key}_DANGER = new Set<string>(${JSON.stringify([...new Set(variants)].filter((v) => DANGER.test(v)))});`,
+		...(a.get('variant') ? [`const DS_${key}_DANGER = new Set<string>(${JSON.stringify([...new Set(variants)].filter((v) => DANGER.test(v)))});`] : []),
 	].join('\n');
 	const v = a.get('variant');
 	const s = a.get('size');
@@ -181,7 +181,33 @@ export const adaptable = (item: string) => item in ADAPTERS;
  * The component's file with its body rendering the library component, or undefined when it cannot be adapted
  * without losing something it does. Everything else in the file (imports, types, helpers) stays.
  */
+/** Only replace wrappers whose runtime behavior is entirely forwarded props. */
+function safeWrapper(text: string, c: AppComponent) {
+ try {
+  const source = text.slice(c.body.start, c.body.end);
+  const ast: any = parse(`const wrapper = () => ${source}`, { sourceType: 'module', plugins: ['typescript', 'jsx'] });
+  let node = ast.program.body[0].declarations[0].init.body;
+  if (node.type === 'BlockStatement') {
+   if (node.body.length !== 1 || node.body[0].type !== 'ReturnStatement') return false;
+   node = node.body[0].argument;
+  }
+  if (node?.type !== 'JSXElement') return false;
+  const access = (expression: any) => expression?.type === 'Identifier' ? expression.name : expression?.type === 'MemberExpression' && expression.object?.name === c.params.identifier ? expression.property?.name : undefined;
+  for (const attr of node.openingElement.attributes) {
+   if (attr.type === 'JSXSpreadAttribute') {
+    if (attr.argument.type !== 'Identifier' || ![c.params.identifier, c.params.rest].includes(attr.argument.name)) return false;
+   } else if (attr.name?.name !== 'className') {
+    if (attr.value?.type !== 'JSXExpressionContainer') return false;
+    const name = access(attr.value.expression);
+    if (!name || (name !== attr.name.name && !(attr.name.name === 'disabled' && ['loading', 'isLoading'].includes(name)))) return false;
+   }
+  }
+  return node.children.every((child: any) => child.type === 'JSXText' ? !child.value.trim() : child.type === 'JSXExpressionContainer' && access(child.expression) === 'children');
+ } catch { return false; }
+}
+
 export function adaptComponent(text: string, c: AppComponent, item: string, surface: Surface, importFrom: string, values: Record<string, string[]>): string | undefined {
+	if (!safeWrapper(text, c)) return undefined;
 	const make = ADAPTERS[item];
 	if (!make) return undefined;
 	const local = `Ds${item.replace(/(^|-)([a-z])/g, (_, __, ch: string) => ch.toUpperCase())}`;

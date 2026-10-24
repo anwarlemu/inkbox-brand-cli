@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "radix-ui";
+import { chakra } from "@chakra-ui/react";
 import { CaretRightIcon, DotsThreeIcon } from "@phosphor-icons/react/ssr";
 
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 function BreadcrumbLink({ asChild, className, ...props }: React.ComponentProps<"a"> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "a";
+  const Comp = asChild ? chakra.a : "a";
   return (
     <Comp
       data-slot="breadcrumb-link"

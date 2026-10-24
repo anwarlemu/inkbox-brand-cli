@@ -4,7 +4,7 @@ import { type NextFont, brand, tokens } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 import type { Project } from '../project/detect.js';
 import type { Surface } from '../project/surface.js';
-import type { Writer } from './files.js';
+import { upsertBlock, type Writer } from './files.js';
 
 // The brand stylesheet: one file in the project's styles folder (tokens plus the site or product layer), imported once
 // by the project's main stylesheet, or linked from each page when there is none. Fonts load with it (next/font in Next).
@@ -24,6 +24,7 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 	const stylesDir = main ? dirname(main) : project.framework === 'static' ? '.' : project.srcDir ? 'src/styles' : 'styles';
 	const dir = posix.join(stylesDir, STYLE_DIR(bin));
 	const next = project.framework === 'next';
+	const tailwind4 = (project.tailwindMajor ?? 0) >= 4;
 	let css = readFileSync(pkgPath('build', surface === 'product' ? 'product.css' : 'site.css'), 'utf8');
 	// A product whose dark theme follows the system setting gets the brand's dark values the same way.
 	if (surface === 'product' && /prefers-color-scheme\s*:\s*dark/.test(styleText)) {
@@ -32,9 +33,8 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 	}
 	css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.
-	if (!next) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;
+	if (!next && (!main || !tailwind4)) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;
 	w.write(`${dir}/brand.css`, css);
-	const tailwind4 = (project.tailwindMajor ?? 0) >= 4;
 	if (tailwind4) w.write(`${dir}/theme.css`, readFileSync(pkgPath('build', 'theme.css'), 'utf8'));
 
 	let imported: string | undefined;
@@ -47,8 +47,23 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 		if (tw) after = after.replace(tw[0], `${tw[0]}\n${lines.join('\n')}`);
 		else {
 			// @import must come first: after a @charset and leading comments, before any rule.
-			const lead = after.match(/^(?:\s*(?:@charset[^;]*;|\/\*[\s\S]*?\*\/|@import[^;]*;))*/)?.[0] ?? '';
+			const lead = after.match(/^(?:\s*(?:@charset[^;]*;|\/\*[\s\S]*?\*\/|@import(?:[^;"']|"[^"]*"|'[^']*')*;))*/)?.[0] ?? '';
 			after = `${lead}${lead && !lead.endsWith('\n') ? '\n' : ''}${lines.join('\n')}\n${after.slice(lead.length).replace(/^\n/, '')}`;
+		}
+		if (!next && tailwind4) {
+			const imports = readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter(line => line.startsWith('@import'));
+			for (const line of imports) after = after.replaceAll(line + '\n', '').replaceAll(line, '');
+			const charset = after.match(/^\s*@charset[^;]*;\s*/)?.[0] ?? '';
+			after = `${charset}${imports.join('\n')}\n${after.slice(charset.length)}`;
+		}
+		if (tailwind4) {
+			// Existing shadcn themes can otherwise override brand font, color and radius aliases after imports.
+			const start = `/* ${bin}:theme:start */`, end = `/* ${bin}:theme:end */`;
+			const previous = after.indexOf(start), finish = after.indexOf(end);
+			if (previous >= 0 && finish >= previous) after = after.slice(0, previous).trimEnd() + after.slice(finish + end.length);
+			const aliases = readFileSync(pkgPath('build', 'theme.css'), 'utf8').match(/@theme inline\s*\{([^}]+)\}/)?.[1] ?? '';
+			const overrides = aliases.split('\n').filter(line => { const key = line.match(/(--[\w.-]+):/)?.[1]; return key && after.includes(`${key}:`); });
+			if (overrides.length) after = upsertBlock(after, `@theme inline {\n${overrides.join('\n')}\n}`, start, end);
 		}
 		if (w.write(main, after)) imported = main;
 		else if (before.includes(`./${STYLE_DIR(bin)}/brand.css`)) imported = main;
@@ -114,7 +129,7 @@ function wireNextFonts(w: Writer, project: Project) {
 	if (!layout) return loader;
 	const text = w.read(layout) ?? '';
 	if (text.includes('dsFontVariables')) return layout;
-	const from = project.hasAlias ? `@/${libDir.replace(/^src\//, '')}/ds-fonts` : relative(dirname(layout), `${libDir}/ds-fonts`).split('\\').join('/').replace(/^(?!\.)/, './');
+	const from = relative(dirname(layout), `${libDir}/ds-fonts`).split('\\').join('/').replace(/^(?!\.)/, './');
 	let next = text.replace(/<html\b([^>]*?)\bclassName=(\{`([^`]*)`\}|\{([^}]+)\}|"([^"]*)")/, (all, pre: string, _v: string, tpl?: string, expr?: string, str?: string) => {
 		const inner = tpl !== undefined ? tpl : expr !== undefined ? `\${${expr.trim()}}` : str;
 		return `<html${pre}className={\`\${dsFontVariables} ${inner}\`}`;

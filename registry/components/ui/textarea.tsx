@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 
 import { cn } from "@/lib/utils";
 
@@ -7,10 +8,11 @@ import { cn } from "@/lib/utils";
 // It grows with its content (field-sizing), from 72px. Focus, invalid and read-only states match Input.
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
-    <textarea
+    <ChakraTextarea
+      unstyled
       data-slot="textarea"
       className={cn(
-        "field-sizing-content flex min-h-18 w-full min-w-0 resize-y rounded-control border border-line-field bg-surface px-3.5 py-2.5 font-sans text-body leading-5 text-fg outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle selection:bg-ring-tint focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger aria-invalid:focus-visible:shadow-none read-only:bg-subtle read-only:text-fg-muted disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted motion-reduce:transition-none",
+        "field-sizing-content flex min-h-18 w-full min-w-0 resize rounded-control border border-line-field bg-surface px-3.5 py-2.5 font-sans text-body leading-5 text-fg outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle selection:bg-ring-tint focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger aria-invalid:focus-visible:shadow-none read-only:bg-subtle read-only:text-fg-muted disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted motion-reduce:transition-none",
         className,
       )}
       {...props}

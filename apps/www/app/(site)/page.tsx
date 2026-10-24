@@ -14,8 +14,23 @@ export default function HomePage() {
             <Command command="npx inkbox-ds init" />
           </div>
         </Section>
-        <Section title="Add components" description="Components need React 19.2 or later, Tailwind CSS 4 and the @/* source alias. The CLI copies the source and installs what it needs.">
+        <Section title="Add components" description="Components need React 19.2 or later, Tailwind CSS 4 and project configuration. The CLI respects configured aliases and JavaScript or TypeScript output, copies source and installs dependencies.">
           <Command command={`${CLI_COMMAND} add button dialog field input`} />
+        </Section>
+        <Section title="Discover and preview" description="Read the project configuration and exact component APIs before installing. Preview diffs before replacing local changes.">
+          <div className="grid gap-2">
+            <Command command="npx inkbox-ds info --json" />
+            <Command command="npx inkbox-ds search button --json" />
+            <Command command="npx inkbox-ds view button --json" />
+            <Command command="npx inkbox-ds add button --diff" />
+          </div>
+        </Section>
+        <Section title="Use with shadcn and agents" description="Init configures the standard registry and installs portable Claude/Codex skills. Include the theme when using shadcn to update existing theme aliases. Advanced commands use pinned shadcn 4.22.1.">
+          <div className="grid gap-2">
+            <Command command="npx inkbox-ds shadcn add @inkbox-ds/theme @inkbox-ds/button" />
+            <Command command="npx inkbox-ds mcp init --client claude" />
+            <Command command="npx inkbox-ds create --template vite --name my-app" />
+          </div>
         </Section>
         <Section title="Components" description="Every component in the library, in the console's style.">
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-2">

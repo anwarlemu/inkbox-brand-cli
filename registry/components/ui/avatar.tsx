@@ -1,15 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Avatar as AvatarPrimitive } from "radix-ui";
+import { Avatar as ChakraAvatar } from "@chakra-ui/react";
 
 import { cn } from "@/lib/utils";
 
 // Circular avatars with an avatar-blue fallback and a white initial; `square` remains an explicit shape option.
 // Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.
-function Avatar({ className, size = "default", shape = "circle", ...props }: React.ComponentProps<typeof AvatarPrimitive.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {
+function Avatar({ className, size = "default", shape = "circle", ...props }: React.ComponentProps<typeof ChakraAvatar.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {
   return (
-    <AvatarPrimitive.Root
+    <ChakraAvatar.Root
+      unstyled
       data-slot="avatar"
       data-size={size}
       data-shape={shape}
@@ -23,13 +24,13 @@ function Avatar({ className, size = "default", shape = "circle", ...props }: Rea
   );
 }
 
-function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  return <AvatarPrimitive.Image data-slot="avatar-image" className={cn("aspect-square size-full rounded-[inherit] object-cover", className)} {...props} />;
+function AvatarImage({ className, ...props }: React.ComponentProps<typeof ChakraAvatar.Image>) {
+  return <ChakraAvatar.Image data-slot="avatar-image" className={cn("aspect-square size-full rounded-[inherit] object-cover", className)} {...props} />;
 }
 
-function AvatarFallback({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+function AvatarFallback({ className, ...props }: React.ComponentProps<typeof ChakraAvatar.Fallback>) {
   return (
-    <AvatarPrimitive.Fallback
+    <ChakraAvatar.Fallback
       data-slot="avatar-fallback"
       className={cn("flex size-full items-center justify-center rounded-[inherit] bg-avatar font-sans text-body leading-none text-white group-data-[size=lg]/avatar:text-body-lg group-data-[size=sm]/avatar:text-body", className)}
       {...props}

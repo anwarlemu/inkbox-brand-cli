@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Slot } from "radix-ui";
+import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { SidebarSimpleIcon } from "@phosphor-icons/react/ssr";
 
@@ -279,7 +279,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
 
 /** A group's 13px purple label, 16px in from the rail; it folds away when the rail is narrowed to its glyphs. */
 function SidebarGroupLabel({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "div";
+  const Comp = asChild ? chakra.div : "div";
   return (
     <Comp
       data-slot="sidebar-group-label"
@@ -295,7 +295,7 @@ function SidebarGroupLabel({ className, asChild = false, ...props }: React.Compo
 
 /** A group's action beside its label (the sliders glyph by Email and Agent2Agent): a 16px glyph, 16px from the edge. */
 function SidebarGroupAction({ className, asChild = false, ...props }: React.ComponentProps<"button"> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? chakra.button : "button";
   return (
     <Comp
       data-slot="sidebar-group-action"
@@ -351,7 +351,7 @@ function SidebarMenuButton({
   className,
   ...props
 }: React.ComponentProps<"button"> & { asChild?: boolean; isActive?: boolean; tooltip?: string | React.ComponentProps<typeof TooltipContent> } & VariantProps<typeof sidebarMenuButtonVariants>) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? chakra.button : "button";
   const { isMobile, state } = useSidebar();
   // The tooltip names a row only while the rail shows glyphs alone; otherwise it stays shut, so it never catches Escape.
   const [tipOpen, setTipOpen] = React.useState(false);
@@ -379,7 +379,7 @@ function SidebarMenuButton({
 
 /** An action at a row's right end (a row's more glyph). `showOnHover` keeps it hidden until the row is hovered or open. */
 function SidebarMenuAction({ className, asChild = false, showOnHover = false, ...props }: React.ComponentProps<"button"> & { asChild?: boolean; showOnHover?: boolean }) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? chakra.button : "button";
   return (
     <Comp
       data-slot="sidebar-menu-action"
@@ -446,7 +446,7 @@ function SidebarMenuSubItem({ className, ...props }: React.ComponentProps<"li">)
 }
 
 function SidebarMenuSubButton({ asChild = false, size = "md", isActive = false, className, ...props }: React.ComponentProps<"a"> & { asChild?: boolean; size?: "sm" | "md"; isActive?: boolean }) {
-  const Comp = asChild ? Slot.Root : "a";
+  const Comp = asChild ? chakra.a : "a";
   return (
     <Comp
       data-slot="sidebar-menu-sub-button"

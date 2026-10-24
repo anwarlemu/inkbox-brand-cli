@@ -12,7 +12,8 @@ rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 for (const p of ['bin.js', 'build', 'brand', 'README.md']) cpSync(join(root, p), join(out, p), { recursive: true });
 // The component library's registry items, so `add` works offline and without the docs site.
-cpSync(join(root, 'apps', 'www', 'public', 'r'), join(out, 'r'), { recursive: true });
+// The hosted shadcn manifests duplicate source; native installs need only the bundled registry.
+cpSync(join(root, 'apps', 'www', 'public', 'r'), join(out, 'r'), { recursive: true, filter: source => !/[\\/]shadcn(?:-product)?(?:[\\/]|$)/.test(source) });
 // The code and its dependencies in one file, so installing the release fetches almost nothing. playwright-core
 // (screenshots for review) stays a package: it is large and loads its own files.
 await build({
@@ -22,7 +23,8 @@ await build({
 	platform: 'node',
 	format: 'esm',
 	target: 'node20',
-	external: ['playwright-core'],
+	// Babel's optional external config loader is disabled by configFile:false and babelrc:false.
+	external: ['playwright-core', '@babel/preset-typescript'],
 	banner: { js: "import { createRequire as __ds_require } from 'node:module'; const require = __ds_require(import.meta.url);" },
 	logLevel: 'warning',
 });

@@ -39,7 +39,7 @@ export function HandleCheck() {
           </InputGroupAddon>
         </InputGroup>
         <p className="flex items-center gap-2 text-caption text-fg-secondary">
-          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@acme-support</span>
+          Will be displayed as <span className="rounded-pill bg-subtle px-2 py-1 text-fg">@acme-support</span>
         </p>
       </div>
       <div className="grid gap-1">
@@ -50,7 +50,7 @@ export function HandleCheck() {
           </InputGroupAddon>
         </InputGroup>
         <p id="taken" className="flex items-center gap-2 text-caption text-fg-secondary">
-          Will be displayed as <span className="rounded-sm bg-subtle px-2 py-1 text-fg">@acme-support</span>
+          Will be displayed as <span className="rounded-pill bg-subtle px-2 py-1 text-fg">@acme-support</span>
           <span className="text-danger">(is not available)</span>
         </p>
       </div>

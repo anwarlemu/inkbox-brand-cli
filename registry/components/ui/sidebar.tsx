@@ -396,7 +396,7 @@ function SidebarMenuAction({ className, asChild = false, showOnHover = false, ..
 }
 
 /**
- * A mark at a row's right end, 12px in (ADMIN by My Organisation): the pink edge, 6px corners and 12px pink text.
+ * A mark at a row's right end, 12px in (ADMIN by My Organisation): the pink edge, pill corners and 12px pink text.
  * `count` is a quiet 13px number instead (unread mail). For a mark right after the label (BETA by Agent2Agent), put a
  * Badge with variant pink inside the row's button.
  */
@@ -408,7 +408,7 @@ function SidebarMenuBadge({ className, variant = "mark", ...props }: React.Compo
       className={cn(
         "pointer-events-none absolute top-2 right-3 flex h-5.5 items-center justify-center font-sans whitespace-nowrap select-none group-data-[collapsible=icon]/sidebar:hidden",
         "peer-data-[size=sm]/menu-button:top-1.25 peer-data-[size=lg]/menu-button:top-3.25",
-        variant === "mark" ? "rounded-pill border border-pink bg-surface px-1.5 text-caption leading-tight text-pink" : "min-w-5 px-1 text-body-sm text-fg-muted tabular-nums",
+        variant === "mark" ? "rounded-pill border border-pink bg-surface px-1.5 pt-px text-caption leading-none text-pink" : "min-w-5 px-1 text-body-sm text-fg-muted tabular-nums",
         className,
       )}
       {...props}

@@ -10,7 +10,7 @@ export function Preview() {
   const [open, setOpen] = React.useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="w-full max-w-122">
-      <CollapsibleTrigger className="group flex w-full items-center justify-between gap-4 rounded-control py-2 text-left text-body text-fg outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
+      <CollapsibleTrigger className="group flex w-full items-center justify-between gap-4 rounded-pill py-2 text-left text-body text-fg outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
         Advanced settings - tunnel mode, phone state, line sharing
         <CaretDownIcon aria-hidden weight="bold" className="size-4 shrink-0 text-icon-default transition-transform duration-200 ease-out group-data-[state=open]:rotate-180 motion-reduce:transition-none" />
       </CollapsibleTrigger>

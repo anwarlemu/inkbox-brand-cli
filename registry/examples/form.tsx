@@ -98,7 +98,7 @@ export function Preview() {
                     </InputGroup>
                     {handle && check !== "idle" && check !== "checking" ? (
                       <p className="flex flex-wrap items-center gap-2 text-caption leading-body text-fg-secondary">
-                        Will be displayed as <span className="rounded-sm bg-subtle px-2 py-0.5 text-fg">@{handle}</span>
+                        Will be displayed as <span className="rounded-pill bg-subtle px-2 py-0.5 text-fg">@{handle}</span>
                         {check === "taken" && <span className="text-danger">(is not available)</span>}
                       </p>
                     ) : null}
@@ -161,7 +161,7 @@ export function Preview() {
                 control={form.control}
                 name={name}
                 render={({ field }) => (
-                  <FormItem className="flex h-13 items-center gap-2.5 rounded-control bg-subtle px-3.5">
+                  <FormItem className="flex h-13 items-center gap-2.5 rounded-pill bg-subtle px-3.5">
                     <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
                       <Icon weight="fill" className="size-5.5" />
                     </span>
@@ -177,7 +177,7 @@ export function Preview() {
               control={form.control}
               name="a2a"
               render={({ field }) => (
-                <FormItem className="flex h-13 items-center gap-2.5 rounded-control bg-subtle px-3.5">
+                <FormItem className="flex h-13 items-center gap-2.5 rounded-pill bg-subtle px-3.5">
                   <ArrowsLeftRightIcon className="size-6 text-icon-secondary" aria-hidden />
                   <FormLabel className="flex-1 text-body-lg font-medium">
                     Agent2Agent <Badge variant="pink">BETA</Badge>
@@ -192,7 +192,7 @@ export function Preview() {
 
           <div className="grid gap-2">
             <p className="text-body leading-body text-fg">Your agent will be reachable at:</p>
-            <p className="flex h-10 items-center gap-2.5 rounded-control bg-subtle px-2.5 text-body text-fg">
+            <p className="flex h-10 items-center gap-2.5 rounded-pill bg-subtle px-2.5 text-body text-fg">
               <span className="flex size-7 items-center justify-center rounded-sm bg-pink text-rose">
                 <GlobeIcon weight="fill" className="size-5.5" />
               </span>

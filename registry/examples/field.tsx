@@ -44,7 +44,7 @@ export function Invalid() {
       <Input id="handle" defaultValue="acme-support" aria-invalid aria-describedby="handle-error" />
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption leading-body text-fg">
         Will be displayed as
-        <span className="rounded-sm bg-subtle px-1.5 py-0.5">@acme-support</span>
+        <span className="rounded-pill bg-subtle px-1.5 py-0.5">@acme-support</span>
         <FieldError id="handle-error">(is not available)</FieldError>
       </div>
     </Field>

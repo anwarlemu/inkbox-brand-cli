@@ -61,7 +61,7 @@ export function Channel() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <p className="flex h-10 items-center rounded-control border border-line-field bg-subtle px-3.5 text-body text-fg-muted">acme-support@inboxmail.com</p>
+          <p className="flex h-10 items-center rounded-pill border border-line-field bg-subtle px-3.5 text-body text-fg-muted">acme-support@inboxmail.com</p>
         </CardContent>
       </Card>
       <Card variant="muted">

@@ -24,7 +24,7 @@ export function Horizontal() {
     <ScrollArea className="w-full max-w-96 rounded-panel border border-line-subtle whitespace-nowrap">
       <div className="flex w-max gap-3 p-3">
         {["Hermes", "Openclaw", "Codex", "Claude Code", "OpenCode", "Other", "Cursor", "Windsurf"].map((name) => (
-          <span key={name} className="flex h-9 items-center rounded-control bg-subtle px-3 text-body text-fg">
+          <span key={name} className="flex h-9 items-center rounded-pill bg-subtle px-3 text-body text-fg">
             {name}
           </span>
         ))}

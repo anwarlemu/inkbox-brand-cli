@@ -211,11 +211,14 @@
    "name": "badge",
    "example": "Preview",
    "selector": "[data-slot=badge][class*=border-pink]",
-   "source": "Figma 427:2715 BETA, ADMIN",
+   "source": "Figma 427:2715 BETA, ADMIN; pill radius and optical alignment override",
    "expected": {
     "color": "#F9B1B5",
     "borderTopColor": "#F9B1B5",
-    "fontSize": "12px"
+    "fontSize": "12px",
+    "height": "22px",
+    "borderTopLeftRadius": "9999px",
+    "lineHeight": "12px"
    },
    "width": 1440
   },
@@ -366,6 +369,69 @@
     "borderTopColor": "#D2C9DB",
     "borderTopLeftRadius": "12px",
     "backgroundColor": "#FFFFFF"
+   },
+   "width": 1440
+  },
+  {
+   "id": "calendar-selected",
+   "name": "calendar",
+   "example": "Preview",
+   "selector": "[data-slot=calendar-day][data-selected]",
+   "source": "Requested compact control pill styling, 2026-10-24",
+   "expected": {
+    "width": "36px",
+    "height": "36px",
+    "borderTopLeftRadius": "9999px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "checkbox",
+   "name": "checkbox",
+   "example": "Preview",
+   "selector": "[data-slot=checkbox]",
+   "source": "Requested compact control pill styling, 2026-10-24",
+   "expected": {
+    "width": "18px",
+    "height": "18px",
+    "borderTopLeftRadius": "9999px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "combobox-trigger",
+   "name": "combobox",
+   "example": "Preview",
+   "selector": "[data-slot=combobox-trigger]",
+   "source": "Requested compact control pill styling, 2026-10-24",
+   "expected": {
+    "height": "40px",
+    "borderTopLeftRadius": "9999px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "field-input",
+   "name": "field",
+   "example": "Preview",
+   "selector": "[data-slot=field] input",
+   "source": "Requested compact control pill styling, 2026-10-24",
+   "expected": {
+    "height": "40px",
+    "borderTopLeftRadius": "9999px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "sidebar-mark",
+   "name": "sidebar",
+   "example": "Preview",
+   "selector": "[data-slot=sidebar-menu-badge]",
+   "source": "Requested compact control pill styling, 2026-10-24",
+   "expected": {
+    "height": "22px",
+    "lineHeight": "12px",
+    "borderTopLeftRadius": "9999px"
    },
    "width": 1440
   }

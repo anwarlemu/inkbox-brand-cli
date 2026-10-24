@@ -30,9 +30,9 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
           content: "grid min-w-0 flex-1 gap-0.5",
           title: "text-body! leading-body font-medium! text-fg",
           description: "text-body! leading-body text-fg-muted!",
-          actionButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-primary! px-3.5! font-sans text-body! leading-tight font-normal! text-on-primary! outline-none transition-[background-color,scale] duration-150 ease-out hover:bg-primary-hover! active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
-          cancelButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-subtle! px-3.5! font-sans text-body! leading-tight font-normal! text-fg! outline-none transition-[background-color,scale] duration-150 ease-out hover:bg-subtle-hover! active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
-          closeButton: "absolute -top-2 -left-2 inline-flex size-5 items-center justify-center rounded-pill bg-surface text-fg-muted shadow-s outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring",
+          actionButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-primary! px-3.5! font-sans text-body! leading-tight font-normal! text-on-primary! outline-none transition-[background-color] duration-150 ease-out hover:bg-primary-hover! active:bg-primary-hover! active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
+          cancelButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-subtle! px-3.5! font-sans text-body! leading-tight font-normal! text-fg! outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle-hover! active:bg-subtle-hover! active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
+          closeButton: "absolute -top-2 -left-2 inline-flex size-5 items-center justify-center rounded-pill bg-surface text-fg-muted shadow-s outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring",
           ...toastOptions?.classNames,
         },
       }}

@@ -66,6 +66,12 @@ describe('portable agent workflow', () => {
     expect(readFileSync(join(root, 'src/App.tsx'), 'utf8')).toBe(before);
     expect(existsSync(join(root, '.ds/state.json'))).toBe(false);
     expect(readFileSync(join(root, '.ds/agent-guide.md'), 'utf8').trim()).toBe(agentGuide());
+    expect(agentGuide()).toContain('data-ds-motion="instant"');
+    expect(agentGuide()).toContain('pointer-down');
+    const styles = readFileSync(join(root, 'src/_inkbox-ds/brand.css'), 'utf8');
+    expect(styles).toContain('touch-action: manipulation');
+    expect(styles).toContain('transition-duration: 0s !important');
+    expect(styles).toContain('[data-ds-motion="instant"]');
     expect(readFileSync(join(root, 'AGENTS.md'), 'utf8')).toContain('Keep the existing business rules.');
     expect(readFileSync(join(root, 'GEMINI.md'), 'utf8')).toContain('Use the project test runner.');
     expect(readFileSync(join(root, '.github/copilot-instructions.md'), 'utf8')).toContain('Keep the API client.');

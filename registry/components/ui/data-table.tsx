@@ -59,7 +59,7 @@ function DataTableColumnHeader({ title, sorted, onSort, className }: { title: Re
       type="button"
       data-slot="data-table-column-header"
       onClick={onSort}
-      className={cn("-mx-2 inline-flex h-8 items-center gap-1.5 rounded-control px-2 font-sans text-body leading-tight font-normal text-fg-muted outline-none transition-colors duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring data-[sorted=true]:text-fg motion-reduce:transition-none", className)}
+      className={cn("-mx-2 inline-flex h-8 items-center gap-1.5 rounded-pill px-2 font-sans text-body leading-tight font-normal text-fg-muted outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring data-[sorted=true]:text-fg motion-reduce:transition-none", className)}
       data-sorted={!!sorted}
     >
       {title}

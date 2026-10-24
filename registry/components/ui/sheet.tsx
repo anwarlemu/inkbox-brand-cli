@@ -45,12 +45,13 @@ const SIDES = {
   bottom: "inset-x-0 bottom-0 h-auto max-h-[85dvh] rounded-t-dialog data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom",
 } as const;
 
-function SheetContent({ className, children, side = "right", showCloseButton = true, ...props }: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: keyof typeof SIDES; showCloseButton?: boolean }) {
+function SheetContent({ className, children, side = "right", showCloseButton = true, instant = false, ...props }: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: keyof typeof SIDES; showCloseButton?: boolean; instant?: boolean }) {
   return (
     <SheetPortal>
-      <SheetOverlay />
+      <SheetOverlay data-ds-motion={instant ? "instant" : undefined} />
       <SheetPrimitive.Content
         data-slot="sheet-content"
+        data-ds-motion={instant ? "instant" : undefined}
         data-side={side}
         className={cn("fixed z-50 flex flex-col overflow-y-auto bg-surface text-fg shadow-dialog outline-none", SIDES[side], className)}
         {...props}
@@ -59,7 +60,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            className="absolute top-5 right-5 inline-flex size-7 items-center justify-center rounded-control text-fg-faint outline-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
+            className="absolute top-5 right-5 inline-flex size-7 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
           >
             <XIcon className="size-5.5" />
             <span className="sr-only">Close</span>

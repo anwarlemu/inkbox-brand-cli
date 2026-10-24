@@ -190,13 +190,13 @@
 	--ds-layout-rail: 18rem;
 	--ds-frame-column: min(100% - 2 * var(--ds-layout-gutter), var(--ds-layout-column));
 
-	/* Shape: 4px tags, 6px tiles and chips, 8px fields, cards, nav rows and wells, 10px table heads, tab tracks and
-	   banners, 16px dialogs, and pills for the main action, the Included mark and secondary actions on sign-in. */
-	--ds-radius-xs: 0.25rem;
-	--ds-radius-sm: 0.375rem;
-	--ds-radius-control: 0.5rem;
-	--ds-radius-panel: 0.625rem;
-	--ds-radius-dialog: 1rem;
+	/* Shape: pill buttons and compact controls, 6px details, 8px tiles, 12px content panels,
+	   16px table heads and banners, and 24px dialogs. */
+	--ds-radius-xs: 0.375rem;
+	--ds-radius-sm: 0.5rem;
+	--ds-radius-control: 0.75rem;
+	--ds-radius-panel: 1rem;
+	--ds-radius-dialog: 1.5rem;
 	--ds-radius-pill: 9999px;
 	/* Shadow/S: a raised white panel (a selected tab, a table's body, a select, a menu): a 1px ring and a short drop. */
 	--ds-shadow-s: 0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12);

@@ -118,7 +118,7 @@ function Combobox(props: ComboboxSingleProps | ComboboxMultipleProps) {
 }
 
 const FIELD =
-  "flex min-h-10 w-full min-w-0 items-center gap-2 rounded-control bg-surface pr-3 pl-3.5 font-sans text-body leading-tight text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] motion-reduce:transition-none";
+  "flex min-h-10 w-full min-w-0 items-center gap-2 rounded-pill bg-surface pr-3 pl-3.5 font-sans text-body leading-tight text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] motion-reduce:transition-none";
 
 /** The closed field: the chosen value (ComboboxValue) and the caret. Opens the list. */
 function ComboboxTrigger({ className, children, ...props }: React.ComponentProps<"button">) {
@@ -164,7 +164,7 @@ function ComboboxClear({ className, ...props }: React.ComponentProps<"button">) 
         e.stopPropagation();
         values.forEach(remove);
       }}
-      className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-fg-faint outline-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
+      className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
       {...props}
     >
       <XIcon weight="bold" className="size-4" />
@@ -199,7 +199,7 @@ function ComboboxContent({ className, children, align = "start", sideOffset = 6,
           if (chips && chipsRef.current?.contains(e.target as Node)) e.preventDefault();
         }}
         className={cn(
-          "z-50 w-(--radix-popover-trigger-width) min-w-56 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) overflow-hidden rounded-control bg-surface text-fg shadow-floating outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in",
+          "z-50 w-(--radix-popover-trigger-width) min-w-56 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) overflow-hidden rounded-control bg-surface text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           className,
         )}
         {...props}
@@ -263,7 +263,7 @@ function ComboboxItem({ value, label, className, children, disabled, ...props }:
       data-checked={selected || undefined}
       onSelect={() => toggle(value)}
       className={cn(
-        "relative flex h-9 cursor-default items-center gap-2.5 rounded-control pr-8 pl-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary",
+        "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill pr-8 pl-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary",
         className,
       )}
       {...props}
@@ -343,14 +343,14 @@ function ComboboxChips({ className, children, ...props }: React.ComponentProps<"
 function ComboboxChip({ value, className, children, ...props }: React.ComponentProps<"span"> & { value: string }) {
   const { remove, labelOf, disabled } = useCombobox();
   return (
-    <span data-slot="combobox-chip" className={cn("inline-flex h-7 max-w-full items-center gap-1 rounded-sm bg-subtle pr-1 pl-2 text-body leading-tight text-fg", className)} {...props}>
+    <span data-slot="combobox-chip" className={cn("inline-flex h-7 max-w-full items-center gap-1 rounded-pill bg-subtle pr-1 pl-2 text-body leading-tight text-fg", className)} {...props}>
       <span className="truncate">{children ?? labelOf(value)}</span>
       <button
         type="button"
         aria-label={`Remove ${labelOf(value)}`}
         disabled={disabled}
         onClick={() => remove(value)}
-        className="inline-flex size-5 items-center justify-center rounded-xs text-fg-muted outline-none transition-colors duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
+        className="inline-flex size-5 items-center justify-center rounded-pill text-fg-muted outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
       >
         <XIcon weight="bold" className="size-3.5" />
       </button>

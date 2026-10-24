@@ -6,7 +6,7 @@ import { MinusIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "@/lib/utils";
 
 // A one-time code field, written for the console's look (extrapolated from Figma "Form- Input"): joined 40px slots in
-// the field's lilac-gray edge with 8px outer corners, 16px medium ink characters, and the active slot in the purple edge
+// the field's lilac-gray edge with fully rounded outer corners, 16px medium ink characters, and the active slot in the purple edge
 // with the soft focus ring and a blinking 1px caret. One real input lies over the slots, so typing, deleting, pasting
 // a whole code, autofill from SMS and arrow keys all work as in any field. `pattern` limits each character.
 const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -131,7 +131,7 @@ function InputOTP({ maxLength, value: valueProp, defaultValue = "", onChange, on
 }
 
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="input-otp-group" className={cn("flex items-center rounded-control", className)} {...props} />;
+  return <div data-slot="input-otp-group" className={cn("flex items-center rounded-pill", className)} {...props} />;
 }
 
 function InputOTPSlot({ index, className, ...props }: React.ComponentProps<"div"> & { index: number }) {
@@ -143,7 +143,7 @@ function InputOTPSlot({ index, className, ...props }: React.ComponentProps<"div"
       data-active={isActive || undefined}
       aria-invalid={invalid || undefined}
       className={cn(
-        "relative -ml-px flex size-10 items-center justify-center border border-line-field bg-surface font-sans text-body-lg leading-none font-medium text-fg transition-[border-color,box-shadow] duration-150 ease-out first:ml-0 first:rounded-l-control last:rounded-r-control aria-invalid:border-danger data-active:z-10 data-active:border-line-brand data-active:shadow-focus aria-invalid:data-active:shadow-none motion-reduce:transition-none",
+        "relative -ml-px flex size-10 items-center justify-center border border-line-field bg-surface font-sans text-body-lg leading-none font-medium text-fg transition-[border-color,box-shadow] duration-150 ease-out first:ml-0 first:rounded-l-pill last:rounded-r-pill aria-invalid:border-danger data-active:z-10 data-active:border-line-brand data-active:shadow-focus aria-invalid:data-active:shadow-none motion-reduce:transition-none",
         className,
       )}
       {...props}

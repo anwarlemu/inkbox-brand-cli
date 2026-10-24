@@ -45,7 +45,6 @@ export function Preview() {
 export function Selection() {
   const [rows, setRows] = React.useState(MAILBOXES.slice(0, 8));
   const [selected, setSelected] = React.useState<string[]>([]);
-  const [refreshing, setRefreshing] = React.useState(false);
   return (
     <DataTable
       columns={COLUMNS}
@@ -64,13 +63,12 @@ export function Selection() {
             variant="ghost"
             size="icon-lg"
             aria-label="Refresh"
-            disabled={refreshing}
             onClick={() => {
-              setRefreshing(true);
-              setTimeout(() => setRefreshing(false), 800);
+              setRows(MAILBOXES.slice(0, 8));
+              setSelected([]);
             }}
           >
-            <ArrowsClockwiseIcon className={refreshing ? "animate-spin-steady" : undefined} />
+            <ArrowsClockwiseIcon />
           </Button>
           {selected.length > 0 && (
             <Button

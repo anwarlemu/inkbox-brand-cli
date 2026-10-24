@@ -19,7 +19,8 @@ const vars = (body) => Object.fromEntries([...body.matchAll(/(--ds-[\w-]+)\s*:\s
 const header = `/* Written by ${brand.bin} from its brand files. Do not edit; run the CLI again to update. */\n`;
 // A site may also hold product screens (an app behind the marketing pages): they opt in with the ds-product class.
 const productBlocks = hasProduct ? `.ds-product {${product.body}}\n\n.dark .ds-product,\n[data-theme="dark"] .ds-product,\n.ds-product:is(.dark, [data-theme="dark"]) {${dark.body}}\n\n` : '';
-const site = `${header}:root {${root.body}}\n\n${productBlocks}${read('site.css')}`;
+const interactions = read('interactions.css');
+const site = `${header}:root {${root.body}}\n\n${productBlocks}${read('site.css')}\n${interactions}`;
 // A product project is a product everywhere, so its values apply at the root; its dark theme follows the app's own switch.
 const productCss = !hasProduct ? site : `${header}:root {${root.body}}\n\n:root {${product.body}}\n\n:root:is(.dark, [data-theme="dark"]),\n.dark .ds-product,\n[data-theme="dark"] .ds-product {${dark.body}}\n\n${read('product.css')}`;
 
@@ -59,7 +60,7 @@ const theme = [
 const motion = `@theme {
 	--animate-pop-in: ds-pop-in var(--ds-duration-base) var(--ds-easing-out);
 	--animate-pop-out: ds-pop-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
-	--animate-fade-in: ds-fade-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-fade-in: ds-fade-in var(--ds-duration-fast) var(--ds-easing-out);
 	--animate-fade-out: ds-fade-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
 	--animate-dialog-in: ds-dialog-in var(--ds-duration-moderate) var(--ds-easing-out);
 	--animate-dialog-out: ds-dialog-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
@@ -334,7 +335,7 @@ const motion = `@theme {
 	}
 }
 `;
-const themeCss = `${header}@theme inline {\n${theme.join('\n')}\n}\n\n${motion}`;
+const themeCss = `${header}@theme inline {\n${theme.join('\n')}\n}\n\n${motion}\n${interactions}`;
 const fonts = `${header}@import url("${brand.fonts.css}");\n`;
 
 mkdirSync(new URL('../build', import.meta.url), { recursive: true });

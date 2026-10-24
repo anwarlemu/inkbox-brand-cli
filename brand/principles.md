@@ -21,14 +21,14 @@ for every action. It reads like a well-kept mail client, not a dashboard of char
   medium; only an empty state's title is bold. Keys, hosts and IDs are IBM Plex Mono; code blocks use the system
   monospace in a light editor theme. No caps except BETA and ADMIN; no tracking.
 - The main action is a 40px purple pill. Other actions: the lilac pill beside it, the 36px white outline key with
-  8px corners for actions inside content, a 38px lilac key in a page head, ghost glyphs for row actions.
-- Fields are 40px with 8px corners and a lilac-gray edge (#D2C9DB). Raised white things (a selected tab, a table body,
-  a select) carry Shadow/S: a 1px ring and a short drop. Corners: 4px tags, 6px tiles, 8px almost everything, 10px
-  table heads, tab tracks and banners, 16px dialogs.
+  fully rounded corners for actions inside content, a 38px lilac key in a page head, ghost glyphs for row actions.
+- Fields are 40px with fully rounded corners and a lilac-gray edge (#D2C9DB). Raised white things (a selected tab, a table body,
+  a select) carry Shadow/S: a 1px ring and a short drop. Corners: pills for buttons, compact controls, tabs and badges; 8px tiles, 12px content panels, 16px
+  table heads and banners, 24px dialogs.
 - Navigation is the rail: 38px rows with a filled 22px glyph and a 14px label; the current row sits on the lilac.
   A page opens with a head: a 20px title, a 14px muted line, a hairline under it.
 - Tables are three pieces: a lilac head, a white body with Shadow/S and 64px rows, a lilac pagination bar.
-- Dialogs are white with 16px corners over the page tinted with the ink at 12 percent and lightly blurred.
+- Dialogs are white with 24px corners over the page tinted with the ink at 12 percent and lightly blurred.
 - Icons are filled (Phosphor fill weight) in ink or #5B4C6A; chevrons, close and plus are line glyphs.
 - Empty states have the octopus with five glyph circles around it, a 22px bold title and a pill action.
 
@@ -40,8 +40,12 @@ for every action. It reads like a well-kept mail client, not a dashboard of char
 - Visible focus on every control; touch targets at least 44px on phones. The muted purples are the design's own
   values and sit under 4.5:1 on white: keep them for secondary information (dates, heads, hints), never for the only
   copy of something a person must read.
-- Motion is small and quick (150 to 300ms, a strong ease-out), never ease-in. Nothing animates on keyboard actions;
-  icons never move on hover. Everything stills with reduced motion.
+- Rare onboarding, feedback and celebrations may use expressive motion; frequent interactions use subtle style changes;
+  shortcuts, command palette toggles and other 100+ daily interactions are instant. Reduced motion disables animation.
+- Press feedback starts on pointer-down; actions retain native click/keyboard activation. No scaling, changing font
+  weights or padding on hover/press. Reuse component variants and consistent section gutters.
+- Audit debounces, artificial timers, transition waits and tap delay. Keep typing, filtering and feedback immediate;
+  only essential nonblocking timers survive, with a specific `ds-latency` reason beside each call.
 
 ## Refuse
 

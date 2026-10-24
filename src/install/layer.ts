@@ -42,7 +42,7 @@ const lastClasses = (sel: string) => {
 	const parts = sel.split(/\s*[>+~]\s*|\s+/).filter(Boolean);
 	return parts.slice(-2).flatMap((p) => [...p.matchAll(/\.([\w-]+)/g)].map((m) => m[1].toLowerCase()));
 };
-const SKIN = /^(color|background(-color|-image|-clip)?|border(-[a-z]+)*|outline(-[a-z]+)*|box-shadow|font-(family|size|weight|style)|line-height|letter-spacing|text-(transform|decoration)|transition|backdrop-filter)$/;
+const SKIN = /^(color|background(-color|-image|-clip)?|border(-[a-z]+)*|outline(-[a-z]+)*|box-shadow|font-(family|size|weight|style)|line-height|letter-spacing|text-(transform|decoration)|transition|filter|touch-action|backdrop-filter)$/;
 const CONTROL_KINDS = /(button|chip|input|action|announcement|menu|popover)/;
 const CONTROL = /^(padding(-[a-z]+)*|gap|white-space)$/;
 

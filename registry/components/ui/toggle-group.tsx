@@ -39,7 +39,7 @@ function ToggleGroup({
       style={{ "--gap": spacing } as React.CSSProperties}
       className={cn(
         "group/toggle-group flex w-fit max-w-full items-center gap-[calc(var(--spacing)*var(--gap))] data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
-        variant === "default" && "overflow-x-auto rounded-panel bg-subtle p-0.5 [scrollbar-width:none]",
+        variant === "default" && "overflow-x-auto rounded-pill bg-subtle p-0.5 [scrollbar-width:none]",
         className,
       )}
       {...props}

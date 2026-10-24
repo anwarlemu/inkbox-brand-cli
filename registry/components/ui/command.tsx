@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 // purple and the lilac under the selected row; shortcuts are 12px muted. CommandDialog puts it in the console's dialog
 // (16px corners, the blurred ink-tinted page) and opens without motion: it is summoned by keyboard many times a day.
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
-  return <CommandPrimitive data-slot="command" className={cn("flex size-full flex-col overflow-hidden rounded-control bg-surface text-fg", className)} {...props} />;
+  return <CommandPrimitive data-slot="command" data-ds-motion="instant" className={cn("flex size-full flex-col overflow-hidden rounded-control bg-surface text-fg", className)} {...props} />;
 }
 
 function CommandDialog({
@@ -29,8 +29,9 @@ function CommandDialog({
   return (
     <DialogPrimitive.Root data-slot="command-dialog" {...props}>
       <DialogPrimitive.Portal container={container}>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)]" />
+        <DialogPrimitive.Overlay data-ds-motion="instant" className="fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)]" />
         <DialogPrimitive.Content
+          data-ds-motion="instant"
           className={cn("fixed top-[18dvh] left-1/2 z-50 w-[calc(100%-2rem)] max-w-140 -translate-x-1/2 overflow-hidden rounded-dialog bg-surface p-1.5 text-fg outline-none", className)}
           aria-describedby={undefined}
         >
@@ -84,7 +85,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "relative flex h-9 cursor-default items-center gap-2.5 rounded-control px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary",
+        "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary",
         className,
       )}
       {...props}

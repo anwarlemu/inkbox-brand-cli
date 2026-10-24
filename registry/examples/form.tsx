@@ -18,11 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 type Values = { handle: string; displayName: string; description: string; phone: boolean; imessage: boolean; a2a: boolean; tls: "edge" | "passthrough" };
 
 const TAKEN = ["acme", "support", "acme-support"];
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// The availability check a real form would make against the API: here, a short wait and a fixed list.
+// The local example checks immediately. Real availability checks should use the API without delaying typing.
 async function isAvailable(handle: string) {
-  await wait(600);
   return !TAKEN.includes(handle);
 }
 
@@ -37,15 +35,14 @@ export function Preview() {
   const [created, setCreated] = React.useState<string | null>(null);
   const handle = form.watch("handle");
 
-  // Check the handle a moment after typing stops; the result shows as the field's trailing glyph.
+  // Start validation immediately; discard stale results if the handle changes.
   React.useEffect(() => {
     if (!/^[a-z0-9-]{3,}$/.test(handle)) return setCheck("idle");
     let live = true;
     setCheck("checking");
-    const t = setTimeout(() => isAvailable(handle).then((ok) => live && setCheck(ok ? "free" : "taken")), 300);
+    void isAvailable(handle).then((ok) => live && setCheck(ok ? "free" : "taken"));
     return () => {
       live = false;
-      clearTimeout(t);
     };
   }, [handle]);
 
@@ -54,7 +51,6 @@ export function Preview() {
       form.setError("handle", { message: "(is not available)" });
       return;
     }
-    await wait(1200);
     setCreated(values.handle);
   }
 
@@ -75,7 +71,7 @@ export function Preview() {
       <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="mx-auto grid w-full max-w-121.5 gap-6">
         <fieldset disabled={submitting} className="m-0 grid gap-6 border-0 p-0 disabled:opacity-60">
           <div className="flex gap-5">
-            <button type="button" aria-label="Add a picture" className="flex size-16 shrink-0 items-center justify-center rounded-pill bg-subtle text-fg outline-none transition-[background-color,scale] duration-150 ease-out hover:bg-subtle-hover active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
+            <button type="button" aria-label="Add a picture" className="flex size-16 shrink-0 items-center justify-center rounded-pill bg-subtle text-fg outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle-hover active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
               <PlusIcon className="size-7" />
             </button>
             <div className="grid min-w-0 flex-1 gap-3">
@@ -250,7 +246,7 @@ export function Login() {
   const [done, setDone] = React.useState(false);
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(async () => { await wait(800); setDone(true); })} noValidate className="mx-auto grid w-full max-w-86 gap-3">
+      <form onSubmit={form.handleSubmit(() => setDone(true))} noValidate className="mx-auto grid w-full max-w-86 gap-3">
         <FormField
           control={form.control}
           name="email"

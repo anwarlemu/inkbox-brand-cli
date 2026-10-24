@@ -31,7 +31,7 @@ function PopoverContent({ className, align = "center", sideOffset = 6, ...props 
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 flex w-72 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) flex-col gap-3 rounded-control bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in",
+          "z-50 flex w-72 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) flex-col gap-3 rounded-control bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           className,
         )}
         {...props}

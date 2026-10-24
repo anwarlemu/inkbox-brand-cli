@@ -265,7 +265,7 @@ function Calendar(props: CalendarProps) {
 }
 
 const NAV_BUTTON =
-  "inline-flex size-8 items-center justify-center rounded-control text-icon-secondary outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-subtle hover:text-fg active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none [&_svg]:size-4";
+  "inline-flex size-8 items-center justify-center rounded-pill text-icon-secondary outline-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle active:bg-subtle hover:text-fg active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none [&_svg]:size-4";
 
 function CaptionSelect({ label, value, options, onChange }: { label: string; value: number; options: { value: number; label: string }[]; onChange: (value: number) => void }) {
   return (
@@ -274,7 +274,7 @@ function CaptionSelect({ label, value, options, onChange }: { label: string; val
         aria-label={label}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-8 appearance-none rounded-control bg-surface pr-7 pl-2.5 font-sans text-body leading-tight font-medium text-fg shadow-s outline-none focus-visible:shadow-focus"
+        className="h-8 appearance-none rounded-pill bg-surface pr-7 pl-2.5 font-sans text-body leading-tight font-medium text-fg shadow-s outline-none focus-visible:shadow-focus"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -305,7 +305,7 @@ function CalendarDayButton({ date, label, today, outside, selected, middle, disa
       aria-current={today ? "date" : undefined}
       disabled={disabled}
       className={cn(
-        "relative mx-auto flex size-9 items-center justify-center rounded-control font-sans text-body leading-tight text-fg tabular-nums outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-subtle active:scale-97 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:text-fg-faint disabled:line-through motion-reduce:transition-none",
+        "relative mx-auto flex size-9 items-center justify-center rounded-pill font-sans text-body leading-tight text-fg tabular-nums outline-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:text-fg-faint disabled:line-through motion-reduce:transition-none",
         today && "font-medium text-fg-brand",
         outside && "text-fg-faint",
         middle && "rounded-none bg-transparent text-fg hover:bg-subtle-hover",

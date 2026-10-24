@@ -35,6 +35,7 @@ export function Preview() {
       <Button
         variant="outline"
         onClick={() =>
+          // ds-latency: demonstrates a pending notification; no control or input waits for the demo timer.
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1600)), {
             loading: "Provisioning phone line...",
             success: "Line +1 650 474 9720 is live",

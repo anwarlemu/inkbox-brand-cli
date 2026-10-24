@@ -4,7 +4,7 @@ import { CaretLeftIcon, CaretRightIcon, DotsThreeIcon } from "@phosphor-icons/re
 import { cn } from "@/lib/utils";
 
 // The console's pagination (Figma 427:2715, under the Email and iMessage tables): 14px muted "Previous" and "Next" with
-// 16px carets, the page numbers in 14px ink, and the current page a 40 by 30 white key with 8px corners and Shadow/S.
+// 16px carets, the page numbers in 14px ink, and the current page a 40 by 30 white key with fully rounded corners and Shadow/S.
 // `bar` sets it in the 42px lilac bar with 10px corners that sits 8px under a table, the pages at its right end.
 function Pagination({ className, bar = false, ...props }: React.ComponentProps<"nav"> & { bar?: boolean }) {
   return (
@@ -30,7 +30,7 @@ function PaginationItem(props: React.ComponentProps<"li">) {
 type PaginationLinkProps = { isActive?: boolean; size?: "icon" | "default" } & React.ComponentProps<"a">;
 
 const LINK =
-  "inline-flex h-7.5 shrink-0 items-center justify-center gap-1 rounded-control font-sans text-body leading-tight whitespace-nowrap outline-none transition-[background-color,color,box-shadow,scale] duration-150 ease-out active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+  "inline-flex h-7.5 shrink-0 items-center justify-center gap-1 rounded-pill font-sans text-body leading-tight whitespace-nowrap outline-none transition-[background-color,color,box-shadow] duration-150 ease-out active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
 function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
   return (

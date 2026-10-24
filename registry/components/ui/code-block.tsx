@@ -34,6 +34,7 @@ function CodeBlockCopyButton({ value, className, ...props }: Omit<React.Componen
   const [state, setState] = React.useState<"idle" | "copied" | "failed">("idle");
   React.useEffect(() => {
     if (state === "idle") return;
+    // ds-latency: resets completed clipboard feedback without delaying the copy action.
     const timeout = setTimeout(() => setState("idle"), 2000);
     return () => clearTimeout(timeout);
   }, [state]);
@@ -45,7 +46,7 @@ function CodeBlockCopyButton({ value, className, ...props }: Omit<React.Componen
         data-copied={state === "copied" || undefined}
         aria-label={state === "copied" ? "Copied" : "Copy code"}
         onClick={() => navigator.clipboard.writeText(value).then(() => setState("copied"), () => setState("failed"))}
-        className={cn("inline-flex size-8 items-center justify-center rounded-control text-fg-brand outline-none transition-[background-color,scale] duration-150 ease-out hover:bg-surface active:scale-97 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
+        className={cn("inline-flex size-8 items-center justify-center rounded-pill text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-surface active:bg-surface active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
         {...props}
       >
         {state === "copied" ? <CheckIcon className="size-4.5" weight="bold" /> : <CopyIcon className="size-4.5" weight="duotone" />}

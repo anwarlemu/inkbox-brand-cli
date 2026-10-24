@@ -7,12 +7,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 // Extrapolated from the console's soft key (Tunnel quickstart) and its segmented choice (Where does this agent run?):
-// a 38px key with 8px corners, 8px of side padding and a 14px medium ink label beside a 20px glyph. Off it is bare and
+// a 38px key with fully rounded corners, 8px of side padding and a 14px medium ink label beside a 20px glyph. Off it is bare and
 // washes lilac under the pointer; on it holds the lilac. `outline` adds the field edge and turns white with the Shadow/S
-// ring when on. In a ToggleGroup the default variant becomes the segmented track (see toggle-group). Pressing scales
-// it to 97 percent; the state change itself is a color change only.
+// ring when on. In a ToggleGroup the default variant becomes the segmented track (see toggle-group). Press feedback is immediate and changes styling without resizing.
 const toggleVariants = cva(
-  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control font-sans text-body leading-tight font-medium whitespace-nowrap text-fg outline-none select-none transition-[background-color,box-shadow,color,scale] duration-150 ease-out active:scale-97 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:text-danger motion-reduce:transition-none motion-reduce:active:scale-100 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-pill font-sans text-body leading-tight font-medium whitespace-nowrap text-fg outline-none select-none transition-[background-color,box-shadow,color] duration-150 ease-out active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:text-danger motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
   {
     variants: {
       variant: {

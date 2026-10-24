@@ -10,6 +10,28 @@ import { walkCss } from './walk.js';
 export type Stats = { colors: number; fonts: number; type: number; radius: number; spacing: number; motion: number; shadows: number };
 export const newStats = (): Stats => ({ colors: 0, fonts: 0, type: 0, radius: 0, spacing: 0, motion: 0, shadows: 0 });
 
+/** Remove only the delay slot of each transition, preserving its duration and easing. */
+function immediateTransition(value: string): string {
+	let depth = 0, times = 0, start = 0, result = '';
+	const flush = (end: number) => {
+		const token = value.slice(start, end);
+		const timing = /^-?\d*\.?\d+(?:ms|s)$/.test(token) || /^var\(--ds-duration-[\w-]+\)$/.test(token);
+		result += timing && ++times > 1 ? '0ms' : token;
+	};
+	for (let i = 0; i <= value.length; i++) {
+		const c = value[i];
+		if (c === '(') depth++;
+		if (c === ')') depth--;
+		if (i === value.length || depth === 0 && /[\s,]/.test(c)) {
+			flush(i);
+			if (i < value.length) result += c;
+			if (c === ',') times = 0;
+			start = i + 1;
+		}
+	}
+	return result;
+}
+
 const toPx = (n: string, unit: string) => Number(n) * (unit === 'rem' || unit === 'em' ? 16 : 1);
 
 function mapLengths(value: string, list: [string, number][], { pill = false } = {}) {
@@ -142,10 +164,12 @@ function convertDecls(css: string, palette: Palette, stats: Stats, selector: str
 			next = next.replace(/\binvert\((1|100%)?\)/g, 'invert(0)');
 		} else if (/^(transition|animation)(-duration|-timing-function|-delay)?$/.test(p)) {
 			const before = next;
+			if (p === 'transition') next = immediateTransition(next);
 			next = next
 				// A looping or long animation (a marquee, a spinner) keeps its own timing; interface motion moves to the brand's.
 				.replace(/(?<![\w.-])(\d*\.?\d+)(ms|s)\b/g, (m, n: string, unit: string) => {
 					const ms = Number(n) * (unit === 's' ? 1000 : 1);
+					if (ms === 0 || p === 'transition-delay') return '0ms';
 					return p.startsWith('animation') && (ms > 1000 || /\binfinite\b/.test(value)) ? m : `var(${nearest(scales().duration, ms)})`;
 				})
 				.replace(/\bcubic-bezier\([^)]*\)|\bease-in-out\b|\bease-in\b|\bease-out\b|(?<![\w-])ease(?![\w-])/g, (e) => (e === 'ease-in-out' ? 'var(--ds-easing-in-out)' : 'var(--ds-easing-out)'))

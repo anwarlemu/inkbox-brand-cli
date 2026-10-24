@@ -46,7 +46,7 @@ function ToastAction({ className, ...props }: React.ComponentProps<typeof ToastP
     <ToastPrimitive.Action
       data-slot="toast-action"
       className={cn(
-        "inline-flex h-8 shrink-0 items-center justify-center self-center rounded-control border border-line-field bg-surface px-2.5 font-sans text-body leading-tight font-medium text-fg-brand outline-none transition-[background-color,scale] duration-150 ease-out hover:bg-subtle active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=destructive]/toast:text-danger-strong motion-reduce:transition-none",
+        "inline-flex h-8 shrink-0 items-center justify-center self-center rounded-pill border border-line-field bg-surface px-2.5 font-sans text-body leading-tight font-medium text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=destructive]/toast:text-danger-strong motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -59,7 +59,7 @@ function ToastClose({ className, ...props }: React.ComponentProps<typeof ToastPr
     <ToastPrimitive.Close
       data-slot="toast-close"
       aria-label="Close"
-      className={cn("absolute top-3 right-3 inline-flex size-6 items-center justify-center rounded-control text-fg-faint outline-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
+      className={cn("absolute top-3 right-3 inline-flex size-6 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
       {...props}
     >
       <XIcon className="size-4" />
@@ -98,6 +98,7 @@ function setState(update: (state: State) => State) {
 
 function scheduleRemove(id: string) {
   if (timeouts.has(id)) return;
+  // ds-latency: removes an already dismissed toast from memory; dismissal and input stay immediate.
   timeouts.set(id, setTimeout(() => {
     timeouts.delete(id);
     setState((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));

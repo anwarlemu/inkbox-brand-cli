@@ -1,7 +1,7 @@
 {
  "reference": "Figma \"Inkbox (Copy) (Copy)\", section \"New\" (node 427:2715), the console screens",
  "captured": "2026-10-23",
- "method": "Colors sampled from the 1x renders, type fitted to text layer widths, sizes and radii from layer geometry",
+ "method": "Colors sampled from the 1x renders, type fitted to text layer widths, sizes and radii from layer geometry; component radii updated to the requested rounded styling",
  "viewport": {
   "width": 1440,
   "height": 1000
@@ -28,11 +28,11 @@
    "name": "button",
    "example": "Preview",
    "selector": "[data-slot=button][data-variant=outline]",
-   "source": "Figma 427:2715 View as formatted",
+   "source": "Figma 427:2715 View as formatted; pill radius override",
    "expected": {
     "height": "36px",
     "borderTopColor": "#D2C9DB",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "color": "#74629D",
     "fontWeight": "500"
    },
@@ -43,11 +43,11 @@
    "name": "button",
    "example": "Preview",
    "selector": "[data-slot=button][data-variant=soft]",
-   "source": "Figma 427:2715 Tunnel quickstart",
+   "source": "Figma 427:2715 Tunnel quickstart; pill radius override",
    "expected": {
     "height": "38px",
     "backgroundColor": "#F4F2F6",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -70,10 +70,10 @@
    "name": "input",
    "example": "Preview",
    "selector": "input[data-slot=input]",
-   "source": "Figma 427:2715 Form- Input",
+   "source": "Figma 427:2715 Form- Input; pill radius override",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "borderTopColor": "#D2C9DB",
     "fontSize": "14px",
     "paddingLeft": "14px",
@@ -101,11 +101,11 @@
    "name": "tabs",
    "example": "Preview",
    "selector": "[data-slot=tabs-list]",
-   "source": "Figma 427:2715 Email tabs",
+   "source": "Figma 427:2715 Email tabs; pill radius override",
    "expected": {
     "height": "42px",
     "backgroundColor": "#F4F2F6",
-    "borderTopLeftRadius": "10px",
+    "borderTopLeftRadius": "9999px",
     "paddingTop": "2px"
    },
    "width": 1440
@@ -115,11 +115,11 @@
    "name": "tabs",
    "example": "Preview",
    "selector": "[data-slot=tabs-trigger][data-state=active]",
-   "source": "Figma 427:2715 Email tabs: Mailboxes",
+   "source": "Figma 427:2715 Email tabs: Mailboxes; pill radius override",
    "expected": {
     "height": "38px",
     "backgroundColor": "#FFFFFF",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "fontWeight": "500",
     "fontSize": "14px"
    },
@@ -130,10 +130,10 @@
    "name": "dialog",
    "example": "Preview",
    "selector": "[data-slot=dialog-content]",
-   "source": "Figma 427:2715 Modal - Create Agent",
+   "source": "Figma 427:2715 Modal - Create Agent; rounded radius override",
    "expected": {
     "width": "534px",
-    "borderTopLeftRadius": "16px",
+    "borderTopLeftRadius": "24px",
     "backgroundColor": "#FFFFFF"
    },
    "width": 1440,
@@ -197,10 +197,10 @@
    "name": "select",
    "example": "Preview",
    "selector": "[data-slot=select-trigger]",
-   "source": "Figma 427:2715 Any State",
+   "source": "Figma 427:2715 Any State; pill radius override",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "backgroundColor": "#FFFFFF",
     "fontSize": "14px"
    },
@@ -237,10 +237,10 @@
    "name": "alert",
    "example": "Warning",
    "selector": "[data-slot=alert]",
-   "source": "Figma 427:2715 Copy this API key now",
+   "source": "Figma 427:2715 Copy this API key now; rounded radius override",
    "expected": {
     "backgroundColor": "#F6E8C9",
-    "borderTopLeftRadius": "10px",
+    "borderTopLeftRadius": "16px",
     "color": "#4A2F0B"
    },
    "width": 1440
@@ -250,10 +250,10 @@
    "name": "alert",
    "example": "Info",
    "selector": "[data-slot=alert]",
-   "source": "Figma 427:2715 Vault: zero-knowledge note",
+   "source": "Figma 427:2715 Vault: zero-knowledge note; rounded radius override",
    "expected": {
     "backgroundColor": "#C9EBF6",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "12px",
     "color": "#0D4152"
    },
    "width": 1440
@@ -347,11 +347,11 @@
    "name": "sidebar",
    "example": "Preview",
    "selector": "[data-slot=sidebar-menu-button]",
-   "source": "Figma 427:2715 rail rows",
+   "source": "Figma 427:2715 rail rows; pill radius override",
    "expected": {
     "height": "38px",
     "fontSize": "14px",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "9999px",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -361,10 +361,10 @@
    "name": "card",
    "example": "Preview",
    "selector": "[data-slot=card]",
-   "source": "Figma 427:2715 Webhooks: Trigger card",
+   "source": "Figma 427:2715 Webhooks: Trigger card; rounded radius override",
    "expected": {
     "borderTopColor": "#D2C9DB",
-    "borderTopLeftRadius": "8px",
+    "borderTopLeftRadius": "12px",
     "backgroundColor": "#FFFFFF"
    },
    "width": 1440

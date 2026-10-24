@@ -300,7 +300,7 @@ function QuestionnaireChoice({ value, disabled = false, index = 0, className, ch
         data-slot="questionnaire-choice-indicator"
         className={cn(
           "pointer-events-none mt-px flex size-4.5 shrink-0 items-center justify-center border-[1.5px] border-line-strong bg-surface text-on-primary transition-[background-color,border-color,border-width] duration-150 ease-out motion-reduce:transition-none",
-          multiple ? "rounded-xs group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary" : "rounded-pill group-data-checked/questionnaire-choice:border-4 group-data-checked/questionnaire-choice:border-pink",
+          multiple ? "rounded-pill group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary" : "rounded-pill group-data-checked/questionnaire-choice:border-4 group-data-checked/questionnaire-choice:border-pink",
         )}
       >
         {multiple && <CheckIcon weight="bold" className="hidden size-3.5 group-data-checked/questionnaire-choice:block" />}

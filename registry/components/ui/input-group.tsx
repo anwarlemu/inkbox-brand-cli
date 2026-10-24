@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// The console's field with things inside it (Figma 427:2715, Create Agent Identity): the field's 40px, 8px corners and
+// The console's field with things inside it (Figma 427:2715, Create Agent Identity): the field's 40px, fully rounded corners and
 // lilac-gray edge around a borderless control, with addons at either end: a muted glyph or text, the trailing state
 // glyph of the handle check (a spinner while checking, a green check-circle when free, a red x-circle when taken), or a
 // `segment`, the lilac suffix with a divider ("@inboxmail.com" in the Email card). Focus, invalid and read-only states
@@ -17,11 +17,11 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="input-group"
       role="group"
       className={cn(
-        "group/input-group relative flex h-10 w-full min-w-0 items-center overflow-hidden rounded-control border border-line-field bg-surface transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none",
+        "group/input-group relative flex h-10 w-full min-w-0 items-center overflow-hidden rounded-pill border border-line-field bg-surface transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none",
         "has-[[data-slot=input-group-control]:focus-visible]:border-line-brand has-[[data-slot=input-group-control]:focus-visible]:shadow-focus",
         "has-[[data-slot][aria-invalid=true]]:border-danger has-[[data-slot][aria-invalid=true]]:shadow-none",
         "has-[[data-slot=input-group-control]:read-only]:border-line-field/50 has-[[data-slot=input-group-control]:read-only]:bg-subtle has-[[data-slot=input-group-control]:disabled]:border-line-field/50 has-[[data-slot=input-group-control]:disabled]:bg-subtle has-[[data-slot=input-group-control]:disabled]:opacity-70",
-        "has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto",
+        "has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>textarea]:rounded-control has-[>[data-align=block-start]]:rounded-control has-[>[data-align=block-end]]:rounded-control",
         "has-[>[data-align=inline-start]]:[&>input]:pl-2 has-[>[data-align=inline-end]]:[&>input]:pr-2 has-[>[data-align=block-start]]:[&>textarea]:pt-1 has-[>[data-align=block-end]]:[&>textarea]:pb-1",
         className,
       )}
@@ -74,10 +74,10 @@ function InputGroupAddon({ className, align = "inline-start", variant = "plain",
 const inputGroupButtonVariants = cva("shadow-none", {
   variants: {
     size: {
-      xs: "h-7 gap-1 rounded-sm px-2 text-body-sm [&>svg:not([class*='size-'])]:size-4",
-      sm: "h-8 gap-1.5 rounded-control px-2.5",
-      "icon-xs": "size-7 rounded-sm p-0 [&>svg:not([class*='size-'])]:size-4",
-      "icon-sm": "size-8 rounded-control p-0",
+      xs: "h-7 gap-1 rounded-pill px-2 text-body-sm [&>svg:not([class*='size-'])]:size-4",
+      sm: "h-8 gap-1.5 rounded-pill px-2.5",
+      "icon-xs": "size-7 rounded-pill p-0 [&>svg:not([class*='size-'])]:size-4",
+      "icon-sm": "size-8 rounded-pill p-0",
     },
   },
   defaultVariants: { size: "xs" },

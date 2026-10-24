@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 export function Preview() {
   const [value, setValue] = React.useState(12);
   React.useEffect(() => {
+    // ds-latency: advances a presentation-only progress example; no user input is waiting.
     const t = setTimeout(() => setValue(64), 600);
     return () => clearTimeout(t);
   }, []);

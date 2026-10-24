@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 // at the panel's left, the chosen one on the lilac. A single date closes the panel when picked; a range closes once both
 // ends are set. Opening puts focus on the chosen day (or today), so the arrow keys work at once.
 const TRIGGER =
-  "flex h-10 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-control bg-surface pr-3 pl-3 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[empty=true]:text-fg-subtle motion-reduce:transition-none";
+  "flex h-10 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-pill bg-surface pr-3 pl-3 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[empty=true]:text-fg-subtle motion-reduce:transition-none";
 
 type Preset<T> = { label: string; value: T };
 
@@ -50,7 +50,7 @@ function Presets<T>({ presets, isActive, onPick }: { presets: Preset<T>[]; isAct
           type="button"
           aria-pressed={isActive(p)}
           onClick={() => onPick(p.value)}
-          className="flex h-9 shrink-0 items-center rounded-control px-2.5 text-left font-sans text-body leading-tight whitespace-nowrap text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-pressed:bg-subtle aria-pressed:font-medium motion-reduce:transition-none"
+          className="flex h-9 shrink-0 items-center rounded-pill px-2.5 text-left font-sans text-body leading-tight whitespace-nowrap text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-pressed:bg-subtle motion-reduce:transition-none"
         >
           {p.label}
         </button>

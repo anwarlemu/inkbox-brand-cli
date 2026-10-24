@@ -175,7 +175,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const ARROW =
-  "absolute inline-flex size-8 items-center justify-center rounded-pill bg-surface text-fg shadow-s outline-none transition-[background-color,opacity,scale] duration-150 ease-out hover:bg-subtle active:scale-97 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none [&_svg]:size-4";
+  "absolute inline-flex size-8 items-center justify-center rounded-pill bg-surface text-fg shadow-s outline-none transition-[background-color,opacity] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none [&_svg]:size-4";
 
 function CarouselPrevious({ className, ...props }: React.ComponentProps<"button">) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();

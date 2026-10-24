@@ -17,7 +17,7 @@ Say in one line what the screen is for. Its main action is the most prominent th
 information is easy to find and scan, and the restyle did not bury, flatten or reorder anything.
 
 ## One system (score: coherence)
-Every section uses the same few parts: the same pills and keys, fields, lilac wells, Shadow/S panels, 8px corners,
+Every section uses the same few parts: the same pills and keys, fields, lilac wells, Shadow/S panels, pill controls, 12px panel corners,
 spacing rhythm and type scale. Nothing left from the old look: an old accent color or font, black text, a dark panel,
 square main actions, heavy shadows, gray smudges where an old shadow or fade was converted.
 
@@ -36,6 +36,14 @@ Flag each as a blocker or major:
   horizontal scroll.
 - A table that does not scroll inside its panel on a phone.
 - Lines of body text wider than about 75 characters.
+
+## Interaction review
+
+Verify with a running page as well as screenshots. Rare celebrations may be expressive; frequent hover/list actions
+use only subtle styling; keyboard shortcuts, command toggles and 100+ daily actions are instant. Hold a pointer down
+and verify feedback before release. Compare dimensions, font weight and padding across states. Equivalent components
+must use the same interaction treatment and size variant. Audit debounce/timeout/transition waits and tap delay;
+remove nonessential input latency. Reduced motion must disable animations. Static screenshots cannot prove timing.
 
 ## Accessibility (score: accessibility)
 Primary copy at least 4.5:1 (the ink and the action purple pass); the muted purples are allowed only for secondary

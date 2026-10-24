@@ -8,11 +8,10 @@ import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
 // The console's select (Figma 427:2715, Create Agent Identity: "Any State" under Phone Number, "Shared" under
-// iMessage): a white 40px field with 8px corners and the Shadow/S ring instead of an edge, the value in 14px ink 14px
+// iMessage): a white 40px field with fully rounded corners and the Shadow/S ring instead of an edge, the value in 14px ink 14px
 // in, a 16px bold caret 12px from the right; the placeholder is the light purple. `size="sm"` is 36px. The list is the
 // console's menu: white, 8px corners, the floating shadow, 4px inside; 36px rows with 8px corners, 14px ink, the
-// highlighted row on the lilac and a purple check at the right of the chosen one. It opens from the trigger (96
-// percent and a fade, 200ms) and closes faster.
+// highlighted row on the lilac and a purple check at the right of the chosen one. It opens and closes with a subtle 150ms fade.
 function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
@@ -31,7 +30,7 @@ function SelectTrigger({ className, size = "default", children, ...props }: Reac
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-control bg-surface pr-3 pl-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-placeholder:text-fg-subtle data-[size=default]:h-10 data-[size=sm]:h-9 motion-reduce:transition-none *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
+        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-pill bg-surface pr-3 pl-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-placeholder:text-fg-subtle data-[size=default]:h-10 data-[size=sm]:h-9 motion-reduce:transition-none *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
         className,
       )}
       {...props}
@@ -51,7 +50,7 @@ function SelectContent({ className, children, position = "popper", align = "cent
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-control bg-surface text-fg shadow-floating data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in",
+          "relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-control bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in",
           position === "popper" && "w-full min-w-(--radix-select-trigger-width) data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,
         )}
@@ -78,7 +77,7 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex h-9 w-full cursor-default items-center gap-2.5 rounded-control pr-9 pl-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-disabled:pointer-events-none data-disabled:text-fg-faint data-highlighted:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2.5",
+        "relative flex h-9 w-full cursor-default items-center gap-2.5 rounded-pill pr-9 pl-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-disabled:pointer-events-none data-disabled:text-fg-faint data-highlighted:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2.5",
         className,
       )}
       {...props}

@@ -257,7 +257,7 @@
 			},
 			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-control bg-surface",
 			"rules": [
-				"White with the field edge and 8px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
+				"White with the field edge and 12px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
 				"A card inside a dialog sits on the lilac with no edge (a channel card)."
 			],
 			"source": "Figma 427:2715 (Webhooks: Trigger, Delivery, Response contract)"
@@ -303,7 +303,7 @@
 			},
 			"tailwind": "p-3.5 rounded-control bg-subtle",
 			"rules": [
-				"A grouped block on the lilac with 8px corners (Initialize vault, a channel card)."
+				"A grouped block on the lilac with 12px corners (Initialize vault, a channel card)."
 			],
 			"source": "Figma 427:2715 (Vault: Initialize vault)"
 		},
@@ -487,9 +487,9 @@
 				"line-height": "1",
 				"white-space": "nowrap",
 				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-primary text-on-primary font-sans text-body font-normal leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-primary-hover active:scale-97",
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-primary text-on-primary font-sans text-body font-normal leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-primary-hover active:bg-primary-hover active:brightness-95 active:transition-none",
 			"rules": [
 				"The main action is a 40px purple pill with a 14px regular white label and a 20px glyph 8px from it.",
 				"One per view (Create Agent, Log in); a dialog's action spans its width."
@@ -500,7 +500,9 @@
 					"background-color": "var(--ds-color-action-primary-hover)"
 				},
 				":active": {
-					"scale": "0.97"
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-action-primary-hover)"
 				}
 			}
 		},
@@ -531,7 +533,7 @@
 				"height": "var(--ds-space-9)",
 				"padding-inline": "var(--ds-space-2-5)",
 				"border": "1px solid var(--ds-color-border-field)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-brand)",
 				"font-family": "var(--ds-font-sans)",
@@ -540,11 +542,11 @@
 				"line-height": "1",
 				"white-space": "nowrap",
 				"text-decoration": "none",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "inline-flex items-center justify-center gap-1 h-9 px-2.5 border border-line-field rounded-control bg-surface text-fg-brand font-sans text-body font-medium leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-subtle active:scale-97",
+			"tailwind": "inline-flex items-center justify-center gap-1 h-9 px-2.5 border border-line-field rounded-pill bg-surface text-fg-brand font-sans text-body font-medium leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none",
 			"rules": [
-				"Other actions are the 36px white key with 8px corners, the field edge and a medium purple label (View as formatted).",
+				"Other actions are the 36px white key with fully rounded corners, the field edge and a medium purple label (View as formatted).",
 				"Beside the main action on a form, use the lilac pill instead (Continue with GitHub)."
 			],
 			"source": "Figma 427:2715 (Modal - Created: View as formatted, Copy as markdown)",
@@ -553,7 +555,9 @@
 					"background-color": "var(--ds-color-bg-subtle)"
 				},
 				":active": {
-					"scale": "0.97"
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle)"
 				}
 			}
 		},
@@ -587,9 +591,9 @@
 				"font-size": "var(--ds-text-body)",
 				"line-height": "1",
 				"white-space": "nowrap",
-				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out), scale var(--ds-duration-fast) var(--ds-easing-out)"
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-subtle text-fg font-sans text-body leading-none whitespace-nowrap transition-[background-color,scale] duration-150 ease-out hover:bg-subtle-hover active:scale-97",
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-subtle text-fg font-sans text-body leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover active:brightness-95 active:transition-none",
 			"rules": [
 				"The alternative beside the main action: the same pill in lilac with ink text (Continue with GitHub, Continue with Google)."
 			],
@@ -599,7 +603,9 @@
 					"background-color": "var(--ds-color-bg-subtle-hover)"
 				},
 				":active": {
-					"scale": "0.97"
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle-hover)"
 				}
 			}
 		},
@@ -664,19 +670,24 @@
 				"gap": "var(--ds-space-2-5)",
 				"height": "var(--ds-space-9-5)",
 				"padding-inline": "var(--ds-space-3)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-bg-subtle)",
 				"color": "var(--ds-color-text-default)",
 				"font-size": "var(--ds-text-body)",
 				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "inline-flex items-center gap-2.5 h-9.5 px-3 rounded-control bg-subtle text-fg text-body transition-colors duration-150 ease-out hover:bg-subtle-hover",
+			"tailwind": "inline-flex items-center gap-2.5 h-9.5 px-3 rounded-pill bg-subtle text-fg text-body transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover active:brightness-95 active:transition-none",
 			"rules": [
 				"An action in a page head is the 38px lilac key with a 22px glyph (Tunnel quickstart)."
 			],
 			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)",
 			"states": {
 				":hover": {
+					"background-color": "var(--ds-color-bg-subtle-hover)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
 					"background-color": "var(--ds-color-bg-subtle-hover)"
 				}
 			}
@@ -706,15 +717,15 @@
 				"gap": "var(--ds-space-2-5)",
 				"height": "var(--ds-space-9-5)",
 				"padding-inline": "var(--ds-space-3)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-pill)",
 				"color": "var(--ds-color-text-nav)",
 				"font-size": "var(--ds-text-body)",
 				"text-decoration": "none",
 				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "flex items-center gap-2.5 h-9.5 px-3 rounded-control text-fg text-body no-underline transition-colors duration-150 ease-out hover:bg-subtle aria-[current=page]:bg-subtle",
+			"tailwind": "flex items-center gap-2.5 h-9.5 px-3 rounded-pill text-fg text-body no-underline transition-colors duration-150 ease-out hover:bg-subtle active:bg-subtle aria-[current=page]:bg-subtle active:brightness-95 active:transition-none",
 			"rules": [
-				"38px rows with 8px corners: a 22px filled glyph in ink, 10px, a 14px regular ink label.",
+				"38px rows with fully rounded corners: a 22px filled glyph in ink, 10px, a 14px regular ink label.",
 				"The current row sits on the lilac (white on the lilac rail). Glyphs never move."
 			],
 			"source": "Figma 427:2715 (rail: Agent Workspace, Email, Vault)",
@@ -723,6 +734,11 @@
 					"background-color": "var(--ds-color-bg-subtle)"
 				},
 				"[aria-current=page]": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
 					"background-color": "var(--ds-color-bg-subtle)"
 				}
 			}
@@ -769,16 +785,16 @@
 				"display": "inline-flex",
 				"align-items": "center",
 				"padding": "1px var(--ds-space-1)",
-				"border-radius": "var(--ds-radius-xs)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-tag-blue)",
 				"color": "var(--ds-color-tag-blue-fg)",
 				"font-size": "var(--ds-text-micro)",
 				"font-weight": "var(--ds-font-weight-medium)",
 				"line-height": "var(--ds-leading-snug)"
 			},
-			"tailwind": "inline-flex items-center px-1 py-px rounded-xs bg-tag-blue text-tag-blue-fg text-micro font-medium leading-snug",
+			"tailwind": "inline-flex items-center px-1 py-px rounded-pill bg-tag-blue text-tag-blue-fg text-micro font-medium leading-snug",
 			"rules": [
-				"Tags are 11px medium on a pale blue, purple or gray with 4px corners (Email, Signed, Fire-and-forget).",
+				"Tags are 11px medium on a pale blue, purple or gray with fully rounded corners (Email, Signed, Fire-and-forget).",
 				"A BETA or ADMIN mark is a pink edge with 12px pink text instead."
 			],
 			"source": "Figma 427:2715 (Webhooks - Event catalog: tags)"
@@ -801,14 +817,14 @@
 				"align-items": "center",
 				"height": "var(--ds-space-9-5)",
 				"padding-inline": "var(--ds-space-3-5)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-status-success-bg)",
 				"color": "var(--ds-color-text-default)",
 				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "inline-flex items-center h-9.5 px-3.5 rounded-control bg-success-bg text-fg text-body",
+			"tailwind": "inline-flex items-center h-9.5 px-3.5 rounded-pill bg-success-bg text-fg text-body",
 			"rules": [
-				"A state is shown as a 38px well with 8px corners: green for active, gray for idle, blue for a mode (Active, Idle, Edge)."
+				"A state is shown as a 38px well with fully rounded corners: green for active, gray for idle, blue for a mode (Active, Idle, Edge)."
 			],
 			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)"
 		},
@@ -873,7 +889,7 @@
 			},
 			"tailwind": "overflow-hidden rounded-control bg-subtle",
 			"rules": [
-				"Images and previews sit in 8px corners on the lilac."
+				"Images and previews sit in 12px corners on the lilac."
 			],
 			"source": "Figma 427:2715 (extrapolated from the lilac panels)"
 		},
@@ -900,7 +916,7 @@
 			},
 			"tailwind": "w-full border-separate border-spacing-0 text-body text-fg",
 			"rules": [
-				"The head is a 48px lilac bar with 10px corners and 14px muted labels; the body a separate white panel with Shadow/S, 64px rows ruled by Line/S Bottom; the foot a 42px lilac bar.",
+				"The head is a 48px lilac bar with 16px corners and 14px muted labels; the body a separate white panel with Shadow/S, 64px rows ruled by Line/S Bottom; the foot a 42px lilac bar.",
 				"An agent handle in a cell is rose (#8C5659)."
 			],
 			"source": "Figma 427:2715 (Email: Mailboxes table)"
@@ -954,19 +970,19 @@
 				"gap": "var(--ds-space-2)",
 				"height": "var(--ds-space-10-5)",
 				"padding": "var(--ds-space-0-5)",
-				"border-radius": "var(--ds-radius-panel)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-bg-subtle)"
 			},
-			"tailwind": "inline-flex items-center gap-2 h-10.5 p-0.5 rounded-panel bg-subtle",
+			"tailwind": "inline-flex items-center gap-2 h-10.5 p-0.5 rounded-pill bg-subtle",
 			"rules": [
-				"A 42px lilac track with 10px corners; 38px tabs with a 14px medium ink label; the selected tab is a white key with 8px corners and Shadow/S."
+				"A 42px lilac track with fully rounded corners; 38px tabs with a 14px medium ink label; the selected tab is a white key with fully rounded corners and Shadow/S."
 			],
 			"source": "Figma 427:2715 (Email: Mailboxes, Contact rules, Custom domains)",
 			"states": {
 				"[aria-selected=true]": {
 					"background-color": "var(--ds-color-bg-default)",
 					"box-shadow": "var(--ds-shadow-s)",
-					"border-radius": "var(--ds-radius-control)"
+					"border-radius": "var(--ds-radius-pill)"
 				}
 			}
 		},
@@ -989,7 +1005,7 @@
 				"height": "var(--ds-space-10)",
 				"padding-inline": "var(--ds-space-3-5)",
 				"border": "1px solid var(--ds-color-border-field)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-pill)",
 				"background-color": "var(--ds-color-bg-default)",
 				"color": "var(--ds-color-text-default)",
 				"font-family": "var(--ds-font-sans)",
@@ -997,13 +1013,16 @@
 				"line-height": "var(--ds-leading-tight)",
 				"transition": "border-color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "h-10 px-3.5 border border-line-field rounded-control bg-surface text-fg font-sans text-body leading-tight outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger",
+			"tailwind": "h-10 px-3.5 border border-line-field rounded-pill [&:is(textarea)]:rounded-control bg-surface text-fg font-sans text-body leading-tight outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger",
 			"rules": [
-				"40px fields with 8px corners and the lilac-gray edge on white; 14px ink text 14px in; a light purple placeholder.",
+				"40px fields with fully rounded corners and the lilac-gray edge on white; 14px ink text 14px in; a light purple placeholder.",
 				"A rejected value takes the red edge and a red message under it."
 			],
 			"source": "Figma 427:2715 (Form- Input)",
 			"states": {
+				":is(textarea)": {
+					"border-radius": "var(--ds-radius-control)"
+				},
 				":focus-visible": {
 					"border-color": "var(--ds-color-border-brand)",
 					"box-shadow": "var(--ds-shadow-focus)"
@@ -1096,7 +1115,7 @@
 			},
 			"tailwind": "rounded-control bg-surface p-1 font-sans text-body text-fg shadow-floating outline-none",
 			"rules": [
-				"Menus and select lists are white with 8px corners, the Shadow/S ring and a soft drop, 4px inside."
+				"Menus and select lists are white with 12px corners, the Shadow/S ring and a soft drop, 4px inside."
 			],
 			"source": "Figma 427:2715 (extrapolated from Shadow/S and the select trigger)",
 			"states": {}
@@ -1123,14 +1142,14 @@
 				"gap": "var(--ds-space-2)",
 				"min-height": "var(--ds-space-9)",
 				"padding-inline": "var(--ds-space-2-5)",
-				"border-radius": "var(--ds-radius-sm)",
+				"border-radius": "var(--ds-radius-pill)",
 				"color": "var(--ds-color-text-default)",
 				"font-size": "var(--ds-text-body)",
 				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
 			},
-			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-sm text-fg text-body outline-none transition-colors duration-150 ease-out data-[highlighted]:bg-subtle",
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-pill text-fg text-body outline-none transition-colors duration-150 ease-out data-[highlighted]:bg-subtle",
 			"rules": [
-				"36px rows with 6px corners, a 20px glyph in the softer purple, 14px ink; the highlighted row sits on the lilac."
+				"36px rows with fully rounded corners, a 20px glyph in the softer purple, 14px ink; the highlighted row sits on the lilac."
 			],
 			"source": "Figma 427:2715 (extrapolated from the rail rows)",
 			"states": {
@@ -1175,11 +1194,11 @@
 				"gap": "var(--ds-space-2)",
 				"min-height": "var(--ds-space-9)",
 				"padding-inline": "var(--ds-space-2-5)",
-				"border-radius": "var(--ds-radius-sm)",
+				"border-radius": "var(--ds-radius-pill)",
 				"color": "var(--ds-color-text-default)",
 				"font-size": "var(--ds-text-body)"
 			},
-			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-sm text-fg text-body",
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-pill text-fg text-body",
 			"rules": [
 				"As a menu item."
 			],

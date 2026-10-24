@@ -1,5 +1,6 @@
 import { brand, cli, colorHex, isToken, scales, tokens } from '../lib/brand.js';
 import { parseColor } from '../convert/color.js';
+import { checkInteractionDecl, checkInteractions } from './interactions.js';
 import type { SourceFile } from './source.js';
 
 // The checks: every style value must come from the brand. Deterministic, fast, no model. Each finding says what to use.
@@ -34,19 +35,19 @@ const hexOf = (raw: string) => {
 
 const pxScale = (prop: string) => new Map((/radius/.test(prop) ? scales().radius : /font-size/.test(prop) ? scales().text : scales().space).map(([name, px]) => [px, name]));
 
-type Decl = { prop: string; value: string; offset: number; valueOffset: number; fontFace: boolean };
+type Decl = { prop: string; value: string; offset: number; valueOffset: number; fontFace: boolean; selector?: string };
 
 /** Declarations of a stylesheet (or styles extracted from a template), with their offsets. */
 export function declarations(css: string): Decl[] {
 	const out: Decl[] = [];
-	const stack: boolean[] = [];
+	const stack: {fontFace: boolean; selector: string}[] = [];
 	let segStart = 0;
 	const flush = (end: number) => {
 		const seg = css.slice(segStart, end);
 		for (const m of seg.matchAll(/(^|[\s;{])(--[\w-]+|[a-zA-Z-]+)\s*:\s*([^;{}]+)/g)) {
 			const start = segStart + m.index + m[1].length;
 			const lead = m[3].length - m[3].trimStart().length;
-			out.push({ prop: m[2].toLowerCase(), value: m[3].trim(), offset: start, valueOffset: start + m[0].length - m[1].length - m[3].length + lead, fontFace: stack[stack.length - 1] ?? false });
+			out.push({ prop: m[2].toLowerCase(), value: m[3].trim(), offset: start, valueOffset: start + m[0].length - m[1].length - m[3].length + lead, fontFace: stack.at(-1)?.fontFace ?? false, selector: stack.at(-1)?.selector });
 		}
 	};
 	for (let i = 0; i < css.length; i++) {
@@ -62,7 +63,8 @@ export function declarations(css: string): Decl[] {
 			let b = i - 1;
 			while (b >= segStart && !';{}'.includes(css[b])) b--;
 			flush(b + 1);
-			stack.push(/@font-face\s*$/.test(css.slice(b + 1, i).trim()) || /^\s*@font-face/.test(css.slice(b + 1, i)));
+			const header = css.slice(b + 1, i).trim();
+			stack.push({fontFace: /^@font-face/.test(header), selector: `${stack.at(-1)?.selector ?? ''} ${header.startsWith('@') ? '' : header}`.trim()});
 			segStart = i + 1;
 		} else if (ch === '}') {
 			flush(i);
@@ -79,6 +81,7 @@ const SKIP_PROPS = /^(src|content|font-display|unicode-range|grid-template|grid-
 /** One declaration checked against the brand. */
 export function checkDecl(d: Decl, push: (f: RawFinding) => void) {
 	if (d.fontFace || d.prop.startsWith('--ds-')) return;
+	checkInteractionDecl(d, push);
 	const offsetIn = (index = 0) => d.valueOffset + index;
 	// Colors: brand variables only.
 	for (const m of d.value.matchAll(COLOR)) {
@@ -170,7 +173,7 @@ export function checkIcons(text: string, push: (f: RawFinding) => void) {
 
 /** Runs every rule on a parsed file. */
 export function runRules(file: SourceFile): RawFinding[] {
-	const out: RawFinding[] = [];
+	const out: RawFinding[] = checkInteractions(file);
 	const push = (f: RawFinding) => out.push(f);
 	if (file.kind === 'css') for (const d of declarations(file.text)) checkDecl(d, push);
 	for (const t of file.classTokens) checkClass(t.value, t.offset, push);

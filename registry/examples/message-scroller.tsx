@@ -77,6 +77,7 @@ export function Streaming() {
   const [count, setCount] = React.useState(3);
   React.useEffect(() => {
     if (count >= 12) return;
+    // ds-latency: simulates incoming messages in this example; scrolling and input remain immediate.
     const t = setTimeout(() => setCount((c) => c + 1), 900);
     return () => clearTimeout(t);
   }, [count]);

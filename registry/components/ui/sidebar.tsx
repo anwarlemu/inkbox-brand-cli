@@ -32,6 +32,7 @@ type SidebarContextProps = {
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
+  instant: boolean;
   toggleSidebar: () => void;
 };
 
@@ -93,7 +94,7 @@ function SidebarProvider({ defaultOpen = true, open: openProp, onOpenChange: set
   }, [isMobile, setOpen]);
 
   const state = open ? "expanded" : "collapsed";
-  const value = React.useMemo<SidebarContextProps>(() => ({ state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar }), [state, open, setOpen, isMobile, openMobile, toggleSidebar]);
+  const value = React.useMemo<SidebarContextProps>(() => ({ state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, instant }), [state, open, setOpen, isMobile, openMobile, toggleSidebar, instant]);
 
   return (
     <SidebarContext.Provider value={value}>
@@ -125,7 +126,7 @@ function Sidebar({
   children,
   ...props
 }: React.ComponentProps<"div"> & { side?: "left" | "right"; variant?: "sidebar" | "secondary" | "floating" | "inset"; collapsible?: "offcanvas" | "icon" | "none" }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile, instant } = useSidebar();
   const ground = variant === "secondary" || variant === "inset" ? "bg-subtle" : "bg-surface";
 
   if (collapsible === "none") {
@@ -139,7 +140,7 @@ function Sidebar({
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile}>
-        <SheetContent data-slot="sidebar" data-sidebar="sidebar" data-mobile="true" data-variant={variant} side={side} showCloseButton={false} className={cn("group/sidebar w-(--ds-layout-rail) max-w-[calc(100vw-var(--ds-space-12))] p-0 text-fg sm:max-w-(--ds-layout-rail) [&>button]:hidden", ground)}>
+        <SheetContent instant={instant} data-slot="sidebar" data-sidebar="sidebar" data-mobile="true" data-variant={variant} side={side} showCloseButton={false} className={cn("group/sidebar w-(--ds-layout-rail) max-w-[calc(100vw-var(--ds-space-12))] p-0 text-fg sm:max-w-(--ds-layout-rail) [&>button]:hidden", ground)}>
           <SheetHeader className="sr-only">
             <SheetTitle>Navigation</SheetTitle>
             <SheetDescription>The app's sections and settings.</SheetDescription>
@@ -300,7 +301,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }: React.Comp
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
-        "absolute top-2 right-3 flex size-6 cursor-pointer items-center justify-center rounded-xs text-icon-secondary outline-none transition-colors duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-2 right-3 flex size-6 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         className,
       )}
       {...props}
@@ -324,7 +325,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 // label 9px after it, at the design's 44px. Hover washes the row; the current row takes the lilac (white on the lilac
 // rail). Narrowed to icons, the row is a 38px square around its glyph.
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full cursor-pointer items-center gap-2.25 overflow-hidden rounded-control pr-3 pl-2.75 text-left font-sans text-fg outline-none transition-[background-color,color] duration-150 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-data-[collapsible=icon]/sidebar:size-9.5! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
+  "peer/menu-button active:brightness-95 active:transition-none flex w-full cursor-pointer items-center gap-2.25 overflow-hidden rounded-pill pr-3 pl-2.75 text-left font-sans text-fg outline-none transition-[background-color,color] duration-150 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-data-[collapsible=icon]/sidebar:size-9.5! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
   {
     variants: {
       variant: {
@@ -384,7 +385,7 @@ function SidebarMenuAction({ className, asChild = false, showOnHover = false, ..
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
-        "absolute top-1.25 right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-sm text-icon-secondary outline-none transition-[background-color,color,opacity] duration-150 ease-out hover:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-1.25 right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none active:brightness-95 active:transition-none transition-[background-color,color,opacity] duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         "peer-data-[size=sm]/menu-button:top-0.5 peer-data-[size=lg]/menu-button:top-2.5",
         showOnHover && "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-fg md:opacity-0",
         className,
@@ -407,7 +408,7 @@ function SidebarMenuBadge({ className, variant = "mark", ...props }: React.Compo
       className={cn(
         "pointer-events-none absolute top-2 right-3 flex h-5.5 items-center justify-center font-sans whitespace-nowrap select-none group-data-[collapsible=icon]/sidebar:hidden",
         "peer-data-[size=sm]/menu-button:top-1.25 peer-data-[size=lg]/menu-button:top-3.25",
-        variant === "mark" ? "rounded-sm border border-pink bg-surface px-1.5 text-caption leading-tight text-pink" : "min-w-5 px-1 text-body-sm text-fg-muted tabular-nums",
+        variant === "mark" ? "rounded-pill border border-pink bg-surface px-1.5 text-caption leading-tight text-pink" : "min-w-5 px-1 text-body-sm text-fg-muted tabular-nums",
         className,
       )}
       {...props}
@@ -421,7 +422,7 @@ function SidebarMenuSkeleton({ className, showIcon = false, ...props }: React.Co
   const id = React.useId();
   const width = `${50 + (([...id].reduce((sum, c) => (sum * 31 + c.charCodeAt(0)) % 997, 7) % 41))}%`;
   return (
-    <div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" className={cn("flex h-9.5 items-center gap-2.25 rounded-control pr-3 pl-2.75", className)} {...props}>
+    <div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" className={cn("flex h-9.5 items-center gap-2.25 rounded-pill pr-3 pl-2.75", className)} {...props}>
       {showIcon && <Skeleton className="size-5.5 rounded-sm" data-sidebar="menu-skeleton-icon" />}
       <Skeleton className="h-3.5 max-w-(--skeleton-width) flex-1 rounded-xs" data-sidebar="menu-skeleton-text" style={{ "--skeleton-width": width } as React.CSSProperties} />
     </div>
@@ -454,7 +455,7 @@ function SidebarMenuSubButton({ asChild = false, size = "md", isActive = false, 
       data-active={isActive || undefined}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "flex h-8 min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-control px-2.5 font-sans text-fg-secondary outline-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle data-[active=true]:text-fg group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
+        "flex h-8 min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-pill px-2.5 font-sans text-fg-secondary outline-none active:brightness-95 active:transition-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle active:bg-subtle hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle data-[active=true]:text-fg group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
         size === "sm" ? "text-body-sm" : "text-body",
         className,
       )}

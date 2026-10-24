@@ -522,7 +522,7 @@ export function Picker(props: any) { return <Select.Root name="card" value={prop
     const out = elementLayer('menu.css', css, 'site');
     expect(out.styled).toEqual([{selector:'.dropdown-menu',kind:'menu-panel'},{selector:'.menu-item',kind:'menu-item'},{selector:'.glass-menu',kind:'glass-menu'},{selector:'.glass-menu-item',kind:'glass-menu-item'},{selector:'.popover-content',kind:'popover-panel'}]);
     expect(out.block).toContain('var(--ds-shadow-floating)');
-    expect(out.block).toContain('var(--ds-radius-sm)');
+    expect(out.block).toContain('var(--ds-radius-pill)');
     expect(out.block).not.toMatch(/position:|display:|width:/);
     expect(elementLayer('select.css', '.select-content { color: red } .select-item { color: red }', 'site').styled).toEqual([{selector:'.select-content',kind:'menu-panel'},{selector:'.select-item',kind:'menu-item'}]);
   });

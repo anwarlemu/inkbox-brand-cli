@@ -14,7 +14,7 @@ function NativeSelect({ className, size = "default", ...props }: NativeSelectPro
       <select
         data-slot="native-select"
         data-size={size}
-        className="h-10 w-full min-w-0 cursor-pointer appearance-none rounded-control bg-surface py-0 pr-10 pl-3.5 font-sans text-body leading-tight text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[size=sm]:h-9 motion-reduce:transition-none"
+        className="h-10 w-full min-w-0 cursor-pointer appearance-none rounded-pill bg-surface py-0 pr-10 pl-3.5 font-sans text-body leading-tight text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[size=sm]:h-9 motion-reduce:transition-none"
         {...props}
       />
       <CaretDownIcon aria-hidden data-slot="native-select-icon" weight="bold" className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-fg" />

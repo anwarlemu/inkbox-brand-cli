@@ -426,7 +426,7 @@ function ChartLegendContent({ className, hideIcon = false, interactive = true, .
           </>
         );
         return interactive ? (
-          <button key={key} type="button" aria-pressed={!off} onClick={() => chart.toggle(key)} className={cn("inline-flex items-center gap-1.5 rounded-xs text-caption leading-tight text-fg-secondary outline-none transition-opacity duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", off && "opacity-40")}>
+          <button key={key} type="button" aria-pressed={!off} onClick={() => chart.toggle(key)} className={cn("inline-flex items-center gap-1.5 rounded-pill text-caption leading-tight text-fg-secondary outline-none transition-opacity duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", off && "opacity-40")}>
             {body}
           </button>
         ) : (

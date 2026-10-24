@@ -194,7 +194,7 @@ function MessageScrollerButton({ direction = "end", className, children, variant
         if (!event.defaultPrevented) (direction === "end" ? scrollToEnd : scrollToStart)();
       }}
       className={cn(
-        "absolute left-1/2 z-10 -translate-x-1/2 gap-1.5 bg-surface px-3.5 text-body shadow-floating transition-[opacity,background-color,scale] duration-200 ease-out hover:bg-subtle data-[active=false]:pointer-events-none data-[active=false]:opacity-0 data-[direction=end]:bottom-4 data-[direction=start]:top-4 [&_svg:not([class*='size-'])]:size-4",
+        "absolute left-1/2 z-10 -translate-x-1/2 gap-1.5 bg-surface px-3.5 text-body shadow-floating transition-[opacity,background-color] duration-200 ease-out hover:bg-subtle data-[active=false]:pointer-events-none data-[active=false]:opacity-0 data-[direction=end]:bottom-4 data-[direction=start]:top-4 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

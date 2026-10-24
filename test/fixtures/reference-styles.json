@@ -130,10 +130,10 @@
    "name": "dialog",
    "example": "Preview",
    "selector": "[data-slot=dialog-content]",
-   "source": "Figma 427:2715 Modal - Create Agent; rounded radius override",
+   "source": "Figma 427:2715 Modal - Create Agent; shared popup radius override",
    "expected": {
     "width": "534px",
-    "borderTopLeftRadius": "24px",
+    "borderTopLeftRadius": "16px",
     "backgroundColor": "#FFFFFF"
    },
    "width": 1440,

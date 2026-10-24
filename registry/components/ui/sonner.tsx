@@ -4,7 +4,7 @@ import * as React from "react";
 import { CheckCircleIcon, InfoIcon, SpinnerGapIcon, WarningIcon, XCircleIcon, XIcon } from "@phosphor-icons/react/ssr";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-// Toasts (extrapolated from the Inkbox console, Figma 427:2715: its white floating panels, 8px corners, filled status
+// Toasts (extrapolated from the Inkbox console, Figma 427:2715: its white floating panels, 16px corners, filled status
 // glyphs and the purple action). A toast is a white panel with the floating shadow and 16px of padding: a 20px filled
 // glyph (green success, red error, amber warning, teal info, a spinning loader), the 14px medium ink title, the 14px
 // muted description, and a small purple pill for its action beside a lilac one for cancel. Sonner stacks, swipes and
@@ -25,7 +25,7 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
       toastOptions={{
         ...toastOptions,
         classNames: {
-          toast: "group/toast flex! w-(--width) items-start! gap-3! rounded-control bg-surface p-4! font-sans text-fg shadow-floating!",
+          toast: "group/toast flex! w-(--width) items-start! gap-3! rounded-panel bg-surface p-4! font-sans text-fg shadow-floating!",
           icon: "mt-px flex size-5 shrink-0 items-center justify-center",
           content: "grid min-w-0 flex-1 gap-0.5",
           title: "text-body! leading-body font-medium! text-fg",
@@ -42,7 +42,7 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
           "--normal-bg": "var(--ds-color-bg-default)",
           "--normal-text": "var(--ds-color-text-default)",
           "--normal-border": "transparent",
-          "--border-radius": "var(--ds-radius-control)",
+          "--border-radius": "var(--ds-radius-panel)",
         } as React.CSSProperties
       }
       {...props}

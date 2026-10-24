@@ -331,7 +331,7 @@ function ComboboxChips({ className, children, ...props }: React.ComponentProps<"
           e.currentTarget.querySelector("input")?.focus();
           setOpen(true);
         }}
-        className={cn(FIELD, "flex-wrap gap-1.5 rounded-dialog py-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
+        className={cn(FIELD, "flex-wrap gap-1.5 rounded-dialog py-1.5 pl-1.5 has-[input:focus-visible]:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-disabled:bg-subtle data-disabled:text-fg-muted", className)}
         {...props}
       >
         {children}

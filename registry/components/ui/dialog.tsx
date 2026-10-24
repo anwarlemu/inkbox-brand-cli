@@ -45,7 +45,7 @@ function DialogContent({ className, children, showClose = true, ...props }: Reac
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-133.5 -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-dialog bg-surface text-fg outline-none data-[state=closed]:animate-dialog-out data-[state=open]:animate-dialog-in",
+          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-133.5 -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-panel bg-surface text-fg outline-none data-[state=closed]:animate-dialog-out data-[state=open]:animate-dialog-in",
           className,
         )}
         {...props}

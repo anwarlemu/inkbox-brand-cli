@@ -7,7 +7,7 @@ import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
 // A tooltip, extrapolated from the console's info glyphs (Figma 427:2715: Tunnel, Connection, TLS, Tunnel TLS mode):
-// the ink with 13px white text, 6px corners, 6px by 10px of padding and a small ink arrow. The first one waits 400ms;
+// the ink with 13px white text, 16px corners, 6px by 10px of padding and a small ink arrow. The first one waits 400ms;
 // once one is open its neighbors open at once and without motion (the provider's skip delay), as a toolbar should.
 // Whether a TooltipProvider is above: tooltips under one share its delay, so neighbors open at once. A lone Tooltip
 // brings its own provider. The dwell avoids incidental hover popups; it never delays the underlying button action.
@@ -38,7 +38,7 @@ function TooltipContent({ className, sideOffset = 6, children, ...props }: React
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 w-fit max-w-72 origin-(--radix-tooltip-content-transform-origin) rounded-sm bg-inverse px-2.5 py-1.5 font-sans text-body-sm leading-tight text-balance text-fg-inverse data-[state=closed]:animate-fade-out data-[state=delayed-open]:animate-fade-in",
+          "z-50 w-fit max-w-72 origin-(--radix-tooltip-content-transform-origin) rounded-panel bg-inverse px-2.5 py-1.5 font-sans text-body-sm leading-tight text-balance text-fg-inverse data-[state=closed]:animate-fade-out data-[state=delayed-open]:animate-fade-in",
           className,
         )}
         {...props}

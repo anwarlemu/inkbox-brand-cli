@@ -8,7 +8,7 @@ import { XIcon } from "@phosphor-icons/react/ssr";
 import { cn } from "@/lib/utils";
 
 // The Radix toast (shadcn's older toast API; prefer Sonner for new work). Same look as the Sonner toasts (extrapolated
-// from the Inkbox console, Figma 427:2715): a white panel with 8px corners, the floating shadow and 16px of padding, a
+// from the Inkbox console, Figma 427:2715): a white panel with 16px corners, the floating shadow and 16px of padding, a
 // 14px medium ink title over a 14px muted description, an outline action key and a faint close glyph. `destructive`
 // edges it in red with a red title. It slides in from the right edge it lives on (300ms, the drawer curve) and fades
 // out faster; a swipe to the right drags it with the finger and lets it go.
@@ -25,7 +25,7 @@ function ToastViewport({ className, ...props }: React.ComponentProps<typeof Toas
 }
 
 const toastVariants = cva(
-  "group/toast pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-control bg-surface p-4 pr-10 font-sans text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-sheet-in-right data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[translate] data-[swipe=cancel]:duration-200 data-[swipe=cancel]:ease-out data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=end]:animate-fade-out data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none motion-reduce:data-[swipe=cancel]:transition-none",
+  "group/toast pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-panel bg-surface p-4 pr-10 font-sans text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-sheet-in-right data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[translate] data-[swipe=cancel]:duration-200 data-[swipe=cancel]:ease-out data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=end]:animate-fade-out data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none motion-reduce:data-[swipe=cancel]:transition-none",
   {
     variants: {
       variant: {

@@ -57,10 +57,10 @@ function DrawerOverlay({ className, ...props }: React.ComponentProps<typeof Draw
 }
 
 const PLACE: Record<Direction, string> = {
-  bottom: "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-dialog data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom",
-  top: "inset-x-0 top-0 max-h-[85dvh] flex-col-reverse rounded-b-dialog data-[state=closed]:animate-sheet-out-top data-[state=open]:animate-sheet-in-top",
-  right: "inset-y-0 right-0 w-3/4 flex-row-reverse rounded-l-dialog sm:max-w-96 data-[state=closed]:animate-sheet-out-right data-[state=open]:animate-sheet-in-right",
-  left: "inset-y-0 left-0 w-3/4 flex-row rounded-r-dialog sm:max-w-96 data-[state=closed]:animate-sheet-out-left data-[state=open]:animate-sheet-in-left",
+  bottom: "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-panel data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom",
+  top: "inset-x-0 top-0 max-h-[85dvh] flex-col-reverse rounded-b-panel data-[state=closed]:animate-sheet-out-top data-[state=open]:animate-sheet-in-top",
+  right: "inset-y-0 right-0 w-3/4 flex-row-reverse rounded-l-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-right data-[state=open]:animate-sheet-in-right",
+  left: "inset-y-0 left-0 w-3/4 flex-row rounded-r-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-left data-[state=open]:animate-sheet-in-left",
 };
 
 // Where a pull closes the drawer: toward its own edge (positive for bottom and right).

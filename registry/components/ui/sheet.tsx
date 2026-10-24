@@ -39,10 +39,10 @@ function SheetOverlay({ className, ...props }: React.ComponentProps<typeof Sheet
 }
 
 const SIDES = {
-  right: "inset-y-0 right-0 h-full w-full rounded-l-dialog sm:max-w-96 data-[state=closed]:animate-sheet-out-right data-[state=open]:animate-sheet-in-right",
-  left: "inset-y-0 left-0 h-full w-full rounded-r-dialog sm:max-w-96 data-[state=closed]:animate-sheet-out-left data-[state=open]:animate-sheet-in-left",
-  top: "inset-x-0 top-0 h-auto max-h-[85dvh] rounded-b-dialog data-[state=closed]:animate-sheet-out-top data-[state=open]:animate-sheet-in-top",
-  bottom: "inset-x-0 bottom-0 h-auto max-h-[85dvh] rounded-t-dialog data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom",
+  right: "inset-y-0 right-0 h-full w-full rounded-l-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-right data-[state=open]:animate-sheet-in-right",
+  left: "inset-y-0 left-0 h-full w-full rounded-r-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-left data-[state=open]:animate-sheet-in-left",
+  top: "inset-x-0 top-0 h-auto max-h-[85dvh] rounded-b-panel data-[state=closed]:animate-sheet-out-top data-[state=open]:animate-sheet-in-top",
+  bottom: "inset-x-0 bottom-0 h-auto max-h-[85dvh] rounded-t-panel data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom",
 } as const;
 
 function SheetContent({ className, children, side = "right", showCloseButton = true, instant = false, ...props }: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: keyof typeof SIDES; showCloseButton?: boolean; instant?: boolean }) {

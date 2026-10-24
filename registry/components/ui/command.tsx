@@ -8,13 +8,13 @@ import { MagnifyingGlassIcon } from "@phosphor-icons/react/ssr";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A command menu, extrapolated from the console (Figma 427:2715): a white panel with 8px corners; the search row is
+// A command menu, extrapolated from the console (Figma 427:2715): a white panel with 16px corners; the search row is
 // 48px with a 20px magnifying glass in muted purple and 14px ink text over the rail's hairline; groups open with 13px
-// headings in the label purple ("Channels"), items are 36px rows with 8px corners, a 20px glyph in the action-glyph
+// headings in the label purple ("Channels"), items are 36px pill rows, a 20px glyph in the action-glyph
 // purple and the lilac under the selected row; shortcuts are 12px muted. CommandDialog puts it in the console's dialog
 // (16px corners, the blurred ink-tinted page) and opens without motion: it is summoned by keyboard many times a day.
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
-  return <CommandPrimitive data-slot="command" data-ds-motion="instant" className={cn("flex size-full flex-col overflow-hidden rounded-control bg-surface text-fg", className)} {...props} />;
+  return <CommandPrimitive data-slot="command" data-ds-motion="instant" className={cn("flex size-full flex-col overflow-hidden rounded-panel bg-surface text-fg", className)} {...props} />;
 }
 
 function CommandDialog({
@@ -32,12 +32,12 @@ function CommandDialog({
         <DialogPrimitive.Overlay data-ds-motion="instant" className="fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)]" />
         <DialogPrimitive.Content
           data-ds-motion="instant"
-          className={cn("fixed top-[18dvh] left-1/2 z-50 w-[calc(100%-2rem)] max-w-140 -translate-x-1/2 overflow-hidden rounded-dialog bg-surface p-1.5 text-fg outline-none", className)}
+          className={cn("fixed top-[18dvh] left-1/2 z-50 w-[calc(100%-2rem)] max-w-140 -translate-x-1/2 overflow-hidden rounded-panel bg-surface p-1.5 text-fg outline-none", className)}
           aria-describedby={undefined}
         >
           <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">{description}</DialogPrimitive.Description>
-          <Command className="rounded-control [&_[data-slot=command-list]]:max-h-96">{children}</Command>
+          <Command className="rounded-panel [&_[data-slot=command-list]]:max-h-96">{children}</Command>
           {showCloseButton && <DialogPrimitive.Close className="sr-only">Close</DialogPrimitive.Close>}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

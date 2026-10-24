@@ -25,11 +25,12 @@ for every action. It reads like a well-kept mail client, not a dashboard of char
 - Fields are 40px with fully rounded corners and a lilac-gray edge (#D2C9DB). Raised white things (a selected tab, a table body,
   a select) carry Shadow/S: a 1px ring and a short drop. Corners: pills for buttons, compact controls, tabs, badges and horizontal
   attachments; circles for avatars and small icon or logo tiles; 12px content panels,
-  16px dropdown menus, popovers, table heads and banners, 24px dialogs, channel cards and multiple-selection fields.
+  16px dropdown menus and popup panels (command palettes, date pickers, popovers, tooltips, dialogs, sheets and toasts),
+  table heads and banners; 24px channel cards and multiple-selection fields.
 - Navigation is the rail: 38px rows with a filled 22px glyph and a 14px label; the current row sits on the lilac.
   A page opens with a head: a 20px title, a 14px muted line, a hairline under it.
 - Tables are three pieces: a lilac head, a white body with Shadow/S and 64px rows, a lilac pagination bar.
-- Dialogs are white with 24px corners over the page tinted with the ink at 12 percent and lightly blurred.
+- Dialogs are white with the shared 16px popup corners over the page tinted with the ink at 12 percent and lightly blurred.
 - Icons are filled (Phosphor fill weight) in ink or #5B4C6A; chevrons, close and plus are line glyphs.
 - Empty states have the octopus with five glyph circles around it, a 22px bold title and a pill action.
 

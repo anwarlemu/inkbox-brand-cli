@@ -375,10 +375,10 @@ type ChartTooltipContentProps = React.ComponentProps<"div"> & {
   formatter?: (value: number, name: React.ReactNode, key: string) => React.ReactNode;
 };
 
-/** The tooltip's panel: white, 8px corners, the floating shadow, the label in 13px medium ink, a row per series. */
+/** The tooltip's panel: white, 16px corners, the floating shadow, the label in 13px medium ink, a row per series. */
 function ChartTooltipContent({ payload = [], label, indicator = "dot", hideLabel = false, hideIndicator = false, labelFormatter, formatter, className, ...props }: ChartTooltipContentProps) {
   return (
-    <div data-slot="chart-tooltip-content" className={cn("grid min-w-32 gap-1.5 rounded-control bg-surface px-3 py-2 text-caption leading-tight text-fg shadow-floating", className)} {...props}>
+    <div data-slot="chart-tooltip-content" className={cn("grid min-w-32 gap-1.5 rounded-panel bg-surface px-3 py-2 text-caption leading-tight text-fg shadow-floating", className)} {...props}>
       {!hideLabel && label !== undefined && <p className="text-body-sm font-medium text-fg">{labelFormatter ? labelFormatter(label) : label}</p>}
       <div className="grid gap-1">
         {payload.map((item) => (

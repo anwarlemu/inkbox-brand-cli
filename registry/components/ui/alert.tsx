@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 // warning glyph, a 14px medium title and a 13px note at the right (AlertAction). `destructive` borrows the failed
 // field's red. Put a Phosphor glyph first; the title and description line up beside it.
 const alertVariants = cva(
-  "group/alert relative grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2.5 gap-y-0.5 font-sans text-body leading-body has-[>svg]:grid-cols-[auto_minmax(0,1fr)_auto] [&>svg]:shrink-0",
+  "@container/alert group/alert relative grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2.5 gap-y-0.5 font-sans text-body leading-body has-[>svg]:grid-cols-[auto_minmax(0,1fr)_auto] [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -58,7 +58,7 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-action"
-      className={cn("col-start-2 row-span-2 row-start-1 self-center text-right text-body-sm group-has-[>svg]/alert:col-start-3", className)}
+      className={cn("col-start-2 row-span-2 row-start-1 self-center text-right text-body-sm group-has-[>svg]/alert:col-start-3 @max-sm/alert:col-start-1 @max-sm/alert:col-end-[-1] @max-sm/alert:row-start-3 @max-sm/alert:row-span-1 @max-sm/alert:text-left @max-sm/alert:group-has-[>svg]/alert:col-start-2", className)}
       {...props}
     />
   );

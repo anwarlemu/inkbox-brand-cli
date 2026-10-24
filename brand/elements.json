@@ -252,12 +252,12 @@
 				"gap": "var(--ds-space-2)",
 				"padding": "var(--ds-space-3-5)",
 				"border": "1px solid var(--ds-color-border-field)",
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-dialog)",
 				"background-color": "var(--ds-color-bg-default)"
 			},
-			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-control bg-surface",
+			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-dialog bg-surface",
 			"rules": [
-				"White with the field edge and 12px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
+				"White with the field edge and 24px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
 				"A channel card inside a dialog sits on the lilac with no edge and 24px corners (rounded-dialog)."
 			],
 			"source": "Figma 427:2715 (Webhooks: Trigger, Delivery, Response contract)"
@@ -275,11 +275,11 @@
 				]
 			},
 			"css": {
-				"border-radius": "var(--ds-radius-control)",
+				"border-radius": "var(--ds-radius-dialog)",
 				"background-color": "var(--ds-color-bg-default)",
 				"box-shadow": "var(--ds-shadow-s)"
 			},
-			"tailwind": "rounded-control bg-surface shadow-s",
+			"tailwind": "rounded-dialog bg-surface shadow-s",
 			"rules": [
 				"A white panel lifted by Shadow/S, a 1px ring and a short drop: a table body, a selected tab, a select trigger."
 			],

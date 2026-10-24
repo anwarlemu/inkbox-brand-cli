@@ -101,6 +101,20 @@ export async function checkInteractions(page, base) {
     await area.fill('Forward receipts to the finance agent.');
     assert.equal(await area.inputValue(), 'Forward receipts to the finance agent.');
 
+    // Clearing a multi-select is one update, including the values submitted by the form.
+    await open(page, base, 'combobox', 'Multiple');
+    assert.equal(await page.locator('[data-slot="combobox-chip"]').count(), 2);
+    await page.getByRole('button', { name: 'Clear', exact: true }).click();
+    assert.equal(await page.locator('[data-slot="combobox-chip"]').count(), 0, 'combobox: Clear removes all chips');
+    assert.equal(await page.locator('input[type="hidden"][name="events"]').count(), 0, 'combobox: Clear resets submitted values');
+    await page.locator('#events').fill('call.started');
+    await page.getByRole('option', { name: 'call.started', exact: true }).click();
+    assert.equal(await page.locator('[data-slot="combobox-chip"]').count(), 1, 'combobox: selection works after Clear');
+    await page.keyboard.press('Escape');
+    await page.locator('#events').focus();
+    await page.keyboard.press('Backspace');
+    assert.equal(await page.locator('[data-slot="combobox-chip"]').count(), 0, 'combobox: Backspace removes the last chip');
+
     // Calendar: a click selects a day; arrows move the focus.
     await open(page, base, 'calendar');
     const day = page.getByRole('grid').first().locator('button:not([disabled])').nth(12);
@@ -130,9 +144,10 @@ export async function checkInteractions(page, base) {
     const sortable = page.locator('th[aria-sort] button, th button').first();
     await sortable.click();
     assert.ok(await page.locator('th[aria-sort="ascending"], th[aria-sort="descending"]').count(), 'data-table: a head sorts');
-    await page.locator('input[type=search], input[type=text], input:not([type])').first().fill('support');
-    await page.waitForTimeout(150);
-    assert.ok((await rows()) < all, 'data-table: the filter narrows the rows');
+    await page.locator('input[type=search], input[type=text], input:not([type])').first().fill('support-desk@');
+    assert.equal(await settle(rows, (count) => count === 1), 1, 'data-table: the filter finds the exact mailbox');
+    assert.ok(all > 1);
+    assert.match(await page.locator('tbody tr').innerText(), /support-desk@inkboxmail\.com/);
 
     // Sidebar: on a desktop the Collapse row folds the rail to its glyphs and Cmd/Ctrl B brings it back.
     if (width > 800) {

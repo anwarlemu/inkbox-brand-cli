@@ -191,7 +191,7 @@
 	--ds-frame-column: min(100% - 2 * var(--ds-layout-gutter), var(--ds-layout-column));
 
 	/* Shape: pill buttons and compact controls, 6px details, 8px tiles, 12px content panels,
-	   16px table heads and banners, and 24px dialogs. */
+	   16px popup panels, table heads and banners, and 24px cards and multi-select fields. */
 	--ds-radius-xs: 0.375rem;
 	--ds-radius-sm: 0.5rem;
 	--ds-radius-control: 0.75rem;

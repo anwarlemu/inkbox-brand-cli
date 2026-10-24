@@ -26,7 +26,7 @@ for every action. It reads like a well-kept mail client, not a dashboard of char
   a select) carry Shadow/S: a 1px ring and a short drop. Corners: pills for buttons, compact controls, tabs, badges and horizontal
   attachments; circles for avatars and small icon or logo tiles; 12px content panels,
   16px dropdown menus and popup panels (command palettes, date pickers, popovers, tooltips, dialogs, sheets and toasts),
-  table heads and banners; 24px channel cards and multiple-selection fields.
+  table heads and banners; 24px cards (all variants and sizes) and multiple-selection fields.
 - Navigation is the rail: 38px rows with a filled 22px glyph and a 14px label; the current row sits on the lilac.
   A page opens with a head: a 20px title, a 14px muted line, a hairline under it.
 - Tables are three pieces: a lilac head, a white body with Shadow/S and 64px rows, a lilac pagination bar.

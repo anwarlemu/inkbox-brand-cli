@@ -29,7 +29,7 @@ const t = vars(root.body);
 // Role names for the core tokens; every other color token keeps its own name (--ds-color-paper is bg-paper).
 const ROLES = {
 	brand: 'brand', black: 'black', white: 'white', primary: 'action-primary', 'primary-hover': 'action-primary-hover', 'on-primary': 'action-primary-fg', 'focus-ring': 'focus-ring',
-	surface: 'bg-default', subtle: 'bg-subtle', frame: 'bg-frame', canvas: 'bg-canvas', tint: 'bg-tint', inverse: 'bg-inverse', dark: 'bg-dark', code: 'bg-code', scrim: 'bg-scrim',
+	surface: 'bg-default', 'surface-brand': 'bg-brand', subtle: 'bg-subtle', frame: 'bg-frame', canvas: 'bg-canvas', tint: 'bg-tint', inverse: 'bg-inverse', dark: 'bg-dark', code: 'bg-code', scrim: 'bg-scrim',
 	fg: 'text-default', 'fg-secondary': 'text-secondary', 'fg-muted': 'text-muted', 'fg-subtle': 'text-subtle', 'fg-faint': 'text-faint', 'fg-nav': 'text-nav', 'fg-inverse': 'text-inverse', 'fg-brand': 'text-brand', 'on-brand': 'text-on-brand',
 	line: 'border-default', 'line-subtle': 'border-subtle', 'line-strong': 'border-strong', hairline: 'border-hairline',
 	success: 'status-success', warning: 'status-warning', danger: 'status-danger',
@@ -40,11 +40,23 @@ for (const name of Object.keys(t)) {
 	const m = name.match(/^--ds-color-(.+)$/);
 	if (!m || named.has(m[1])) continue;
 	const key = m[1].replace(/^chart-(series-\d)$/, '$1').replace(/^status-/, '').replace(/^status-/, '').replace(/^bg-/, '').replace(/^border-/, 'line-').replace(/^text-/, 'fg-');
-	if (!(key in color)) color[key] = m[1];
+	color[key in color ? m[1] : key] = m[1];
 }
 const theme = [
 	...Object.entries(color).map(([k, v]) => `\t--color-${k}: var(--ds-color-${v});`),
 	...Object.keys(t).filter((k) => /^--ds-font-(?!weight)/.test(k)).map((k) => `\t--font-${k.slice(10)}: var(${k});`),
+	...Object.keys(t).filter((k) => k.startsWith('--ds-font-weight-')).map((k) => `\t--font-weight-${k.slice(17).replace(/^regular$/, 'normal')}: var(${k});`),
+	'\t--spacing: var(--ds-space-1);',
+	...Object.keys(t).filter((k) => k.startsWith('--ds-space-')).map((k) => `\t--spacing-${k.slice(11).replace(/-/g, '\\.')}: var(${k});`),
+	...Object.keys(t).filter((k) => k.startsWith('--ds-layout-')).map((k) => `\t--spacing-layout-${k.slice(12)}: var(${k});`),
+	...Object.keys(t).filter((k) => k.startsWith('--ds-frame-')).map((k) => `\t--container-frame-${k.slice(11)}: var(${k});`),
+	...Object.keys(t).filter((k) => k.startsWith('--ds-blur-')).map((k) => `\t--blur-${k.slice(10)}: var(${k});`),
+	...Object.entries(t).filter(([k]) => k.startsWith('--ds-duration-')).flatMap(([k, v]) => [
+		`\t--transition-duration-${k.slice(14)}: var(${k});`,
+		`\t--transition-duration-${Number.parseFloat(v) * (v.endsWith('ms') ? 1 : 1000)}: var(${k});`,
+	]),
+	'\t--default-transition-duration: var(--ds-duration-fast);',
+	'\t--default-transition-timing-function: var(--ds-easing-out);',
 	...Object.keys(t).filter((k) => k.startsWith('--ds-text-')).map((k) => `\t--text-${k.slice(10)}: var(${k});`),
 	...Object.keys(t).filter((k) => k.startsWith('--ds-leading-')).map((k) => `\t--leading-${k.slice(13)}: var(${k});`),
 	...Object.keys(t).filter((k) => k.startsWith('--ds-tracking-')).map((k) => `\t--tracking-${k.slice(14)}: var(${k});`),

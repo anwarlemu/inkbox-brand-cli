@@ -23,6 +23,7 @@ type ComboboxContextValue = {
   values: string[];
   toggle: (value: string) => void;
   remove: (value: string) => void;
+  clear: () => void;
   open: boolean;
   setOpen: (open: boolean) => void;
   search: string;
@@ -108,7 +109,7 @@ function Combobox(props: ComboboxSingleProps | ComboboxMultipleProps) {
   const register = React.useCallback((value: string, label: string) => labels.current.set(value, label), []);
 
   return (
-    <ComboboxContext.Provider value={{ multiple, values, toggle, remove, open, setOpen, search, setSearch, labelOf, register, items, disabled, listRef, chipsRef, chips, setChips, contentId }}>
+    <ComboboxContext.Provider value={{ multiple, values, toggle, remove, clear: () => commit([]), open, setOpen, search, setSearch, labelOf, register, items, disabled, listRef, chipsRef, chips, setChips, contentId }}>
       <PopoverPrimitive.Root data-slot="combobox" open={open} onOpenChange={setOpen}>
         {children}
       </PopoverPrimitive.Root>
@@ -152,7 +153,7 @@ function ComboboxValue({ placeholder = "Select", children }: { placeholder?: str
 
 /** Clears every chosen value. Put it inside ComboboxChips or beside a trigger. */
 function ComboboxClear({ className, ...props }: React.ComponentProps<"button">) {
-  const { values, remove, disabled } = useCombobox();
+  const { values, clear, disabled } = useCombobox();
   if (!values.length) return null;
   return (
     <button
@@ -162,7 +163,7 @@ function ComboboxClear({ className, ...props }: React.ComponentProps<"button">) 
       disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
-        values.forEach(remove);
+        clear();
       }}
       className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
       {...props}

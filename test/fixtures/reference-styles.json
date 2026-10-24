@@ -364,10 +364,10 @@
    "name": "card",
    "example": "Preview",
    "selector": "[data-slot=card]",
-   "source": "Figma 427:2715 Webhooks: Trigger card; rounded radius override",
+   "source": "Figma 427:2715 Webhooks: Trigger card; shared card radius override",
    "expected": {
     "borderTopColor": "#D2C9DB",
-    "borderTopLeftRadius": "12px",
+    "borderTopLeftRadius": "24px",
     "backgroundColor": "#FFFFFF"
    },
    "width": 1440

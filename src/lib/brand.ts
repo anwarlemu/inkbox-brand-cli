@@ -66,9 +66,9 @@ export function scales() {
 	const px = (v: string) => (v.endsWith('rem') ? Number.parseFloat(v) * 16 : v.endsWith('px') ? Number.parseFloat(v) : Number.NaN);
 	const pick = (re: RegExp, read: (v: string) => number) => Object.entries(t).filter(([k]) => re.test(k)).map(([k, v]) => [k, read(v)] as [string, number]).filter(([, v]) => Number.isFinite(v) && v > 0);
 	scaleCache = {
-		text: pick(/^--ds-text-(h[1-5]|body-lg|body|body-sm|caption)$/, px),
-		space: pick(/^--ds-space-[\d-]+$/, px),
-		radius: pick(/^--ds-radius-(sm|control|card|shell)$/, px),
+		text: pick(/^--ds-text-/, px),
+		space: pick(/^--ds-space-/, px),
+		radius: pick(/^--ds-radius-(?!pill$)/, px),
 		duration: pick(/^--ds-duration-/, (v) => Number.parseFloat(v)),
 	};
 	return scaleCache;

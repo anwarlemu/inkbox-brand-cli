@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "name": "card",
+  "useFor": "Use default for a small fact block in a grid (Trigger, Delivery, Response contract): a glyph-led 14px title and a muted description. Use raised for a white panel that sits on lilac or holds rows. Use muted for a grouped setting inside a dialog (a channel with its toggle in CardAction). Put a button or toggle in CardAction at the top right.",
+  "constraints": [
+    "Drop shadows on default cards",
+    "Corners other than rounded-dialog",
+    "A colored header bar",
+    "Nesting cards more than one level"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Webhooks - Event catalog (Trigger, Delivery, Response contract), Create Agent Identity (Email, Phone Number channel cards)",
+  "exports": [
+    "Card",
+    "CardAction",
+    "CardContent",
+    "CardDescription",
+    "CardFooter",
+    "CardHeader",
+    "CardTitle",
+    "cardVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/card",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/card.md",
+  "examples": [
+    {
+      "path": "examples/card.tsx",
+      "content": "import { BellRingingIcon, CheckCircleIcon, EnvelopeIcon, LightningIcon, PhoneIcon, PlugsIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full gap-6 sm:grid-cols-3\">\n      <Card>\n        <CardHeader>\n          <CardTitle>\n            <LightningIcon weight=\"fill\" />\n            Trigger\n          </CardTitle>\n          <CardDescription>Triggered after an inbound email is accepted and persisted to the mailbox.</CardDescription>\n        </CardHeader>\n      </Card>\n      <Card>\n        <CardHeader>\n          <CardTitle>\n            <BellRingingIcon weight=\"fill\" />\n            Delivery\n          </CardTitle>\n          <CardDescription>Fire-and-forget POST. Delivery failures are logged and do not block mail processing.</CardDescription>\n        </CardHeader>\n      </Card>\n      <Card>\n        <CardHeader>\n          <CardTitle>\n            <PlugsIcon weight=\"fill\" />\n            Response contract\n          </CardTitle>\n          <CardDescription>Any response body is ignored.</CardDescription>\n        </CardHeader>\n      </Card>\n    </div>\n  );\n}\n\nfunction Tile({ children }: { children: React.ReactNode }) {\n  return <span className=\"flex size-7 shrink-0 items-center justify-center rounded-pill bg-pink text-rose\">{children}</span>;\n}\n\nexport function Channel() {\n  return (\n    <div className=\"grid w-full max-w-122 gap-2\">\n      <Card variant=\"muted\">\n        <CardHeader className=\"items-center\">\n          <CardTitle className=\"gap-2.5\">\n            <Tile>\n              <EnvelopeIcon weight=\"fill\" className=\"size-5.5\" />\n            </Tile>\n            Email\n          </CardTitle>\n          <CardAction className=\"self-center\">\n            <Badge variant=\"success\" size=\"lg\">\n              <CheckCircleIcon weight=\"fill\" />\n              Included\n            </Badge>\n          </CardAction>\n        </CardHeader>\n        <CardContent>\n          <p className=\"flex h-10 items-center rounded-pill border border-line-field bg-subtle px-3.5 text-body text-fg-muted\">acme-support@inboxmail.com</p>\n        </CardContent>\n      </Card>\n      <Card variant=\"muted\">\n        <CardHeader className=\"items-center\">\n          <CardTitle className=\"gap-2.5\">\n            <Tile>\n              <PhoneIcon weight=\"fill\" className=\"size-5.5\" />\n            </Tile>\n            Phone Number\n          </CardTitle>\n        </CardHeader>\n      </Card>\n    </div>\n  );\n}\n\nexport function WithFooter() {\n  return (\n    <Card variant=\"raised\" className=\"w-full max-w-100\">\n      <CardHeader>\n        <CardTitle className=\"text-body-lg\">Custom domain</CardTitle>\n        <CardDescription>Send and receive as you@yourcompany.com. Add the DNS records, then verify.</CardDescription>\n        <CardAction>\n          <Button variant=\"ghost\" size=\"sm\">Docs</Button>\n        </CardAction>\n      </CardHeader>\n      <CardContent>\n        <p className=\"font-mono text-body text-fg\">mail.yourcompany.com</p>\n      </CardContent>\n      <CardFooter className=\"justify-end\">\n        <Button variant=\"outline\">Verify domain</Button>\n      </CardFooter>\n    </Card>\n  );\n}\n\nexport function Small() {\n  return (\n    <Card size=\"sm\" className=\"w-full max-w-72\">\n      <CardHeader>\n        <CardTitle>Last connected</CardTitle>\n        <CardDescription>Aug 8, 2026, 07:16 PM</CardDescription>\n      </CardHeader>\n    </Card>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Channel",
+        "WithFooter",
+        "Small"
+      ],
+      "requires": [
+        "card",
+        "badge",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/card/Preview"
+        },
+        {
+          "name": "Channel",
+          "url": "https://inkbox-ds.vercel.app/preview/card/Channel"
+        },
+        {
+          "name": "WithFooter",
+          "url": "https://inkbox-ds.vercel.app/preview/card/WithFooter"
+        },
+        {
+          "name": "Small",
+          "url": "https://inkbox-ds.vercel.app/preview/card/Small"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Card",
+  "description": "White cards with the field edge, raised white panels, and lilac channel cards, all with 24px corners.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/card.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's cards (Figma 427:2715). `default` is the webhook Trigger and Delivery card: white, a 1px #D2C9DB edge,\n// 24px corners, 14px in; a 14px ink title led by a 16px filled glyph and a 14px muted description. `raised` is the white\n// panel lifted by Shadow/S (a table's body). `muted` is the dialog's channel card: lilac, 24px corners, no edge, 12px above and\n// below, a 16px medium title (52px tall with a 28px glyph tile). Size sm tightens the insides to 12px.\nconst cardVariants = cva(\"group/card flex flex-col gap-3 rounded-dialog py-3.5 font-sans text-body leading-body text-fg data-[size=sm]:gap-2 data-[size=sm]:py-3\", {\n  variants: {\n    variant: {\n      default: \"border border-line-field bg-surface\",\n      raised: \"bg-surface shadow-s\",\n      muted: \"bg-subtle py-3\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction Card({ className, variant, size = \"default\", ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof cardVariants> & { size?: \"default\" | \"sm\" }) {\n  return <div data-slot=\"card\" data-variant={variant ?? \"default\"} data-size={size} className={cn(cardVariants({ variant }), className)} {...props} />;\n}\n\nfunction CardHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"card-header\"\n      className={cn(\"grid auto-rows-min grid-rows-[auto] has-data-[slot=card-description]:grid-rows-[auto_auto] items-start gap-x-3 gap-y-2.5 px-3.5 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto]\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction CardTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"card-title\"\n      className={cn(\"flex min-w-0 items-center gap-1.5 text-body leading-body text-fg group-data-[variant=muted]/card:text-body-lg group-data-[variant=muted]/card:font-medium [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction CardDescription({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-description\" className={cn(\"text-body leading-body text-fg-muted\", className)} {...props} />;\n}\n\nfunction CardAction({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-action\" className={cn(\"col-start-2 row-span-full flex self-start justify-self-end\", className)} {...props} />;\n}\n\nfunction CardContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-content\" className={cn(\"px-3.5 group-data-[size=sm]/card:px-3\", className)} {...props} />;\n}\n\nfunction CardFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-footer\" className={cn(\"flex items-center gap-2 px-3.5 group-data-[size=sm]/card:px-3\", className)} {...props} />;\n}\n\nexport { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants };\n"
+    }
+  ]
+}

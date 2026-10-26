@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "name": "toast",
+  "useFor": "Use when an app already calls the older toast() and useToast() API. Mount Toaster once and call toast({ title, description, action }); pass variant destructive for failures. For new work, use Sonner.",
+  "constraints": [
+    "Stacking more than three toasts",
+    "A toast that needs a decision before work continues",
+    "A purple or dark toast"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): white floating panels and outline keys",
+  "exports": [
+    "Toast",
+    "ToastAction",
+    "ToastClose",
+    "ToastDescription",
+    "Toaster",
+    "ToastProvider",
+    "ToastTitle",
+    "ToastViewport",
+    "toast",
+    "useToast",
+    "ToastActionElement",
+    "ToastProps"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/toast",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/toast.md",
+  "examples": [
+    {
+      "path": "examples/toast.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { ToastAction, Toaster, useToast } from \"@/components/ui/toast\";\n\nexport function Preview() {\n  const { toast } = useToast();\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <Toaster />\n      <Button\n        variant=\"outline\"\n        onClick={() =>\n          toast({\n            title: \"Mailbox archived\",\n            description: \"support@inkboxmail.com no longer receives mail.\",\n            action: <ToastAction altText=\"Undo the archive\">Undo</ToastAction>,\n          })\n        }\n      >\n        Archive mailbox\n      </Button>\n      <Button\n        variant=\"outline\"\n        onClick={() =>\n          toast({\n            variant: \"destructive\",\n            title: \"Delivery failed\",\n            description: \"api.acme.dev answered 500 three times.\",\n            action: <ToastAction altText=\"Retry the delivery\">Retry</ToastAction>,\n          })\n        }\n      >\n        Destructive\n      </Button>\n      <Button variant=\"outline\" onClick={() => toast({ title: \"Contact rule saved\" })}>\n        Title only\n      </Button>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "toast",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/toast/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Toast",
+  "description": "The Radix toast API in the same white floating look, with an outline action and a red edge for destructive toasts.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui",
+    "class-variance-authority",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toast.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Toast as ToastPrimitive } from \"radix-ui\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { XIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The Radix toast (shadcn's older toast API; prefer Sonner for new work). Same look as the Sonner toasts (extrapolated\n// from the Inkbox console, Figma 427:2715): a white panel with 16px corners, the floating shadow and 16px of padding, a\n// 14px medium ink title over a 14px muted description, an outline action key and a faint close glyph. `destructive`\n// edges it in red with a red title. It slides in from the right edge it lives on (300ms, the drawer curve) and fades\n// out faster; a swipe to the right drags it with the finger and lets it go.\nconst ToastProvider = ToastPrimitive.Provider;\n\nfunction ToastViewport({ className, ...props }: React.ComponentProps<typeof ToastPrimitive.Viewport>) {\n  return (\n    <ToastPrimitive.Viewport\n      data-slot=\"toast-viewport\"\n      className={cn(\"fixed right-0 bottom-0 z-[100] flex max-h-dvh w-full flex-col-reverse gap-2 p-4 outline-none sm:max-w-sm sm:flex-col\", className)}\n      {...props}\n    />\n  );\n}\n\nconst toastVariants = cva(\n  \"group/toast pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-panel bg-surface p-4 pr-10 font-sans text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-sheet-in-right data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[translate] data-[swipe=cancel]:duration-200 data-[swipe=cancel]:ease-out data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=end]:animate-fade-out data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none motion-reduce:data-[swipe=cancel]:transition-none\",\n  {\n    variants: {\n      variant: {\n        default: \"\",\n        destructive: \"border border-danger [&_[data-slot=toast-title]]:text-danger-strong\",\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\nfunction Toast({ className, variant, ...props }: React.ComponentProps<typeof ToastPrimitive.Root> & VariantProps<typeof toastVariants>) {\n  return <ToastPrimitive.Root data-slot=\"toast\" data-variant={variant ?? \"default\"} className={cn(toastVariants({ variant }), className)} {...props} />;\n}\n\nfunction ToastAction({ className, ...props }: React.ComponentProps<typeof ToastPrimitive.Action>) {\n  return (\n    <ToastPrimitive.Action\n      data-slot=\"toast-action\"\n      className={cn(\n        \"inline-flex h-8 shrink-0 items-center justify-center self-center rounded-pill border border-line-field bg-surface px-2.5 font-sans text-body leading-tight font-medium text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=destructive]/toast:text-danger-strong motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction ToastClose({ className, ...props }: React.ComponentProps<typeof ToastPrimitive.Close>) {\n  return (\n    <ToastPrimitive.Close\n      data-slot=\"toast-close\"\n      aria-label=\"Close\"\n      className={cn(\"absolute top-3 right-3 inline-flex size-6 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none\", className)}\n      {...props}\n    >\n      <XIcon className=\"size-4\" />\n    </ToastPrimitive.Close>\n  );\n}\n\nfunction ToastTitle({ className, ...props }: React.ComponentProps<typeof ToastPrimitive.Title>) {\n  return <ToastPrimitive.Title data-slot=\"toast-title\" className={cn(\"text-body leading-body font-medium text-fg\", className)} {...props} />;\n}\n\nfunction ToastDescription({ className, ...props }: React.ComponentProps<typeof ToastPrimitive.Description>) {\n  return <ToastPrimitive.Description data-slot=\"toast-description\" className={cn(\"text-body leading-body text-fg-muted\", className)} {...props} />;\n}\n\ntype ToastProps = React.ComponentProps<typeof Toast>;\ntype ToastActionElement = React.ReactElement<React.ComponentProps<typeof ToastAction>>;\n\n// The toast queue: a tiny store any part of the app can push to with toast(), read by useToast() and <Toaster />.\nconst TOAST_LIMIT = 3;\nconst REMOVE_DELAY = 1000;\n\ntype ToasterToast = ToastProps & { id: string; title?: React.ReactNode; description?: React.ReactNode; action?: ToastActionElement };\ntype State = { toasts: ToasterToast[] };\n\nlet count = 0;\nconst nextId = () => String((count = (count + 1) % Number.MAX_SAFE_INTEGER));\nconst listeners: Array<(state: State) => void> = [];\nlet memory: State = { toasts: [] };\nconst timeouts = new Map<string, ReturnType<typeof setTimeout>>();\n\nfunction setState(update: (state: State) => State) {\n  memory = update(memory);\n  listeners.forEach((l) => l(memory));\n}\n\nfunction scheduleRemove(id: string) {\n  if (timeouts.has(id)) return;\n  // ds-latency: removes an already dismissed toast from memory; dismissal and input stay immediate.\n  timeouts.set(id, setTimeout(() => {\n    timeouts.delete(id);\n    setState((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));\n  }, REMOVE_DELAY));\n}\n\nfunction dismiss(id?: string) {\n  setState((s) => ({ toasts: s.toasts.map((t) => (id === undefined || t.id === id ? { ...t, open: false } : t)) }));\n  memory.toasts.filter((t) => id === undefined || t.id === id).forEach((t) => scheduleRemove(t.id));\n}\n\nfunction toast(props: Omit<ToasterToast, \"id\">) {\n  const id = nextId();\n  const update = (next: Partial<ToasterToast>) => setState((s) => ({ toasts: s.toasts.map((t) => (t.id === id ? { ...t, ...next } : t)) }));\n  setState((s) => ({\n    toasts: [{ ...props, id, open: true, onOpenChange: (open: boolean) => { if (!open) dismiss(id); props.onOpenChange?.(open); } }, ...s.toasts].slice(0, TOAST_LIMIT),\n  }));\n  return { id, dismiss: () => dismiss(id), update };\n}\n\nfunction useToast() {\n  const [state, setLocal] = React.useState(memory);\n  React.useEffect(() => {\n    listeners.push(setLocal);\n    return () => {\n      const i = listeners.indexOf(setLocal);\n      if (i > -1) listeners.splice(i, 1);\n    };\n  }, []);\n  return { ...state, toast, dismiss };\n}\n\n/** Renders the queue. Mount it once, near the root. */\nfunction Toaster() {\n  const { toasts } = useToast();\n  return (\n    <ToastProvider swipeDirection=\"right\">\n      {toasts.map(({ id, title, description, action, ...props }) => (\n        <Toast key={id} {...props}>\n          <div className=\"grid min-w-0 gap-0.5\">\n            {title && <ToastTitle>{title}</ToastTitle>}\n            {description && <ToastDescription>{description}</ToastDescription>}\n          </div>\n          {action}\n          <ToastClose />\n        </Toast>\n      ))}\n      <ToastViewport />\n    </ToastProvider>\n  );\n}\n\nexport { Toast, ToastAction, ToastClose, ToastDescription, Toaster, ToastProvider, ToastTitle, ToastViewport, toast, useToast };\nexport type { ToastActionElement, ToastProps };\n"
+    }
+  ]
+}

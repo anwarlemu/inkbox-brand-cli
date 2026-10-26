@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "name": "breadcrumb",
+  "useFor": "Use above a page head when a page sits deep in a hierarchy (Webhooks, then an endpoint, then a delivery). Fold middle levels into BreadcrumbEllipsis when the trail is long; use asChild to render your router's link.",
+  "constraints": [
+    "Purple links",
+    "Slashes as separators",
+    "A breadcrumb on a top-level page"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): page heads, muted text and links",
+  "exports": [
+    "Breadcrumb",
+    "BreadcrumbEllipsis",
+    "BreadcrumbItem",
+    "BreadcrumbLink",
+    "BreadcrumbList",
+    "BreadcrumbPage",
+    "BreadcrumbSeparator"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/breadcrumb",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/breadcrumb.md",
+  "examples": [
+    {
+      "path": "examples/breadcrumb.tsx",
+      "content": "import { LineVerticalIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from \"@/components/ui/breadcrumb\";\n\nexport function Preview() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#\">Webhooks</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#\">Delivery log</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>message.sent</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n\nexport function Collapsed() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#\">Agent Workspace</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbEllipsis />\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#\">Tunnel</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>Telemetry</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n\nexport function CustomSeparator() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#\">Vault</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator>\n          <LineVerticalIcon className=\"rotate-12\" />\n        </BreadcrumbSeparator>\n        <BreadcrumbItem>\n          <BreadcrumbPage>Login credentials</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Collapsed",
+        "CustomSeparator"
+      ],
+      "requires": [
+        "breadcrumb"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/breadcrumb/Preview"
+        },
+        {
+          "name": "Collapsed",
+          "url": "https://inkbox-ds.vercel.app/preview/breadcrumb/Collapsed"
+        },
+        {
+          "name": "CustomSeparator",
+          "url": "https://inkbox-ds.vercel.app/preview/breadcrumb/CustomSeparator"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Breadcrumb",
+  "description": "A trail of 14px muted links ending in the current page in ink, with faint carets between.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/breadcrumb.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { CaretRightIcon, DotsThreeIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A trail of pages (extrapolated from the Inkbox console, Figma 427:2715: its page heads and muted links). 14px muted\n// links that darken to ink on hover, the current page in ink, 16px faint carets between them, and three dots for the\n// pages folded away.\nfunction Breadcrumb(props: React.ComponentProps<\"nav\">) {\n  return <nav aria-label=\"breadcrumb\" data-slot=\"breadcrumb\" {...props} />;\n}\n\nfunction BreadcrumbList({ className, ...props }: React.ComponentProps<\"ol\">) {\n  return <ol data-slot=\"breadcrumb-list\" className={cn(\"flex flex-wrap items-center gap-1.5 font-sans text-body leading-tight break-words text-fg-muted\", className)} {...props} />;\n}\n\nfunction BreadcrumbItem({ className, ...props }: React.ComponentProps<\"li\">) {\n  return <li data-slot=\"breadcrumb-item\" className={cn(\"inline-flex items-center gap-1.5\", className)} {...props} />;\n}\n\nfunction BreadcrumbLink({ asChild, className, ...props }: React.ComponentProps<\"a\"> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.a : \"a\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return (\n    <Comp {...slotProps}\n      data-slot=\"breadcrumb-link\"\n      className={cn(\"rounded-xs text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction BreadcrumbPage({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"breadcrumb-page\" role=\"link\" aria-disabled=\"true\" aria-current=\"page\" className={cn(\"font-normal text-fg\", className)} {...props} />;\n}\n\nfunction BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<\"li\">) {\n  return (\n    <li data-slot=\"breadcrumb-separator\" role=\"presentation\" aria-hidden=\"true\" className={cn(\"text-fg-faint [&>svg]:size-4\", className)} {...props}>\n      {children ?? <CaretRightIcon />}\n    </li>\n  );\n}\n\nfunction BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<\"span\">) {\n  return (\n    <span data-slot=\"breadcrumb-ellipsis\" role=\"presentation\" aria-hidden=\"true\" className={cn(\"flex size-7 items-center justify-center\", className)} {...props}>\n      <DotsThreeIcon weight=\"bold\" className=\"size-4\" />\n      <span className=\"sr-only\">More</span>\n    </span>\n  );\n}\n\nexport { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator };\n"
+    }
+  ]
+}

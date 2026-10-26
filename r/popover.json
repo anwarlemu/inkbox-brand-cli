@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "name": "popover",
+  "useFor": "Use for a small form or detail tied to one control (rename a mailbox, set a phone line's state). Put a PopoverHeader with a PopoverTitle and PopoverDescription first, then the fields. For choosing one value from a list use Select or Combobox; for actions use Dropdown Menu.",
+  "constraints": [
+    "A popover that opens on hover (use Hover Card)",
+    "A dark or lilac popover panel",
+    "Scaling from the center instead of the trigger",
+    "Long forms that scroll inside a popover"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panel of the select and the selected tab (Shadow/S), the field and button sizes",
+  "exports": [
+    "Popover",
+    "PopoverAnchor",
+    "PopoverContent",
+    "PopoverDescription",
+    "PopoverHeader",
+    "PopoverTitle",
+    "PopoverTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/popover",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/popover.md",
+  "examples": [
+    {
+      "path": "examples/popover.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { PencilSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\nimport { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from \"@/components/ui/popover\";\n\nfunction RenameForm({ onDone }: { onDone?: () => void }) {\n  const [name, setName] = React.useState(\"Acme support\");\n  return (\n    <form\n      className=\"grid gap-3\"\n      onSubmit={(event) => {\n        event.preventDefault();\n        onDone?.();\n      }}\n    >\n      <PopoverHeader>\n        <PopoverTitle>Display name</PopoverTitle>\n        <PopoverDescription>Shown as the sender on acme@inkboxmail.com.</PopoverDescription>\n      </PopoverHeader>\n      <div className=\"grid gap-1\">\n        <Label htmlFor=\"display-name\">Name</Label>\n        <Input id=\"display-name\" value={name} onChange={(e) => setName(e.target.value)} />\n      </div>\n      <Button type=\"submit\" className=\"w-full\">\n        Save\n      </Button>\n    </form>\n  );\n}\n\nexport function Preview() {\n  const [open, setOpen] = React.useState(false);\n  return (\n    <div className=\"flex justify-center\">\n      <Popover open={open} onOpenChange={setOpen}>\n        <PopoverTrigger asChild>\n          <Button variant=\"outline\">\n            <PencilSimpleIcon weight=\"fill\" />\n            Rename mailbox\n          </Button>\n        </PopoverTrigger>\n        <PopoverContent align=\"start\">\n          <RenameForm onDone={() => setOpen(false)} />\n        </PopoverContent>\n      </Popover>\n    </div>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"flex min-h-80 items-start justify-center\">\n      <Popover defaultOpen>\n        <PopoverTrigger asChild>\n          <Button variant=\"outline\">\n            <PencilSimpleIcon weight=\"fill\" />\n            Rename mailbox\n          </Button>\n        </PopoverTrigger>\n        <PopoverContent>\n          <RenameForm />\n        </PopoverContent>\n      </Popover>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Open"
+      ],
+      "requires": [
+        "popover",
+        "button",
+        "input",
+        "label"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/popover/Preview"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/popover/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Popover",
+  "description": "A raised white panel with 16px corners and the floating shadow that grows out of the control that opened it.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/popover.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Popover as ChakraPopover, Portal } from \"@chakra-ui/react\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A popover, extrapolated from the console's raised white panels (Figma 427:2715: the select and the selected tab\n// carry Shadow/S): white with 16px corners and the floating shadow (Shadow/S's ring with a softer, longer drop), 16px of\n// padding, 14px ink text. It grows out of its trigger from 96 percent with a fade (200ms, the strong ease-out) and\n// leaves faster than it came.\ntype PopoverProps = Omit<React.ComponentProps<typeof ChakraPopover.Root>, \"onOpenChange\"> & { onOpenChange?: (open: boolean) => void };\nfunction Popover({ onOpenChange, ...props }: PopoverProps) {\n  return <ChakraPopover.Root unstyled data-slot=\"popover\" onOpenChange={(details) => onOpenChange?.(details.open)} {...props} />;\n}\n\nfunction PopoverTrigger(props: React.ComponentProps<typeof ChakraPopover.Trigger>) {\n  return <ChakraPopover.Trigger data-slot=\"popover-trigger\" {...props} />;\n}\n\nfunction PopoverAnchor(props: React.ComponentProps<typeof ChakraPopover.Anchor>) {\n  return <ChakraPopover.Anchor data-slot=\"popover-anchor\" {...props} />;\n}\n\ntype PopoverContentProps = Omit<React.ComponentProps<typeof ChakraPopover.Content>, \"positioning\"> & { align?: \"start\" | \"center\" | \"end\"; sideOffset?: number; onOpenAutoFocus?: (event: { preventDefault(): void }) => void };\nfunction PopoverContent({ className, align = \"center\", sideOffset = 6, onOpenAutoFocus: _onOpenAutoFocus, ...props }: PopoverContentProps) {\n  const container = usePortalContainer();\n  const portalRef = React.useMemo(() => container ? { current: container } : undefined, [container]);\n  return (\n    <Portal container={portalRef}>\n      <ChakraPopover.Positioner>\n      <ChakraPopover.Content\n        unstyled\n        data-slot=\"popover-content\"\n        className={cn(\n          \"z-50 flex w-72 max-w-[calc(100vw-2rem)] origin-(--transform-origin) flex-col gap-3 rounded-panel bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in\",\n          className,\n        )}\n        {...props}\n      />\n      </ChakraPopover.Positioner>\n    </Portal>\n  );\n}\n\n/** The popover's head: its title over a short muted line. */\nfunction PopoverHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"popover-header\" className={cn(\"flex flex-col gap-0.5\", className)} {...props} />;\n}\n\nfunction PopoverTitle({ className, ...props }: React.ComponentProps<\"h2\">) {\n  return <h2 data-slot=\"popover-title\" className={cn(\"font-sans text-body-lg leading-body font-medium text-fg\", className)} {...props} />;\n}\n\nfunction PopoverDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"popover-description\" className={cn(\"text-body leading-body text-fg-muted\", className)} {...props} />;\n}\n\nexport { Popover, PopoverAnchor, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger };\n"
+    }
+  ]
+}

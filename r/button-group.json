@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "name": "button-group",
+  "useFor": "Use to join related actions into one control (View as formatted beside Copy as markdown), a field with an action, or a field with a fixed part (the @inboxmail.com suffix as ButtonGroupText). Nest groups to keep space between sets.",
+  "constraints": [
+    "Joining a purple pill with an outline key",
+    "More than five buttons in a group",
+    "Joining unrelated actions"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the outline keys of the created dialog and the Email channel card's split field",
+  "exports": [
+    "ButtonGroup",
+    "ButtonGroupSeparator",
+    "ButtonGroupText",
+    "buttonGroupVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/button-group",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/button-group.md",
+  "examples": [
+    {
+      "path": "examples/button-group.tsx",
+      "content": "import { CaretDownIcon, CopyIcon, FileTextIcon, MinusIcon, PlusIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from \"@/components/ui/button-group\";\nimport { Input } from \"@/components/ui/input\";\n\nexport function Preview() {\n  return (\n    <ButtonGroup aria-label=\"Prompt actions\">\n      <Button variant=\"outline\">\n        <FileTextIcon weight=\"fill\" />\n        View as formatted\n      </Button>\n      <Button variant=\"outline\">\n        <CopyIcon weight=\"duotone\" />\n        Copy as markdown\n      </Button>\n    </ButtonGroup>\n  );\n}\n\nexport function WithField() {\n  return (\n    <div className=\"grid w-full max-w-115 gap-4\">\n      <ButtonGroup className=\"w-full\">\n        <Input aria-label=\"Mailbox name\" defaultValue=\"acme-support\" />\n        <ButtonGroupText>@inboxmail.com</ButtonGroupText>\n      </ButtonGroup>\n      <ButtonGroup className=\"w-full\">\n        <Input aria-label=\"Search contacts\" placeholder=\"Search contacts\" />\n        <Button variant=\"outline\">Search</Button>\n      </ButtonGroup>\n    </div>\n  );\n}\n\nexport function Split() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-6\">\n      <ButtonGroup>\n        <Button>Create Agent</Button>\n        <ButtonGroupSeparator />\n        <Button size=\"icon-lg\" aria-label=\"More create options\">\n          <CaretDownIcon />\n        </Button>\n      </ButtonGroup>\n      <ButtonGroup aria-label=\"Phone lines\">\n        <Button variant=\"outline\" size=\"icon\" className=\"size-9\" aria-label=\"Remove a line\">\n          <MinusIcon />\n        </Button>\n        <ButtonGroupText className=\"min-w-12 justify-center text-fg\">2</ButtonGroupText>\n        <Button variant=\"outline\" size=\"icon\" className=\"size-9\" aria-label=\"Add a line\">\n          <PlusIcon />\n        </Button>\n      </ButtonGroup>\n    </div>\n  );\n}\n\nexport function Vertical() {\n  return (\n    <ButtonGroup orientation=\"vertical\" aria-label=\"Zoom\">\n      <Button variant=\"outline\" size=\"icon\" className=\"size-9\" aria-label=\"Zoom in\">\n        <PlusIcon />\n      </Button>\n      <Button variant=\"outline\" size=\"icon\" className=\"size-9\" aria-label=\"Zoom out\">\n        <MinusIcon />\n      </Button>\n    </ButtonGroup>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "WithField",
+        "Split",
+        "Vertical"
+      ],
+      "requires": [
+        "button-group",
+        "button",
+        "input"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/button-group/Preview"
+        },
+        {
+          "name": "WithField",
+          "url": "https://inkbox-ds.vercel.app/preview/button-group/WithField"
+        },
+        {
+          "name": "Split",
+          "url": "https://inkbox-ds.vercel.app/preview/button-group/Split"
+        },
+        {
+          "name": "Vertical",
+          "url": "https://inkbox-ds.vercel.app/preview/button-group/Vertical"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Button Group",
+  "description": "Buttons, fields and text segments joined into one bar with shared edges and outer corners only.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/button-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Buttons joined into one control (extrapolated from the Inkbox console, Figma 427:2715: the outline keys of the\n// created dialog and the split field of the Email channel card). Inner corners square off and the shared edges merge,\n// so outline keys read as one 36px bar with fully rounded outer corners; a field, select or text segment can sit in the bar.\n// ButtonGroupText is the lilac segment with muted 14px text (@inboxmail.com); ButtonGroupSeparator is a 1px rule\n// between filled buttons.\nconst buttonGroupVariants = cva(\n  \"group/button-group flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[>input]:[&>[data-slot=button]]:h-10 has-[>input]:[&>[data-slot=button-group-text]]:h-10 [&>input]:flex-1\",\n  {\n    variants: {\n      orientation: {\n        horizontal: \"[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none\",\n        vertical: \"flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none\",\n      },\n    },\n    defaultVariants: { orientation: \"horizontal\" },\n  },\n);\n\nfunction ButtonGroup({ className, orientation, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof buttonGroupVariants>) {\n  return <div role=\"group\" data-slot=\"button-group\" data-orientation={orientation ?? \"horizontal\"} className={cn(buttonGroupVariants({ orientation }), className)} {...props} />;\n}\n\nfunction ButtonGroupText({ className, asChild = false, ...props }: React.ComponentProps<\"div\"> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.div : \"div\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return (\n    <Comp {...slotProps}\n      data-slot=\"button-group-text\"\n      className={cn(\"flex items-center gap-2 rounded-pill border border-line-field bg-subtle px-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction ButtonGroupSeparator({ className, orientation = \"vertical\", ...props }: React.ComponentProps<\"div\"> & { orientation?: \"horizontal\" | \"vertical\" }) {\n  return (\n    <div\n      role=\"separator\"\n      aria-orientation={orientation}\n      data-slot=\"button-group-separator\"\n      data-orientation={orientation}\n      className={cn(\"relative shrink-0 self-stretch bg-surface/40\", orientation === \"vertical\" ? \"w-px\" : \"h-px\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants };\n"
+    }
+  ]
+}

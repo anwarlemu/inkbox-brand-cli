@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "label",
+  "useFor": "Name every field with a Label tied to it by htmlFor, 4px above the field. For a label with a hint or an action beside it (Forgot password?), use Field.",
+  "constraints": [
+    "Bold or caps labels",
+    "A label in the action purple"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Login (Email address, Password), Vault (Vault key)",
+  "exports": [
+    "Label"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/label",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/label.md",
+  "examples": [
+    {
+      "path": "examples/label.tsx",
+      "content": "import { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-86 gap-1\">\n      <Label htmlFor=\"vault-key\">Vault key</Label>\n      <Input id=\"vault-key\" type=\"password\" placeholder=\"Enter a vault key\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "label",
+        "input"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/label/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Label",
+  "description": "A field's 14px regular ink label on a 24px line.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/label.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A field's label (Email address, Password, Vault key): 14px regular ink on a 24px line, 4px above its field. A\n// disabled field's label fades with it.\nfunction Label({ className, ...props }: React.ComponentProps<\"label\">) {\n  return (\n    <chakra.label\n      data-slot=\"label\"\n      className={cn(\"flex items-center gap-2 font-sans text-body leading-body font-normal text-fg select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Label };\n"
+    }
+  ]
+}

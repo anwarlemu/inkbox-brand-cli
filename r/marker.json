@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "marker",
+  "useFor": "Mark where a day begins (separator, \"Yesterday\"), where unread messages start (unread), or an event in a thread (default with a MarkerIcon, \"Ray joined the conversation\"). Use border to head a short list.",
+  "constraints": [
+    "Markers larger than 12px",
+    "A colored pill around a date",
+    "More than one unread line"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox dates (muted) and the rail rules",
+  "exports": [
+    "Marker",
+    "MarkerContent",
+    "MarkerIcon",
+    "markerVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/marker",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/marker.md",
+  "examples": [
+    {
+      "path": "examples/marker.tsx",
+      "content": "import { ArrowsLeftRightIcon, UserPlusIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Marker, MarkerContent, MarkerIcon } from \"@/components/ui/marker\";\n\nexport function Preview() {\n  return (\n    <div className=\"mx-auto grid w-full max-w-120 gap-5\">\n      <Marker variant=\"separator\">\n        <MarkerContent>Yesterday</MarkerContent>\n      </Marker>\n      <Marker>\n        <MarkerIcon>\n          <UserPlusIcon weight=\"fill\" />\n        </MarkerIcon>\n        <MarkerContent>Ray Liao joined the conversation</MarkerContent>\n      </Marker>\n      <Marker variant=\"unread\">\n        <MarkerContent>2 unread</MarkerContent>\n      </Marker>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"mx-auto grid w-full max-w-120 gap-5\">\n      <Marker variant=\"border\">\n        <MarkerContent>Threads</MarkerContent>\n      </Marker>\n      <Marker>\n        <MarkerIcon>\n          <ArrowsLeftRightIcon />\n        </MarkerIcon>\n        <MarkerContent>\n          Delegated to @ops-agent over Agent2Agent. <a href=\"#session\">View session</a>\n        </MarkerContent>\n      </Marker>\n      <Marker variant=\"separator\">\n        <MarkerContent>Jul 31</MarkerContent>\n      </Marker>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Variants"
+      ],
+      "requires": [
+        "marker"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/marker/Preview"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/marker/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Marker",
+  "description": "A 12px muted marker in a conversation or list, alone, between two hairlines, ruled underneath, or as the purple unread line.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/marker.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A marker in a conversation or a list: 12px muted text, as the inbox sets its dates (Figma 427:2715). `separator`\n// centers it between two hairlines (\"Yesterday\"), `border` rules it underneath, and `unread` is the purple line where\n// unread messages begin.\nconst markerVariants = cva(\n  \"group/marker relative flex min-h-4 w-full items-center gap-2 text-left font-sans text-caption leading-tight text-fg-muted [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-4 [a]:hover:text-fg\",\n  {\n    variants: {\n      variant: {\n        default: \"\",\n        separator: \"before:mr-1 before:h-px before:min-w-0 before:flex-1 before:bg-line-subtle after:ml-1 after:h-px after:min-w-0 after:flex-1 after:bg-line-subtle\",\n        border: \"border-b border-line-subtle pb-2\",\n        unread: \"font-medium text-fg-brand before:mr-1 before:h-px before:min-w-0 before:flex-1 before:bg-line-brand after:ml-1 after:h-px after:min-w-0 after:flex-1 after:bg-line-brand\",\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\nfunction Marker({ className, variant = \"default\", asChild = false, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof markerVariants> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.div : \"div\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return <Comp {...slotProps} data-slot=\"marker\" data-variant={variant} role={variant === \"default\" ? undefined : \"separator\"} className={cn(markerVariants({ variant }), className)} {...props} />;\n}\n\nfunction MarkerIcon({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"marker-icon\" aria-hidden=\"true\" className={cn(\"inline-flex size-4 shrink-0 items-center justify-center [&_svg:not([class*='size-'])]:size-4\", className)} {...props} />;\n}\n\nfunction MarkerContent({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"marker-content\" className={cn(\"min-w-0 break-words group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center group-data-[variant=unread]/marker:flex-none *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-fg\", className)} {...props} />;\n}\n\nexport { Marker, MarkerContent, MarkerIcon, markerVariants };\n"
+    }
+  ]
+}

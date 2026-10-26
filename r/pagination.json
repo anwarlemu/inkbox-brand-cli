@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "pagination",
+  "useFor": "Use under a table or list that has more than one page. Pass bar to set it in the lilac bar that sits 8px under a table, as the console does. Mark the current page with isActive and disable Previous on the first page with aria-disabled.",
+  "constraints": [
+    "A purple current page",
+    "Page numbers in the action purple",
+    "More than seven page links at once"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: the pagination bar under the Email and iMessage tables",
+  "exports": [
+    "Pagination",
+    "PaginationContent",
+    "PaginationEllipsis",
+    "PaginationItem",
+    "PaginationLink",
+    "PaginationNext",
+    "PaginationPrevious"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/pagination",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/pagination.md",
+  "examples": [
+    {
+      "path": "examples/pagination.tsx",
+      "content": "import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from \"@/components/ui/pagination\";\n\nexport function Preview() {\n  return (\n    <Pagination bar>\n      <PaginationContent>\n        <PaginationItem>\n          <PaginationPrevious href=\"#\" aria-disabled />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\" isActive>\n            1\n          </PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\">2</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationNext href=\"#\" />\n        </PaginationItem>\n      </PaginationContent>\n    </Pagination>\n  );\n}\n\nexport function Plain() {\n  return (\n    <Pagination>\n      <PaginationContent>\n        <PaginationItem>\n          <PaginationPrevious href=\"#\" />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\">1</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationEllipsis />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\">7</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\" isActive>\n            8\n          </PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\">9</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationEllipsis />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"#\">24</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationNext href=\"#\" />\n        </PaginationItem>\n      </PaginationContent>\n    </Pagination>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Plain"
+      ],
+      "requires": [
+        "pagination"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/pagination/Preview"
+        },
+        {
+          "name": "Plain",
+          "url": "https://inkbox-ds.vercel.app/preview/pagination/Plain"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Pagination",
+  "description": "Muted Previous and Next with carets around ink page numbers; the current page is a white key with Shadow/S.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/pagination.tsx",
+      "content": "import * as React from \"react\";\nimport { CaretLeftIcon, CaretRightIcon, DotsThreeIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's pagination (Figma 427:2715, under the Email and iMessage tables): 14px muted \"Previous\" and \"Next\" with\n// 16px carets, the page numbers in 14px ink, and the current page a 40 by 30 white key with fully rounded corners and Shadow/S.\n// `bar` sets it in the 42px lilac bar with 10px corners that sits 8px under a table, the pages at its right end.\nfunction Pagination({ className, bar = false, ...props }: React.ComponentProps<\"nav\"> & { bar?: boolean }) {\n  return (\n    <nav\n      role=\"navigation\"\n      aria-label=\"pagination\"\n      data-slot=\"pagination\"\n      data-bar={bar || undefined}\n      className={cn(\"flex w-full justify-center\", bar && \"min-h-10.5 items-center justify-end rounded-panel bg-subtle px-2 py-1.5\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction PaginationContent({ className, ...props }: React.ComponentProps<\"ul\">) {\n  return <ul data-slot=\"pagination-content\" className={cn(\"flex flex-row flex-wrap items-center gap-1\", className)} {...props} />;\n}\n\nfunction PaginationItem(props: React.ComponentProps<\"li\">) {\n  return <li data-slot=\"pagination-item\" {...props} />;\n}\n\ntype PaginationLinkProps = { isActive?: boolean; size?: \"icon\" | \"default\" } & React.ComponentProps<\"a\">;\n\nconst LINK =\n  \"inline-flex h-7.5 shrink-0 items-center justify-center gap-1 rounded-pill font-sans text-body leading-tight whitespace-nowrap outline-none transition-[background-color,color,box-shadow] duration-150 ease-out active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\";\n\nfunction PaginationLink({ className, isActive, size = \"icon\", ...props }: PaginationLinkProps) {\n  return (\n    <a\n      aria-current={isActive ? \"page\" : undefined}\n      data-slot=\"pagination-link\"\n      data-active={isActive || undefined}\n      className={cn(\n        LINK,\n        size === \"icon\" ? \"min-w-10 px-2\" : \"px-2.5\",\n        isActive ? \"bg-surface text-fg shadow-s\" : \"text-fg hover:bg-subtle-hover in-data-[bar=true]:hover:bg-surface/70\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction PaginationPrevious({ className, children = \"Previous\", ...props }: React.ComponentProps<typeof PaginationLink>) {\n  return (\n    <PaginationLink aria-label=\"Go to previous page\" size=\"default\" className={cn(\"text-fg-muted hover:text-fg\", className)} {...props}>\n      <CaretLeftIcon aria-hidden />\n      <span>{children}</span>\n    </PaginationLink>\n  );\n}\n\nfunction PaginationNext({ className, children = \"Next\", ...props }: React.ComponentProps<typeof PaginationLink>) {\n  return (\n    <PaginationLink aria-label=\"Go to next page\" size=\"default\" className={cn(\"text-fg-muted hover:text-fg\", className)} {...props}>\n      <span>{children}</span>\n      <CaretRightIcon aria-hidden />\n    </PaginationLink>\n  );\n}\n\nfunction PaginationEllipsis({ className, ...props }: React.ComponentProps<\"span\">) {\n  return (\n    <span aria-hidden data-slot=\"pagination-ellipsis\" className={cn(\"flex h-7.5 min-w-8 items-center justify-center text-fg-muted\", className)} {...props}>\n      <DotsThreeIcon weight=\"bold\" className=\"size-4\" />\n      <span className=\"sr-only\">More pages</span>\n    </span>\n  );\n}\n\nexport { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious };\n"
+    }
+  ]
+}

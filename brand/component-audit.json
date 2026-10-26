@@ -1,0 +1,347 @@
+{
+  "checkedAt": "2026-10-23",
+  "reference": "Figma \"Inkbox (Copy) (Copy)\", section \"New\" (node 427:2715)",
+  "method": "Colors sampled from the design's 1x renders, type fitted to text layer widths, sizes and radii from layer geometry; each component compared side by side with the screens it comes from, and 27 computed-style checks (test/fixtures/reference-styles.json) run in the browser. Components marked extrapolated have no counterpart in the design and extend its patterns.",
+  "components": [
+    {
+      "name": "accordion",
+      "basis": "design",
+      "reference": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)"
+    },
+    {
+      "name": "alert-dialog",
+      "basis": "design",
+      "reference": "Figma 427:2715: Modal - Create Agent (panel, scrim, title) with the console's pill buttons"
+    },
+    {
+      "name": "alert",
+      "basis": "design",
+      "reference": "Figma 427:2715: Vault (Initialize vault, zero-knowledge note), Modal - Created (Copy this API key now)"
+    },
+    {
+      "name": "aspect-ratio",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the 8px corners of its cards and wells"
+    },
+    {
+      "name": "attachment",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the webhook cards (white, field edge, 8px corners) and the pink channel tiles of Create Agent Identity"
+    },
+    {
+      "name": "avatar",
+      "basis": "design",
+      "reference": "Figma 427:2715: the rail (Robert Ligthart), the agent picker (@acme), Modal - Created (@test-agent)"
+    },
+    {
+      "name": "badge",
+      "basis": "design",
+      "reference": "Figma 427:2715: the rail (BETA, ADMIN), Create Agent Identity (Included), Webhooks (Email, Signed, Fire-and-forget), iMessage (Blacklist), Tunnel (Active, Idle, Edge), Inbox (Unread)"
+    },
+    {
+      "name": "breadcrumb",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): page heads, muted text and links"
+    },
+    {
+      "name": "bubble",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): iMessage and the inbox, in the action purple and the lilac"
+    },
+    {
+      "name": "button-group",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the outline keys of the created dialog and the Email channel card's split field"
+    },
+    {
+      "name": "button",
+      "basis": "design",
+      "reference": "Figma 427:2715: Create Agent, Enable iMessage, Log in, Continue with GitHub, View as formatted, Tunnel quickstart"
+    },
+    {
+      "name": "calendar",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): 8px keys, the lilac wash and the purple action"
+    },
+    {
+      "name": "card",
+      "basis": "design",
+      "reference": "Figma 427:2715: Webhooks - Event catalog (Trigger, Delivery, Response contract), Create Agent Identity (Email, Phone Number channel cards)"
+    },
+    {
+      "name": "carousel",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): white keys with Shadow/S"
+    },
+    {
+      "name": "chart",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): muted labels, lilac rules, floating panels and the status colors"
+    },
+    {
+      "name": "checkbox",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the radios' 18px size and gray edge, the action purple and the white checks"
+    },
+    {
+      "name": "code-block",
+      "basis": "design",
+      "reference": "Figma 427:2715: Webhooks - Event catalog (Signature headers, Payload example)"
+    },
+    {
+      "name": "collapsible",
+      "basis": "design",
+      "reference": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)"
+    },
+    {
+      "name": "combobox",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the select trigger (Any State), the command menu and the lilac handle chip"
+    },
+    {
+      "name": "command",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the nav rows, section labels (Channels, Shared) and the dialog"
+    },
+    {
+      "name": "context-menu",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the email list items, nav rows and the raised panel"
+    },
+    {
+      "name": "data-table",
+      "basis": "design",
+      "reference": "Figma 427:2715: Email (Mailboxes table and its pagination bar), iMessage (Agents and lines)"
+    },
+    {
+      "name": "date-picker",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the select trigger (Any State) and the menu panel, with the calendar"
+    },
+    {
+      "name": "dialog",
+      "basis": "design",
+      "reference": "Figma 427:2715: Modal - Create Agent, Modal - Created, modal-bg"
+    },
+    {
+      "name": "direction",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): no visual of its own"
+    },
+    {
+      "name": "drawer",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): Modal - Create Agent (panel, title, scrim) and the field-edge lilac"
+    },
+    {
+      "name": "dropdown-menu",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): nav rows (38px, 8px corners, filled glyphs, lilac current row), section labels (Channels), the raised panel"
+    },
+    {
+      "name": "empty",
+      "basis": "design",
+      "reference": "Figma 427:2715: Dashboard - empty state (Create Your First Agent), Agent Workspace - Inbox - Not selected (No email selected)"
+    },
+    {
+      "name": "field",
+      "basis": "design",
+      "reference": "Figma 427:2715: Login (Email address, Password, Forgot password?, or), Vault (Vault key and its description), Create Agent Identity (is not available, Will be displayed as)"
+    },
+    {
+      "name": "form",
+      "basis": "design",
+      "reference": "Figma 427:2715: Create Agent Identity (handle check states, Creating Agent Identity...), Login"
+    },
+    {
+      "name": "hover-card",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panels, the 8px corners and the avatar tile"
+    },
+    {
+      "name": "input-group",
+      "basis": "design",
+      "reference": "Figma 427:2715: the Email card's handle field with @inboxmail.com and the handle check states (checking, Available, Not Available) in Modal States"
+    },
+    {
+      "name": "input-otp",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): Form- Input's 40px, edge and focus"
+    },
+    {
+      "name": "input",
+      "basis": "design",
+      "reference": "Figma 427:2715: Form- Input in Create Agent Identity, Login and Vault"
+    },
+    {
+      "name": "item",
+      "basis": "design",
+      "reference": "Figma 427:2715: Agent Workspace - Inbox (email list), Webhooks - Event catalog (event list), the rail"
+    },
+    {
+      "name": "kbd",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac @handle chip and its 4px tag corners"
+    },
+    {
+      "name": "label",
+      "basis": "design",
+      "reference": "Figma 427:2715: Login (Email address, Password), Vault (Vault key)"
+    },
+    {
+      "name": "marker",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox dates (muted) and the rail rules"
+    },
+    {
+      "name": "menubar",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the tab track (Mailboxes, Contact rules, Custom domains) and the raised panel"
+    },
+    {
+      "name": "message-scroller",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox list and reading pane, the white key with Shadow/S"
+    },
+    {
+      "name": "message",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox rows (sender in ink, date muted) and the rail's initial tile"
+    },
+    {
+      "name": "native-select",
+      "basis": "design",
+      "reference": "Figma 427:2715: the Any State and Shared selects in Create Agent Identity"
+    },
+    {
+      "name": "navigation-menu",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the rail's nav rows and the raised panel"
+    },
+    {
+      "name": "pagination",
+      "basis": "design",
+      "reference": "Figma 427:2715: the pagination bar under the Email and iMessage tables"
+    },
+    {
+      "name": "popover",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panel of the select and the selected tab (Shadow/S), the field and button sizes"
+    },
+    {
+      "name": "progress",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the Email table's Storage column, the lilac wells and the purple action color"
+    },
+    {
+      "name": "questionnaire",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the radio and checks in Create Agent Identity and the Where does this agent run? picker"
+    },
+    {
+      "name": "radio-group",
+      "basis": "design",
+      "reference": "Figma 427:2715: Tunnel TLS mode radios in Create Agent Identity (Modal States)"
+    },
+    {
+      "name": "resizable",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the 1px rules between the rails and the inbox list"
+    },
+    {
+      "name": "scroll-area",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox and event lists, the field edge color for the thumb"
+    },
+    {
+      "name": "select",
+      "basis": "design",
+      "reference": "Figma 427:2715: Any State and Shared in Create Agent Identity (Modal States); the list is extrapolated as the console's menu"
+    },
+    {
+      "name": "separator",
+      "basis": "design",
+      "reference": "Figma 427:2715: the rail's footer rule, page head rules, inbox list dividers"
+    },
+    {
+      "name": "sheet",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): Modal - Create Agent (panel, title, close glyph, scrim)"
+    },
+    {
+      "name": "sidebar",
+      "basis": "design",
+      "reference": "Figma 427:2715: the rail in Dashboard - empty state and every console screen; the second rail in Agent Workspace - Inbox"
+    },
+    {
+      "name": "skeleton",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac fill and 8px corners of its wells"
+    },
+    {
+      "name": "slider",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the switch's knob and purple, the field's lilac-gray"
+    },
+    {
+      "name": "sonner",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): white floating panels, filled status glyphs and the purple action"
+    },
+    {
+      "name": "spinner",
+      "basis": "design",
+      "reference": "Figma 427:2715: Modal States (Handle check, Creating...)"
+    },
+    {
+      "name": "switch",
+      "basis": "design",
+      "reference": "Figma 427:2715: Toggle (44 by 24) in the channel cards of Create Agent Identity, off and on states in Modal States"
+    },
+    {
+      "name": "table",
+      "basis": "design",
+      "reference": "Figma 427:2715: Email (Mailboxes table) and iMessage (Agents and lines table)"
+    },
+    {
+      "name": "tabs",
+      "basis": "design",
+      "reference": "Figma 427:2715: Email, iMessage, Webhooks and Login tabs"
+    },
+    {
+      "name": "textarea",
+      "basis": "design",
+      "reference": "Figma 427:2715: Agent Description (Form- Input, 72px) in Create Agent Identity"
+    },
+    {
+      "name": "toast",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): white floating panels and outline keys"
+    },
+    {
+      "name": "toggle-group",
+      "basis": "design",
+      "reference": "Figma 427:2715: Where does this agent run? in Modal - Created"
+    },
+    {
+      "name": "toggle",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the soft key (Tunnel quickstart) and the segmented choice"
+    },
+    {
+      "name": "tooltip",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the info glyphs beside Tunnel, Connection, TLS and Tunnel TLS mode"
+    },
+    {
+      "name": "trace",
+      "basis": "extrapolated",
+      "reference": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox list's muted text and the Advanced settings disclosure"
+    },
+    {
+      "name": "typography",
+      "basis": "design",
+      "reference": "Figma 427:2715: page titles (Vault, Webhooks), dialog titles, the email body, inline hosts and keys"
+    }
+  ]
+}

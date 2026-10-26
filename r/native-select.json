@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "name": "native-select",
+  "useFor": "Use when the platform's own picker is better: on phones, for long lists such as countries or states, or in forms that must work without script. Otherwise use Select. Use NativeSelectOptGroup to group options.",
+  "constraints": [
+    "A field edge instead of the Shadow/S ring",
+    "A custom arrow image",
+    "A native select styled differently from Select on the same form"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: the Any State and Shared selects in Create Agent Identity",
+  "exports": [
+    "NativeSelect",
+    "NativeSelectOptGroup",
+    "NativeSelectOption"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/native-select",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/native-select.md",
+  "examples": [
+    {
+      "path": "examples/native-select.tsx",
+      "content": "import { Label } from \"@/components/ui/label\";\nimport { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from \"@/components/ui/native-select\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-114.5 gap-1\">\n      <Label htmlFor=\"state\">Phone number state</Label>\n      <NativeSelect id=\"state\" defaultValue=\"any\" className=\"w-full\">\n        <NativeSelectOption value=\"any\">Any State</NativeSelectOption>\n        <NativeSelectOptGroup label=\"West\">\n          <NativeSelectOption value=\"ca\">California</NativeSelectOption>\n          <NativeSelectOption value=\"or\">Oregon</NativeSelectOption>\n          <NativeSelectOption value=\"wa\">Washington</NativeSelectOption>\n        </NativeSelectOptGroup>\n        <NativeSelectOptGroup label=\"East\">\n          <NativeSelectOption value=\"ny\">New York</NativeSelectOption>\n          <NativeSelectOption value=\"ma\">Massachusetts</NativeSelectOption>\n        </NativeSelectOptGroup>\n      </NativeSelect>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <NativeSelect aria-label=\"Line\" size=\"sm\" defaultValue=\"shared\">\n        <NativeSelectOption value=\"shared\">Shared</NativeSelectOption>\n        <NativeSelectOption value=\"dedicated\">Dedicated</NativeSelectOption>\n      </NativeSelect>\n      <NativeSelect aria-label=\"Disabled\" disabled defaultValue=\"shared\">\n        <NativeSelectOption value=\"shared\">Shared</NativeSelectOption>\n      </NativeSelect>\n      <NativeSelect aria-label=\"Invalid\" aria-invalid defaultValue=\"\">\n        <NativeSelectOption value=\"\" disabled>\n          Choose a mode\n        </NativeSelectOption>\n        <NativeSelectOption value=\"edge\">Edge</NativeSelectOption>\n      </NativeSelect>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "States"
+      ],
+      "requires": [
+        "native-select",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/native-select/Preview"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/native-select/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Native Select",
+  "description": "The browser's own select dressed as the console's: a white 40px field with the Shadow/S ring and an ink caret.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/native-select.tsx",
+      "content": "import * as React from \"react\";\nimport { CaretDownIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The browser's own select dressed as the console's select (\"Any State\", \"Shared\" in Create Agent Identity): a white\n// 40px field with 8px corners and the Shadow/S ring, 14px ink at 14px from the left and a 20px ink caret 12px from the\n// right. `size=\"sm\"` is 36px. Use it where the platform picker is better (phones, long lists, forms without script).\ntype NativeSelectProps = Omit<React.ComponentProps<\"select\">, \"size\"> & { size?: \"sm\" | \"default\" };\n\nfunction NativeSelect({ className, size = \"default\", ...props }: NativeSelectProps) {\n  return (\n    <div data-slot=\"native-select-wrapper\" data-size={size} className={cn(\"group/native-select relative w-fit has-[select:disabled]:opacity-50\", className)}>\n      <select\n        data-slot=\"native-select\"\n        data-size={size}\n        className=\"h-10 w-full min-w-0 cursor-pointer appearance-none rounded-pill bg-surface py-0 pr-10 pl-3.5 font-sans text-body leading-tight text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[size=sm]:h-9 motion-reduce:transition-none\"\n        {...props}\n      />\n      <CaretDownIcon aria-hidden data-slot=\"native-select-icon\" weight=\"bold\" className=\"pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-fg\" />\n    </div>\n  );\n}\n\nfunction NativeSelectOption({ className, ...props }: React.ComponentProps<\"option\">) {\n  return <option data-slot=\"native-select-option\" className={cn(\"bg-surface text-fg\", className)} {...props} />;\n}\n\nfunction NativeSelectOptGroup({ className, ...props }: React.ComponentProps<\"optgroup\">) {\n  return <optgroup data-slot=\"native-select-optgroup\" className={cn(\"bg-surface text-fg\", className)} {...props} />;\n}\n\nexport { NativeSelect, NativeSelectOptGroup, NativeSelectOption };\n"
+    }
+  ]
+}

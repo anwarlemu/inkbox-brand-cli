@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "name": "button",
+  "useFor": "Use one default (purple pill) button per view for the main action, secondary for the alternatives beside it (Continue with GitHub), outline for actions inside content (View as formatted), soft for an action in a page head (Tunnel quickstart), ghost with size icon for row actions, and link for an inline action in text. Use type=\"submit\" in forms, or asChild with a link for navigation. Put a Phosphor glyph first for an action that adds or creates.",
+  "constraints": [
+    "Two purple pills side by side",
+    "A square or 8px-cornered main action",
+    "Bold or caps labels",
+    "An icon that moves on hover"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Create Agent, Enable iMessage, Log in, Continue with GitHub, View as formatted, Tunnel quickstart",
+  "exports": [
+    "Button",
+    "buttonVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/button",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/button.md",
+  "examples": [
+    {
+      "path": "examples/button.tsx",
+      "content": "import { CopyIcon, FileTextIcon, GithubLogoIcon, LightningIcon, PencilSimpleIcon, PlusIcon, TrashIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\n\nexport function Preview() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <Button>\n        <PlusIcon />\n        Create Agent\n      </Button>\n      <Button variant=\"secondary\">\n        <GithubLogoIcon weight=\"fill\" />\n        Continue with GitHub\n      </Button>\n      <Button variant=\"outline\">\n        <FileTextIcon weight=\"fill\" />\n        View as formatted\n      </Button>\n      <Button variant=\"soft\">\n        <LightningIcon weight=\"fill\" />\n        Tunnel quickstart\n      </Button>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"grid gap-4\">\n      <div className=\"flex flex-wrap items-center gap-3\">\n        <Button>Log in</Button>\n        <Button variant=\"secondary\">Cancel</Button>\n        <Button variant=\"destructive\">\n          <TrashIcon weight=\"fill\" />\n          Delete agent\n        </Button>\n      </div>\n      <div className=\"flex flex-wrap items-center gap-3\">\n        <Button variant=\"outline\">\n          <CopyIcon weight=\"duotone\" />\n          Copy as markdown\n        </Button>\n        <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit mailbox\">\n          <PencilSimpleIcon weight=\"fill\" />\n        </Button>\n        <Button variant=\"link\">Generate a random key instead</Button>\n      </div>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <Button disabled>Create Agent Identity</Button>\n      <Button variant=\"outline\" disabled>\n        View as formatted\n      </Button>\n      <Button size=\"sm\">Small</Button>\n      <Button size=\"lg\">Large</Button>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Variants",
+        "States"
+      ],
+      "requires": [
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/button/Preview"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/button/Variants"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/button/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Button",
+  "description": "The purple pill for the main action, the lilac pill, the white outline key, the soft lilac key, ghost glyphs and text links.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/button.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button as ChakraButton } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's buttons (Figma 427:2715). The main action is a 40px purple pill with a 14px regular white label and a\n// 20px glyph 8px from it (Create Agent, Enable iMessage, Log in). `secondary` is the same pill in lilac with ink text\n// (Continue with GitHub). `outline` is the 36px white key with fully rounded corners, the field edge and a medium purple label\n// (View as formatted, Copy as markdown). `soft` is the 38px lilac key in a page head (Tunnel quickstart). `ghost` is a\n// bare glyph or label that washes on hover (a row's edit pencil). Press feedback changes the fill immediately without resizing.\nconst buttonVariants = cva(\n  \"inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap font-sans text-body leading-tight outline-none select-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:brightness-95 active:transition-none disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5\",\n  {\n    variants: {\n      variant: {\n        default: \"rounded-pill bg-primary px-5 text-on-primary hover:bg-primary-hover active:bg-primary-hover\",\n        secondary: \"rounded-pill bg-subtle px-5 text-fg hover:bg-subtle-hover active:bg-subtle-hover\",\n        destructive: \"rounded-pill bg-danger px-5 text-white hover:bg-danger-strong active:bg-danger-strong\",\n        outline: \"rounded-pill border border-line-field bg-surface px-2.5 font-medium text-fg-brand hover:bg-subtle active:bg-subtle\",\n        soft: \"rounded-pill bg-subtle px-3 text-fg hover:bg-subtle-hover active:bg-subtle-hover [&_svg:not([class*='size-'])]:size-6\",\n        ghost: \"rounded-pill text-icon-secondary hover:bg-subtle active:bg-subtle hover:text-fg data-[state=open]:bg-subtle\",\n        link: \"h-auto rounded-pill px-0 text-fg-brand underline-offset-4 hover:underline\",\n      },\n      size: {\n        default: \"h-10\",\n        sm: \"h-9 [&_svg:not([class*='size-'])]:size-5.5\",\n        lg: \"h-11 px-6\",\n        icon: \"size-8 rounded-pill px-0\",\n        \"icon-sm\": \"size-7 rounded-pill px-0 [&_svg:not([class*='size-'])]:size-4.5\",\n        \"icon-lg\": \"size-10 px-0\",\n      },\n    },\n    compoundVariants: [\n      { variant: \"outline\", size: \"default\", className: \"h-9\" },\n      { variant: \"soft\", size: \"default\", className: \"h-9.5 gap-2.5\" },\n      { variant: \"ghost\", size: \"default\", className: \"h-8 px-2\" },\n      { variant: \"link\", size: \"default\", className: \"h-auto\" },\n    ],\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\ntype ButtonProps = Omit<React.ComponentProps<typeof ChakraButton>, \"variant\" | \"size\"> & VariantProps<typeof buttonVariants> & { asChild?: boolean };\n\nfunction Button({ className, variant, size, asChild = false, type, ...props }: ButtonProps) {\n  return <ChakraButton unstyled asChild={asChild} data-slot=\"button\" data-variant={variant ?? \"default\"} type={asChild ? type : (type ?? \"button\")} className={cn(buttonVariants({ variant, size, className }))} {...props} />;\n}\n\nexport { Button, buttonVariants };\n"
+    }
+  ]
+}

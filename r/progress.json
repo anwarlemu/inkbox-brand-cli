@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "progress",
+  "useFor": "Use for a known amount (mailbox storage used, an upload, setup steps done). Put the value as text beside it (0%) and give it an aria-label. For unknown waits use Spinner.",
+  "constraints": [
+    "Striped or gradient fills",
+    "Progress for something that takes under a second",
+    "A track thicker than 8px"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the Email table's Storage column, the lilac wells and the purple action color",
+  "exports": [
+    "Progress"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/progress",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/progress.md",
+  "examples": [
+    {
+      "path": "examples/progress.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Progress } from \"@/components/ui/progress\";\n\nexport function Preview() {\n  const [value, setValue] = React.useState(12);\n  React.useEffect(() => {\n    // ds-latency: advances a presentation-only progress example; no user input is waiting.\n    const t = setTimeout(() => setValue(64), 600);\n    return () => clearTimeout(t);\n  }, []);\n  return (\n    <div className=\"grid w-full max-w-100 gap-2\">\n      <div className=\"flex justify-between text-body\">\n        <span className=\"text-fg\">Mailbox storage</span>\n        <span className=\"text-fg-muted\">{value}%</span>\n      </div>\n      <Progress value={value} aria-label=\"Mailbox storage used\" />\n    </div>\n  );\n}\n\nexport function Values() {\n  return (\n    <div className=\"grid w-full max-w-100 gap-4\">\n      <Progress value={0} aria-label=\"Empty\" />\n      <Progress value={33} aria-label=\"A third\" />\n      <Progress value={100} aria-label=\"Full\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Values"
+      ],
+      "requires": [
+        "progress"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/progress/Preview"
+        },
+        {
+          "name": "Values",
+          "url": "https://inkbox-ds.vercel.app/preview/progress/Values"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Progress",
+  "description": "An 8px lilac pill track filled with the purple.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/progress.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Progress as ChakraProgress } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// How far along something is (mailbox storage, an upload): an 8px lilac pill track with the purple filling it from the\n// left. A new value slides the fill there (300ms, the strong ease-out); with reduced motion it jumps.\nfunction Progress({ className, value, ...props }: React.ComponentProps<typeof ChakraProgress.Root>) {\n  return (\n    <ChakraProgress.Root unstyled data-slot=\"progress\" value={value} className={cn(\"relative h-2 w-full overflow-hidden rounded-pill bg-subtle\", className)} {...props}>\n      <ChakraProgress.Track className=\"size-full overflow-hidden rounded-pill bg-transparent\">\n      <ChakraProgress.Range\n        data-slot=\"progress-indicator\"\n        className=\"size-full flex-1 rounded-pill bg-primary transition-[translate] duration-300 ease-out motion-reduce:transition-none\"\n        style={{ translate: `-${100 - (value ?? 0)}%` }}\n      />\n      </ChakraProgress.Track>\n    </ChakraProgress.Root>\n  );\n}\n\nexport { Progress };\n"
+    }
+  ]
+}

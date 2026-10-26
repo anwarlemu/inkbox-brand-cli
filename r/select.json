@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "name": "select",
+  "useFor": "Use to choose one value from a list of five or more (Any State for a phone number, Shared or Dedicated for an iMessage line). Give it a Label or an aria-label, a placeholder when nothing is chosen, and group long lists with SelectGroup and SelectLabel. Control it with value and onValueChange (values are non-empty strings), and give the root a name so a form submits the value with FormData.",
+  "constraints": [
+    "A field edge instead of the Shadow/S ring",
+    "A dark or purple list",
+    "Checkmarks at the left of the items",
+    "Animating items as they are highlighted"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Any State and Shared in Create Agent Identity (Modal States); the list is extrapolated as the console's menu",
+  "exports": [
+    "Select",
+    "SelectContent",
+    "SelectGroup",
+    "SelectItem",
+    "SelectLabel",
+    "SelectScrollDownButton",
+    "SelectScrollUpButton",
+    "SelectSeparator",
+    "SelectTrigger",
+    "SelectValue"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/select",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/select.md",
+  "examples": [
+    {
+      "path": "examples/select.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { EnvelopeSimpleIcon, PhoneIcon, ChatCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Label } from \"@/components/ui/label\";\nimport { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from \"@/components/ui/select\";\n\nexport function Preview() {\n  const [state, setState] = React.useState(\"any\");\n  const [saved, setSaved] = React.useState<string>();\n  return (\n    <form\n      className=\"grid w-full max-w-114.5 gap-1\"\n      onSubmit={(event) => {\n        event.preventDefault();\n        setSaved(String(new FormData(event.currentTarget).get(\"state\")));\n      }}\n    >\n      <Label htmlFor=\"any-state\">Phone number state</Label>\n      <Select name=\"state\" value={state} onValueChange={setState}>\n        <SelectTrigger id=\"any-state\">\n          <SelectValue placeholder=\"Choose a state\" />\n        </SelectTrigger>\n        <SelectContent>\n          <SelectItem value=\"any\">Any State</SelectItem>\n          <SelectSeparator />\n          <SelectGroup>\n            <SelectLabel>West</SelectLabel>\n            <SelectItem value=\"ca\">California</SelectItem>\n            <SelectItem value=\"or\">Oregon</SelectItem>\n            <SelectItem value=\"wa\">Washington</SelectItem>\n          </SelectGroup>\n          <SelectGroup>\n            <SelectLabel>East</SelectLabel>\n            <SelectItem value=\"ny\">New York</SelectItem>\n            <SelectItem value=\"ma\">Massachusetts</SelectItem>\n            <SelectItem value=\"fl\" disabled>\n              Florida (no numbers left)\n            </SelectItem>\n          </SelectGroup>\n        </SelectContent>\n      </Select>\n      <div className=\"mt-3 flex items-center gap-3\">\n        <Button type=\"submit\">Save</Button>\n        <p aria-live=\"polite\" className=\"text-body text-fg-muted\">\n          {saved ? `Saved: ${saved}` : \"\"}\n        </p>\n      </div>\n    </form>\n  );\n}\n\nexport function WithIcons() {\n  return (\n    <Select defaultValue=\"email\">\n      <SelectTrigger aria-label=\"Channel\" className=\"w-60\">\n        <SelectValue />\n      </SelectTrigger>\n      <SelectContent>\n        <SelectItem value=\"email\">\n          <EnvelopeSimpleIcon weight=\"fill\" /> Email\n        </SelectItem>\n        <SelectItem value=\"phone\">\n          <PhoneIcon weight=\"fill\" /> Phone\n        </SelectItem>\n        <SelectItem value=\"imessage\">\n          <ChatCircleIcon weight=\"fill\" /> iMessage\n        </SelectItem>\n      </SelectContent>\n    </Select>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <Select>\n        <SelectTrigger aria-label=\"Line\" size=\"sm\" className=\"w-44\">\n          <SelectValue placeholder=\"Choose a line\" />\n        </SelectTrigger>\n        <SelectContent>\n          <SelectItem value=\"shared\">Shared</SelectItem>\n          <SelectItem value=\"dedicated\">Dedicated</SelectItem>\n        </SelectContent>\n      </Select>\n      <Select defaultValue=\"shared\" disabled>\n        <SelectTrigger aria-label=\"Disabled\" className=\"w-44\">\n          <SelectValue />\n        </SelectTrigger>\n        <SelectContent>\n          <SelectItem value=\"shared\">Shared</SelectItem>\n        </SelectContent>\n      </Select>\n      <Select>\n        <SelectTrigger aria-label=\"Invalid\" aria-invalid className=\"w-44\">\n          <SelectValue placeholder=\"Required\" />\n        </SelectTrigger>\n        <SelectContent>\n          <SelectItem value=\"edge\">Edge</SelectItem>\n        </SelectContent>\n      </Select>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "WithIcons",
+        "States"
+      ],
+      "requires": [
+        "select",
+        "button",
+        "label"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/select/Preview"
+        },
+        {
+          "name": "WithIcons",
+          "url": "https://inkbox-ds.vercel.app/preview/select/WithIcons"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/select/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Select",
+  "description": "A white 40px field with the Shadow/S ring and an ink caret that opens the console's white menu.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/select.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Select as SelectPrimitive } from \"radix-ui\";\nimport { CaretDownIcon, CaretUpIcon, CheckIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// The console's select (Figma 427:2715, Create Agent Identity: \"Any State\" under Phone Number, \"Shared\" under\n// iMessage): a white 40px field with fully rounded corners and the Shadow/S ring instead of an edge, the value in 14px ink 14px\n// in, a 16px bold caret 12px from the right; the placeholder is the light purple. `size=\"sm\"` is 36px. The list is the\n// console's menu: white, 16px corners, the floating shadow, 4px inside; 36px rows with fully rounded corners, 14px ink, the\n// highlighted row on the lilac and a purple check at the right of the chosen one. It opens and closes with a subtle 150ms fade.\nfunction Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {\n  return <SelectPrimitive.Root data-slot=\"select\" {...props} />;\n}\n\nfunction SelectGroup({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Group>) {\n  return <SelectPrimitive.Group data-slot=\"select-group\" className={cn(\"scroll-my-1\", className)} {...props} />;\n}\n\nfunction SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) {\n  return <SelectPrimitive.Value data-slot=\"select-value\" {...props} />;\n}\n\nfunction SelectTrigger({ className, size = \"default\", children, ...props }: React.ComponentProps<typeof SelectPrimitive.Trigger> & { size?: \"sm\" | \"default\" }) {\n  return (\n    <SelectPrimitive.Trigger\n      data-slot=\"select-trigger\"\n      data-size={size}\n      className={cn(\n        \"flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-pill bg-surface pr-3 pl-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-placeholder:text-fg-subtle data-[size=default]:h-10 data-[size=sm]:h-9 motion-reduce:transition-none *:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      <SelectPrimitive.Icon asChild>\n        <CaretDownIcon weight=\"bold\" className=\"size-4 text-fg\" />\n      </SelectPrimitive.Icon>\n    </SelectPrimitive.Trigger>\n  );\n}\n\nfunction SelectContent({ className, children, position = \"popper\", align = \"center\", ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {\n  const container = usePortalContainer();\n  return (\n    <SelectPrimitive.Portal container={container}>\n      <SelectPrimitive.Content\n        data-slot=\"select-content\"\n        className={cn(\n          \"relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-panel bg-surface text-fg shadow-floating data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in\",\n          position === \"popper\" && \"w-full min-w-(--radix-select-trigger-width) data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1\",\n          className,\n        )}\n        position={position}\n        align={align}\n        {...props}\n      >\n        <SelectScrollUpButton />\n        <SelectPrimitive.Viewport data-position={position} className={cn(\"p-1\", position === \"popper\" && \"h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1\")}>\n          {children}\n        </SelectPrimitive.Viewport>\n        <SelectScrollDownButton />\n      </SelectPrimitive.Content>\n    </SelectPrimitive.Portal>\n  );\n}\n\nfunction SelectLabel({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Label>) {\n  return <SelectPrimitive.Label data-slot=\"select-label\" className={cn(\"px-2.5 pt-2 pb-1 text-body-sm leading-tight text-fg-label\", className)} {...props} />;\n}\n\nfunction SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {\n  return (\n    <SelectPrimitive.Item\n      data-slot=\"select-item\"\n      className={cn(\n        \"relative flex h-9 w-full cursor-default items-center gap-2.5 rounded-pill pr-9 pl-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-disabled:pointer-events-none data-disabled:text-fg-faint data-highlighted:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2.5\",\n        className,\n      )}\n      {...props}\n    >\n      <span data-slot=\"select-item-indicator\" className=\"absolute right-2.5 flex size-4 items-center justify-center\">\n        <SelectPrimitive.ItemIndicator>\n          <CheckIcon weight=\"bold\" className=\"size-4 text-fg-brand\" />\n        </SelectPrimitive.ItemIndicator>\n      </span>\n      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>\n    </SelectPrimitive.Item>\n  );\n}\n\nfunction SelectSeparator({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Separator>) {\n  return <SelectPrimitive.Separator data-slot=\"select-separator\" className={cn(\"pointer-events-none -mx-1 my-1 h-px bg-line-subtle\", className)} {...props} />;\n}\n\nfunction SelectScrollUpButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {\n  return (\n    <SelectPrimitive.ScrollUpButton data-slot=\"select-scroll-up-button\" className={cn(\"flex h-6 cursor-default items-center justify-center bg-surface text-fg-muted\", className)} {...props}>\n      <CaretUpIcon weight=\"bold\" className=\"size-3.5\" />\n    </SelectPrimitive.ScrollUpButton>\n  );\n}\n\nfunction SelectScrollDownButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {\n  return (\n    <SelectPrimitive.ScrollDownButton data-slot=\"select-scroll-down-button\" className={cn(\"flex h-6 cursor-default items-center justify-center bg-surface text-fg-muted\", className)} {...props}>\n      <CaretDownIcon weight=\"bold\" className=\"size-3.5\" />\n    </SelectPrimitive.ScrollDownButton>\n  );\n}\n\nexport { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue };\n"
+    }
+  ]
+}

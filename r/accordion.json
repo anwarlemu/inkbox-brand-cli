@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "name": "accordion",
+  "useFor": "Use for settings or answers people open one at a time (advanced options, FAQs). Pass type=\"single\" collapsible for one open at a time, type=\"multiple\" for several. Keep the label a short phrase; the content is 14px secondary text or a group of fields.",
+  "constraints": [
+    "Bold or purple trigger labels",
+    "A chevron at the left",
+    "Boxing each item in a card",
+    "Opening animation longer than 200ms"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)",
+  "exports": [
+    "Accordion",
+    "AccordionContent",
+    "AccordionItem",
+    "AccordionTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/accordion",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/accordion.md",
+  "examples": [
+    {
+      "path": "examples/accordion.tsx",
+      "content": "import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";\n\nexport function Preview() {\n  return (\n    <Accordion type=\"single\" collapsible defaultValue=\"tunnel\" className=\"w-full max-w-120\">\n      <AccordionItem value=\"tunnel\">\n        <AccordionTrigger>What does the tunnel do?</AccordionTrigger>\n        <AccordionContent>It gives each agent a stable hostname (acme.inkboxwire.com) and routes inbound traffic to wherever the agent runs, with TLS at the edge or passed through.</AccordionContent>\n      </AccordionItem>\n      <AccordionItem value=\"phone\">\n        <AccordionTrigger>Can one agent have a phone number and iMessage?</AccordionTrigger>\n        <AccordionContent>Yes. Turn on Phone Number for calls and SMS, and iMessage for a shared or dedicated line. Each channel keeps its own contact rules.</AccordionContent>\n      </AccordionItem>\n      <AccordionItem value=\"vault\">\n        <AccordionTrigger>Who can read the vault?</AccordionTrigger>\n        <AccordionContent>Only people with the vault key. Encryption and decryption happen in the browser, so the server never sees your secrets.</AccordionContent>\n      </AccordionItem>\n    </Accordion>\n  );\n}\n\nexport function Multiple() {\n  return (\n    <Accordion type=\"multiple\" defaultValue={[\"email\", \"calls\"]} className=\"w-full max-w-120\">\n      <AccordionItem value=\"email\">\n        <AccordionTrigger>Email</AccordionTrigger>\n        <AccordionContent>acme-support@inboxmail.com receives and sends mail for this agent.</AccordionContent>\n      </AccordionItem>\n      <AccordionItem value=\"calls\">\n        <AccordionTrigger>Calls and texts</AccordionTrigger>\n        <AccordionContent>Any state. Calls and SMS are on; RCS needs a dedicated line.</AccordionContent>\n      </AccordionItem>\n      <AccordionItem value=\"a2a\" disabled>\n        <AccordionTrigger>Agent2Agent (not enabled)</AccordionTrigger>\n        <AccordionContent>Turn on Agent2Agent to publish this identity&apos;s Agent Card.</AccordionContent>\n      </AccordionItem>\n    </Accordion>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Multiple"
+      ],
+      "requires": [
+        "accordion"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/accordion/Preview"
+        },
+        {
+          "name": "Multiple",
+          "url": "https://inkbox-ds.vercel.app/preview/accordion/Multiple"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Accordion",
+  "description": "Sections that open in place: 14px ink labels with a caret at the right, ruled by the faint lilac line.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/accordion.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Accordion as ChakraAccordion } from \"@chakra-ui/react\";\nimport { CaretDownIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Sections that open in place, drawn as the dialog's Advanced settings row (Figma 427:2715, Create Agent Identity): a\n// 14px regular ink label with a 20px caret at the right, items ruled by the faint lilac line. The panel opens with its\n// height (200ms, the strong ease-out; closing is quicker) and the caret turns to point up.\ntype AccordionProps = Omit<React.ComponentProps<typeof ChakraAccordion.Root>, \"multiple\" | \"collapsible\" | \"value\" | \"defaultValue\"> & { type?: \"single\" | \"multiple\"; collapsible?: boolean; value?: string | string[]; defaultValue?: string | string[] };\nfunction Accordion({ type = \"single\", collapsible, value, defaultValue, ...props }: AccordionProps) {\n  return <ChakraAccordion.Root unstyled data-slot=\"accordion\" multiple={type === \"multiple\"} collapsible={collapsible} value={value === undefined ? undefined : Array.isArray(value) ? value : [value]} defaultValue={defaultValue === undefined ? undefined : Array.isArray(defaultValue) ? defaultValue : [defaultValue]} {...props} />;\n}\n\nfunction AccordionItem({ className, ...props }: React.ComponentProps<typeof ChakraAccordion.Item>) {\n  return <ChakraAccordion.Item unstyled data-slot=\"accordion-item\" className={cn(\"border-b border-line-subtle last:border-b-0\", className)} {...props} />;\n}\n\nfunction AccordionTrigger({ className, children, ...props }: React.ComponentProps<typeof ChakraAccordion.ItemTrigger>) {\n  return (\n    <ChakraAccordion.ItemTrigger\n        data-slot=\"accordion-trigger\"\n        className={cn(\n          \"group/accordion-trigger flex flex-1 items-center justify-between gap-4 rounded-pill py-3.5 text-left font-sans text-body leading-body text-fg outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:text-fg-muted motion-reduce:transition-none\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <ChakraAccordion.ItemIndicator>\n          <CaretDownIcon aria-hidden data-slot=\"accordion-trigger-icon\" weight=\"bold\" className=\"size-4 shrink-0 text-icon-default transition-transform duration-200 ease-out group-data-[state=open]/accordion-trigger:rotate-180 motion-reduce:transition-none\" />\n        </ChakraAccordion.ItemIndicator>\n      </ChakraAccordion.ItemTrigger>\n  );\n}\n\nfunction AccordionContent({ className, children, ...props }: React.ComponentProps<typeof ChakraAccordion.ItemContent>) {\n  return (\n    <ChakraAccordion.ItemContent data-slot=\"accordion-content\" className=\"overflow-hidden text-body leading-body text-fg-secondary data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down\" {...props}>\n      <ChakraAccordion.ItemBody className={cn(\"pb-4\", className)}>{children}</ChakraAccordion.ItemBody>\n    </ChakraAccordion.ItemContent>\n  );\n}\n\nexport { Accordion, AccordionContent, AccordionItem, AccordionTrigger };\n"
+    }
+  ]
+}

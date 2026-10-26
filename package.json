@@ -1,0 +1,23 @@
+{
+  "name": "inkbox-ds",
+  "version": "2.1.0",
+  "description": "Components, design tokens and checks for building Inkbox pages and interfaces.",
+  "type": "module",
+  "bin": {
+    "inkbox-ds": "./bin.js"
+  },
+  "files": [
+    "bin.js",
+    "dist",
+    "brand",
+    "build",
+    "r"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {},
+  "optionalDependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

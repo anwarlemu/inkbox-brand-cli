@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "name": "command",
+  "useFor": "Use as a command palette (CommandDialog, opened with Command K) to jump to agents, mailboxes and pages, or inline as a searchable list. Give every item a filled glyph and the group a heading.",
+  "constraints": [
+    "Animating the palette open or closed",
+    "A palette without an empty state",
+    "Results without groups once there are more than ten"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the nav rows, section labels (Channels, Shared) and the dialog",
+  "exports": [
+    "Command",
+    "CommandDialog",
+    "CommandEmpty",
+    "CommandGroup",
+    "CommandInput",
+    "CommandItem",
+    "CommandList",
+    "CommandSeparator",
+    "CommandShortcut"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/command",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/command.md",
+  "examples": [
+    {
+      "path": "examples/command.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { BookOpenTextIcon, EnvelopeSimpleIcon, GearSixIcon, KeyIcon, LockKeyIcon, PhoneIcon, PlusIcon, RobotIcon, WebhooksLogoIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from \"@/components/ui/command\";\n\nfunction Items({ onRun }: { onRun?: () => void }) {\n  return (\n    <>\n      <CommandInput placeholder=\"Search agents, mailboxes and pages\" />\n      <CommandList>\n        <CommandEmpty>No results.</CommandEmpty>\n        <CommandGroup heading=\"Agents\">\n          <CommandItem onSelect={onRun}>\n            <RobotIcon weight=\"fill\" />\n            @acme\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <RobotIcon weight=\"fill\" />\n            @acme-support\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <PlusIcon />\n            Create Agent\n            <CommandShortcut>⌘N</CommandShortcut>\n          </CommandItem>\n        </CommandGroup>\n        <CommandSeparator />\n        <CommandGroup heading=\"Channels\">\n          <CommandItem onSelect={onRun}>\n            <EnvelopeSimpleIcon weight=\"fill\" />\n            Email\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <PhoneIcon weight=\"fill\" />\n            Phone\n          </CommandItem>\n          <CommandItem disabled>\n            <WebhooksLogoIcon weight=\"fill\" />\n            Agent2Agent (beta)\n          </CommandItem>\n        </CommandGroup>\n        <CommandSeparator />\n        <CommandGroup heading=\"Shared\">\n          <CommandItem onSelect={onRun}>\n            <LockKeyIcon weight=\"fill\" />\n            Vault\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <KeyIcon weight=\"fill\" />\n            API Keys\n            <CommandShortcut>⌘K</CommandShortcut>\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <GearSixIcon weight=\"fill\" />\n            Settings\n            <CommandShortcut>⌘,</CommandShortcut>\n          </CommandItem>\n          <CommandItem onSelect={onRun}>\n            <BookOpenTextIcon weight=\"fill\" />\n            Read the docs\n          </CommandItem>\n        </CommandGroup>\n      </CommandList>\n    </>\n  );\n}\n\nexport function Preview() {\n  return (\n    <Command className=\"mx-auto max-w-112 shadow-s\">\n      <Items />\n    </Command>\n  );\n}\n\nexport function Dialog() {\n  const [open, setOpen] = React.useState(false);\n  React.useEffect(() => {\n    const onKey = (event: KeyboardEvent) => {\n      if (event.key === \"k\" && (event.metaKey || event.ctrlKey)) {\n        event.preventDefault();\n        setOpen((o) => !o);\n      }\n    };\n    document.addEventListener(\"keydown\", onKey);\n    return () => document.removeEventListener(\"keydown\", onKey);\n  }, []);\n  return (\n    <div className=\"grid justify-items-center gap-3\">\n      <Button variant=\"outline\" onClick={() => setOpen(true)}>\n        Open the command menu\n      </Button>\n      <p className=\"text-body text-fg-muted\">\n        Or press <kbd className=\"rounded-xs bg-subtle px-1.5 font-sans text-caption text-fg\">⌘K</kbd>\n      </p>\n      <CommandDialog open={open} onOpenChange={setOpen}>\n        <Items onRun={() => setOpen(false)} />\n      </CommandDialog>\n    </div>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"min-h-120\">\n      <CommandDialog defaultOpen>\n        <Items />\n      </CommandDialog>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Dialog",
+        "Open"
+      ],
+      "requires": [
+        "command",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/command/Preview"
+        },
+        {
+          "name": "Dialog",
+          "url": "https://inkbox-ds.vercel.app/preview/command/Dialog"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/command/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Command",
+  "description": "A search row over grouped 36px results with purple group headings, in a panel or a dialog with the shared 16px popup corners.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "cmdk",
+    "radix-ui",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/command.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Command as CommandPrimitive } from \"cmdk\";\nimport { Dialog as DialogPrimitive } from \"radix-ui\";\nimport { MagnifyingGlassIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A command menu, extrapolated from the console (Figma 427:2715): a white panel with 16px corners; the search row is\n// 48px with a 20px magnifying glass in muted purple and 14px ink text over the rail's hairline; groups open with 13px\n// headings in the label purple (\"Channels\"), items are 36px pill rows, a 20px glyph in the action-glyph\n// purple and the lilac under the selected row; shortcuts are 12px muted. CommandDialog puts it in the console's dialog\n// (16px corners, the blurred ink-tinted page) and opens without motion: it is summoned by keyboard many times a day.\nfunction Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {\n  return <CommandPrimitive data-slot=\"command\" data-ds-motion=\"instant\" className={cn(\"flex size-full flex-col overflow-hidden rounded-panel bg-surface text-fg\", className)} {...props} />;\n}\n\nfunction CommandDialog({\n  title = \"Command menu\",\n  description = \"Search for a command to run\",\n  children,\n  className,\n  showCloseButton = false,\n  ...props\n}: React.ComponentProps<typeof DialogPrimitive.Root> & { title?: string; description?: string; className?: string; showCloseButton?: boolean }) {\n  const container = usePortalContainer();\n  return (\n    <DialogPrimitive.Root data-slot=\"command-dialog\" {...props}>\n      <DialogPrimitive.Portal container={container}>\n        <DialogPrimitive.Overlay data-ds-motion=\"instant\" className=\"fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)]\" />\n        <DialogPrimitive.Content\n          data-ds-motion=\"instant\"\n          className={cn(\"fixed top-[18dvh] left-1/2 z-50 w-[calc(100%-2rem)] max-w-140 -translate-x-1/2 overflow-hidden rounded-panel bg-surface p-1.5 text-fg outline-none\", className)}\n          aria-describedby={undefined}\n        >\n          <DialogPrimitive.Title className=\"sr-only\">{title}</DialogPrimitive.Title>\n          <DialogPrimitive.Description className=\"sr-only\">{description}</DialogPrimitive.Description>\n          <Command className=\"rounded-panel [&_[data-slot=command-list]]:max-h-96\">{children}</Command>\n          {showCloseButton && <DialogPrimitive.Close className=\"sr-only\">Close</DialogPrimitive.Close>}\n        </DialogPrimitive.Content>\n      </DialogPrimitive.Portal>\n    </DialogPrimitive.Root>\n  );\n}\n\nfunction CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {\n  return (\n    <div data-slot=\"command-input-wrapper\" className=\"flex h-12 shrink-0 items-center gap-2.5 border-b border-line-subtle px-3.5\">\n      <MagnifyingGlassIcon aria-hidden className=\"size-5.5 shrink-0 text-fg-muted\" />\n      <CommandPrimitive.Input\n        data-slot=\"command-input\"\n        className={cn(\"h-full w-full min-w-0 bg-transparent font-sans text-body leading-tight text-fg outline-none placeholder:text-fg-subtle disabled:cursor-not-allowed disabled:opacity-50\", className)}\n        {...props}\n      />\n    </div>\n  );\n}\n\nfunction CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {\n  return <CommandPrimitive.List data-slot=\"command-list\" className={cn(\"max-h-80 scroll-py-1 overflow-x-hidden overflow-y-auto overscroll-contain p-1\", className)} {...props} />;\n}\n\nfunction CommandEmpty({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {\n  return <CommandPrimitive.Empty data-slot=\"command-empty\" className={cn(\"py-8 text-center text-body text-fg-muted\", className)} {...props} />;\n}\n\nfunction CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {\n  return (\n    <CommandPrimitive.Group\n      data-slot=\"command-group\"\n      className={cn(\"overflow-hidden text-fg [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:text-body-sm [&_[cmdk-group-heading]]:leading-tight [&_[cmdk-group-heading]]:text-fg-label\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {\n  return <CommandPrimitive.Separator data-slot=\"command-separator\" className={cn(\"-mx-1 my-1 h-px bg-line-subtle\", className)} {...props} />;\n}\n\nfunction CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {\n  return (\n    <CommandPrimitive.Item\n      data-slot=\"command-item\"\n      className={cn(\n        \"relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction CommandShortcut({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"command-shortcut\" className={cn(\"ml-auto pl-4 font-sans text-caption text-fg-muted\", className)} {...props} />;\n}\n\nexport { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut };\n"
+    }
+  ]
+}

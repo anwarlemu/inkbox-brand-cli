@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "name": "empty",
+  "useFor": "Use where a list or pane has nothing yet (Create Your First Agent, No email selected). Put EmptyOrbit (up to five filled glyphs of what the area holds) and EmptyMascot in an EmptyMedia variant=\"mascot\", then the title, a one-sentence description and one default Button with a plus. For a smaller pane, use EmptyMedia variant=\"icon\" with one glyph.",
+  "constraints": [
+    "More than one action",
+    "Animating the orbit",
+    "A title longer than five words",
+    "Gray stock illustrations"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Dashboard - empty state (Create Your First Agent), Agent Workspace - Inbox - Not selected (No email selected)",
+  "exports": [
+    "Empty",
+    "EmptyContent",
+    "EmptyDescription",
+    "EmptyHeader",
+    "EmptyMascot",
+    "EmptyMedia",
+    "EmptyOrbit",
+    "EmptyTitle"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/empty",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/empty.md",
+  "examples": [
+    {
+      "path": "examples/empty.tsx",
+      "content": "import { ArrowsHorizontalIcon, ChatCircleIcon, EnvelopeIcon, EnvelopeOpenIcon, EnvelopeSimpleIcon, PaperPlaneTiltIcon, PhoneIcon, PlusIcon, TextAlignLeftIcon, TrayIcon, VaultIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMascot, EmptyMedia, EmptyOrbit, EmptyTitle } from \"@/components/ui/empty\";\n\nexport function Preview() {\n  return (\n    <Empty className=\"min-h-100\">\n      <EmptyMedia variant=\"mascot\">\n        <EmptyOrbit>\n          <EnvelopeIcon weight=\"fill\" />\n          <PhoneIcon weight=\"fill\" />\n          <ChatCircleIcon weight=\"bold\" className=\"size-7 text-success\" />\n          <ArrowsHorizontalIcon weight=\"bold\" />\n          <VaultIcon weight=\"fill\" />\n        </EmptyOrbit>\n        <EmptyMascot src=\"/octopus.png\" />\n      </EmptyMedia>\n      <EmptyHeader>\n        <EmptyTitle>Create Your First Agent</EmptyTitle>\n        <EmptyDescription>Set up an identity to unlock mailbox, phone, and vault features</EmptyDescription>\n      </EmptyHeader>\n      <EmptyContent>\n        <Button>\n          <PlusIcon />\n          Create Agent\n        </Button>\n      </EmptyContent>\n    </Empty>\n  );\n}\n\nexport function NoSelection() {\n  return (\n    <Empty className=\"min-h-100\">\n      <EmptyMedia variant=\"mascot\">\n        <EmptyOrbit>\n          <TextAlignLeftIcon weight=\"bold\" />\n          <EnvelopeOpenIcon weight=\"fill\" />\n          <EnvelopeSimpleIcon weight=\"fill\" />\n          <PaperPlaneTiltIcon weight=\"fill\" />\n          <TrayIcon weight=\"fill\" />\n        </EmptyOrbit>\n        <EmptyMascot src=\"/octopus.png\" />\n      </EmptyMedia>\n      <EmptyHeader>\n        <EmptyTitle>No email selected</EmptyTitle>\n        <EmptyDescription>Select an email from the list to read it</EmptyDescription>\n      </EmptyHeader>\n      <EmptyContent>\n        <Button>\n          <PlusIcon />\n          Compose Email\n        </Button>\n      </EmptyContent>\n    </Empty>\n  );\n}\n\nexport function Icon() {\n  return (\n    <Empty className=\"min-h-72\">\n      <EmptyMedia variant=\"icon\">\n        <TrayIcon weight=\"fill\" />\n      </EmptyMedia>\n      <EmptyHeader>\n        <EmptyTitle>No emails to display</EmptyTitle>\n        <EmptyDescription>New mail for @acme lands here.</EmptyDescription>\n      </EmptyHeader>\n    </Empty>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "NoSelection",
+        "Icon"
+      ],
+      "requires": [
+        "empty",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/empty/Preview"
+        },
+        {
+          "name": "NoSelection",
+          "url": "https://inkbox-ds.vercel.app/preview/empty/NoSelection"
+        },
+        {
+          "name": "Icon",
+          "url": "https://inkbox-ds.vercel.app/preview/empty/Icon"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Empty",
+  "description": "The centered empty state: the 3D octopus under an arc of glyph circles, a 22px bold title, a short description and a purple pill.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/empty.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's empty states (Figma 427:2715: Create Your First Agent, No email selected). Centered: the media, a 22px\n// bold ink title, a 14px description on 24px lines in the secondary purple, at most 248px wide, then the action (a purple pill). The\n// `mascot` media is the 3D octopus with a soft shadow under it; EmptyOrbit arcs up to five 40px white circles holding\n// the channel glyphs above it. Nothing moves: the empty state is seen every time the page loads.\nfunction Empty({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty\" className={cn(\"flex min-w-0 flex-1 flex-col items-center justify-center gap-5 p-6 text-center text-balance\", className)} {...props} />;\n}\n\nfunction EmptyHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-header\" className={cn(\"flex max-w-sm flex-col items-center gap-2\", className)} {...props} />;\n}\n\nconst emptyMediaVariants = cva(\"flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0\", {\n  variants: {\n    variant: {\n      default: \"bg-transparent\",\n      icon: \"size-10 rounded-pill border border-line-subtle bg-surface text-icon-secondary shadow-line [&_svg:not([class*='size-'])]:size-5.5\",\n      mascot: \"relative mb-1 w-56 flex-col\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction EmptyMedia({ className, variant = \"default\", ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof emptyMediaVariants>) {\n  return <div data-slot=\"empty-media\" data-variant={variant} className={cn(emptyMediaVariants({ variant }), className)} {...props} />;\n}\n\n// Where each circle sits on the arc over the mascot, outermost first: left offset and top, in px of a 224px box.\nconst ORBIT = [\n  [0, 32],\n  [44, 12],\n  [92, 0],\n  [140, 12],\n  [184, 32],\n] as const;\n\n/** Up to five glyphs in white circles, arced over the mascot (email, phone, iMessage, agent to agent, vault). */\nfunction EmptyOrbit({ className, children, ...props }: React.ComponentProps<\"div\">) {\n  const glyphs = React.Children.toArray(children).slice(0, 5);\n  const start = Math.floor((5 - glyphs.length) / 2);\n  return (\n    <div data-slot=\"empty-orbit\" aria-hidden className={cn(\"relative h-13 w-56\", className)} {...props}>\n      {glyphs.map((glyph, i) => {\n        const [left, top] = ORBIT[start + i];\n        return (\n          <span key={i} className=\"absolute flex size-10 items-center justify-center rounded-pill border border-line-subtle bg-surface text-icon-secondary shadow-line [&_svg:not([class*='size-'])]:size-5.5 [&_svg]:shrink-0\" style={{ left, top }}>\n            {glyph}\n          </span>\n        );\n      })}\n    </div>\n  );\n}\n\n/** The 3D octopus, standing on a soft shadow. Pass its image as src (the brand's octopus.png). */\nfunction EmptyMascot({ className, alt = \"\", ...props }: React.ComponentProps<\"img\">) {\n  return (\n    <span data-slot=\"empty-mascot\" className=\"relative -mt-1 flex justify-center after:absolute after:-bottom-1 after:left-1/2 after:h-3 after:w-20 after:-translate-x-1/2 after:rounded-pill after:bg-ink after:opacity-10 after:blur-md\">\n      {/* eslint-disable-next-line @next/next/no-img-element */}\n      <img alt={alt} width={90} height={80} className={cn(\"relative z-10 h-20 w-auto select-none\", className)} draggable={false} {...props} />\n    </span>\n  );\n}\n\nfunction EmptyTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-title\" className={cn(\"font-sans text-h2 leading-tight font-bold text-fg\", className)} {...props} />;\n}\n\nfunction EmptyDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"empty-description\" className={cn(\"max-w-62 text-body leading-6 text-pretty text-fg-secondary [&>a]:text-fg-brand [&>a]:underline [&>a]:underline-offset-4\", className)} {...props} />;\n}\n\nfunction EmptyContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-content\" className={cn(\"flex w-full max-w-sm min-w-0 flex-col items-center gap-3 text-body text-balance\", className)} {...props} />;\n}\n\nexport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMascot, EmptyMedia, EmptyOrbit, EmptyTitle };\n"
+    }
+  ]
+}

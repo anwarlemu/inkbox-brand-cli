@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "name": "alert-dialog",
+  "useFor": "Use before an action that cannot be undone (delete an agent, rotate an API key) or when the person must acknowledge something. Name the action on its button (Delete agent), use variant=\"destructive\" for it, and keep Cancel beside it.",
+  "constraints": [
+    "OK and Cancel as labels",
+    "A close glyph on an alert dialog",
+    "Closing on a click outside",
+    "More than two actions"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Modal - Create Agent (panel, scrim, title) with the console's pill buttons",
+  "exports": [
+    "AlertDialog",
+    "AlertDialogAction",
+    "AlertDialogCancel",
+    "AlertDialogContent",
+    "AlertDialogDescription",
+    "AlertDialogFooter",
+    "AlertDialogHeader",
+    "AlertDialogMedia",
+    "AlertDialogOverlay",
+    "AlertDialogPortal",
+    "AlertDialogTitle",
+    "AlertDialogTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/alert-dialog",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/alert-dialog.md",
+  "examples": [
+    {
+      "path": "examples/alert-dialog.tsx",
+      "content": "\"use client\";\n\nimport { KeyIcon, TrashIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogTitle, AlertDialogTrigger } from \"@/components/ui/alert-dialog\";\nimport { Button } from \"@/components/ui/button\";\n\nfunction DeleteAgent() {\n  return (\n    <AlertDialogContent>\n      <AlertDialogHeader>\n        <AlertDialogTitle>Delete @acme?</AlertDialogTitle>\n        <AlertDialogDescription>Its mailbox, phone line and tunnel are deleted with it. Messages it sent stay with their recipients. This cannot be undone.</AlertDialogDescription>\n      </AlertDialogHeader>\n      <AlertDialogFooter>\n        <AlertDialogCancel>Cancel</AlertDialogCancel>\n        <AlertDialogAction variant=\"destructive\">Delete agent</AlertDialogAction>\n      </AlertDialogFooter>\n    </AlertDialogContent>\n  );\n}\n\nexport function Preview() {\n  return (\n    <div className=\"flex justify-center\">\n      <AlertDialog>\n        <AlertDialogTrigger asChild>\n          <Button variant=\"destructive\">\n            <TrashIcon weight=\"fill\" />\n            Delete agent\n          </Button>\n        </AlertDialogTrigger>\n        <DeleteAgent />\n      </AlertDialog>\n    </div>\n  );\n}\n\nexport function Small() {\n  return (\n    <div className=\"flex justify-center\">\n      <AlertDialog>\n        <AlertDialogTrigger asChild>\n          <Button variant=\"outline\">\n            <KeyIcon weight=\"fill\" />\n            Rotate API key\n          </Button>\n        </AlertDialogTrigger>\n        <AlertDialogContent size=\"sm\">\n          <AlertDialogHeader>\n            <AlertDialogMedia>\n              <KeyIcon weight=\"fill\" />\n            </AlertDialogMedia>\n            <AlertDialogTitle>Rotate the API key?</AlertDialogTitle>\n            <AlertDialogDescription>Agents using the old key stop working until you give them the new one.</AlertDialogDescription>\n          </AlertDialogHeader>\n          <AlertDialogFooter>\n            <AlertDialogCancel>Cancel</AlertDialogCancel>\n            <AlertDialogAction>Rotate</AlertDialogAction>\n          </AlertDialogFooter>\n        </AlertDialogContent>\n      </AlertDialog>\n    </div>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"min-h-100\">\n      <AlertDialog defaultOpen>\n        <DeleteAgent />\n      </AlertDialog>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Small",
+        "Open"
+      ],
+      "requires": [
+        "alert-dialog",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/alert-dialog/Preview"
+        },
+        {
+          "name": "Small",
+          "url": "https://inkbox-ds.vercel.app/preview/alert-dialog/Small"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/alert-dialog/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Alert Dialog",
+  "description": "The console's dialog for a question that must be answered: title, a secondary line and two pills.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "button",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert-dialog.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { AlertDialog as AlertDialogPrimitive } from \"radix-ui\";\n\nimport { buttonVariants } from \"@/components/ui/button\";\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A confirmation, drawn as the console's dialog (Figma 427:2715: Create Agent Identity, @test-agent is ready!): a white\n// panel with 16px corners over the blurred, ink-tinted page, a 20px regular title and a 14px secondary line, 24px of\n// padding, then the actions: the cancel as the lilac pill and the action as the purple pill (red for a destructive\n// one), side by side at the end, stacked full width on phones. `size=\"sm\"` is a 320px card with the title centered\n// under an optional media tile (AlertDialogMedia). It has no close glyph: the person answers it. Opens from 96 percent\n// with a fade, centered; closes faster.\nfunction AlertDialog(props: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {\n  return <AlertDialogPrimitive.Root data-slot=\"alert-dialog\" {...props} />;\n}\n\nfunction AlertDialogTrigger(props: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {\n  return <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />;\n}\n\nfunction AlertDialogPortal(props: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {\n  const container = usePortalContainer();\n  return <AlertDialogPrimitive.Portal data-slot=\"alert-dialog-portal\" container={container} {...props} />;\n}\n\nfunction AlertDialogOverlay({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {\n  return (\n    <AlertDialogPrimitive.Overlay\n      data-slot=\"alert-dialog-overlay\"\n      className={cn(\"fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)] data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction AlertDialogContent({ className, size = \"default\", ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & { size?: \"default\" | \"sm\" }) {\n  return (\n    <AlertDialogPortal>\n      <AlertDialogOverlay />\n      <AlertDialogPrimitive.Content\n        data-slot=\"alert-dialog-content\"\n        data-size={size}\n        className={cn(\n          \"group/alert-dialog fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 overflow-y-auto rounded-panel bg-surface p-6 text-fg outline-none data-[size=default]:max-w-112 data-[size=sm]:max-w-80 data-[state=closed]:animate-dialog-out data-[state=open]:animate-dialog-in\",\n          className,\n        )}\n        {...props}\n      />\n    </AlertDialogPortal>\n  );\n}\n\nfunction AlertDialogHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"alert-dialog-header\" className={cn(\"grid gap-1.5 group-data-[size=sm]/alert-dialog:justify-items-center group-data-[size=sm]/alert-dialog:text-center\", className)} {...props} />;\n}\n\nfunction AlertDialogFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-dialog-footer\"\n      className={cn(\"flex flex-col-reverse gap-3 sm:flex-row sm:justify-end group-data-[size=sm]/alert-dialog:grid group-data-[size=sm]/alert-dialog:grid-cols-2 group-data-[size=sm]/alert-dialog:[&>*]:w-full\", className)}\n      {...props}\n    />\n  );\n}\n\n/** A 48px tile above the title (the console's pink channel tile): put a filled glyph inside. */\nfunction AlertDialogMedia({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"alert-dialog-media\" className={cn(\"mb-1.5 inline-flex size-12 items-center justify-center rounded-pill bg-pink text-rose [&_svg:not([class*='size-'])]:size-7\", className)} {...props} />;\n}\n\nfunction AlertDialogTitle({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {\n  return <AlertDialogPrimitive.Title data-slot=\"alert-dialog-title\" className={cn(\"font-sans text-h3 leading-heading font-normal text-fg\", className)} {...props} />;\n}\n\nfunction AlertDialogDescription({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {\n  return <AlertDialogPrimitive.Description data-slot=\"alert-dialog-description\" className={cn(\"text-body leading-body text-fg-secondary\", className)} {...props} />;\n}\n\nfunction AlertDialogAction({ className, variant = \"default\", ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Action> & { variant?: \"default\" | \"destructive\" }) {\n  return <AlertDialogPrimitive.Action data-slot=\"alert-dialog-action\" className={cn(buttonVariants({ variant }), className)} {...props} />;\n}\n\nfunction AlertDialogCancel({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {\n  return <AlertDialogPrimitive.Cancel data-slot=\"alert-dialog-cancel\" className={cn(buttonVariants({ variant: \"secondary\" }), className)} {...props} />;\n}\n\nexport {\n  AlertDialog,\n  AlertDialogAction,\n  AlertDialogCancel,\n  AlertDialogContent,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogHeader,\n  AlertDialogMedia,\n  AlertDialogOverlay,\n  AlertDialogPortal,\n  AlertDialogTitle,\n  AlertDialogTrigger,\n};\n"
+    }
+  ]
+}

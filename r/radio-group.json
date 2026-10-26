@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "radio-group",
+  "useFor": "Use for one choice among two to five visible options (Tunnel TLS mode: Edge (default), Passthrough). Stack options 8px apart, each with its label 8px from the circle. For more options use Select; for an immediate view switch use Tabs or Toggle Group.",
+  "constraints": [
+    "A purple or filled dot for the chosen option",
+    "Radios laid out without labels",
+    "A single radio on its own"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Tunnel TLS mode radios in Create Agent Identity (Modal States)",
+  "exports": [
+    "RadioGroup",
+    "RadioGroupItem"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/radio-group",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/radio-group.md",
+  "examples": [
+    {
+      "path": "examples/radio-group.tsx",
+      "content": "\"use client\";\n\nimport { InfoIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Label } from \"@/components/ui/label\";\nimport { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid gap-2\">\n      <p id=\"tls-mode\" className=\"flex items-center gap-1.5 text-body leading-body text-fg\">\n        Tunnel TLS mode <InfoIcon weight=\"fill\" aria-hidden className=\"size-4 text-fg-label\" />\n      </p>\n      <RadioGroup defaultValue=\"edge\" aria-labelledby=\"tls-mode\">\n        <div className=\"flex items-center gap-2\">\n          <RadioGroupItem value=\"edge\" id=\"edge\" />\n          <Label htmlFor=\"edge\">Edge (default)</Label>\n        </div>\n        <div className=\"flex items-center gap-2\">\n          <RadioGroupItem value=\"passthrough\" id=\"passthrough\" />\n          <Label htmlFor=\"passthrough\">Passthrough</Label>\n        </div>\n      </RadioGroup>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <RadioGroup defaultValue=\"shared\" aria-label=\"iMessage line\">\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem value=\"shared\" id=\"shared\" />\n        <Label htmlFor=\"shared\">Shared line</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem value=\"dedicated\" id=\"dedicated\" disabled />\n        <Label htmlFor=\"dedicated\">Dedicated line (none available)</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem value=\"none\" id=\"none\" aria-invalid />\n        <Label htmlFor=\"none\">No line (invalid)</Label>\n      </div>\n    </RadioGroup>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "States"
+      ],
+      "requires": [
+        "radio-group",
+        "label"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/radio-group/Preview"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/radio-group/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Radio Group",
+  "description": "18px circles; the chosen one takes a thick pink ring around a white center.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/radio-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { RadioGroup as ChakraRadioGroup } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's radios (Tunnel TLS mode: Edge (default), Passthrough): an 18px circle on white. Unselected it has a\n// 1.5px gray edge; selected it takes a thick 4px pink ring around a white center. Options stack 8px apart, each label\n// 14px ink 8px from its circle (wrap item and label in a `label`, or pair them with htmlFor).\ntype RadioGroupProps = Omit<React.ComponentProps<typeof ChakraRadioGroup.Root>, \"onValueChange\"> & { onValueChange?: (value: string | null) => void };\nfunction RadioGroup({ className, onValueChange, ...props }: RadioGroupProps) {\n  return <ChakraRadioGroup.Root unstyled data-slot=\"radio-group\" className={cn(\"grid gap-2\", className)} onValueChange={(details) => onValueChange?.(details.value)} {...props} />;\n}\n\nfunction RadioGroupItem({ className, ...props }: React.ComponentProps<typeof ChakraRadioGroup.Item>) {\n  return (\n    <ChakraRadioGroup.Item\n      data-slot=\"radio-group-item\"\n      unstyled\n      className={cn(\n        \"peer relative aspect-square size-4.5 shrink-0 cursor-pointer rounded-pill border-[1.5px] border-line-strong bg-surface outline-none active:brightness-95 active:transition-none transition-[border-color,border-width] duration-150 ease-out hover:border-fg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger data-[state=checked]:border-4 data-[state=checked]:border-pink motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    >\n      <ChakraRadioGroup.ItemHiddenInput />\n      <ChakraRadioGroup.ItemControl className=\"contents\">\n        <ChakraRadioGroup.ItemIndicator data-slot=\"radio-group-indicator\" className=\"sr-only\" />\n      </ChakraRadioGroup.ItemControl>\n    </ChakraRadioGroup.Item>\n  );\n}\n\nexport { RadioGroup, RadioGroupItem };\n"
+    }
+  ]
+}

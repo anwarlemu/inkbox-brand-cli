@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "input",
+  "useFor": "Use for one line of text: a handle, an email, a key. Pair it with Label (or Field) above it. Set aria-invalid when the value is rejected and say why below it; set readOnly for a value the person cannot change (it sits on the lilac).",
+  "constraints": [
+    "A placeholder used as the only label",
+    "A pill-shaped field",
+    "A gray field background for an editable value"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Form- Input in Create Agent Identity, Login and Vault",
+  "exports": [
+    "Input",
+    "inputClassName"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/input",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/input.md",
+  "examples": [
+    {
+      "path": "examples/input.tsx",
+      "content": "import { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-86 gap-1\">\n      <Label htmlFor=\"email\">Email address</Label>\n      <Input id=\"email\" type=\"email\" placeholder=\"your@email.com\" autoComplete=\"email\" />\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-100 gap-3\">\n      <Input aria-label=\"Agent display name\" placeholder=\"Agent display name\" />\n      <Input aria-label=\"Agent handle\" defaultValue=\"acme-support\" aria-invalid />\n      <Input aria-label=\"Mailbox\" defaultValue=\"acme-support\" readOnly />\n      <Input aria-label=\"Disabled\" placeholder=\"Disabled\" disabled />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "States"
+      ],
+      "requires": [
+        "input",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/input/Preview"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/input/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Input",
+  "description": "The 40px field with 8px corners, the lilac-gray edge and a light purple placeholder.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/input.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Input as ChakraInput } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's field (Figma \"Form- Input\"): 40px tall, fully rounded corners, the lilac-gray edge on white, 14px ink text and a\n// lighter purple placeholder, 14px in from the edge. Focus takes the purple edge and a soft ring; aria-invalid takes\n// the red edge (Not Available). A read-only or disabled field sits on the lilac (the email local part in a channel\n// card).\nconst FIELD =\n  \"h-10 w-full min-w-0 rounded-pill border border-line-field bg-surface px-3.5 font-sans text-body leading-tight text-fg outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle selection:bg-ring-tint focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger aria-invalid:focus-visible:shadow-none read-only:bg-subtle read-only:text-fg-muted disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted motion-reduce:transition-none file:mr-3 file:border-0 file:bg-transparent file:font-sans file:text-body file:font-medium file:text-fg\";\n\nfunction Input({ className, type = \"text\", size, ...props }: React.ComponentProps<\"input\">) {\n  return <ChakraInput unstyled type={type} htmlSize={size} data-slot=\"input\" className={cn(FIELD, className)} {...props} />;\n}\n\nexport { Input, FIELD as inputClassName };\n"
+    }
+  ]
+}

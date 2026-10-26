@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "name": "alert",
+  "useFor": "Use default for a panel that introduces a setup step (Initialize vault: glyph, 16px title, muted description). Use info for a fact the person should know (The vault is zero-knowledge), warning for something to act on now (Copy this API key now, with the reason in AlertAction), destructive for a failure. Lead with a filled Phosphor glyph.",
+  "constraints": [
+    "A dark or saturated alert background",
+    "More than one alert stacked for one message",
+    "Dismissable warnings for security notes",
+    "A bold title"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Vault (Initialize vault, zero-knowledge note), Modal - Created (Copy this API key now)",
+  "exports": [
+    "Alert",
+    "AlertAction",
+    "AlertDescription",
+    "AlertTitle",
+    "alertVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/alert",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/alert.md",
+  "examples": [
+    {
+      "path": "examples/alert.tsx",
+      "content": "import { InfoIcon, LockIcon, WarningIcon, XCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Alert, AlertAction, AlertDescription, AlertTitle } from \"@/components/ui/alert\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Preview() {\n  return (\n    <Alert className=\"max-w-200\">\n      <LockIcon weight=\"fill\" />\n      <AlertTitle>Initialize vault</AlertTitle>\n      <AlertDescription className=\"grid gap-2\">\n        <p>Create an encrypted vault for your organization. The vault can store login credentials including MFA one-time passwords (OTP), SSH keys, API keys and other secrets for your agents.</p>\n        <Alert variant=\"info\">\n          <InfoIcon weight=\"fill\" />\n          <AlertTitle>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertTitle>\n        </Alert>\n      </AlertDescription>\n    </Alert>\n  );\n}\n\nexport function Info() {\n  return (\n    <Alert variant=\"info\" className=\"max-w-200\">\n      <InfoIcon weight=\"fill\" />\n      <AlertTitle>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertTitle>\n    </Alert>\n  );\n}\n\nexport function Warning() {\n  return (\n    <Alert variant=\"warning\" className=\"max-w-180\">\n      <WarningIcon weight=\"fill\" />\n      <AlertTitle>Copy this API key now</AlertTitle>\n      <AlertAction>For security, the full key cannot be shown again.</AlertAction>\n    </Alert>\n  );\n}\n\nexport function Destructive() {\n  return (\n    <Alert variant=\"destructive\" className=\"max-w-180\">\n      <XCircleIcon weight=\"fill\" />\n      <AlertTitle>Webhook delivery failed</AlertTitle>\n      <AlertDescription>https://hooks.example.com/inkbox returned 502 three times. Deliveries are paused until it responds.</AlertDescription>\n      <AlertAction>\n        <Button variant=\"outline\" size=\"sm\">Retry</Button>\n      </AlertAction>\n    </Alert>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Info",
+        "Warning",
+        "Destructive"
+      ],
+      "requires": [
+        "alert",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Preview"
+        },
+        {
+          "name": "Info",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Info"
+        },
+        {
+          "name": "Warning",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Warning"
+        },
+        {
+          "name": "Destructive",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Destructive"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Alert",
+  "description": "The vault box on the lilac, the pale cyan info note, the sand warning banner with a note at the right, and a red error.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's notes (Figma 427:2715). `default` is the vault box: a lilac panel with 8px corners, a 22px filled ink\n// glyph beside a 16px regular title, then a 14px muted description across the full width (it can hold an info note). `info` is the zero-knowledge note: pale cyan, 8px corners,\n// a filled info glyph and 14px deep teal text. `warning` is the copy-this-key banner: pale sand, 10px corners, a filled\n// warning glyph, a 14px medium title and a 13px note at the right (AlertAction). `destructive` borrows the failed\n// field's red. Put a Phosphor glyph first; the title and description line up beside it.\nconst alertVariants = cva(\n  \"@container/alert group/alert relative grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2.5 gap-y-0.5 font-sans text-body leading-body has-[>svg]:grid-cols-[auto_minmax(0,1fr)_auto] [&>svg]:shrink-0\",\n  {\n    variants: {\n      variant: {\n        default: \"items-center rounded-control bg-subtle px-3.5 py-3 text-fg [&>svg]:size-6 [&>svg]:text-icon-default [&>[data-slot=alert-description]]:col-span-full [&>[data-slot=alert-description]]:col-start-1 [&>[data-slot=alert-description]]:text-fg-muted [&>[data-slot=alert-title]]:text-body-lg [&>[data-slot=alert-title]]:leading-snug\",\n        info: \"rounded-control bg-info-bg px-4 py-2 text-info-fg [&>svg]:size-5 [&>svg]:text-info\",\n        warning: \"rounded-panel bg-warning-bg px-4 py-2 text-warning-fg [&>svg]:size-5.5 [&>svg]:text-warning [&>[data-slot=alert-action]]:text-warning-muted [&>[data-slot=alert-description]]:text-warning-muted [&>[data-slot=alert-title]]:font-medium\",\n        destructive: \"rounded-control border border-danger bg-surface px-3.5 py-3 text-danger [&>svg]:size-5.5 [&>svg]:text-danger-strong [&>[data-slot=alert-description]]:text-fg-secondary [&>[data-slot=alert-title]]:font-medium\",\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\nfunction Alert({ className, variant, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof alertVariants>) {\n  return <div data-slot=\"alert\" data-variant={variant ?? \"default\"} role=\"alert\" className={cn(alertVariants({ variant }), className)} {...props} />;\n}\n\nfunction AlertTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-title\"\n      className={cn(\n        \"col-start-1 min-w-0 leading-body group-has-[>svg]/alert:col-start-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction AlertDescription({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-description\"\n      className={cn(\n        \"col-start-1 min-w-0 text-body leading-body group-has-[>svg]/alert:col-start-2 [&_p]:leading-body\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\n/** What sits at the right of an alert: a note (For security, the full key cannot be shown again) or a button. */\nfunction AlertAction({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-action\"\n      className={cn(\"col-start-2 row-span-2 row-start-1 self-center text-right text-body-sm group-has-[>svg]/alert:col-start-3 @max-sm/alert:col-start-1 @max-sm/alert:col-end-[-1] @max-sm/alert:row-start-3 @max-sm/alert:row-span-1 @max-sm/alert:text-left @max-sm/alert:group-has-[>svg]/alert:col-start-2\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants };\n"
+    }
+  ]
+}

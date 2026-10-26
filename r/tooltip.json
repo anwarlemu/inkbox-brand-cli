@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "name": "tooltip",
+  "useFor": "Use to explain an icon button or an info glyph in a few words (Tunnel, Connection, TLS). Wrap a toolbar or page in TooltipProvider so neighboring tooltips open at once after the first.",
+  "constraints": [
+    "Essential information only in a tooltip",
+    "Interactive content inside a tooltip",
+    "Sentences longer than one line or two",
+    "A white tooltip"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the info glyphs beside Tunnel, Connection, TLS and Tunnel TLS mode",
+  "exports": [
+    "Tooltip",
+    "TooltipContent",
+    "TooltipProvider",
+    "TooltipTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/tooltip",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/tooltip.md",
+  "examples": [
+    {
+      "path": "examples/tooltip.tsx",
+      "content": "import { ArrowsClockwiseIcon, GearSixIcon, InfoIcon, PencilSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from \"@/components/ui/tooltip\";\n\nexport function Preview() {\n  return (\n    <TooltipProvider>\n      <div className=\"flex items-center gap-1\">\n        <Tooltip>\n          <TooltipTrigger asChild>\n            <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit mailbox\">\n              <PencilSimpleIcon weight=\"fill\" />\n            </Button>\n          </TooltipTrigger>\n          <TooltipContent>Edit mailbox</TooltipContent>\n        </Tooltip>\n        <Tooltip>\n          <TooltipTrigger asChild>\n            <Button variant=\"ghost\" size=\"icon\" aria-label=\"Refresh\">\n              <ArrowsClockwiseIcon />\n            </Button>\n          </TooltipTrigger>\n          <TooltipContent>Refresh</TooltipContent>\n        </Tooltip>\n        <Tooltip>\n          <TooltipTrigger asChild>\n            <Button variant=\"ghost\" size=\"icon\" aria-label=\"Mailbox settings\">\n              <GearSixIcon weight=\"fill\" />\n            </Button>\n          </TooltipTrigger>\n          <TooltipContent>Mailbox settings</TooltipContent>\n        </Tooltip>\n      </div>\n    </TooltipProvider>\n  );\n}\n\nexport function Info() {\n  return (\n    <div className=\"flex min-h-40 items-start justify-center pt-14\">\n      <p className=\"flex items-center gap-1.5 text-body text-fg\">\n        Tunnel TLS mode\n        <Tooltip defaultOpen>\n          <TooltipTrigger className=\"rounded-pill text-fg-label outline-none focus-visible:outline-2 focus-visible:outline-focus-ring\" aria-label=\"About TLS modes\">\n            <InfoIcon weight=\"fill\" className=\"size-4.5\" />\n          </TooltipTrigger>\n          <TooltipContent side=\"top\">Edge ends TLS at Inkbox. Passthrough sends it to your agent.</TooltipContent>\n        </Tooltip>\n      </p>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Info"
+      ],
+      "requires": [
+        "tooltip",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/tooltip/Preview"
+        },
+        {
+          "name": "Info",
+          "url": "https://inkbox-ds.vercel.app/preview/tooltip/Info"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tooltip",
+  "description": "A short ink label with white 13px text, 16px corners and a small arrow.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tooltip.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Tooltip as TooltipPrimitive } from \"radix-ui\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A tooltip, extrapolated from the console's info glyphs (Figma 427:2715: Tunnel, Connection, TLS, Tunnel TLS mode):\n// the ink with 13px white text, 16px corners, 6px by 10px of padding and a small ink arrow. The first one waits 400ms;\n// once one is open its neighbors open at once and without motion (the provider's skip delay), as a toolbar should.\n// Whether a TooltipProvider is above: tooltips under one share its delay, so neighbors open at once. A lone Tooltip\n// brings its own provider. The dwell avoids incidental hover popups; it never delays the underlying button action.\nconst HasProvider = React.createContext(false);\n\nfunction TooltipProvider({ delayDuration = 400, skipDelayDuration = 300, ...props }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {\n  return (\n    <HasProvider.Provider value>\n      <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" delayDuration={delayDuration} skipDelayDuration={skipDelayDuration} {...props} />\n    </HasProvider.Provider>\n  );\n}\n\nfunction Tooltip(props: React.ComponentProps<typeof TooltipPrimitive.Root>) {\n  const root = <TooltipPrimitive.Root data-slot=\"tooltip\" {...props} />;\n  return React.useContext(HasProvider) ? root : <TooltipProvider>{root}</TooltipProvider>;\n}\n\nfunction TooltipTrigger(props: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {\n  return <TooltipPrimitive.Trigger data-slot=\"tooltip-trigger\" {...props} />;\n}\n\nfunction TooltipContent({ className, sideOffset = 6, children, ...props }: React.ComponentProps<typeof TooltipPrimitive.Content>) {\n  const container = usePortalContainer();\n  return (\n    <TooltipPrimitive.Portal container={container}>\n      <TooltipPrimitive.Content\n        data-slot=\"tooltip-content\"\n        sideOffset={sideOffset}\n        className={cn(\n          \"z-50 w-fit max-w-72 origin-(--radix-tooltip-content-transform-origin) rounded-panel bg-inverse px-2.5 py-1.5 font-sans text-body-sm leading-tight text-balance text-fg-inverse data-[state=closed]:animate-fade-out data-[state=delayed-open]:animate-fade-in\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <TooltipPrimitive.Arrow className=\"z-50 fill-inverse\" width={10} height={5} />\n      </TooltipPrimitive.Content>\n    </TooltipPrimitive.Portal>\n  );\n}\n\nexport { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger };\n"
+    }
+  ]
+}

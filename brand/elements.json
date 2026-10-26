@@ -1,0 +1,1229 @@
+{
+	"site": {
+		"page": {
+			"name": "Page",
+			"match": {
+				"tags": [
+					"html",
+					"body"
+				]
+			},
+			"css": {
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)"
+			},
+			"tailwind": "bg-surface text-fg font-sans text-body leading-body",
+			"rules": [
+				"White, Inter at 14px in the deep purple ink.",
+				"The left rail is white with a hairline at its edge; a second rail (an agent workspace) is lilac."
+			],
+			"source": "Figma 427:2715 (Dashboard - empty state)"
+		},
+		"column": {
+			"name": "Content column",
+			"match": {
+				"words": [
+					"container",
+					"wrapper",
+					"wrap",
+					"inner",
+					"content",
+					"max"
+				]
+			},
+			"css": {
+				"width": "100%",
+				"max-width": "var(--ds-frame-column)",
+				"margin-inline": "auto"
+			},
+			"tailwind": "w-full max-w-(--ds-frame-column) mx-auto",
+			"rules": [
+				"Pages fill the width beside the rail with 24px sides; reading text stops at 680px."
+			],
+			"source": "Figma 427:2715 (Email, Vault)"
+		},
+		"section": {
+			"name": "Section",
+			"match": {
+				"tags": [
+					"section"
+				],
+				"words": [
+					"section",
+					"block",
+					"band"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-3)",
+				"padding-block": "var(--ds-space-6)"
+			},
+			"tailwind": "flex flex-col gap-3 py-6",
+			"rules": [
+				"A block of a page: a 14px label (Signature headers) over its content, 24px from the next block."
+			],
+			"source": "Figma 427:2715 (Webhooks - Event catalog)"
+		},
+		"section-heading": {
+			"name": "Section heading",
+			"match": {
+				"tags": [
+					"h2"
+				],
+				"words": [
+					"title",
+					"heading",
+					"headline"
+				],
+				"context": [
+					"section"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "font-sans text-body font-normal leading-body text-fg",
+			"rules": [
+				"A section inside a page is named in 14px regular ink (Channels, Signature headers, Tunnel TLS mode).",
+				"A page or dialog title is 20px regular (page-title)."
+			],
+			"source": "Figma 427:2715 (Create Agent Identity: Channels)"
+		},
+		"section-description": {
+			"name": "Section description",
+			"match": {
+				"tags": [
+					"p"
+				],
+				"words": [
+					"subtitle",
+					"sub",
+					"lead",
+					"description",
+					"intro",
+					"desc",
+					"lede"
+				],
+				"context": [
+					"section"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-muted)"
+			},
+			"tailwind": "text-body leading-body text-fg-muted",
+			"rules": [
+				"14px in the muted purple under a title or a field label."
+			],
+			"source": "Figma 427:2715 (Vault: Enter a vault key...)"
+		},
+		"hero": {
+			"name": "Page head",
+			"match": {
+				"words": [
+					"hero",
+					"masthead",
+					"jumbotron",
+					"banner-hero",
+					"splash"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-0-5)",
+				"padding": "var(--ds-space-4) var(--ds-space-6)",
+				"border-bottom": "1px solid var(--ds-color-border-subtle)",
+				"background-color": "var(--ds-color-bg-default)"
+			},
+			"tailwind": "flex flex-col gap-0.5 px-6 py-4 border-b border-line-subtle bg-surface",
+			"rules": [
+				"The console has no hero: a page opens with its head, a 20px title and a 14px muted line, ruled off from the page."
+			],
+			"source": "Figma 427:2715 (Vault, Webhooks heads)"
+		},
+		"hero-title": {
+			"name": "Page title",
+			"match": {
+				"tags": [
+					"h1"
+				],
+				"words": [
+					"hero-title",
+					"headline",
+					"display"
+				]
+			},
+			"css": {
+				"font-family": "var(--ds-font-display)",
+				"font-size": "var(--ds-text-h3)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-heading)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "font-display text-h3 font-normal leading-heading text-fg",
+			"rules": [
+				"20px regular ink; never bold, never tracked."
+			],
+			"source": "Figma 427:2715 (Vault, Email, Create Agent Identity)"
+		},
+		"hero-subtitle": {
+			"name": "Page description",
+			"match": {
+				"tags": [
+					"p"
+				],
+				"words": [
+					"hero-sub",
+					"subtitle",
+					"tagline",
+					"lead"
+				],
+				"context": [
+					"hero"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-muted)"
+			},
+			"tailwind": "text-body leading-body text-fg-muted",
+			"rules": [
+				"14px muted purple, one line under the title."
+			],
+			"source": "Figma 427:2715 (Vault: Zero-knowledge encrypted secret store for your agents.)"
+		},
+		"eyebrow": {
+			"name": "Rail label",
+			"match": {
+				"words": [
+					"eyebrow",
+					"kicker",
+					"overline",
+					"label",
+					"tag",
+					"pretitle",
+					"badge"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body-sm)",
+				"line-height": "var(--ds-leading-tight)",
+				"color": "var(--ds-color-text-label)"
+			},
+			"tailwind": "text-body-sm leading-tight text-fg-label",
+			"rules": [
+				"13px regular in the action purple, above a group of rail rows (Channels, Shared).",
+				"Sentence case; never caps."
+			],
+			"source": "Figma 427:2715 (rail: Channels, Shared)"
+		},
+		"card": {
+			"name": "Card",
+			"match": {
+				"tags": [
+					"article"
+				],
+				"words": [
+					"card",
+					"tile",
+					"panel",
+					"box",
+					"feature",
+					"item",
+					"plan"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-2)",
+				"padding": "var(--ds-space-3-5)",
+				"border": "1px solid var(--ds-color-border-field)",
+				"border-radius": "var(--ds-radius-dialog)",
+				"background-color": "var(--ds-color-bg-default)"
+			},
+			"tailwind": "flex flex-col gap-2 p-3.5 border border-line-field rounded-dialog bg-surface",
+			"rules": [
+				"White with the field edge and 24px corners; a 16px glyph and a 14px title over 14px muted text (Trigger, Delivery).",
+				"A channel card inside a dialog sits on the lilac with no edge and 24px corners (rounded-dialog)."
+			],
+			"source": "Figma 427:2715 (Webhooks: Trigger, Delivery, Response contract)"
+		},
+		"card-raised": {
+			"name": "Raised panel",
+			"match": {
+				"words": [
+					"feature",
+					"product",
+					"plan",
+					"offer",
+					"tile-lg",
+					"showcase"
+				]
+			},
+			"css": {
+				"border-radius": "var(--ds-radius-dialog)",
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-s)"
+			},
+			"tailwind": "rounded-dialog bg-surface shadow-s",
+			"rules": [
+				"A white panel lifted by Shadow/S, a 1px ring and a short drop: a table body, a selected tab, a select trigger."
+			],
+			"source": "Figma 427:2715 (Email: table body)"
+		},
+		"window": {
+			"name": "Lilac panel",
+			"match": {
+				"words": [
+					"window",
+					"terminal",
+					"dir",
+					"case",
+					"file"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-subtle)"
+			},
+			"tailwind": "p-3.5 rounded-control bg-subtle",
+			"rules": [
+				"A grouped block on the lilac with 12px corners (Initialize vault)."
+			],
+			"source": "Figma 427:2715 (Vault: Initialize vault)"
+		},
+		"window-bar": {
+			"name": "Code head",
+			"match": {
+				"words": [
+					"windowbar",
+					"titlebar",
+					"window-bar",
+					"title-bar",
+					"chrome"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-3)",
+				"border-bottom": "1px solid var(--ds-color-border-code)",
+				"background-color": "var(--ds-color-bg-code-head)",
+				"color": "var(--ds-color-code-head-fg)",
+				"font-size": "var(--ds-text-body)"
+			},
+			"tailwind": "flex items-center gap-2 h-10 px-3 border-b border-line-code bg-code-head text-code-head-fg text-body",
+			"rules": [
+				"The gray head of a code block: the language at the left, a purple copy glyph at the right."
+			],
+			"source": "Figma 427:2715 (Webhooks: JSON)"
+		},
+		"card-title": {
+			"name": "Card title",
+			"match": {
+				"tags": [
+					"h3",
+					"h4"
+				],
+				"words": [
+					"card-title",
+					"title",
+					"name",
+					"heading"
+				],
+				"context": [
+					"card"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "text-body font-normal leading-body text-fg",
+			"rules": [
+				"14px regular ink (Trigger); a channel card title is 16px medium."
+			],
+			"source": "Figma 427:2715 (Webhooks: Trigger)"
+		},
+		"body-text": {
+			"name": "Body text",
+			"match": {
+				"tags": [
+					"p",
+					"li"
+				],
+				"words": [
+					"text",
+					"body",
+					"copy",
+					"desc",
+					"description",
+					"summary",
+					"excerpt"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "text-body leading-body text-fg",
+			"rules": [
+				"14px ink; secondary copy under a title in #70637E."
+			],
+			"source": "Figma 427:2715 (Inbox: message body)"
+		},
+		"caption": {
+			"name": "Caption",
+			"match": {
+				"tags": [
+					"small",
+					"figcaption",
+					"time"
+				],
+				"words": [
+					"caption",
+					"meta",
+					"note",
+					"date",
+					"small",
+					"fine",
+					"hint"
+				]
+			},
+			"css": {
+				"font-size": "var(--ds-text-caption)",
+				"line-height": "var(--ds-leading-body)",
+				"color": "var(--ds-color-text-muted)"
+			},
+			"tailwind": "text-caption leading-body text-fg-muted",
+			"rules": [
+				"12px muted for small print (Will be displayed as, reCAPTCHA notes)."
+			],
+			"source": "Figma 427:2715 (Login footer)"
+		},
+		"link": {
+			"name": "Link",
+			"match": {
+				"tags": [
+					"a"
+				],
+				"words": [
+					"link",
+					"more",
+					"arrow",
+					"readmore"
+				]
+			},
+			"css": {
+				"color": "var(--ds-color-text-brand)",
+				"text-decoration": "none",
+				"transition": "color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "text-fg-brand no-underline transition-colors duration-150 ease-out hover:underline underline-offset-4",
+			"rules": [
+				"Links are the action purple with no underline until hover (Forgot password?, Generate a random key instead).",
+				"A link inside muted copy is underlined in the same color as the copy (Manage agents.)."
+			],
+			"source": "Figma 427:2715 (Login, Vault)",
+			"states": {
+				":hover": {
+					"text-decoration": "underline"
+				}
+			}
+		},
+		"button-primary": {
+			"name": "Primary button",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn-primary",
+					"primary",
+					"cta",
+					"get-started",
+					"signup",
+					"start",
+					"solid",
+					"filled",
+					"main"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-5)",
+				"border": "0",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-action-primary)",
+				"color": "var(--ds-color-action-primary-fg)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-regular)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-primary text-on-primary font-sans text-body font-normal leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-primary-hover active:bg-primary-hover active:brightness-95 active:transition-none",
+			"rules": [
+				"The main action is a 40px purple pill with a 14px regular white label and a 20px glyph 8px from it.",
+				"One per view (Create Agent, Log in); a dialog's action spans its width."
+			],
+			"source": "Figma 427:2715 (Create Agent, Enable iMessage, Log in)",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-action-primary-hover)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-action-primary-hover)"
+				}
+			}
+		},
+		"button-secondary": {
+			"name": "Outline button",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn-secondary",
+					"secondary",
+					"outline",
+					"ghost",
+					"btn-ghost",
+					"learn",
+					"demo",
+					"explore",
+					"btn"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-1)",
+				"height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border": "1px solid var(--ds-color-border-field)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-brand)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "inline-flex items-center justify-center gap-1 h-9 px-2.5 border border-line-field rounded-pill bg-surface text-fg-brand font-sans text-body font-medium leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none",
+			"rules": [
+				"Other actions are the 36px white key with fully rounded corners, the field edge and a medium purple label (View as formatted).",
+				"Beside the main action on a form, use the lilac pill instead (Continue with GitHub)."
+			],
+			"source": "Figma 427:2715 (Modal - Created: View as formatted, Copy as markdown)",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle)"
+				}
+			}
+		},
+		"button-on-brand": {
+			"name": "Lilac pill",
+			"match": {
+				"tags": [
+					"button",
+					"a"
+				],
+				"words": [
+					"btn"
+				],
+				"context": [
+					"section-blue",
+					"on-brand"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"justify-content": "center",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-5)",
+				"border": "0",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-subtle)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "1",
+				"white-space": "nowrap",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "inline-flex items-center justify-center gap-2 h-10 px-5 rounded-pill bg-subtle text-fg font-sans text-body leading-none whitespace-nowrap transition-[background-color] duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover active:brightness-95 active:transition-none",
+			"rules": [
+				"The alternative beside the main action: the same pill in lilac with ink text (Continue with GitHub, Continue with Google)."
+			],
+			"source": "Figma 427:2715 (Login)",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-bg-subtle-hover)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle-hover)"
+				}
+			}
+		},
+		"header": {
+			"name": "Rail",
+			"match": {
+				"tags": [
+					"header"
+				],
+				"words": [
+					"header",
+					"nav",
+					"navbar",
+					"topbar",
+					"site-header",
+					"masthead"
+				],
+				"roles": [
+					"banner"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"width": "var(--ds-layout-rail)",
+				"padding": "var(--ds-space-3)",
+				"border-right": "1px solid var(--ds-color-border-subtle)",
+				"background-color": "var(--ds-color-bg-default)"
+			},
+			"tailwind": "flex flex-col gap-1 w-(--ds-layout-rail) p-3 border-r border-line-subtle bg-surface",
+			"rules": [
+				"Navigation lives in a 288px white rail at the left: the lockup, then rows grouped under purple labels, help and the account at the foot.",
+				"There is no top bar on a desktop screen."
+			],
+			"source": "Figma 427:2715 (Dashboard - empty state: rail)"
+		},
+		"header-action": {
+			"name": "Head action",
+			"match": {
+				"tags": [
+					"a",
+					"button"
+				],
+				"words": [
+					"btn",
+					"cta",
+					"login",
+					"signin",
+					"sign-in",
+					"demo",
+					"get-started",
+					"signup"
+				],
+				"context": [
+					"header"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2-5)",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-subtle)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "inline-flex items-center gap-2.5 h-9.5 px-3 rounded-pill bg-subtle text-fg text-body transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover active:brightness-95 active:transition-none",
+			"rules": [
+				"An action in a page head is the 38px lilac key with a 22px glyph (Tunnel quickstart)."
+			],
+			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-bg-subtle-hover)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle-hover)"
+				}
+			}
+		},
+		"nav-link": {
+			"name": "Rail row",
+			"match": {
+				"tags": [
+					"a",
+					"button"
+				],
+				"words": [
+					"nav-link",
+					"menu-link",
+					"nav-item",
+					"link",
+					"menu-item"
+				],
+				"context": [
+					"header",
+					"nav"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2-5)",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3)",
+				"border-radius": "var(--ds-radius-pill)",
+				"color": "var(--ds-color-text-nav)",
+				"font-size": "var(--ds-text-body)",
+				"text-decoration": "none",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "flex items-center gap-2.5 h-9.5 px-3 rounded-pill text-fg text-body no-underline transition-colors duration-150 ease-out hover:bg-subtle active:bg-subtle aria-[current=page]:bg-subtle active:brightness-95 active:transition-none",
+			"rules": [
+				"38px rows with fully rounded corners: a 22px filled glyph in ink, 10px, a 14px regular ink label.",
+				"The current row sits on the lilac (white on the lilac rail). Glyphs never move."
+			],
+			"source": "Figma 427:2715 (rail: Agent Workspace, Email, Vault)",
+			"states": {
+				":hover": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				},
+				"[aria-current=page]": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				},
+				":active": {
+					"filter": "brightness(0.95)",
+					"transition": "none",
+					"background-color": "var(--ds-color-bg-subtle)"
+				}
+			}
+		},
+		"nav-dock": {
+			"name": "Second rail",
+			"match": {
+				"words": [
+					"dock",
+					"nav-pill",
+					"pill-nav",
+					"floating-nav",
+					"navpill",
+					"bottom-nav"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"width": "var(--ds-layout-rail)",
+				"padding": "var(--ds-space-3)",
+				"background-color": "var(--ds-color-bg-subtle)"
+			},
+			"tailwind": "flex flex-col gap-1 w-(--ds-layout-rail) p-3 bg-subtle",
+			"rules": [
+				"An agent's workspace adds a lilac rail of its own beside the white one; its current row is white."
+			],
+			"source": "Figma 427:2715 (Agent Workspace - Inbox: second rail)"
+		},
+		"chip": {
+			"name": "Tag",
+			"match": {
+				"words": [
+					"chip",
+					"pill",
+					"tag",
+					"badge",
+					"token",
+					"label"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"padding": "1px var(--ds-space-1)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-tag-blue)",
+				"color": "var(--ds-color-tag-blue-fg)",
+				"font-size": "var(--ds-text-micro)",
+				"font-weight": "var(--ds-font-weight-medium)",
+				"line-height": "var(--ds-leading-snug)"
+			},
+			"tailwind": "inline-flex items-center px-1 py-px rounded-pill bg-tag-blue text-tag-blue-fg text-micro font-medium leading-snug",
+			"rules": [
+				"Tags are 11px medium on a pale blue, purple or gray with fully rounded corners (Email, Signed, Fire-and-forget).",
+				"A BETA or ADMIN mark is a pink edge with 12px pink text instead."
+			],
+			"source": "Figma 427:2715 (Webhooks - Event catalog: tags)"
+		},
+		"stat": {
+			"name": "Status well",
+			"match": {
+				"words": [
+					"stat",
+					"metric",
+					"number",
+					"figure",
+					"kpi",
+					"count",
+					"value"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"height": "var(--ds-space-9-5)",
+				"padding-inline": "var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-status-success-bg)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)"
+			},
+			"tailwind": "inline-flex items-center h-9.5 px-3.5 rounded-pill bg-success-bg text-fg text-body",
+			"rules": [
+				"A state is shown as a 38px well with fully rounded corners: green for active, gray for idle, blue for a mode (Active, Idle, Edge)."
+			],
+			"source": "Figma 427:2715 (Agent Workspace - Inbox - Tunnel)"
+		},
+		"code-window": {
+			"name": "Code block",
+			"match": {
+				"tags": [
+					"pre"
+				],
+				"words": [
+					"code",
+					"terminal",
+					"snippet",
+					"codeblock",
+					"console",
+					"editor",
+					"window"
+				]
+			},
+			"css": {
+				"overflow": "hidden",
+				"border": "1px solid var(--ds-color-border-code)",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-code)",
+				"color": "var(--ds-color-code-text)",
+				"font-family": "var(--ds-font-code)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-body)"
+			},
+			"tailwind": "overflow-hidden border border-line-code rounded-control bg-code text-code-text font-code text-body leading-body",
+			"rules": [
+				"Code is light: an off-white body with the editor's gray edge and head, line numbers in teal, red keys and blue values.",
+				"Never a dark code block."
+			],
+			"source": "Figma 427:2715 (Webhooks: Signature headers)"
+		},
+		"media-frame": {
+			"name": "Media frame",
+			"match": {
+				"tags": [
+					"img",
+					"video",
+					"picture",
+					"figure",
+					"iframe"
+				],
+				"words": [
+					"screenshot",
+					"image",
+					"media",
+					"preview",
+					"shot",
+					"visual",
+					"frame",
+					"mockup"
+				]
+			},
+			"css": {
+				"overflow": "hidden",
+				"border-radius": "var(--ds-radius-control)",
+				"background-color": "var(--ds-color-bg-subtle)"
+			},
+			"tailwind": "overflow-hidden rounded-control bg-subtle",
+			"rules": [
+				"Images and previews sit in 12px corners on the lilac."
+			],
+			"source": "Figma 427:2715 (extrapolated from the lilac panels)"
+		},
+		"table": {
+			"name": "Table",
+			"match": {
+				"tags": [
+					"table"
+				],
+				"words": [
+					"table",
+					"comparison",
+					"compare",
+					"pricing-table",
+					"grid"
+				]
+			},
+			"css": {
+				"width": "100%",
+				"border-collapse": "separate",
+				"border-spacing": "0",
+				"font-size": "var(--ds-text-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "w-full border-separate border-spacing-0 text-body text-fg",
+			"rules": [
+				"The head is a 48px lilac bar with 16px corners and 14px muted labels; the body a separate white panel with Shadow/S, 64px rows ruled by Line/S Bottom; the foot a 42px lilac bar.",
+				"An agent handle in a cell is rose (#8C5659)."
+			],
+			"source": "Figma 427:2715 (Email: Mailboxes table)"
+		},
+		"faq": {
+			"name": "Collapsible row",
+			"match": {
+				"tags": [
+					"details"
+				],
+				"words": [
+					"faq",
+					"accordion",
+					"question",
+					"qa"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"justify-content": "space-between",
+				"gap": "var(--ds-space-3)",
+				"padding-block": "var(--ds-space-3)",
+				"font-size": "var(--ds-text-body)",
+				"color": "var(--ds-color-text-default)"
+			},
+			"tailwind": "flex items-center justify-between gap-3 py-3 text-body text-fg",
+			"rules": [
+				"A disclosure is a 14px ink row with a caret at its right (Advanced settings - tunnel mode, phone state, line sharing)."
+			],
+			"source": "Figma 427:2715 (Modal - Create Agent)"
+		},
+		"tabs": {
+			"name": "Tabs",
+			"match": {
+				"roles": [
+					"tab",
+					"tablist"
+				],
+				"words": [
+					"tab",
+					"tabs",
+					"segment",
+					"toggle",
+					"switcher"
+				]
+			},
+			"css": {
+				"display": "inline-flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"height": "var(--ds-space-10-5)",
+				"padding": "var(--ds-space-0-5)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-subtle)"
+			},
+			"tailwind": "inline-flex items-center gap-2 h-10.5 p-0.5 rounded-pill bg-subtle",
+			"rules": [
+				"A 42px lilac track with fully rounded corners; 38px tabs with a 14px medium ink label; the selected tab is a white key with fully rounded corners and Shadow/S."
+			],
+			"source": "Figma 427:2715 (Email: Mailboxes, Contact rules, Custom domains)",
+			"states": {
+				"[aria-selected=true]": {
+					"background-color": "var(--ds-color-bg-default)",
+					"box-shadow": "var(--ds-shadow-s)",
+					"border-radius": "var(--ds-radius-pill)"
+				}
+			}
+		},
+		"input": {
+			"name": "Field",
+			"match": {
+				"tags": [
+					"input",
+					"textarea",
+					"select"
+				],
+				"words": [
+					"input",
+					"field",
+					"search",
+					"email"
+				]
+			},
+			"css": {
+				"height": "var(--ds-space-10)",
+				"padding-inline": "var(--ds-space-3-5)",
+				"border": "1px solid var(--ds-color-border-field)",
+				"border-radius": "var(--ds-radius-pill)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)",
+				"line-height": "var(--ds-leading-tight)",
+				"transition": "border-color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "h-10 px-3.5 border border-line-field rounded-pill [&:is(textarea)]:rounded-control bg-surface text-fg font-sans text-body leading-tight outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger",
+			"rules": [
+				"40px fields with fully rounded corners and the lilac-gray edge on white; 14px ink text 14px in; a light purple placeholder.",
+				"A rejected value takes the red edge and a red message under it."
+			],
+			"source": "Figma 427:2715 (Form- Input)",
+			"states": {
+				":is(textarea)": {
+					"border-radius": "var(--ds-radius-control)"
+				},
+				":focus-visible": {
+					"border-color": "var(--ds-color-border-brand)",
+					"box-shadow": "var(--ds-shadow-focus)"
+				},
+				"[aria-invalid=true]": {
+					"border-color": "var(--ds-color-status-danger)"
+				}
+			}
+		},
+		"logo-strip": {
+			"name": "Logo row",
+			"match": {
+				"words": [
+					"logos",
+					"logo-strip",
+					"clients",
+					"customers",
+					"trusted",
+					"marquee",
+					"partners",
+					"brands"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-wrap": "wrap",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"padding": "var(--ds-space-0-5)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-subtle)"
+			},
+			"tailwind": "flex flex-wrap items-center gap-2 p-0.5 rounded-panel bg-subtle",
+			"rules": [
+				"A row of tools or partners is a lilac track of 24px circular logo tiles with 14px ink names (Where does this agent run?)."
+			],
+			"source": "Figma 427:2715 (Modal - Created)"
+		},
+		"footer": {
+			"name": "Rail foot",
+			"match": {
+				"tags": [
+					"footer"
+				],
+				"words": [
+					"footer",
+					"site-footer"
+				],
+				"roles": [
+					"contentinfo"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"flex-direction": "column",
+				"gap": "var(--ds-space-1)",
+				"padding": "var(--ds-space-3)",
+				"border-top": "1px solid var(--ds-color-border-subtle)"
+			},
+			"tailwind": "flex flex-col gap-1 p-3 border-t border-line-subtle",
+			"rules": [
+				"The rail ends with help, the organization (with an ADMIN mark), the account and Collapse, ruled off above."
+			],
+			"source": "Figma 427:2715 (rail foot)"
+		},
+		"menu-panel": {
+			"name": "Menu panel",
+			"match": {
+				"words": [
+					"dropdown-menu",
+					"dropdown-content",
+					"dropdown-menu-content",
+					"menu-panel",
+					"menu-content",
+					"select-content"
+				],
+				"roles": [
+					"menu",
+					"listbox"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-1)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"box-shadow": "var(--ds-shadow-floating)",
+				"font-family": "var(--ds-font-sans)",
+				"font-size": "var(--ds-text-body)"
+			},
+			"tailwind": "rounded-panel bg-surface p-1 font-sans text-body text-fg shadow-floating outline-none",
+			"rules": [
+				"Menus and select lists are white with 16px corners, the Shadow/S ring and a soft drop, 4px inside."
+			],
+			"source": "Figma 427:2715 (extrapolated from Shadow/S and the select trigger)",
+			"states": {}
+		},
+		"menu-item": {
+			"name": "Menu item",
+			"match": {
+				"words": [
+					"dropdown-item",
+					"dropdown-menu-item",
+					"menu-item",
+					"select-item"
+				],
+				"roles": [
+					"menuitem",
+					"menuitemcheckbox",
+					"menuitemradio",
+					"option"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"min-height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border-radius": "var(--ds-radius-pill)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)",
+				"transition": "background-color var(--ds-duration-fast) var(--ds-easing-out)"
+			},
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-pill text-fg text-body outline-none transition-colors duration-150 ease-out data-[highlighted]:bg-subtle",
+			"rules": [
+				"36px rows with fully rounded corners, a 20px glyph in the softer purple, 14px ink; the highlighted row sits on the lilac."
+			],
+			"source": "Figma 427:2715 (extrapolated from the rail rows)",
+			"states": {
+				"[data-highlighted]": {
+					"background-color": "var(--ds-color-bg-subtle)"
+				}
+			}
+		},
+		"glass-menu": {
+			"name": "Floating panel",
+			"match": {
+				"words": [
+					"glass-menu",
+					"glass-dropdown",
+					"dock-card"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-1)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-default)",
+				"box-shadow": "var(--ds-shadow-floating)"
+			},
+			"tailwind": "rounded-panel bg-surface p-1 shadow-floating",
+			"rules": [
+				"The console has no glass: floating panels are the white menu panel."
+			],
+			"source": "Figma 427:2715 (extrapolated)"
+		},
+		"glass-menu-item": {
+			"name": "Floating panel item",
+			"match": {
+				"words": [
+					"glass-menu-item",
+					"glass-dropdown-item",
+					"dock-card-item"
+				]
+			},
+			"css": {
+				"display": "flex",
+				"align-items": "center",
+				"gap": "var(--ds-space-2)",
+				"min-height": "var(--ds-space-9)",
+				"padding-inline": "var(--ds-space-2-5)",
+				"border-radius": "var(--ds-radius-pill)",
+				"color": "var(--ds-color-text-default)",
+				"font-size": "var(--ds-text-body)"
+			},
+			"tailwind": "flex items-center gap-2 min-h-9 px-2.5 rounded-pill text-fg text-body",
+			"rules": [
+				"As a menu item."
+			],
+			"source": "Figma 427:2715 (extrapolated)"
+		},
+		"popover-panel": {
+			"name": "Popover panel",
+			"match": {
+				"words": [
+					"popover-content",
+					"popover-panel"
+				]
+			},
+			"css": {
+				"padding": "var(--ds-space-3-5)",
+				"border-radius": "var(--ds-radius-panel)",
+				"background-color": "var(--ds-color-bg-default)",
+				"color": "var(--ds-color-text-default)",
+				"box-shadow": "var(--ds-shadow-floating)"
+			},
+			"tailwind": "rounded-panel bg-surface p-3.5 text-fg shadow-floating",
+			"rules": [
+				"Popovers are the white menu panel with 14px inside."
+			],
+			"source": "Figma 427:2715 (extrapolated from Shadow/S)"
+		}
+	}
+}

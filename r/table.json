@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "name": "table",
+  "useFor": "Use for rows of records people scan and act on (mailboxes, agents and lines, webhooks). Put labels in TableHeader, rows in TableBody, totals or Pagination with bar in a TableFooter or under the table, and row actions as ghost icon buttons in the last cell. Keep cells to one line; truncate long values.",
+  "constraints": [
+    "Zebra striping",
+    "Vertical rules between cells",
+    "A dark or purple head row",
+    "Bold cell text"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Email (Mailboxes table) and iMessage (Agents and lines table)",
+  "exports": [
+    "Table",
+    "TableBody",
+    "TableCaption",
+    "TableCell",
+    "TableFooter",
+    "TableHead",
+    "TableHeader",
+    "TableRow"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/table",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/table.md",
+  "examples": [
+    {
+      "path": "examples/table.tsx",
+      "content": "import { ArrowsClockwiseIcon, PencilSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from \"@/components/ui/pagination\";\nimport { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";\n\nconst MAILBOXES = [\n  { address: \"acme@inkboxmail.com\", agent: \"@acme\", webhooks: \"None\", storage: \"0%\", created: \"Jul 27, 2026\" },\n  { address: \"support@inkboxmail.com\", agent: \"@support-desk\", webhooks: \"2\", storage: \"4%\", created: \"Jul 29, 2026\" },\n  { address: \"ops@inkboxmail.com\", agent: \"@ops-runner\", webhooks: \"1\", storage: \"12%\", created: \"Aug 2, 2026\" },\n];\n\nexport function Preview() {\n  return (\n    <div className=\"grid gap-0\">\n      <Table>\n        <TableHeader>\n          <TableRow>\n            <TableHead>Email address</TableHead>\n            <TableHead>Agent</TableHead>\n            <TableHead>Webhooks</TableHead>\n            <TableHead>Storage</TableHead>\n            <TableHead>Created</TableHead>\n            <TableHead className=\"w-12 text-right\">\n              <Button variant=\"ghost\" size=\"icon\" aria-label=\"Refresh mailboxes\">\n                <ArrowsClockwiseIcon />\n              </Button>\n            </TableHead>\n          </TableRow>\n        </TableHeader>\n        <TableBody>\n          {MAILBOXES.map((m) => (\n            <TableRow key={m.address}>\n              <TableCell>{m.address}</TableCell>\n              <TableCell className=\"text-rose\">{m.agent}</TableCell>\n              <TableCell>{m.webhooks}</TableCell>\n              <TableCell>{m.storage}</TableCell>\n              <TableCell>{m.created}</TableCell>\n              <TableCell className=\"text-right\">\n                <Button variant=\"ghost\" size=\"icon\" aria-label={`Edit ${m.address}`}>\n                  <PencilSimpleIcon weight=\"fill\" />\n                </Button>\n              </TableCell>\n            </TableRow>\n          ))}\n        </TableBody>\n      </Table>\n      <Pagination bar className=\"mt-1\">\n        <PaginationContent>\n          <PaginationItem>\n            <PaginationPrevious href=\"#\" aria-disabled />\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationLink href=\"#\" isActive>\n              1\n            </PaginationLink>\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationLink href=\"#\">2</PaginationLink>\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationNext href=\"#\" />\n          </PaginationItem>\n        </PaginationContent>\n      </Pagination>\n    </div>\n  );\n}\n\nexport function WithFooter() {\n  return (\n    <Table>\n      <TableCaption>Usage this billing period.</TableCaption>\n      <TableHeader>\n        <TableRow>\n          <TableHead>Channel</TableHead>\n          <TableHead>Messages</TableHead>\n          <TableHead className=\"text-right\">Cost</TableHead>\n        </TableRow>\n      </TableHeader>\n      <TableBody>\n        <TableRow>\n          <TableCell>Email</TableCell>\n          <TableCell>1,204</TableCell>\n          <TableCell className=\"text-right\">$12.04</TableCell>\n        </TableRow>\n        <TableRow data-state=\"selected\">\n          <TableCell>Phone</TableCell>\n          <TableCell>86</TableCell>\n          <TableCell className=\"text-right\">$4.30</TableCell>\n        </TableRow>\n        <TableRow>\n          <TableCell>iMessage</TableCell>\n          <TableCell>412</TableCell>\n          <TableCell className=\"text-right\">$8.24</TableCell>\n        </TableRow>\n      </TableBody>\n      <TableFooter>\n        <TableRow>\n          <TableCell colSpan={2}>Total</TableCell>\n          <TableCell className=\"text-right\">$24.58</TableCell>\n        </TableRow>\n      </TableFooter>\n    </Table>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "WithFooter"
+      ],
+      "requires": [
+        "table",
+        "button",
+        "pagination"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/table/Preview"
+        },
+        {
+          "name": "WithFooter",
+          "url": "https://inkbox-ds.vercel.app/preview/table/WithFooter"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Table",
+  "description": "The console's table: a lilac head with muted labels, a separate white body with Shadow/S and 64px rows, and a lilac foot.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/table.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's table (Figma 427:2715, Email: Mailboxes; iMessage: Agents and lines). Three separate panels: a 48px\n// lilac head with 10px corners and 14px muted labels; 8px below it a white body with 8px corners, the Shadow/S ring\n// and its short drop, 64px rows of 14px ink ruled by Line/S Bottom; and a lilac foot 8px below (the pagination bar or\n// totals). Cells keep 16px sides. The table scrolls sideways inside its frame on a narrow screen.\nfunction Table({ className, ...props }: React.ComponentProps<\"table\">) {\n  return (\n    <div data-slot=\"table-container\" className=\"relative w-full overflow-x-auto px-px pt-px pb-1\">\n      <table data-slot=\"table\" className={cn(\"w-full caption-bottom border-separate border-spacing-0 font-sans text-body leading-tight text-fg\", className)} {...props} />\n    </div>\n  );\n}\n\nfunction TableHeader({ className, ...props }: React.ComponentProps<\"thead\">) {\n  return (\n    <thead\n      data-slot=\"table-header\"\n      className={cn(\n        \"after:table-row after:h-2 after:content-[''] [&>tr>th]:bg-subtle [&>tr>th:first-child]:rounded-l-panel [&>tr>th:last-child]:rounded-r-panel\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableBody({ className, ...props }: React.ComponentProps<\"tbody\">) {\n  return (\n    <tbody\n      data-slot=\"table-body\"\n      className={cn(\n        \"[&>tr>td]:bg-surface [&>tr:not(:last-child)>td]:border-b [&>tr:not(:last-child)>td]:border-b-line-row [&>tr>td:first-child]:border-l [&>tr>td:first-child]:border-l-line-ring [&>tr>td:last-child]:border-r [&>tr>td:last-child]:border-r-line-ring [&>tr:first-child>td]:border-t [&>tr:first-child>td]:border-t-line-ring [&>tr:first-child>td:first-child]:rounded-tl-control [&>tr:first-child>td:last-child]:rounded-tr-control [&>tr:last-child>td]:border-b [&>tr:last-child>td]:border-b-line-ring [&>tr:last-child]:shadow-[0_2px_4px_-1px_var(--ds-color-shadow-drop)] [&>tr:last-child]:[clip-path:inset(0_-8px_-8px_-8px_round_0_0_8px_8px)] [&>tr:last-child>td:first-child]:rounded-bl-control [&>tr:last-child>td:last-child]:rounded-br-control\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableFooter({ className, ...props }: React.ComponentProps<\"tfoot\">) {\n  return (\n    <tfoot\n      data-slot=\"table-footer\"\n      className={cn(\n        \"before:table-row before:h-2 before:content-[''] [&>tr>td]:h-10.5 [&>tr>td]:bg-subtle [&>tr>td]:font-medium [&>tr>td:first-child]:rounded-l-panel [&>tr>td:last-child]:rounded-r-panel [&>tr>th]:bg-subtle\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableRow({ className, ...props }: React.ComponentProps<\"tr\">) {\n  return (\n    <tr\n      data-slot=\"table-row\"\n      className={cn(\"transition-colors duration-150 ease-out hover:[&>td]:bg-subtle/60 data-[state=selected]:[&>td]:bg-subtle motion-reduce:transition-none\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableHead({ className, ...props }: React.ComponentProps<\"th\">) {\n  return (\n    <th\n      data-slot=\"table-head\"\n      className={cn(\"h-12 px-4 text-left align-middle text-body leading-tight font-normal whitespace-nowrap text-fg-muted [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pr-0\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableCell({ className, ...props }: React.ComponentProps<\"td\">) {\n  return (\n    <td\n      data-slot=\"table-cell\"\n      className={cn(\"h-16 px-4 align-middle whitespace-nowrap transition-colors duration-150 ease-out motion-reduce:transition-none [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pr-0\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableCaption({ className, ...props }: React.ComponentProps<\"caption\">) {\n  return <caption data-slot=\"table-caption\" className={cn(\"mt-3 text-body-sm leading-body text-fg-muted\", className)} {...props} />;\n}\n\nexport { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };\n"
+    }
+  ]
+}

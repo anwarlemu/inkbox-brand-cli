@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "name": "hover-card",
+  "useFor": "Use to preview what a link or an agent handle points to (the agent's addresses, its channels) for people with a pointer. Keep the same information reachable by clicking: hover cards do not open on touch.",
+  "constraints": [
+    "Actions that exist only inside the card",
+    "A card that opens instantly on hover",
+    "Long content"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panels and the avatar tile, with the shared popup radius",
+  "exports": [
+    "HoverCard",
+    "HoverCardContent",
+    "HoverCardTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/hover-card",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/hover-card.md",
+  "examples": [
+    {
+      "path": "examples/hover-card.tsx",
+      "content": "import { EnvelopeSimpleIcon, PhoneIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { HoverCard, HoverCardContent, HoverCardTrigger } from \"@/components/ui/hover-card\";\n\nfunction AgentCard() {\n  return (\n    <div className=\"flex gap-3\">\n      <span className=\"flex size-10 shrink-0 items-center justify-center rounded-pill bg-avatar text-body-lg font-medium text-white\">A</span>\n      <div className=\"grid min-w-0 gap-1\">\n        <p className=\"text-body font-medium text-fg\">@acme</p>\n        <p className=\"text-body text-fg-muted\">Support agent for Acme. Created Jul 27, 2026.</p>\n        <p className=\"mt-1 flex items-center gap-2 text-body text-fg\">\n          <EnvelopeSimpleIcon weight=\"fill\" className=\"size-4.5 text-icon-secondary\" /> acme@inkboxmail.com\n        </p>\n        <p className=\"flex items-center gap-2 text-body text-fg\">\n          <PhoneIcon weight=\"fill\" className=\"size-4.5 text-icon-secondary\" /> +1 650 474 9720\n        </p>\n      </div>\n    </div>\n  );\n}\n\nexport function Preview() {\n  return (\n    <p className=\"text-body text-fg\">\n      Messages to{\" \"}\n      <HoverCard>\n        <HoverCardTrigger href=\"#agent\" className=\"text-rose underline-offset-4 hover:underline\">\n          @acme\n        </HoverCardTrigger>\n        <HoverCardContent>\n          <AgentCard />\n        </HoverCardContent>\n      </HoverCard>{\" \"}\n      are answered within a minute.\n    </p>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"flex min-h-60 items-start justify-center\">\n      <HoverCard defaultOpen>\n        <HoverCardTrigger href=\"#agent\" className=\"text-rose underline-offset-4 hover:underline\">\n          @acme\n        </HoverCardTrigger>\n        <HoverCardContent>\n          <AgentCard />\n        </HoverCardContent>\n      </HoverCard>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Open"
+      ],
+      "requires": [
+        "hover-card"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/hover-card/Preview"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/hover-card/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Hover Card",
+  "description": "A raised white preview card with 16px corners that opens after a short pause on a link or handle.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/ui/hover-card.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { HoverCard as HoverCardPrimitive } from \"radix-ui\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A preview on hover, extrapolated from the console's raised white panels (Figma 427:2715): white, 16px corners, the\n// floating shadow, 16px of padding, 14px ink. It waits before opening (so a passing pointer does not trigger it), then\n// uses a short opacity fade without scaling. The dwell prevents accidental previews; it never delays the link action.\nfunction HoverCard({ openDelay = 400, closeDelay = 150, ...props }: React.ComponentProps<typeof HoverCardPrimitive.Root>) {\n  return <HoverCardPrimitive.Root data-slot=\"hover-card\" openDelay={openDelay} closeDelay={closeDelay} {...props} />;\n}\n\nfunction HoverCardTrigger(props: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {\n  return <HoverCardPrimitive.Trigger data-slot=\"hover-card-trigger\" {...props} />;\n}\n\nfunction HoverCardContent({ className, align = \"center\", sideOffset = 6, ...props }: React.ComponentProps<typeof HoverCardPrimitive.Content>) {\n  const container = usePortalContainer();\n  return (\n    <HoverCardPrimitive.Portal container={container} data-slot=\"hover-card-portal\">\n      <HoverCardPrimitive.Content\n        data-slot=\"hover-card-content\"\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          \"z-50 w-72 max-w-[calc(100vw-2rem)] origin-(--radix-hover-card-content-transform-origin) rounded-panel bg-surface p-4 text-body leading-body text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in\",\n          className,\n        )}\n        {...props}\n      />\n    </HoverCardPrimitive.Portal>\n  );\n}\n\nexport { HoverCard, HoverCardContent, HoverCardTrigger };\n"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "collapsible",
+  "useFor": "Use for one optional group (Advanced settings under the channels). Make the trigger the whole row: a 14px ink label with a caret at the right that turns when open. For several sections, use Accordion.",
+  "constraints": [
+    "Hiding required fields in it",
+    "A trigger without a caret",
+    "Animating anything but the content height and the caret"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)",
+  "exports": [
+    "Collapsible",
+    "CollapsibleContent",
+    "CollapsibleTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/collapsible",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/collapsible.md",
+  "examples": [
+    {
+      "path": "examples/collapsible.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CaretDownIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Collapsible, CollapsibleContent, CollapsibleTrigger } from \"@/components/ui/collapsible\";\nimport { Label } from \"@/components/ui/label\";\n\nexport function Preview() {\n  const [open, setOpen] = React.useState(false);\n  return (\n    <Collapsible open={open} onOpenChange={setOpen} className=\"w-full max-w-122\">\n      <CollapsibleTrigger className=\"group flex w-full items-center justify-between gap-4 rounded-pill py-2 text-left text-body text-fg outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none\">\n        Advanced settings - tunnel mode, phone state, line sharing\n        <CaretDownIcon aria-hidden weight=\"bold\" className=\"size-4 shrink-0 text-icon-default transition-transform duration-200 ease-out group-data-[state=open]:rotate-180 motion-reduce:transition-none\" />\n      </CollapsibleTrigger>\n      <CollapsibleContent>\n        <div className=\"grid gap-2 pt-3\" role=\"radiogroup\" aria-label=\"Tunnel TLS mode\">\n          <p className=\"text-body text-fg\">Tunnel TLS mode</p>\n          <Label className=\"gap-2\">\n            <input type=\"radio\" name=\"tls\" defaultChecked className=\"size-4 accent-[var(--ds-color-action-primary)]\" />\n            Edge (default)\n          </Label>\n          <Label className=\"gap-2\">\n            <input type=\"radio\" name=\"tls\" className=\"size-4 accent-[var(--ds-color-action-primary)]\" />\n            Passthrough\n          </Label>\n        </div>\n      </CollapsibleContent>\n    </Collapsible>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "collapsible",
+        "label"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/collapsible/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Collapsible",
+  "description": "A part that shows and hides in place, opening with its height.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/collapsible.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Collapsible as ChakraCollapsible } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A part that shows and hides in place (Figma 427:2715: \"Advanced settings - tunnel mode, phone state, line sharing\"\n// under the channels). The parts carry no look of their own beyond the motion: the content opens with its height\n// (200ms, the strong ease-out; closing is quicker). Style the trigger as the row it is (see the example).\ntype CollapsibleProps = Omit<React.ComponentProps<typeof ChakraCollapsible.Root>, \"onOpenChange\"> & { onOpenChange?: (open: boolean) => void };\nfunction Collapsible({ onOpenChange, ...props }: CollapsibleProps) {\n  return <ChakraCollapsible.Root unstyled data-slot=\"collapsible\" onOpenChange={(details) => onOpenChange?.(details.open)} {...props} />;\n}\n\nfunction CollapsibleTrigger(props: React.ComponentProps<typeof ChakraCollapsible.Trigger>) {\n  return <ChakraCollapsible.Trigger unstyled data-slot=\"collapsible-trigger\" {...props} />;\n}\n\nfunction CollapsibleContent({ className, ...props }: React.ComponentProps<typeof ChakraCollapsible.Content>) {\n  return <ChakraCollapsible.Content unstyled data-slot=\"collapsible-content\" className={cn(\"overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down\", className)} {...props} />;\n}\n\nexport { Collapsible, CollapsibleContent, CollapsibleTrigger };\n"
+    }
+  ]
+}

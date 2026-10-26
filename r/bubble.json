@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "bubble",
+  "useFor": "Use inside Message for each piece of a conversation with an agent or a contact. Use the default (purple) variant with align end for what the person or their agent sent, secondary (lilac) for what arrived, tinted for another agent over Agent2Agent, muted for a system note, outline for a quoted message and destructive for one that failed to send. Stack consecutive bubbles in a BubbleGroup so only the last keeps the tail. BubbleReactions pins reactions to an edge.",
+  "constraints": [
+    "Bubbles in colors outside the palette",
+    "An entrance animation on each bubble",
+    "Text smaller than 14px",
+    "Square corners"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): iMessage and the inbox, in the action purple and the lilac",
+  "exports": [
+    "Bubble",
+    "BubbleContent",
+    "BubbleGroup",
+    "BubbleReactions",
+    "bubbleVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/bubble",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/bubble.md",
+  "examples": [
+    {
+      "path": "examples/bubble.tsx",
+      "content": "import { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from \"@/components/ui/bubble\";\n\nexport function Preview() {\n  return (\n    <div className=\"mx-auto flex w-full max-w-120 flex-col gap-3\">\n      <BubbleGroup>\n        <Bubble variant=\"secondary\">\n          <BubbleContent>Hi, can you send me the invoice for August?</BubbleContent>\n        </Bubble>\n        <Bubble variant=\"secondary\">\n          <BubbleContent>The one from acme@inkboxmail.com.</BubbleContent>\n        </Bubble>\n      </BubbleGroup>\n      <Bubble align=\"end\">\n        <BubbleContent>Sent it to you just now. It is also in your inbox as invoice-2026-08.pdf.</BubbleContent>\n        <BubbleReactions align=\"start\">👍</BubbleReactions>\n      </Bubble>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"mx-auto flex w-full max-w-120 flex-col gap-3\">\n      <Bubble variant=\"tinted\">\n        <BubbleContent>@ops-agent: I can take the delegated task. Starting now.</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"muted\">\n        <BubbleContent>Shared iMessage line connected.</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"outline\">\n        <BubbleContent>Quoted: Your agent will be reachable at acme-support.inkboxwire.com</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"destructive\" align=\"end\">\n        <BubbleContent>Not delivered. The recipient blocks unknown senders.</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"ghost\">\n        <BubbleContent>A ghost bubble sets text without a box, for long agent output.</BubbleContent>\n      </Bubble>\n      <Bubble align=\"end\">\n        <BubbleContent asChild>\n          <button type=\"button\">Retry sending</button>\n        </BubbleContent>\n      </Bubble>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Variants"
+      ],
+      "requires": [
+        "bubble"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/bubble/Preview"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/bubble/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Bubble",
+  "description": "A message bubble: incoming on the lilac, outgoing in the action purple, 16px corners with a 4px tail corner.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/bubble.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A message bubble in an agent conversation, in the console's colors (Figma 427:2715, iMessage and the inbox): an\n// incoming message on the lilac with ink text, an outgoing one in the action purple with white text. 14px text on a 21px\n// line, 14px by 10px of padding, 16px corners with the tail corner (bottom left for incoming, bottom right for outgoing)\n// cut to 4px. In a BubbleGroup only the last bubble keeps the tail. Bubbles never animate in: a conversation is read\n// all day.\nfunction BubbleGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"bubble-group\" className={cn(\"flex min-w-0 flex-col gap-1 [&>[data-slot=bubble]:not(:last-child)>[data-slot=bubble-content]]:rounded-dialog\", className)} {...props} />;\n}\n\nconst bubbleVariants = cva(\n  \"group/bubble relative flex w-fit max-w-[80%] min-w-0 flex-col gap-1 group-data-[align=end]/message:self-end data-[align=end]:self-end data-[align=start]:*:data-[slot=bubble-content]:rounded-bl-xs data-[align=end]:*:data-[slot=bubble-content]:rounded-br-xs data-[variant=ghost]:max-w-full\",\n  {\n    variants: {\n      variant: {\n        // Outgoing: the purple, as the main action.\n        default: \"*:data-[slot=bubble-content]:bg-primary *:data-[slot=bubble-content]:text-on-primary [&>[data-slot=bubble-content]:is(button,a):hover]:bg-primary-hover\",\n        // Incoming: the lilac.\n        secondary: \"*:data-[slot=bubble-content]:bg-subtle *:data-[slot=bubble-content]:text-fg [&>[data-slot=bubble-content]:is(button,a):hover]:bg-subtle-hover\",\n        // A system or quoted message: the cool gray of a neutral tag.\n        muted: \"*:data-[slot=bubble-content]:bg-tag-gray *:data-[slot=bubble-content]:text-fg-secondary [&>[data-slot=bubble-content]:is(button,a):hover]:bg-subtle-hover\",\n        // Another agent (Agent2Agent): the pale purple of a Signed tag.\n        tinted: \"*:data-[slot=bubble-content]:bg-tag-purple *:data-[slot=bubble-content]:text-fg [&>[data-slot=bubble-content]:is(button,a):hover]:bg-subtle-hover\",\n        outline: \"*:data-[slot=bubble-content]:border-line-field *:data-[slot=bubble-content]:bg-surface *:data-[slot=bubble-content]:text-fg [&>[data-slot=bubble-content]:is(button,a):hover]:bg-subtle\",\n        ghost: \"*:data-[slot=bubble-content]:rounded-none *:data-[slot=bubble-content]:bg-transparent *:data-[slot=bubble-content]:p-0 *:data-[slot=bubble-content]:text-fg\",\n        // A message that failed to send.\n        destructive: \"*:data-[slot=bubble-content]:border-danger *:data-[slot=bubble-content]:bg-surface *:data-[slot=bubble-content]:text-danger [&>[data-slot=bubble-content]:is(button,a):hover]:bg-subtle\",\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\nfunction Bubble({ variant = \"default\", align = \"start\", className, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof bubbleVariants> & { align?: \"start\" | \"end\" }) {\n  return <div data-slot=\"bubble\" data-variant={variant} data-align={align} className={cn(bubbleVariants({ variant }), className)} {...props} />;\n}\n\nfunction BubbleContent({ asChild = false, className, ...props }: React.ComponentProps<\"div\"> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.div : \"div\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return (\n    <Comp {...slotProps}\n      data-slot=\"bubble-content\"\n      className={cn(\n        \"w-fit max-w-full min-w-0 overflow-hidden rounded-dialog border border-transparent px-3.5 py-2.5 font-sans text-body leading-body break-words group-data-[align=end]/bubble:self-end [button]:cursor-pointer [button]:text-left [button,a]:outline-none [button,a]:transition-colors [button,a]:duration-150 [button,a]:ease-out [button,a]:focus-visible:outline-2 [button,a]:focus-visible:outline-offset-2 [button,a]:focus-visible:outline-focus-ring motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nconst bubbleReactionsVariants = cva(\n  \"absolute z-10 flex w-fit shrink-0 items-center justify-center gap-1 rounded-pill bg-surface px-1.5 py-0.5 text-body-sm leading-tight text-fg shadow-s has-[button]:p-0\",\n  {\n    variants: {\n      side: { top: \"top-0 -translate-y-3/4\", bottom: \"bottom-0 translate-y-3/4\" },\n      align: { start: \"left-3\", end: \"right-3\" },\n    },\n    defaultVariants: { side: \"bottom\", align: \"end\" },\n  },\n);\n\n/** Reactions pinned to a bubble's edge: a white pill with Shadow/S. */\nfunction BubbleReactions({ side = \"bottom\", align = \"end\", className, ...props }: React.ComponentProps<\"div\"> & { align?: \"start\" | \"end\"; side?: \"top\" | \"bottom\" }) {\n  return <div data-slot=\"bubble-reactions\" data-align={align} data-side={side} className={cn(bubbleReactionsVariants({ side, align }), className)} {...props} />;\n}\n\nexport { Bubble, BubbleContent, BubbleGroup, BubbleReactions, bubbleVariants };\n"
+    }
+  ]
+}

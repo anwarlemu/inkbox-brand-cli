@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "name": "date-picker",
+  "useFor": "Use DatePicker for one date (a key's expiry, when to send) and DateRangePicker for a period (the delivery log's range). Pass value and onValueChange, a placeholder, and presets for common choices (Today, Last 7 days). Pass calendar props such as disabled days through calendar. Give it a name to submit the date as YYYY-MM-DD with a form.",
+  "constraints": [
+    "A text field people must type a date into",
+    "A range picker for a single date",
+    "More than six presets",
+    "Closing a range before both ends are picked"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the select trigger (Any State) and the menu panel, with the calendar",
+  "exports": [
+    "DatePicker",
+    "DateRangePicker",
+    "formatDate",
+    "formatRange",
+    "DatePickerProps",
+    "DateRangePickerProps"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/date-picker",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/date-picker.md",
+  "examples": [
+    {
+      "path": "examples/date-picker.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport type { DateRange } from \"@/components/ui/calendar\";\nimport { DatePicker, DateRangePicker } from \"@/components/ui/date-picker\";\nimport { Label } from \"@/components/ui/label\";\n\n// A fixed today, so the examples read the same on every visit.\nconst TODAY = new Date(2026, 7, 8);\nconst days = (n: number) => new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + n);\n\nexport function Preview() {\n  const [date, setDate] = React.useState<Date | undefined>();\n  return (\n    <div className=\"grid w-full max-w-72 gap-1\">\n      <Label htmlFor=\"expires\">Key expires</Label>\n      <DatePicker id=\"expires\" value={date} onValueChange={setDate} placeholder=\"Never\" calendar={{ today: TODAY, disabled: { before: TODAY } }} />\n    </div>\n  );\n}\n\nexport function Range() {\n  const [range, setRange] = React.useState<DateRange | undefined>({ from: days(-6), to: TODAY });\n  return (\n    <div className=\"grid w-full max-w-80 gap-1\">\n      <Label htmlFor=\"log-range\">Delivery log</Label>\n      <DateRangePicker id=\"log-range\" value={range} onValueChange={setRange} calendar={{ today: TODAY, disabled: { after: TODAY } }} />\n    </div>\n  );\n}\n\nexport function Presets() {\n  const [send, setSend] = React.useState<Date | undefined>(days(1));\n  const [range, setRange] = React.useState<DateRange | undefined>();\n  return (\n    <div className=\"grid w-full max-w-80 gap-4\">\n      <div className=\"grid gap-1\">\n        <Label htmlFor=\"send-at\">Send the summary on</Label>\n        <DatePicker\n          id=\"send-at\"\n          value={send}\n          onValueChange={setSend}\n          calendar={{ today: TODAY, disabled: { before: TODAY } }}\n          presets={[\n            { label: \"Today\", value: TODAY },\n            { label: \"Tomorrow\", value: days(1) },\n            { label: \"In a week\", value: days(7) },\n            { label: \"In a month\", value: days(30) },\n          ]}\n        />\n      </div>\n      <div className=\"grid gap-1\">\n        <Label htmlFor=\"usage-range\">Usage</Label>\n        <DateRangePicker\n          id=\"usage-range\"\n          value={range}\n          onValueChange={setRange}\n          placeholder=\"All time\"\n          calendar={{ today: TODAY, disabled: { after: TODAY } }}\n          presets={[\n            { label: \"Last 7 days\", value: { from: days(-6), to: TODAY } },\n            { label: \"Last 30 days\", value: { from: days(-29), to: TODAY } },\n            { label: \"Last 90 days\", value: { from: days(-89), to: TODAY } },\n          ]}\n        />\n      </div>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-72 gap-3\">\n      <DatePicker aria-label=\"Disabled date\" defaultValue={TODAY} disabled />\n      <div className=\"grid gap-1\">\n        <DatePicker aria-label=\"Start date\" aria-invalid calendar={{ today: TODAY }} />\n        <p className=\"text-caption leading-body text-danger\">Choose a start date.</p>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Range",
+        "Presets",
+        "States"
+      ],
+      "requires": [
+        "date-picker",
+        "calendar",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/date-picker/Preview"
+        },
+        {
+          "name": "Range",
+          "url": "https://inkbox-ds.vercel.app/preview/date-picker/Range"
+        },
+        {
+          "name": "Presets",
+          "url": "https://inkbox-ds.vercel.app/preview/date-picker/Presets"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/date-picker/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Date Picker",
+  "description": "The select trigger with a calendar glyph that opens the calendar in a white panel, for one date or a range, with optional presets.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "calendar",
+    "popover",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/date-picker.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CalendarBlankIcon, CaretDownIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Calendar, type CalendarProps, type DateRange } from \"@/components/ui/calendar\";\nimport { Popover, PopoverContent, PopoverTrigger } from \"@/components/ui/popover\";\nimport { cn } from \"@/lib/utils\";\n\n// A date field (extrapolated from the Inkbox console, Figma 427:2715: the select trigger \"Any State\" and its menu\n// panel). The trigger is the select's white 40px key with 8px corners and the Shadow/S ring: a 24px calendar glyph in\n// the softer purple, the date in 14px ink (the placeholder in the light purple) and the bold caret at the right. The\n// calendar opens under it in the popover's white panel, growing from the trigger. Presets sit in a column of 36px rows\n// at the panel's left, the chosen one on the lilac. A single date closes the panel when picked; a range closes once both\n// ends are set. Opening puts focus on the chosen day (or today), so the arrow keys work at once.\nconst TRIGGER =\n  \"flex h-10 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-pill bg-surface pr-3 pl-3 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[empty=true]:text-fg-subtle motion-reduce:transition-none\";\n\ntype Preset<T> = { label: string; value: T };\n\nfunction formatDate(date: Date, locale?: string, options: Intl.DateTimeFormatOptions = { month: \"short\", day: \"numeric\", year: \"numeric\" }) {\n  return new Intl.DateTimeFormat(locale, options).format(date);\n}\n\nfunction formatRange(range: DateRange | undefined, locale?: string) {\n  if (!range?.from) return undefined;\n  if (!range.to) return `${formatDate(range.from, locale)} -`;\n  const sameYear = range.from.getFullYear() === range.to.getFullYear();\n  return `${formatDate(range.from, locale, sameYear ? { month: \"short\", day: \"numeric\" } : undefined)} - ${formatDate(range.to, locale)}`;\n}\n\nfunction DatePickerTrigger({ empty, label, className, children, ...props }: React.ComponentProps<\"button\"> & { empty: boolean; label?: string }) {\n  return (\n    <PopoverTrigger asChild>\n      <button type=\"button\" data-slot=\"date-picker-trigger\" data-empty={empty} aria-label={label} className={cn(TRIGGER, className)} {...props}>\n        <CalendarBlankIcon aria-hidden weight=\"fill\" className=\"size-6 shrink-0 text-icon-secondary\" />\n        <span className=\"min-w-0 flex-1 truncate text-left\">{children}</span>\n        <CaretDownIcon aria-hidden weight=\"bold\" className=\"size-4 shrink-0 text-fg\" />\n      </button>\n    </PopoverTrigger>\n  );\n}\n\nfunction Presets<T>({ presets, isActive, onPick }: { presets: Preset<T>[]; isActive: (p: Preset<T>) => boolean; onPick: (value: T) => void }) {\n  return (\n    <div data-slot=\"date-picker-presets\" role=\"group\" aria-label=\"Presets\" className=\"flex gap-1 overflow-x-auto border-line-subtle p-1 max-sm:border-b sm:w-40 sm:flex-col sm:border-r\">\n      {presets.map((p) => (\n        <button\n          key={p.label}\n          type=\"button\"\n          aria-pressed={isActive(p)}\n          onClick={() => onPick(p.value)}\n          className=\"flex h-9 shrink-0 items-center rounded-pill px-2.5 text-left font-sans text-body leading-tight whitespace-nowrap text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-pressed:bg-subtle motion-reduce:transition-none\"\n        >\n          {p.label}\n        </button>\n      ))}\n    </div>\n  );\n}\n\nconst sameDay = (a?: Date, b?: Date) => !!a && !!b && a.toDateString() === b.toDateString();\n\ntype CalendarPassThrough = Omit<CalendarProps, \"mode\" | \"selected\" | \"onSelect\" | \"required\" | \"min\" | \"max\">;\n\ntype DatePickerProps = {\n  value?: Date;\n  defaultValue?: Date;\n  onValueChange?: (date: Date | undefined) => void;\n  placeholder?: string;\n  disabled?: boolean;\n  /** Shortcuts beside the calendar (Today, In a week). */\n  presets?: Preset<Date>[];\n  /** Props for the calendar inside (disabled days, the first day of the week, today). */\n  calendar?: CalendarPassThrough;\n  locale?: string;\n  id?: string;\n  name?: string;\n  className?: string;\n  \"aria-invalid\"?: boolean;\n  \"aria-label\"?: string;\n};\n\nfunction DatePicker({ value: valueProp, defaultValue, onValueChange, placeholder = \"Pick a date\", disabled, presets, calendar, locale, id, name, className, ...aria }: DatePickerProps) {\n  const [open, setOpen] = React.useState(false);\n  const [inner, setInner] = React.useState(defaultValue);\n  const value = valueProp !== undefined ? valueProp : inner;\n  const set = (d: Date | undefined) => {\n    if (valueProp === undefined) setInner(d);\n    onValueChange?.(d);\n  };\n  return (\n    <Popover open={open} onOpenChange={setOpen}>\n      <DatePickerTrigger id={id} empty={!value} disabled={disabled} className={className} aria-invalid={aria[\"aria-invalid\"]} label={aria[\"aria-label\"]}>\n        {value ? formatDate(value, locale) : placeholder}\n      </DatePickerTrigger>\n      {name && <input type=\"hidden\" name={name} value={value ? value.toISOString().slice(0, 10) : \"\"} />}\n      <PopoverContent data-slot=\"date-picker-content\" align=\"start\" onOpenAutoFocus={(e) => e.preventDefault()} className=\"w-auto gap-0 overflow-hidden p-0\">\n        <div className=\"flex flex-col sm:flex-row\">\n          {presets && (\n            <Presets\n              presets={presets}\n              isActive={(p) => sameDay(p.value, value)}\n              onPick={(d) => {\n                set(d);\n                setOpen(false);\n              }}\n            />\n          )}\n          <Calendar\n            {...calendar}\n            mode=\"single\"\n            selected={value}\n            defaultMonth={value ?? calendar?.defaultMonth}\n            locale={locale}\n            autoFocus\n            onSelect={(d) => {\n              set(d);\n              if (d) setOpen(false);\n            }}\n          />\n        </div>\n      </PopoverContent>\n    </Popover>\n  );\n}\n\ntype DateRangePickerProps = Omit<DatePickerProps, \"value\" | \"defaultValue\" | \"onValueChange\" | \"presets\"> & {\n  value?: DateRange;\n  defaultValue?: DateRange;\n  onValueChange?: (range: DateRange | undefined) => void;\n  presets?: Preset<DateRange>[];\n  /** How many months show side by side (two by default; one on a phone). */\n  numberOfMonths?: number;\n};\n\nfunction DateRangePicker({ value: valueProp, defaultValue, onValueChange, placeholder = \"Pick a date range\", disabled, presets, calendar, locale, numberOfMonths = 2, id, name, className, ...aria }: DateRangePickerProps) {\n  const [open, setOpen] = React.useState(false);\n  const [inner, setInner] = React.useState(defaultValue);\n  const value = valueProp !== undefined ? valueProp : inner;\n  const set = (r: DateRange | undefined) => {\n    if (valueProp === undefined) setInner(r);\n    onValueChange?.(r);\n  };\n  const [narrow, setNarrow] = React.useState(false);\n  React.useEffect(() => {\n    const query = window.matchMedia(\"(max-width: 39.99rem)\");\n    const update = () => setNarrow(query.matches);\n    update();\n    query.addEventListener(\"change\", update);\n    return () => query.removeEventListener(\"change\", update);\n  }, []);\n  const label = formatRange(value, locale);\n  return (\n    <Popover open={open} onOpenChange={setOpen}>\n      <DatePickerTrigger id={id} empty={!label} disabled={disabled} className={className} aria-invalid={aria[\"aria-invalid\"]} label={aria[\"aria-label\"]}>\n        {label ?? placeholder}\n      </DatePickerTrigger>\n      {name && (\n        <>\n          <input type=\"hidden\" name={`${name}From`} value={value?.from ? value.from.toISOString().slice(0, 10) : \"\"} />\n          <input type=\"hidden\" name={`${name}To`} value={value?.to ? value.to.toISOString().slice(0, 10) : \"\"} />\n        </>\n      )}\n      <PopoverContent data-slot=\"date-range-picker-content\" align=\"start\" onOpenAutoFocus={(e) => e.preventDefault()} className=\"w-auto max-w-[calc(100vw-2rem)] gap-0 overflow-hidden p-0\">\n        <div className=\"flex flex-col sm:flex-row\">\n          {presets && (\n            <Presets\n              presets={presets}\n              isActive={(p) => sameDay(p.value.from, value?.from) && sameDay(p.value.to, value?.to)}\n              onPick={(r) => {\n                set(r);\n                setOpen(false);\n              }}\n            />\n          )}\n          <Calendar\n            {...calendar}\n            mode=\"range\"\n            selected={value}\n            defaultMonth={value?.from ?? calendar?.defaultMonth}\n            numberOfMonths={narrow ? 1 : numberOfMonths}\n            locale={locale}\n            autoFocus\n            onSelect={(r) => {\n              set(r);\n              if (r?.from && r.to) setOpen(false);\n            }}\n          />\n        </div>\n      </PopoverContent>\n    </Popover>\n  );\n}\n\nexport { DatePicker, DateRangePicker, formatDate, formatRange };\nexport type { DatePickerProps, DateRangePickerProps };\n"
+    }
+  ]
+}

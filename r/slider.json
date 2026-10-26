@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "slider",
+  "useFor": "Use to pick an approximate value in a range where the exact number matters less than its position (a daily send limit, a retry delay, a storage quota). Show the current value next to its label. Pass two values for a range.",
+  "constraints": [
+    "A slider for exact numbers (use Input)",
+    "A thick or colored knob",
+    "Ticks on every step"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the switch's knob and purple, the field's lilac-gray",
+  "exports": [
+    "Slider"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/slider",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/slider.md",
+  "examples": [
+    {
+      "path": "examples/slider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Label } from \"@/components/ui/label\";\nimport { Slider } from \"@/components/ui/slider\";\n\nexport function Preview() {\n  const [limit, setLimit] = React.useState([250]);\n  return (\n    <div className=\"grid w-full max-w-100 gap-3\">\n      <div className=\"flex items-center justify-between\">\n        <Label id=\"limit-label\">Daily send limit</Label>\n        <span className=\"text-body text-fg-muted\">{limit[0]} emails</span>\n      </div>\n      <Slider aria-labelledby=\"limit-label\" value={limit} onValueChange={setLimit} max={1000} step={50} />\n    </div>\n  );\n}\n\nexport function Range() {\n  const [hours, setHours] = React.useState([9, 17]);\n  return (\n    <div className=\"grid w-full max-w-100 gap-3\">\n      <div className=\"flex items-center justify-between\">\n        <Label id=\"hours-label\">Calling hours</Label>\n        <span className=\"text-body text-fg-muted\">\n          {hours[0]}:00 to {hours[1]}:00\n        </span>\n      </div>\n      <Slider aria-labelledby=\"hours-label\" value={hours} onValueChange={setHours} min={0} max={24} step={1} minStepsBetweenThumbs={1} />\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-100 gap-6\">\n      <Slider aria-label=\"Disabled\" defaultValue={[40]} disabled />\n      <div className=\"flex h-40 gap-8\">\n        <Slider aria-label=\"Vertical\" defaultValue={[60]} orientation=\"vertical\" />\n        <Slider aria-label=\"Vertical range\" defaultValue={[20, 70]} orientation=\"vertical\" />\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Range",
+        "States"
+      ],
+      "requires": [
+        "slider",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/slider/Preview"
+        },
+        {
+          "name": "Range",
+          "url": "https://inkbox-ds.vercel.app/preview/slider/Range"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/slider/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Slider",
+  "description": "A 6px lilac-gray track filled purple to the value, with the switch's white knob.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/slider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Slider as ChakraSlider } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Extrapolated from the console's switch (Figma \"Toggle\"): a 6px pill track in the field's lilac-gray, filled with the\n// action purple up to the value, and a 20px white knob with the switch knob's soft drop. Under the pointer or keyboard\n// focus the knob takes a soft purple halo; it never animates its position (it follows the pointer). Pass two values for\n// a range.\ntype SliderProps = Omit<React.ComponentProps<typeof ChakraSlider.Root>, \"onValueChange\" | \"aria-label\" | \"aria-labelledby\"> & { onValueChange?: (value: number[]) => void; \"aria-label\"?: string | string[]; \"aria-labelledby\"?: string | string[] };\nfunction Slider({ className, defaultValue, value, min = 0, max = 100, onValueChange, \"aria-label\": ariaLabel, \"aria-labelledby\": ariaLabelledBy, ...props }: SliderProps) {\n  const values = React.useMemo(() => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]), [value, defaultValue, min, max]);\n  return (\n    <ChakraSlider.Root\n      unstyled\n      data-slot=\"slider\"\n      defaultValue={defaultValue}\n      value={value}\n      onValueChange={(details) => onValueChange?.(details.value)}\n      aria-label={ariaLabel === undefined ? undefined : Array.isArray(ariaLabel) ? ariaLabel : [ariaLabel]}\n      aria-labelledby={ariaLabelledBy === undefined ? undefined : Array.isArray(ariaLabelledBy) ? ariaLabelledBy : [ariaLabelledBy]}\n      min={min}\n      max={max}\n      className={cn(\n        \"relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col\",\n        className,\n      )}\n      {...props}\n    >\n      <ChakraSlider.Control>\n      <ChakraSlider.Track\n        data-slot=\"slider-track\"\n        className=\"relative grow overflow-hidden rounded-pill bg-line-field data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5\"\n      >\n        <ChakraSlider.Range data-slot=\"slider-range\" className=\"absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full\" />\n      </ChakraSlider.Track>\n      {Array.from({ length: values.length }, (_, index) => (\n        <ChakraSlider.Thumb\n          data-slot=\"slider-thumb\"\n          index={index}\n          key={index}\n          aria-label={Array.isArray(ariaLabel) ? ariaLabel[index] : ariaLabel ?? (values.length > 1 ? (index === 0 ? \"Minimum\" : \"Maximum\") : undefined)}\n          className=\"block size-5 shrink-0 cursor-grab rounded-pill bg-surface shadow-knob outline-none transition-[box-shadow] duration-150 ease-out hover:shadow-[var(--ds-shadow-knob),0_0_0_4px_var(--ds-color-ring-tint)] focus-visible:shadow-[var(--ds-shadow-knob),0_0_0_4px_var(--ds-color-ring-tint)] active:cursor-grabbing disabled:pointer-events-none motion-reduce:transition-none\"\n        ><ChakraSlider.HiddenInput /></ChakraSlider.Thumb>\n      ))}\n      </ChakraSlider.Control>\n    </ChakraSlider.Root>\n  );\n}\n\nexport { Slider };\n"
+    }
+  ]
+}

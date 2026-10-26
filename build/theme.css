@@ -1,0 +1,489 @@
+/* Written by inkbox-ds from its brand files. Do not edit; run the CLI again to update. */
+@theme inline {
+	--color-brand: var(--ds-color-brand);
+	--color-black: var(--ds-color-black);
+	--color-white: var(--ds-color-white);
+	--color-primary: var(--ds-color-action-primary);
+	--color-primary-hover: var(--ds-color-action-primary-hover);
+	--color-on-primary: var(--ds-color-action-primary-fg);
+	--color-focus-ring: var(--ds-color-focus-ring);
+	--color-surface: var(--ds-color-bg-default);
+	--color-surface-brand: var(--ds-color-bg-brand);
+	--color-subtle: var(--ds-color-bg-subtle);
+	--color-frame: var(--ds-color-bg-frame);
+	--color-canvas: var(--ds-color-bg-canvas);
+	--color-tint: var(--ds-color-bg-tint);
+	--color-inverse: var(--ds-color-bg-inverse);
+	--color-dark: var(--ds-color-bg-dark);
+	--color-code: var(--ds-color-bg-code);
+	--color-scrim: var(--ds-color-bg-scrim);
+	--color-fg: var(--ds-color-text-default);
+	--color-fg-secondary: var(--ds-color-text-secondary);
+	--color-fg-muted: var(--ds-color-text-muted);
+	--color-fg-subtle: var(--ds-color-text-subtle);
+	--color-fg-faint: var(--ds-color-text-faint);
+	--color-fg-nav: var(--ds-color-text-nav);
+	--color-fg-inverse: var(--ds-color-text-inverse);
+	--color-fg-brand: var(--ds-color-text-brand);
+	--color-on-brand: var(--ds-color-text-on-brand);
+	--color-line: var(--ds-color-border-default);
+	--color-line-subtle: var(--ds-color-border-subtle);
+	--color-line-strong: var(--ds-color-border-strong);
+	--color-success: var(--ds-color-status-success);
+	--color-warning: var(--ds-color-status-warning);
+	--color-danger: var(--ds-color-status-danger);
+	--color-ink: var(--ds-color-ink);
+	--color-lilac: var(--ds-color-lilac);
+	--color-pink: var(--ds-color-pink);
+	--color-rose: var(--ds-color-rose);
+	--color-avatar: var(--ds-color-avatar);
+	--color-page: var(--ds-color-bg-page);
+	--color-subtle-hover: var(--ds-color-bg-subtle-hover);
+	--color-code-head: var(--ds-color-bg-code-head);
+	--color-off: var(--ds-color-bg-off);
+	--color-fg-label: var(--ds-color-text-label);
+	--color-icon-default: var(--ds-color-icon-default);
+	--color-icon-secondary: var(--ds-color-icon-secondary);
+	--color-code-key: var(--ds-color-code-key);
+	--color-code-string: var(--ds-color-code-string);
+	--color-code-line: var(--ds-color-code-line);
+	--color-code-brace: var(--ds-color-code-brace);
+	--color-code-text: var(--ds-color-code-text);
+	--color-code-punct: var(--ds-color-code-punct);
+	--color-code-line-active: var(--ds-color-code-line-active);
+	--color-code-head-fg: var(--ds-color-code-head-fg);
+	--color-code-keyword: var(--ds-color-code-keyword);
+	--color-code-comment: var(--ds-color-code-comment);
+	--color-code-number: var(--ds-color-code-number);
+	--color-code-function: var(--ds-color-code-function);
+	--color-code-type: var(--ds-color-code-type);
+	--color-code-tag: var(--ds-color-code-tag);
+	--color-code-attr: var(--ds-color-code-attr);
+	--color-line-field: var(--ds-color-border-field);
+	--color-line-row: var(--ds-color-border-row);
+	--color-line-ring: var(--ds-color-border-ring);
+	--color-shadow-drop: var(--ds-color-shadow-drop);
+	--color-line-brand: var(--ds-color-border-brand);
+	--color-line-pink: var(--ds-color-border-pink);
+	--color-line-code: var(--ds-color-border-code);
+	--color-wash-hover: var(--ds-color-wash-hover);
+	--color-ring-tint: var(--ds-color-ring-tint);
+	--color-success-bg: var(--ds-color-status-success-bg);
+	--color-warning-bg: var(--ds-color-status-warning-bg);
+	--color-warning-fg: var(--ds-color-status-warning-fg);
+	--color-warning-muted: var(--ds-color-status-warning-muted);
+	--color-danger-strong: var(--ds-color-status-danger-strong);
+	--color-info: var(--ds-color-status-info);
+	--color-info-bg: var(--ds-color-status-info-bg);
+	--color-info-fg: var(--ds-color-status-info-fg);
+	--color-tag-blue: var(--ds-color-tag-blue);
+	--color-tag-blue-fg: var(--ds-color-tag-blue-fg);
+	--color-tag-purple: var(--ds-color-tag-purple);
+	--color-tag-purple-fg: var(--ds-color-tag-purple-fg);
+	--color-tag-gray: var(--ds-color-tag-gray);
+	--color-series-1: var(--ds-color-chart-series-1);
+	--color-series-2: var(--ds-color-chart-series-2);
+	--color-series-3: var(--ds-color-chart-series-3);
+	--color-series-4: var(--ds-color-chart-series-4);
+	--color-series-5: var(--ds-color-chart-series-5);
+	--font-sans: var(--ds-font-sans);
+	--font-display: var(--ds-font-display);
+	--font-mono: var(--ds-font-mono);
+	--font-code: var(--ds-font-code);
+	--font-weight-normal: var(--ds-font-weight-regular);
+	--font-weight-medium: var(--ds-font-weight-medium);
+	--font-weight-semibold: var(--ds-font-weight-semibold);
+	--font-weight-bold: var(--ds-font-weight-bold);
+	--font-weight-heading: var(--ds-font-weight-heading);
+	--spacing: var(--ds-space-1);
+	--spacing-0: var(--ds-space-0);
+	--spacing-px: var(--ds-space-px);
+	--spacing-0\.5: var(--ds-space-0-5);
+	--spacing-1: var(--ds-space-1);
+	--spacing-1\.5: var(--ds-space-1-5);
+	--spacing-2: var(--ds-space-2);
+	--spacing-2\.5: var(--ds-space-2-5);
+	--spacing-3: var(--ds-space-3);
+	--spacing-3\.5: var(--ds-space-3-5);
+	--spacing-4: var(--ds-space-4);
+	--spacing-5: var(--ds-space-5);
+	--spacing-6: var(--ds-space-6);
+	--spacing-7: var(--ds-space-7);
+	--spacing-8: var(--ds-space-8);
+	--spacing-9: var(--ds-space-9);
+	--spacing-9\.5: var(--ds-space-9-5);
+	--spacing-10: var(--ds-space-10);
+	--spacing-10\.5: var(--ds-space-10-5);
+	--spacing-12: var(--ds-space-12);
+	--spacing-14: var(--ds-space-14);
+	--spacing-16: var(--ds-space-16);
+	--spacing-20: var(--ds-space-20);
+	--spacing-24: var(--ds-space-24);
+	--spacing-layout-column: var(--ds-layout-column);
+	--spacing-layout-gutter: var(--ds-layout-gutter);
+	--spacing-layout-text: var(--ds-layout-text);
+	--spacing-layout-heading: var(--ds-layout-heading);
+	--spacing-layout-header: var(--ds-layout-header);
+	--spacing-layout-rail: var(--ds-layout-rail);
+	--container-frame-column: var(--ds-frame-column);
+	--blur-scrim: var(--ds-blur-scrim);
+	--transition-duration-fast: var(--ds-duration-fast);
+	--transition-duration-150: var(--ds-duration-fast);
+	--transition-duration-base: var(--ds-duration-base);
+	--transition-duration-200: var(--ds-duration-base);
+	--transition-duration-moderate: var(--ds-duration-moderate);
+	--transition-duration-250: var(--ds-duration-moderate);
+	--transition-duration-slow: var(--ds-duration-slow);
+	--transition-duration-300: var(--ds-duration-slow);
+	--default-transition-duration: var(--ds-duration-fast);
+	--default-transition-timing-function: var(--ds-easing-out);
+	--text-display: var(--ds-text-display);
+	--text-h1: var(--ds-text-h1);
+	--text-h2: var(--ds-text-h2);
+	--text-h3: var(--ds-text-h3);
+	--text-h4: var(--ds-text-h4);
+	--text-body-lg: var(--ds-text-body-lg);
+	--text-body: var(--ds-text-body);
+	--text-body-sm: var(--ds-text-body-sm);
+	--text-caption: var(--ds-text-caption);
+	--text-micro: var(--ds-text-micro);
+	--leading-tight: var(--ds-leading-tight);
+	--leading-heading: var(--ds-leading-heading);
+	--leading-display: var(--ds-leading-display);
+	--leading-snug: var(--ds-leading-snug);
+	--leading-body: var(--ds-leading-body);
+	--leading-relaxed: var(--ds-leading-relaxed);
+	--leading-code: var(--ds-leading-code);
+	--tracking-normal: var(--ds-tracking-normal);
+	--tracking-tight: var(--ds-tracking-tight);
+	--tracking-caps: var(--ds-tracking-caps);
+	--radius-xs: var(--ds-radius-xs);
+	--radius-sm: var(--ds-radius-sm);
+	--radius-control: var(--ds-radius-control);
+	--radius-panel: var(--ds-radius-panel);
+	--radius-dialog: var(--ds-radius-dialog);
+	--radius-pill: var(--ds-radius-pill);
+	--shadow-s: var(--ds-shadow-s);
+	--shadow-card: var(--ds-shadow-card);
+	--shadow-line: var(--ds-shadow-line);
+	--shadow-floating: var(--ds-shadow-floating);
+	--shadow-dialog: var(--ds-shadow-dialog);
+	--shadow-knob: var(--ds-shadow-knob);
+	--shadow-focus: var(--ds-shadow-focus);
+	--ease-out: var(--ds-easing-out);
+	--ease-in-out: var(--ds-easing-in-out);
+	--ease-drawer: var(--ds-easing-drawer);
+}
+
+@theme {
+	--animate-pop-in: ds-pop-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-pop-out: ds-pop-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
+	--animate-fade-in: ds-fade-in var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-fade-out: ds-fade-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
+	--animate-dialog-in: ds-dialog-in var(--ds-duration-moderate) var(--ds-easing-out);
+	--animate-dialog-out: ds-dialog-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
+	--animate-sheet-in-right: ds-sheet-in-right var(--ds-duration-slow) var(--ds-easing-drawer);
+	--animate-sheet-out-right: ds-sheet-out-right var(--ds-duration-base) var(--ds-easing-drawer) forwards;
+	--animate-sheet-in-left: ds-sheet-in-left var(--ds-duration-slow) var(--ds-easing-drawer);
+	--animate-sheet-out-left: ds-sheet-out-left var(--ds-duration-base) var(--ds-easing-drawer) forwards;
+	--animate-sheet-in-top: ds-sheet-in-top var(--ds-duration-slow) var(--ds-easing-drawer);
+	--animate-sheet-out-top: ds-sheet-out-top var(--ds-duration-base) var(--ds-easing-drawer) forwards;
+	--animate-sheet-in-bottom: ds-sheet-in-bottom var(--ds-duration-slow) var(--ds-easing-drawer);
+	--animate-sheet-out-bottom: ds-sheet-out-bottom var(--ds-duration-base) var(--ds-easing-drawer) forwards;
+	--animate-content-in: ds-content-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-accordion-down: ds-accordion-down var(--ds-duration-base) var(--ds-easing-out);
+	--animate-accordion-up: ds-accordion-up var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-collapsible-down: ds-collapsible-down var(--ds-duration-base) var(--ds-easing-out);
+	--animate-collapsible-up: ds-collapsible-up var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-pulse-soft: ds-pulse-soft 1.6s var(--ds-easing-in-out) infinite;
+	--animate-spin-steady: spin 0.8s linear infinite;
+	--animate-caret-blink: ds-caret-blink 1.1s steps(1) infinite;
+	--animate-chart-line: ds-chart-line 700ms var(--ds-easing-out) backwards;
+	--animate-chart-bar: ds-chart-bar 400ms var(--ds-easing-out) backwards;
+
+	@keyframes ds-pop-in {
+		from {
+			opacity: 0;
+			transform: scale(0.96);
+		}
+	}
+
+	@keyframes ds-pop-out {
+		to {
+			opacity: 0;
+			transform: scale(0.96);
+		}
+	}
+
+	@keyframes ds-fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-dialog-in {
+		from {
+			opacity: 0;
+			transform: scale(0.96);
+		}
+	}
+
+	@keyframes ds-dialog-out {
+		to {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+
+	@keyframes ds-sheet-in-right {
+		from {
+			transform: translateX(100%);
+		}
+	}
+
+	@keyframes ds-sheet-out-right {
+		to {
+			transform: translateX(100%);
+		}
+	}
+
+	@keyframes ds-sheet-in-left {
+		from {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes ds-sheet-out-left {
+		to {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes ds-sheet-in-top {
+		from {
+			transform: translateY(-100%);
+		}
+	}
+
+	@keyframes ds-sheet-out-top {
+		to {
+			transform: translateY(-100%);
+		}
+	}
+
+	@keyframes ds-sheet-in-bottom {
+		from {
+			transform: translateY(100%);
+		}
+	}
+
+	@keyframes ds-sheet-out-bottom {
+		to {
+			transform: translateY(100%);
+		}
+	}
+
+	@keyframes ds-content-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+	}
+
+	@keyframes ds-accordion-down {
+		from {
+			height: 0;
+			opacity: 0;
+		}
+		to {
+			height: var(--radix-accordion-content-height);
+		}
+	}
+
+	@keyframes ds-accordion-up {
+		from {
+			height: var(--radix-accordion-content-height);
+		}
+		to {
+			height: 0;
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-collapsible-down {
+		from {
+			height: 0;
+			opacity: 0;
+		}
+		to {
+			height: var(--radix-collapsible-content-height);
+		}
+	}
+
+	@keyframes ds-collapsible-up {
+		from {
+			height: var(--radix-collapsible-content-height);
+		}
+		to {
+			height: 0;
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-pulse-soft {
+		50% {
+			opacity: 0.55;
+		}
+	}
+
+	@keyframes ds-caret-blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-chart-line {
+		from {
+			stroke-dashoffset: 1;
+		}
+	}
+
+	@keyframes ds-chart-bar {
+		from {
+			transform: scaleY(0.04);
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@keyframes ds-pop-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-pop-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-dialog-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-dialog-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-content-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-in-right {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-out-right {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-in-left {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-out-left {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-in-top {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-out-top {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-in-bottom {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-out-bottom {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-chart-line {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-chart-bar {
+		from {
+			opacity: 0;
+		}
+	}
+}
+
+/* Shared interaction rules for installed CSS and the component theme. */
+@layer base {
+ :where(button, [role="button"], a[href], input, select, textarea, summary) {
+  touch-action: manipulation;
+ }
+}
+
+/* Press feedback is immediate; the action still activates through the native click/keyboard path. */
+:where(button, [role="button"], a[href], summary):active {
+ transition-duration: 0s !important;
+ transition-delay: 0s !important;
+}
+
+/* Keyboard feedback and explicitly high-frequency surfaces never wait for motion. */
+:where(button, [role="button"], a[href], input, select, textarea, summary):focus-visible,
+:where(button, [role="button"], a[href], input, select, textarea, summary):focus-visible *,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]),
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *::before,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *::after,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"])::before,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"])::after {
+ animation: none !important;
+ transition: none !important;
+ scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+ *, ::before, ::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+ }
+}

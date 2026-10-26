@@ -1,0 +1,66 @@
+{
+	"name": "Inkbox",
+	"bin": "inkbox-ds",
+	"source": "github:anwarlemu/inkbox-brand-cli#release",
+	"reviewModel": "claude-opus-5-5",
+	"reviewThreshold": 7,
+	"registryUrl": "https://inkbox-ds.vercel.app",
+	"site": "https://inkbox.ai",
+	"surfaces": [
+		"site"
+	],
+	"fonts": {
+		"css": "https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap",
+		"next": [
+			{
+				"import": "Inter",
+				"variable": "--font-inter",
+				"options": {
+					"display": "swap"
+				}
+			},
+			{
+				"import": "IBM_Plex_Mono",
+				"variable": "--font-plex-mono",
+				"options": {
+					"display": "swap",
+					"weight": [
+						"400",
+						"500"
+					]
+				}
+			}
+		],
+		"native": "Add Inter (all text) and IBM Plex Mono (keys, hosts, IDs and code) to the app as fonts and set them on its text styles"
+	},
+	"icons": {
+		"name": "Phosphor",
+		"packages": [
+			"@phosphor-icons/react",
+			"phosphor-react-native"
+		]
+	},
+	"touches": {},
+	"type": {
+		"caps": false,
+		"bold": true
+	},
+	"variants": {
+		"site": {
+			"filled": "default",
+			"outlined": "outline",
+			"quiet": "ghost",
+			"onBrand": "secondary",
+			"card": "default",
+			"size": "default",
+			"badges": {
+				"brand": "default",
+				"success": "success",
+				"warning": "gray",
+				"destructive": "destructive",
+				"tag": "blue",
+				"chip": "outline"
+			}
+		}
+	}
+}

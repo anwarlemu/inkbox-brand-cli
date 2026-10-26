@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "toggle",
+  "useFor": "Use for a two-state control that changes how something shows (bold, show archived, pin). Give an icon-only toggle an aria-label. For a group of exclusive choices use Toggle Group; for a setting use Switch.",
+  "constraints": [
+    "A toggle that submits a form",
+    "A purple filled toggle",
+    "Icon motion when it turns on"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the soft key (Tunnel quickstart) and the segmented choice",
+  "exports": [
+    "Toggle",
+    "toggleVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/toggle",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/toggle.md",
+  "examples": [
+    {
+      "path": "examples/toggle.tsx",
+      "content": "\"use client\";\n\nimport { ArchiveIcon, PushPinIcon, TextBIcon, TextItalicIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Toggle } from \"@/components/ui/toggle\";\n\nexport function Preview() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-2\">\n      <Toggle aria-label=\"Pin the thread\" defaultPressed>\n        <PushPinIcon weight=\"fill\" />\n      </Toggle>\n      <Toggle>\n        <ArchiveIcon weight=\"fill\" />\n        Show archived\n      </Toggle>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-2\">\n      <Toggle variant=\"outline\" aria-label=\"Bold\" defaultPressed>\n        <TextBIcon weight=\"bold\" />\n      </Toggle>\n      <Toggle variant=\"outline\" aria-label=\"Italic\">\n        <TextItalicIcon weight=\"bold\" />\n      </Toggle>\n      <Toggle size=\"sm\" aria-label=\"Pin, small\">\n        <PushPinIcon weight=\"fill\" />\n      </Toggle>\n      <Toggle size=\"lg\">Large</Toggle>\n      <Toggle disabled>Disabled</Toggle>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Variants"
+      ],
+      "requires": [
+        "toggle"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/toggle/Preview"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/toggle/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Toggle",
+  "description": "A 38px key with a glyph or a medium label that holds the lilac (or turns white in outline) while pressed.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toggle.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Toggle as TogglePrimitive } from \"radix-ui\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Extrapolated from the console's soft key (Tunnel quickstart) and its segmented choice (Where does this agent run?):\n// a 38px key with fully rounded corners, 8px of side padding and a 14px medium ink label beside a 20px glyph. Off it is bare and\n// washes lilac under the pointer; on it holds the lilac. `outline` adds the field edge and turns white with the Shadow/S\n// ring when on. In a ToggleGroup the default variant becomes the segmented track (see toggle-group). Press feedback is immediate and changes styling without resizing.\nconst toggleVariants = cva(\n  \"inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-pill font-sans text-body leading-tight font-medium whitespace-nowrap text-fg outline-none select-none transition-[background-color,box-shadow,color] duration-150 ease-out active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:text-danger motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent hover:bg-subtle data-[state=on]:bg-subtle data-[state=on]:text-fg-brand\",\n        outline: \"border border-line-field bg-surface hover:bg-subtle data-[state=on]:border-transparent data-[state=on]:bg-surface data-[state=on]:text-fg-brand data-[state=on]:shadow-s\",\n      },\n      size: {\n        default: \"h-9.5 min-w-9.5 px-2\",\n        sm: \"h-8 min-w-8 px-1.5 text-body-sm [&_svg:not([class*='size-'])]:size-4\",\n        lg: \"h-10.5 min-w-10.5 px-3\",\n      },\n    },\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\nfunction Toggle({ className, variant, size, ...props }: React.ComponentProps<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>) {\n  return <TogglePrimitive.Root data-slot=\"toggle\" className={cn(toggleVariants({ variant, size, className }))} {...props} />;\n}\n\nexport { Toggle, toggleVariants };\n"
+    }
+  ]
+}

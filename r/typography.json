@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "typography",
+  "useFor": "Use for written content (docs, help panes, agent prompts). TypographyH3 is the 20px page or dialog title; TypographyP is body copy; TypographyMuted the line under a title; TypographyInlineCode a key, host or ID. Interfaces built from components rarely need these.",
+  "constraints": [
+    "Bold titles",
+    "Letter spacing",
+    "Text sizes outside the scale",
+    "Purple body copy"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: page titles (Vault, Webhooks), dialog titles, the email body, inline hosts and keys",
+  "exports": [
+    "TypographyBlockquote",
+    "TypographyH1",
+    "TypographyH2",
+    "TypographyH3",
+    "TypographyH4",
+    "TypographyInlineCode",
+    "TypographyLarge",
+    "TypographyLead",
+    "TypographyList",
+    "TypographyMuted",
+    "TypographyP",
+    "TypographySmall",
+    "TypographyTable"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/typography",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/typography.md",
+  "examples": [
+    {
+      "path": "examples/typography.tsx",
+      "content": "import { TypographyBlockquote, TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyInlineCode, TypographyLarge, TypographyLead, TypographyList, TypographyMuted, TypographyP, TypographySmall, TypographyTable } from \"@/components/ui/typography\";\n\nexport function Preview() {\n  return (\n    <article className=\"w-full max-w-160\">\n      <TypographyH3>Tunnel</TypographyH3>\n      <TypographyMuted>Stable hostname routing inbound traffic to @acme.</TypographyMuted>\n      <TypographyP>\n        Each agent gets a public host such as <TypographyInlineCode>acme.inkboxwire.com</TypographyInlineCode>. Traffic reaches the agent wherever it runs, with TLS handled at the edge by default.\n      </TypographyP>\n      <TypographyBlockquote>Direct card URLs stay public whether or not you list in the directory. Listing only controls discovery.</TypographyBlockquote>\n      <TypographyList>\n        <li>Opt your card into the public directory with an admin key.</li>\n        <li>View the card Inkbox serves for you.</li>\n        <li>Find workers in the public directory.</li>\n      </TypographyList>\n      <TypographyTable>\n        <thead>\n          <tr>\n            <th>Field</th>\n            <th>Value</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>Handle</td>\n            <td>@test-agent-233</td>\n          </tr>\n          <tr>\n            <td>Email</td>\n            <td>test-agent-233@inkboxmail.com</td>\n          </tr>\n        </tbody>\n      </TypographyTable>\n    </article>\n  );\n}\n\nexport function Scale() {\n  return (\n    <div className=\"grid w-full max-w-160 gap-3\">\n      <TypographyH1>Agent Workspace</TypographyH1>\n      <TypographyH2>Create Your First Agent</TypographyH2>\n      <TypographyH3>Create Agent Identity</TypographyH3>\n      <TypographyH4>Email</TypographyH4>\n      <TypographyLead>Set up an identity to unlock mailbox, phone, and vault features.</TypographyLead>\n      <TypographyLarge>Your agent will be reachable at</TypographyLarge>\n      <TypographySmall>Shared lines are assigned when someone connects.</TypographySmall>\n      <TypographyList ordered>\n        <li>Create the agent.</li>\n        <li>Copy its API key.</li>\n      </TypographyList>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Scale"
+      ],
+      "requires": [
+        "typography"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/typography/Preview"
+        },
+        {
+          "name": "Scale",
+          "url": "https://inkbox-ds.vercel.app/preview/typography/Scale"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Typography",
+  "description": "The console's type as components: regular titles, 14px body copy, muted lines, lists, quotes and inline keys.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/typography.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's type as components (Figma 427:2715). Inter throughout, no tracking. Titles are regular, not bold: a page\n// or dialog title is 20px (H3); H1 and H2 are 24px and 22px for the rare larger heading; H4 is a 16px medium card\n// title. Body copy is 14px on a 1.5 line in ink, P under a title in the secondary purple; Muted is the 14px muted line\n// under a page title; Small is 12px; Lead is 16px secondary.\nfunction TypographyH1({ className, ...props }: React.ComponentProps<\"h1\">) {\n  return <h1 data-slot=\"typography-h1\" className={cn(\"font-sans text-h1 leading-heading font-normal text-balance text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH2({ className, ...props }: React.ComponentProps<\"h2\">) {\n  return <h2 data-slot=\"typography-h2\" className={cn(\"font-sans text-h2 leading-heading font-normal text-balance text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH3({ className, ...props }: React.ComponentProps<\"h3\">) {\n  return <h3 data-slot=\"typography-h3\" className={cn(\"font-sans text-h3 leading-heading font-normal text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH4({ className, ...props }: React.ComponentProps<\"h4\">) {\n  return <h4 data-slot=\"typography-h4\" className={cn(\"font-sans text-h4 leading-body font-medium text-fg\", className)} {...props} />;\n}\n\nfunction TypographyP({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-p\" className={cn(\"font-sans text-body leading-body text-pretty text-fg [&:not(:first-child)]:mt-4\", className)} {...props} />;\n}\n\nfunction TypographyLead({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-lead\" className={cn(\"font-sans text-body-lg leading-body text-fg-secondary\", className)} {...props} />;\n}\n\nfunction TypographyLarge({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"typography-large\" className={cn(\"font-sans text-body-lg leading-body font-medium text-fg\", className)} {...props} />;\n}\n\nfunction TypographySmall({ className, ...props }: React.ComponentProps<\"small\">) {\n  return <small data-slot=\"typography-small\" className={cn(\"font-sans text-caption leading-tight text-fg\", className)} {...props} />;\n}\n\nfunction TypographyMuted({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-muted\" className={cn(\"font-sans text-body leading-body text-fg-muted\", className)} {...props} />;\n}\n\n/** A quote: indented behind a 2px pink rule, in the secondary purple. */\nfunction TypographyBlockquote({ className, ...props }: React.ComponentProps<\"blockquote\">) {\n  return <blockquote data-slot=\"typography-blockquote\" className={cn(\"mt-4 border-l-2 border-pink pl-4 font-sans text-body leading-body text-fg-secondary\", className)} {...props} />;\n}\n\nfunction TypographyList({ className, ordered = false, ...props }: Omit<React.ComponentProps<\"ul\">, \"ref\"> & { ordered?: boolean }) {\n  const classes = cn(\"my-4 ml-5 grid gap-1.5 font-sans text-body leading-body text-fg marker:text-fg-muted\", ordered ? \"list-decimal\" : \"list-disc\", className);\n  return ordered ? <ol data-slot=\"typography-list\" className={classes} {...props} /> : <ul data-slot=\"typography-list\" className={classes} {...props} />;\n}\n\n/** A key, host or ID inside text: IBM Plex Mono on the lilac with 4px corners. */\nfunction TypographyInlineCode({ className, ...props }: React.ComponentProps<\"code\">) {\n  return <code data-slot=\"typography-inline-code\" className={cn(\"rounded-xs bg-subtle px-1 py-px font-mono text-body-sm text-fg [box-decoration-break:clone]\", className)} {...props} />;\n}\n\n/** A plain table in running text: the lilac head row and faint rules. For data, use Table. */\nfunction TypographyTable({ className, ...props }: React.ComponentProps<\"table\">) {\n  return (\n    <div data-slot=\"typography-table\" className=\"my-4 w-full overflow-x-auto\">\n      <table\n        className={cn(\n          \"w-full border-collapse font-sans text-body leading-body text-fg [&_td]:border-b [&_td]:border-line-subtle [&_td]:px-4 [&_td]:py-2.5 [&_th]:bg-subtle [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-normal [&_th]:text-fg-muted [&_th:first-child]:rounded-l-panel [&_th:last-child]:rounded-r-panel\",\n          className,\n        )}\n        {...props}\n      />\n    </div>\n  );\n}\n\nexport { TypographyBlockquote, TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyInlineCode, TypographyLarge, TypographyLead, TypographyList, TypographyMuted, TypographyP, TypographySmall, TypographyTable };\n"
+    }
+  ]
+}

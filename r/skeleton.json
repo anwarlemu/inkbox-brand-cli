@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "skeleton",
+  "useFor": "Use in the shape of what will load (rows of the email list, a table's rows, an avatar), matching each part's size and corners (rounded-pill for buttons, avatars and small icon tiles). Show it only for loads longer than about 300ms.",
+  "constraints": [
+    "Shimmer gradients",
+    "Skeletons for content already on screen",
+    "A skeleton for a single button"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac fill and 8px corners of its wells",
+  "exports": [
+    "Skeleton"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/skeleton",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/skeleton.md",
+  "examples": [
+    {
+      "path": "examples/skeleton.tsx",
+      "content": "import { Skeleton } from \"@/components/ui/skeleton\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-96 gap-1\" aria-busy=\"true\" aria-label=\"Loading emails\">\n      {[0, 1, 2].map((i) => (\n        <div key={i} className=\"grid gap-2.5 p-3\">\n          <div className=\"flex justify-between\">\n            <Skeleton className=\"h-4 w-20\" />\n            <Skeleton className=\"h-4 w-12\" />\n          </div>\n          <Skeleton className=\"h-4 w-11/12\" />\n          <Skeleton className=\"h-4 w-3/4\" />\n        </div>\n      ))}\n    </div>\n  );\n}\n\nexport function Row() {\n  return (\n    <div className=\"flex w-full max-w-120 items-center gap-4\" aria-busy=\"true\" aria-label=\"Loading mailbox\">\n      <Skeleton className=\"size-5.5 rounded-pill\" />\n      <Skeleton className=\"h-4 flex-1\" />\n      <Skeleton className=\"h-10 w-28 rounded-pill\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Row"
+      ],
+      "requires": [
+        "skeleton"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/skeleton/Preview"
+        },
+        {
+          "name": "Row",
+          "url": "https://inkbox-ds.vercel.app/preview/skeleton/Row"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Skeleton",
+  "description": "A lilac placeholder with 8px corners that breathes softly while content loads.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/skeleton.tsx",
+      "content": "import { cn } from \"@/lib/utils\";\n\n// A placeholder while content loads: the lilac with 8px corners, breathing between full and 55 percent (1.6s, the\n// in-out curve). With reduced motion it holds still.\nfunction Skeleton({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"skeleton\" aria-hidden className={cn(\"animate-pulse-soft rounded-control bg-subtle motion-reduce:animate-none\", className)} {...props} />;\n}\n\nexport { Skeleton };\n"
+    }
+  ]
+}

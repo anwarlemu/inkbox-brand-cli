@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "carousel",
+  "useFor": "Use to page through a set of similar cards when space is short (agent templates, integrations). Give each CarouselItem a basis for how many show at once. Leave room either side for the arrow keys, or place them yourself.",
+  "constraints": [
+    "Autoplay",
+    "Dots as the only way to move",
+    "Slides of different heights in one row"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): white keys with Shadow/S",
+  "exports": [
+    "Carousel",
+    "CarouselContent",
+    "CarouselItem",
+    "CarouselNext",
+    "CarouselPrevious",
+    "useCarousel",
+    "CarouselApi"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/carousel",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/carousel.md",
+  "examples": [
+    {
+      "path": "examples/carousel.tsx",
+      "content": "import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from \"@/components/ui/carousel\";\n\nconst TEMPLATES = [\n  { name: \"Support desk\", text: \"Answers inbound email and hands hard cases to a person.\" },\n  { name: \"Scheduler\", text: \"Books calls over iMessage and confirms by email.\" },\n  { name: \"Researcher\", text: \"Reads replies and files notes to the shared vault.\" },\n  { name: \"Recruiter\", text: \"Screens candidates by phone and logs each call.\" },\n  { name: \"Concierge\", text: \"Greets new contacts and routes them to the right agent.\" },\n];\n\nfunction Slide({ name, text }: { name: string; text: string }) {\n  return (\n    <div className=\"grid h-36 content-start gap-1 rounded-control border border-line-field bg-surface p-4\">\n      <p className=\"text-body leading-tight font-medium text-fg\">{name}</p>\n      <p className=\"text-body leading-body text-fg-muted\">{text}</p>\n    </div>\n  );\n}\n\nexport function Preview() {\n  return (\n    <div className=\"mx-auto w-full max-w-sm px-12\">\n      <Carousel>\n        <CarouselContent>\n          {TEMPLATES.map((t) => (\n            <CarouselItem key={t.name}>\n              <Slide {...t} />\n            </CarouselItem>\n          ))}\n        </CarouselContent>\n        <CarouselPrevious />\n        <CarouselNext />\n      </Carousel>\n    </div>\n  );\n}\n\nexport function Sizes() {\n  return (\n    <div className=\"mx-auto w-full max-w-2xl px-12\">\n      <Carousel opts={{ align: \"start\" }}>\n        <CarouselContent>\n          {TEMPLATES.map((t) => (\n            <CarouselItem key={t.name} className=\"sm:basis-1/2 lg:basis-1/3\">\n              <Slide {...t} />\n            </CarouselItem>\n          ))}\n        </CarouselContent>\n        <CarouselPrevious />\n        <CarouselNext />\n      </Carousel>\n    </div>\n  );\n}\n\nexport function Vertical() {\n  return (\n    <div className=\"mx-auto w-full max-w-xs py-12\">\n      <Carousel orientation=\"vertical\">\n        <CarouselContent className=\"h-40\">\n          {TEMPLATES.map((t) => (\n            <CarouselItem key={t.name}>\n              <Slide {...t} />\n            </CarouselItem>\n          ))}\n        </CarouselContent>\n        <CarouselPrevious />\n        <CarouselNext />\n      </Carousel>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Sizes",
+        "Vertical"
+      ],
+      "requires": [
+        "carousel"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/carousel/Preview"
+        },
+        {
+          "name": "Sizes",
+          "url": "https://inkbox-ds.vercel.app/preview/carousel/Sizes"
+        },
+        {
+          "name": "Vertical",
+          "url": "https://inkbox-ds.vercel.app/preview/carousel/Vertical"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Carousel",
+  "description": "A row of slides that snap into place, with white round previous and next keys outside it.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/carousel.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ArrowLeftIcon, ArrowRightIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A row of slides that snap into place (extrapolated from the Inkbox console, Figma 427:2715: its white keys with\n// Shadow/S and 8px corners). Slides scroll natively (touch, trackpad and wheel) and snap; the previous and next keys\n// are 32px white circles with Shadow/S and an ink arrow, outside the row. Arrow keys move a slide when the carousel has\n// focus. The scroll is smooth (the browser's own easing) unless reduced motion is set.\n\ntype CarouselEvent = \"select\" | \"reInit\";\ntype CarouselApi = {\n  scrollPrev: () => void;\n  scrollNext: () => void;\n  scrollTo: (index: number) => void;\n  canScrollPrev: () => boolean;\n  canScrollNext: () => boolean;\n  selectedScrollSnap: () => number;\n  scrollSnapList: () => number[];\n  on: (event: CarouselEvent, callback: (api: CarouselApi) => void) => void;\n  off: (event: CarouselEvent, callback: (api: CarouselApi) => void) => void;\n};\ntype CarouselOptions = { loop?: boolean; align?: \"start\" | \"center\" | \"end\" };\n\ntype CarouselProps = {\n  opts?: CarouselOptions;\n  orientation?: \"horizontal\" | \"vertical\";\n  setApi?: (api: CarouselApi) => void;\n};\n\ntype CarouselContextProps = {\n  viewport: React.RefObject<HTMLDivElement | null>;\n  orientation: \"horizontal\" | \"vertical\";\n  align: \"start\" | \"center\" | \"end\";\n  scrollPrev: () => void;\n  scrollNext: () => void;\n  canScrollPrev: boolean;\n  canScrollNext: boolean;\n  update: () => void;\n};\n\nconst CarouselContext = React.createContext<CarouselContextProps | null>(null);\n\nfunction useCarousel() {\n  const context = React.useContext(CarouselContext);\n  if (!context) throw new Error(\"useCarousel must be used within a <Carousel />\");\n  return context;\n}\n\nfunction Carousel({ orientation = \"horizontal\", opts, setApi, className, children, ...props }: React.ComponentProps<\"div\"> & CarouselProps) {\n  const viewport = React.useRef<HTMLDivElement | null>(null);\n  const [edges, setEdges] = React.useState({ prev: false, next: false, index: 0 });\n  const listeners = React.useRef<Record<CarouselEvent, Set<(api: CarouselApi) => void>>>({ select: new Set(), reInit: new Set() });\n  const vertical = orientation === \"vertical\";\n  const loop = !!opts?.loop;\n\n  const slides = React.useCallback(() => Array.from(viewport.current?.querySelectorAll<HTMLElement>(\":scope > [data-slot=carousel-content] > [data-slot=carousel-item]\") ?? []), []);\n  const offsetOf = React.useCallback((el: HTMLElement) => (vertical ? el.offsetTop : el.offsetLeft), [vertical]);\n  const current = React.useCallback(() => {\n    const el = viewport.current;\n    if (!el) return 0;\n    const pos = vertical ? el.scrollTop : el.scrollLeft;\n    const list = slides();\n    let best = 0;\n    list.forEach((s, i) => {\n      if (Math.abs(offsetOf(s) - pos) < Math.abs(offsetOf(list[best]) - pos)) best = i;\n    });\n    return best;\n  }, [offsetOf, slides, vertical]);\n\n  const scrollTo = React.useCallback((index: number) => {\n    const el = viewport.current;\n    const list = slides();\n    if (!el || !list.length) return;\n    const i = loop ? (index + list.length) % list.length : Math.max(0, Math.min(list.length - 1, index));\n    const reduce = window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches;\n    el.scrollTo({ [vertical ? \"top\" : \"left\"]: offsetOf(list[i]), behavior: reduce ? \"auto\" : \"smooth\" });\n  }, [loop, offsetOf, slides, vertical]);\n\n  const api = React.useMemo<CarouselApi>(() => {\n    const self: CarouselApi = {\n      scrollPrev: () => scrollTo(current() - 1),\n      scrollNext: () => scrollTo(current() + 1),\n      scrollTo,\n      canScrollPrev: () => {\n        const el = viewport.current;\n        return !!el && (loop || (vertical ? el.scrollTop : el.scrollLeft) > 1);\n      },\n      canScrollNext: () => {\n        const el = viewport.current;\n        if (!el) return false;\n        return loop || (vertical ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollLeft + el.clientWidth < el.scrollWidth - 1);\n      },\n      selectedScrollSnap: current,\n      scrollSnapList: () => slides().map((_, i) => i),\n      on: (event, cb) => void listeners.current[event].add(cb),\n      off: (event, cb) => void listeners.current[event].delete(cb),\n    };\n    return self;\n  }, [current, loop, scrollTo, slides, vertical]);\n\n  const update = React.useCallback(() => {\n    const next = { prev: api.canScrollPrev(), next: api.canScrollNext(), index: api.selectedScrollSnap() };\n    setEdges((e) => {\n      if (e.index !== next.index) listeners.current.select.forEach((cb) => cb(api));\n      return e.prev === next.prev && e.next === next.next && e.index === next.index ? e : next;\n    });\n  }, [api]);\n\n  React.useEffect(() => {\n    setApi?.(api);\n    const el = viewport.current;\n    if (!el) return;\n    update();\n    const observer = new ResizeObserver(() => {\n      update();\n      listeners.current.reInit.forEach((cb) => cb(api));\n    });\n    observer.observe(el);\n    el.addEventListener(\"scroll\", update, { passive: true });\n    return () => {\n      observer.disconnect();\n      el.removeEventListener(\"scroll\", update);\n    };\n  }, [api, setApi, update]);\n\n  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {\n    const back = vertical ? \"ArrowUp\" : \"ArrowLeft\";\n    const forward = vertical ? \"ArrowDown\" : \"ArrowRight\";\n    if (event.key === back) {\n      event.preventDefault();\n      api.scrollPrev();\n    } else if (event.key === forward) {\n      event.preventDefault();\n      api.scrollNext();\n    }\n  };\n\n  return (\n    <CarouselContext.Provider value={{ viewport, orientation, align: opts?.align ?? \"start\", scrollPrev: api.scrollPrev, scrollNext: api.scrollNext, canScrollPrev: edges.prev, canScrollNext: edges.next, update }}>\n      <div onKeyDownCapture={onKeyDown} className={cn(\"relative\", className)} role=\"region\" aria-roledescription=\"carousel\" data-slot=\"carousel\" data-orientation={orientation} {...props}>\n        {children}\n      </div>\n    </CarouselContext.Provider>\n  );\n}\n\nfunction CarouselContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  const { viewport, orientation } = useCarousel();\n  const vertical = orientation === \"vertical\";\n  return (\n    <div\n      ref={viewport}\n      data-slot=\"carousel-viewport\"\n      className={cn(\"overflow-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden\", vertical ? \"h-full snap-y snap-mandatory\" : \"snap-x snap-mandatory\")}\n    >\n      <div data-slot=\"carousel-content\" className={cn(\"flex\", vertical ? \"-mt-4 flex-col\" : \"-ml-4\", className)} {...props} />\n    </div>\n  );\n}\n\nfunction CarouselItem({ className, ...props }: React.ComponentProps<\"div\">) {\n  const { orientation, align } = useCarousel();\n  return (\n    <div\n      role=\"group\"\n      aria-roledescription=\"slide\"\n      data-slot=\"carousel-item\"\n      className={cn(\"min-w-0 shrink-0 grow-0 basis-full\", orientation === \"horizontal\" ? \"pl-4\" : \"pt-4\", align === \"center\" ? \"snap-center\" : align === \"end\" ? \"snap-end\" : \"snap-start\", className)}\n      {...props}\n    />\n  );\n}\n\nconst ARROW =\n  \"absolute inline-flex size-8 items-center justify-center rounded-pill bg-surface text-fg shadow-s outline-none transition-[background-color,opacity] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none [&_svg]:size-4\";\n\nfunction CarouselPrevious({ className, ...props }: React.ComponentProps<\"button\">) {\n  const { orientation, scrollPrev, canScrollPrev } = useCarousel();\n  return (\n    <button\n      type=\"button\"\n      data-slot=\"carousel-previous\"\n      disabled={!canScrollPrev}\n      onClick={scrollPrev}\n      className={cn(ARROW, orientation === \"horizontal\" ? \"top-1/2 -left-12 -translate-y-1/2\" : \"-top-12 left-1/2 -translate-x-1/2 rotate-90\", className)}\n      {...props}\n    >\n      <ArrowLeftIcon />\n      <span className=\"sr-only\">Previous slide</span>\n    </button>\n  );\n}\n\nfunction CarouselNext({ className, ...props }: React.ComponentProps<\"button\">) {\n  const { orientation, scrollNext, canScrollNext } = useCarousel();\n  return (\n    <button\n      type=\"button\"\n      data-slot=\"carousel-next\"\n      disabled={!canScrollNext}\n      onClick={scrollNext}\n      className={cn(ARROW, orientation === \"horizontal\" ? \"top-1/2 -right-12 -translate-y-1/2\" : \"-bottom-12 left-1/2 -translate-x-1/2 rotate-90\", className)}\n      {...props}\n    >\n      <ArrowRightIcon />\n      <span className=\"sr-only\">Next slide</span>\n    </button>\n  );\n}\n\nexport { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, useCarousel };\nexport type { CarouselApi };\n"
+    }
+  ]
+}

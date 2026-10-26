@@ -1,0 +1,218 @@
+/* Written by inkbox-ds from its brand files. Do not edit; run the CLI again to update. */
+:root {
+	/* Core: deep purple ink, the action purple, the lilac wash, the pink accent, and white. */
+	--ds-color-brand: #74629D;
+	--ds-color-black: #000000;
+	--ds-color-white: #FFFFFF;
+	--ds-color-ink: #3E2A53;
+	--ds-color-lilac: #F4F2F6;
+	--ds-color-pink: #F9B1B5;
+	/* The pink's dark partner: the glyph on a pink channel tile, and an agent handle in a table. */
+	--ds-color-rose: #8C5659;
+	/* An avatar's initial tile. */
+	--ds-color-avatar: #5063B1;
+
+	/* Surfaces: white panels on a white page; the lilac for the second rail, a selected row, a table's head and foot,
+	   a field's well and a channel card. */
+	--ds-color-bg-default: #FFFFFF;
+	--ds-color-bg-page: #FFFFFF;
+	--ds-color-bg-subtle: #F4F2F6;
+	/* The lilac under the pointer or pressed: the wash a step deeper (not in the design; derived for hover). */
+	--ds-color-bg-subtle-hover: #ECE9F0;
+	--ds-color-bg-frame: #F4F2F6;
+	--ds-color-bg-canvas: #F4F2F6;
+	--ds-color-bg-tint: #F4F2F6;
+	--ds-color-bg-brand: #74629D;
+	--ds-color-bg-inverse: #3E2A53;
+	--ds-color-bg-dark: #3E2A53;
+	/* Code: the light editor theme of the event catalog (a gray head over an off-white body). */
+	--ds-color-bg-code: #FFFFFE;
+	--ds-color-bg-code-head: #F0F0F0;
+	/* The page behind a dialog: the ink at 12 percent, over a light blur. */
+	--ds-color-bg-scrim: rgb(62 42 83 / 0.12);
+	/* A switch that is off, and a disabled control's fill. */
+	--ds-color-bg-off: #B1ADBB;
+
+	/* Text: the ink, and four lighter purples (secondary for body copy under a title, muted for table heads, dates and
+	   descriptions, subtle for placeholders, faint for a close glyph); the action purple for links and labels. */
+	--ds-color-text-default: #3E2A53;
+	--ds-color-text-secondary: #70637E;
+	--ds-color-text-muted: #998EA5;
+	--ds-color-text-subtle: #9E94A9;
+	--ds-color-text-nav: #3E2A53;
+	--ds-color-text-faint: #BCB3C5;
+	--ds-color-text-inverse: #FFFFFF;
+	--ds-color-text-brand: #74629D;
+	--ds-color-text-on-brand: #FFFFFF;
+	--ds-color-text-label: #74629D;
+	/* Icons: the ink for nav glyphs, a softer purple for row actions and empty-state orbits. */
+	--ds-color-icon-default: #3E2A53;
+	--ds-color-icon-secondary: #5B4C6A;
+	/* Code: the editor theme's keys, strings, line numbers, braces and plain text. */
+	--ds-color-code-key: #A31515;
+	--ds-color-code-string: #0451A5;
+	--ds-color-code-line: #237893;
+	--ds-color-code-brace: #F8CC5E;
+	--ds-color-code-text: #1A202C;
+	--ds-color-code-punct: #0431FA;
+	--ds-color-code-line-active: #0B216F;
+	--ds-color-code-head-fg: #4A4A4A;
+	/* The rest of the same editor theme (Light+), for code other than JSON: keywords, comments, numbers, functions,
+	   types, markup tags and attributes. */
+	--ds-color-code-keyword: #0000FF;
+	--ds-color-code-comment: #008000;
+	--ds-color-code-number: #098658;
+	--ds-color-code-function: #795E26;
+	--ds-color-code-type: #267F99;
+	--ds-color-code-tag: #800000;
+	--ds-color-code-attr: #E50000;
+
+	/* Lines: a field's edge, the rail and header rules, and the two shared styles (Line/S Bottom under a table row,
+	   Shadow/S's ring around a raised white panel). */
+	--ds-color-border-default: #D2C9DB;
+	--ds-color-border-subtle: #F3F1F5;
+	--ds-color-border-strong: #B1ADBB;
+	--ds-color-border-field: #D2C9DB;
+	--ds-color-border-row: rgb(102 102 99 / 0.12);
+	--ds-color-border-ring: rgb(23 47 41 / 0.12);
+	/* Shadow/S's drop, for a raised panel drawn without box-shadow (a table body built from cells). */
+	--ds-color-shadow-drop: rgb(23 47 41 / 0.08);
+	--ds-color-border-brand: #74629D;
+	--ds-color-border-pink: #F9B1B5;
+	/* A code block's edge, its head's rule and its indent guides (the editor theme's gray). */
+	--ds-color-border-code: #E0E0E0;
+	--ds-color-wash-hover: rgb(62 42 83 / 0.04);
+	--ds-color-ring-tint: rgb(116 98 157 / 0.24);
+
+	/* Actions and states. The main action is the purple pill. */
+	--ds-color-action-primary: #74629D;
+	--ds-color-action-primary-hover: #67568E;
+	--ds-color-action-primary-fg: #FFFFFF;
+	--ds-color-focus-ring: #74629D;
+	/* Success: the Included pill and its checks, and the Active status well. */
+	--ds-color-status-success: #1CA721;
+	--ds-color-status-success-bg: #C6F6D5;
+	/* Warning: the copy-this-key banner (its fill, title ink, glyph and note). */
+	--ds-color-status-warning: #8A581D;
+	--ds-color-status-warning-bg: #F6E8C9;
+	--ds-color-status-warning-fg: #4A2F0B;
+	--ds-color-status-warning-muted: #8E7045;
+	/* Danger: a field that failed (its edge and message) and the error glyph inside it. */
+	--ds-color-status-danger: #BD5557;
+	--ds-color-status-danger-strong: #A71C1F;
+	/* Info: the zero-knowledge note (fill, ink, glyph), and the blue tag and status well. */
+	--ds-color-status-info: #1C7390;
+	--ds-color-status-info-bg: #C9EBF6;
+	--ds-color-status-info-fg: #0D4152;
+	--ds-color-tag-blue: #BEE3F8;
+	--ds-color-tag-blue-fg: #2A4365;
+	--ds-color-tag-purple: #E9D8FD;
+	--ds-color-tag-purple-fg: #6D5C9B;
+	--ds-color-tag-gray: #EDF2F7;
+	--ds-color-chart-series-1: #74629D;
+	--ds-color-chart-series-2: #F9B1B5;
+	--ds-color-chart-series-3: #5063B1;
+	--ds-color-chart-series-4: #1C7390;
+	--ds-color-chart-series-5: #1CA721;
+
+	/* Type: Inter for everything, IBM Plex Mono for keys, hosts and IDs, the system monospace in code blocks. Body copy is 14px regular; medium for
+	   tabs and card titles; bold only for an empty state's title. No tracking. */
+	--ds-font-sans: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
+	--ds-font-display: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
+	--ds-font-mono: var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
+	/* Code blocks (the event catalog's JSON) use the system monospace, as the editor theme does. */
+	--ds-font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	--ds-font-weight-regular: 400;
+	--ds-font-weight-medium: 500;
+	--ds-font-weight-semibold: 600;
+	--ds-font-weight-bold: 700;
+	--ds-font-weight-heading: 400;
+	/* Page and dialog titles are 20px regular; an empty state's title 22px bold; the rest 11 to 16px. */
+	--ds-text-display: 2rem;
+	--ds-text-h1: 1.5rem;
+	--ds-text-h2: 1.375rem;
+	--ds-text-h3: 1.25rem;
+	--ds-text-h4: 1rem;
+	--ds-text-body-lg: 1rem;
+	--ds-text-body: 0.875rem;
+	--ds-text-body-sm: 0.8125rem;
+	--ds-text-caption: 0.75rem;
+	--ds-text-micro: 0.6875rem;
+	--ds-leading-tight: 1.2;
+	--ds-leading-heading: 1.4;
+	--ds-leading-display: 1.25;
+	--ds-leading-snug: 1.25;
+	--ds-leading-body: 1.5;
+	--ds-leading-relaxed: 1.6;
+	--ds-leading-code: 1.5;
+	--ds-tracking-normal: 0;
+	/* Nothing is tracked; the engine's heading tracking resolves to none. */
+	--ds-tracking-tight: 0;
+	--ds-tracking-caps: 0.02em;
+
+	/* Space (rem, so it follows the root); the design's spacing variables are 4, 8, 12, 16 and 24. */
+	--ds-space-0: 0;
+	--ds-space-px: 1px;
+	--ds-space-0-5: 0.125rem;
+	--ds-space-1: 0.25rem;
+	--ds-space-1-5: 0.375rem;
+	--ds-space-2: 0.5rem;
+	--ds-space-2-5: 0.625rem;
+	--ds-space-3: 0.75rem;
+	--ds-space-3-5: 0.875rem;
+	--ds-space-4: 1rem;
+	--ds-space-5: 1.25rem;
+	--ds-space-6: 1.5rem;
+	--ds-space-7: 1.75rem;
+	--ds-space-8: 2rem;
+	--ds-space-9: 2.25rem;
+	--ds-space-9-5: 2.375rem;
+	--ds-space-10: 2.5rem;
+	--ds-space-10-5: 2.625rem;
+	--ds-space-12: 3rem;
+	--ds-space-14: 3.5rem;
+	--ds-space-16: 4rem;
+	--ds-space-20: 5rem;
+	--ds-space-24: 6rem;
+
+	/* Layout: a 288px rail, a 288px second rail, a 64px page head with 24px gutters. */
+	--ds-layout-column: 75rem;
+	--ds-layout-gutter: 1.5rem;
+	--ds-layout-text: 42.5rem;
+	--ds-layout-heading: 42rem;
+	--ds-layout-header: 4rem;
+	--ds-layout-rail: 18rem;
+	--ds-frame-column: min(100% - 2 * var(--ds-layout-gutter), var(--ds-layout-column));
+
+	/* Shape: pill buttons and compact controls, 6px details, 8px tiles, 12px content panels,
+	   16px popup panels, table heads and banners, and 24px cards and multi-select fields. */
+	--ds-radius-xs: 0.375rem;
+	--ds-radius-sm: 0.5rem;
+	--ds-radius-control: 0.75rem;
+	--ds-radius-panel: 1rem;
+	--ds-radius-dialog: 1.5rem;
+	--ds-radius-pill: 9999px;
+	/* Shadow/S: a raised white panel (a selected tab, a table's body, a select, a menu): a 1px ring and a short drop. */
+	--ds-shadow-s: 0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12);
+	/* A card: the same raised panel. */
+	--ds-shadow-card: 0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12);
+	/* Line/S Bottom: the rule under a table row. */
+	--ds-shadow-line: 0 1px 0 rgb(102 102 99 / 0.12);
+	/* A floating panel (a menu, a popover, a toast): Shadow/S with a softer, longer drop. */
+	--ds-shadow-floating: 0 0 0 1px rgb(23 47 41 / 0.12), 0 2px 4px rgb(23 47 41 / 0.08), 0 12px 24px -8px rgb(62 42 83 / 0.16);
+	/* A dialog sits on the scrim with no drop of its own; a sheet gets one where it meets the page. */
+	--ds-shadow-dialog: 0 24px 48px -16px rgb(62 42 83 / 0.16);
+	--ds-shadow-knob: 0 1px 2px rgb(62 42 83 / 0.24), 0 0 0 0.5px rgb(62 42 83 / 0.12);
+	--ds-shadow-focus: 0 0 0 3px rgb(116 98 157 / 0.24);
+	--ds-blur-scrim: 4px;
+
+	/* Motion: a strong ease-out for every hover, press and entrance; in-out only for what travels on screen (a tab
+	   thumb, a switch knob). Never ease-in. */
+	--ds-duration-fast: 150ms;
+	--ds-duration-base: 200ms;
+	--ds-duration-moderate: 250ms;
+	--ds-duration-slow: 300ms;
+	--ds-easing-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ds-easing-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--ds-easing-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}

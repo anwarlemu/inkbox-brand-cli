@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "name": "item",
+  "useFor": "Use for list rows that open something. An email: ItemHeader (sender, date) over ItemContent (ItemTitle subject, ItemDescription preview). A webhook event: ItemHeader (a sm Badge and an arrow) over the event name and its count. A rail row: size sm with ItemMedia variant=\"icon\" and a filled glyph. Mark the open one with aria-current=\"true\". Separate rows with ItemSeparator.",
+  "constraints": [
+    "Bold titles",
+    "Gray descriptions in email and event lists (they are purple)",
+    "A card border around every row in a list"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Agent Workspace - Inbox (email list), Webhooks - Event catalog (event list), the rail",
+  "exports": [
+    "Item",
+    "ItemActions",
+    "ItemContent",
+    "ItemDescription",
+    "ItemFooter",
+    "ItemGroup",
+    "ItemHeader",
+    "ItemMedia",
+    "ItemSeparator",
+    "ItemTitle"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/item",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/item.md",
+  "examples": [
+    {
+      "path": "examples/item.tsx",
+      "content": "import { ArrowRightIcon, EnvelopeIcon, GearIcon, KeyIcon, PencilSimpleIcon, PhoneIcon, RobotIcon, UsersThreeIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle } from \"@/components/ui/item\";\n\nconst EMAILS = [\n  { from: \"Ray Liao\", when: \"Yesterday\", subject: \"Inkbox A2A: publish your Agent Card and connect by...\", preview: \"Hello @acme, This is Ray, cofounder of Inkbox. This update is written for you...\" },\n  { from: \"Ray Liao\", when: \"Jul 31\", subject: \"Agent-to-Agent on Inkbox: you can now delegate...\", preview: \"Hello @acme, This is Ray, cofounder of Inkbox. This week we took A2A across...\" },\n  { from: \"Ray Liao\", when: \"Jul 31\", subject: \"Agent-to-Agent on Inkbox: you can now delegate...\", preview: \"Hello @acme, This is Ray, cofounder of Inkbox. Two new capabilities, with exact...\" },\n];\n\nexport function Preview() {\n  return (\n    <ItemGroup className=\"w-full max-w-96\">\n      {EMAILS.map((email, i) => (\n        <div key={i}>\n          {i > 0 && <ItemSeparator />}\n          <Item asChild aria-current={i === 0 ? \"true\" : undefined}>\n            <a href=\"#email\">\n              <ItemHeader>\n                <span className=\"text-fg\">{email.from}</span>\n                <span className=\"text-fg-muted\">{email.when}</span>\n              </ItemHeader>\n              <ItemContent>\n                <ItemTitle className=\"w-full truncate\">{email.subject}</ItemTitle>\n                <ItemDescription className=\"line-clamp-1\">{email.preview}</ItemDescription>\n              </ItemContent>\n            </a>\n          </Item>\n        </div>\n      ))}\n    </ItemGroup>\n  );\n}\n\nexport function Events() {\n  return (\n    <ItemGroup className=\"w-full max-w-96\">\n      {[\"message.sent\", \"message.delivered\", \"message.bounced\"].map((event, i) => (\n        <div key={event}>\n          {i > 0 && <ItemSeparator />}\n          <Item asChild data-selected={i === 0}>\n            <button type=\"button\" className=\"w-full text-left\">\n              <ItemHeader className=\"justify-start\">\n                <Badge variant=\"blue\" size=\"sm\">Email</Badge>\n                <ArrowRightIcon aria-hidden className=\"size-4.5 text-fg-muted\" />\n              </ItemHeader>\n              <ItemContent>\n                <ItemTitle>{event}</ItemTitle>\n                <ItemDescription>0 configured destinations</ItemDescription>\n              </ItemContent>\n            </button>\n          </Item>\n        </div>\n      ))}\n    </ItemGroup>\n  );\n}\n\nexport function Rail() {\n  const rows = [\n    { label: \"Agent Workspace\", icon: RobotIcon, current: true },\n    { label: \"Manage Agents\", icon: UsersThreeIcon },\n    { label: \"API Keys\", icon: KeyIcon },\n    { label: \"Email\", icon: EnvelopeIcon },\n    { label: \"Phone\", icon: PhoneIcon },\n  ];\n  return (\n    <ItemGroup className=\"w-full max-w-66 gap-0.5\">\n      {rows.map(({ label, icon: Icon, current }) => (\n        <Item key={label} size=\"sm\" asChild aria-current={current ? \"page\" : undefined}>\n          <a href={`#${label}`}>\n            <ItemMedia variant=\"icon\">\n              <Icon weight=\"fill\" />\n            </ItemMedia>\n            <ItemContent>\n              <ItemTitle>{label}</ItemTitle>\n            </ItemContent>\n          </a>\n        </Item>\n      ))}\n    </ItemGroup>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"grid w-full max-w-120 gap-3\">\n      <Item variant=\"outline\">\n        <ItemMedia variant=\"icon\">\n          <EnvelopeIcon weight=\"fill\" />\n        </ItemMedia>\n        <ItemContent>\n          <ItemTitle>acme@inkboxmail.com</ItemTitle>\n          <ItemDescription>Created Jul 27, 2026</ItemDescription>\n        </ItemContent>\n        <ItemActions>\n          <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit mailbox\">\n            <PencilSimpleIcon weight=\"fill\" />\n          </Button>\n        </ItemActions>\n      </Item>\n      <Item variant=\"muted\" size=\"sm\">\n        <ItemMedia variant=\"icon\">\n          <GearIcon weight=\"fill\" />\n        </ItemMedia>\n        <ItemContent>\n          <ItemTitle>Mailbox settings</ItemTitle>\n        </ItemContent>\n      </Item>\n      <Item size=\"xs\">\n        <ItemContent>\n          <ItemTitle>Shared iMessage Line: Enabled</ItemTitle>\n        </ItemContent>\n      </Item>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Events",
+        "Rail",
+        "Variants"
+      ],
+      "requires": [
+        "item",
+        "badge",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/item/Preview"
+        },
+        {
+          "name": "Events",
+          "url": "https://inkbox-ds.vercel.app/preview/item/Events"
+        },
+        {
+          "name": "Rail",
+          "url": "https://inkbox-ds.vercel.app/preview/item/Rail"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/item/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Item",
+  "description": "A row of content: an email in the inbox, a webhook event, or a rail row, washing lilac when hovered or selected.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils",
+    "separator"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/item.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\nimport { Separator } from \"@/components/ui/separator\";\n\n// A row of content (Figma 427:2715): an email in the inbox list (sender and date over the subject and a purple preview),\n// a webhook event (a tag and an arrow over the event name and a purple count), a rail row (a 22px filled glyph and a\n// 14px label, 38px tall at size sm). `default` is bare and washes lilac under the pointer; a selected item\n// (aria-current or data-selected) sits on the lilac with 8px corners. `outline` takes the field edge, `muted` the lilac.\nfunction ItemGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div role=\"list\" data-slot=\"item-group\" className={cn(\"group/item-group flex flex-col\", className)} {...props} />;\n}\n\nfunction ItemSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {\n  return <Separator data-slot=\"item-separator\" orientation=\"horizontal\" className={cn(\"my-0.5\", className)} {...props} />;\n}\n\nconst itemVariants = cva(\n  \"group/item flex flex-wrap items-center rounded-control border border-transparent font-sans text-body leading-body text-fg outline-none transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-subtle aria-[current=true]:bg-subtle data-[selected=true]:bg-subtle motion-reduce:transition-none [a]:hover:bg-subtle [button]:hover:bg-subtle\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        outline: \"border-line-field bg-surface\",\n        muted: \"bg-subtle [a]:hover:bg-subtle-hover [button]:hover:bg-subtle-hover\",\n      },\n      size: {\n        default: \"gap-3 p-3\",\n        sm: \"min-h-9.5 gap-2.5 px-3 py-1.5\",\n        xs: \"gap-2 px-2 py-1\",\n      },\n    },\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\nfunction Item({ className, variant = \"default\", size = \"default\", asChild = false, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof itemVariants> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.div : \"div\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return <Comp {...slotProps} data-slot=\"item\" data-variant={variant} data-size={size} className={cn(itemVariants({ variant, size, className }))} {...props} />;\n}\n\nconst itemMediaVariants = cva(\"flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none\", {\n  variants: {\n    variant: {\n      default: \"bg-transparent\",\n      icon: \"text-icon-default [&_svg:not([class*='size-'])]:size-6\",\n      image: \"size-10 overflow-hidden rounded-pill [&_img]:size-full [&_img]:object-cover\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction ItemMedia({ className, variant = \"default\", ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof itemMediaVariants>) {\n  return <div data-slot=\"item-media\" data-variant={variant} className={cn(itemMediaVariants({ variant, className }))} {...props} />;\n}\n\nfunction ItemContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-content\" className={cn(\"flex min-w-0 flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none\", className)} {...props} />;\n}\n\nfunction ItemTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-title\" className={cn(\"flex w-fit min-w-0 items-center gap-2 text-body leading-tight text-fg\", className)} {...props} />;\n}\n\n/** The purple line under a title (a preview, a count), clamped to two lines. */\nfunction ItemDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"item-description\" className={cn(\"line-clamp-2 text-body leading-tight font-normal text-balance text-fg-brand [&>a]:underline [&>a]:underline-offset-4\", className)} {...props} />;\n}\n\nfunction ItemActions({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-actions\" className={cn(\"flex items-center gap-1\", className)} {...props} />;\n}\n\n/** The top line of an item: what it is at the left (sender, tag), when or where at the right (date, arrow). */\nfunction ItemHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-header\" className={cn(\"flex basis-full items-center justify-between gap-2 text-body leading-tight\", className)} {...props} />;\n}\n\nfunction ItemFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-footer\" className={cn(\"flex basis-full items-center justify-between gap-2\", className)} {...props} />;\n}\n\nexport { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle };\n"
+    }
+  ]
+}

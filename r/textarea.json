@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "textarea",
+  "useFor": "Use for free text longer than a line (Agent Description, a note, a message). Label it above like Input. It grows with its content; set rows or a min-h class to change the starting height.",
+  "constraints": [
+    "A textarea without a label",
+    "A gray background for an editable value",
+    "A fixed height that hides what was typed"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Agent Description (Form- Input, 72px) in Create Agent Identity",
+  "exports": [
+    "Textarea"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/textarea",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/textarea.md",
+  "examples": [
+    {
+      "path": "examples/textarea.tsx",
+      "content": "import { Label } from \"@/components/ui/label\";\nimport { Textarea } from \"@/components/ui/textarea\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-100.5 gap-1\">\n      <Label htmlFor=\"description\">Agent description</Label>\n      <Textarea id=\"description\" placeholder=\"Agent Description\" />\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-100.5 gap-3\">\n      <Textarea aria-label=\"Note\" defaultValue=\"Answers billing questions for Acme and forwards anything about refunds to Robert.\" />\n      <Textarea aria-label=\"Invalid note\" defaultValue=\"\" placeholder=\"Required\" aria-invalid />\n      <Textarea aria-label=\"Read-only\" readOnly defaultValue=\"Created by the Inkbox CLI on Jul 27, 2026.\" />\n      <Textarea aria-label=\"Disabled\" disabled placeholder=\"Disabled\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "States"
+      ],
+      "requires": [
+        "textarea",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/textarea/Preview"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/textarea/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Textarea",
+  "description": "The field's 8px corners and lilac-gray edge around several lines of 14px text, 72px tall to start.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/textarea.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Textarea as ChakraTextarea } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's multi-line field (Agent Description in Create Agent Identity, 72px tall): the field's 8px corners and\n// lilac-gray edge on white, 14px ink on 20px lines with 10px above and 14px at the sides, the light purple placeholder.\n// It grows with its content (field-sizing), from 72px. Focus, invalid and read-only states match Input.\nfunction Textarea({ className, ...props }: React.ComponentProps<\"textarea\">) {\n  return (\n    <ChakraTextarea\n      unstyled\n      data-slot=\"textarea\"\n      className={cn(\n        \"field-sizing-content flex min-h-18 w-full min-w-0 resize rounded-control border border-line-field bg-surface px-3.5 py-2.5 font-sans text-body leading-5 text-fg outline-none transition-[border-color,box-shadow] duration-150 ease-out placeholder:text-fg-subtle selection:bg-ring-tint focus-visible:border-line-brand focus-visible:shadow-focus aria-invalid:border-danger aria-invalid:focus-visible:shadow-none read-only:bg-subtle read-only:text-fg-muted disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Textarea };\n"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "name": "toggle-group",
+  "useFor": "Use for a choice among a few options that changes what is shown next (Where does this agent run? Hermes, Openclaw, Codex, Claude Code). Use type single for one choice, multiple for several. Put a 24px logo tile or a 20px glyph before each label. Use variant outline for separate keys.",
+  "constraints": [
+    "A purple chosen key",
+    "A sliding indicator between choices",
+    "More than seven choices in one track"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Where does this agent run? in Modal - Created",
+  "exports": [
+    "ToggleGroup",
+    "ToggleGroupItem"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/toggle-group",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/toggle-group.md",
+  "examples": [
+    {
+      "path": "examples/toggle-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CodeIcon, CodeBlockIcon, LightningIcon, RobotIcon, SparkleIcon, TerminalWindowIcon, TextAlignCenterIcon, TextAlignLeftIcon, TextAlignRightIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { ToggleGroup, ToggleGroupItem } from \"@/components/ui/toggle-group\";\n\n// The runners as 24px logo tiles; a real app puts each runner's own logo in the tile.\nconst RUNNERS = [\n  { value: \"hermes\", label: \"Hermes\", icon: RobotIcon },\n  { value: \"openclaw\", label: \"Openclaw\", icon: LightningIcon },\n  { value: \"codex\", label: \"Codex\", icon: TerminalWindowIcon },\n  { value: \"claude-code\", label: \"Claude Code\", icon: SparkleIcon },\n  { value: \"opencode\", label: \"OpenCode\", icon: CodeBlockIcon },\n];\n\nexport function Preview() {\n  const [runner, setRunner] = React.useState(\"hermes\");\n  return (\n    <div className=\"grid w-full gap-3\">\n      <p id=\"runner\" className=\"text-body leading-tight font-medium text-fg\">Where does this agent run?</p>\n      <ToggleGroup type=\"single\" value={runner} onValueChange={(v) => v && setRunner(v)} aria-labelledby=\"runner\" className=\"w-full\">\n        {RUNNERS.map(({ value, label, icon: Icon }) => (\n          <ToggleGroupItem key={value} value={value}>\n            <span className=\"flex size-6 items-center justify-center rounded-pill bg-surface text-fg-brand shadow-s\">\n              <Icon weight=\"fill\" className=\"size-4\" />\n            </span>\n            {label}\n          </ToggleGroupItem>\n        ))}\n        <ToggleGroupItem value=\"other\">\n          <CodeIcon weight=\"bold\" />\n          Other\n        </ToggleGroupItem>\n      </ToggleGroup>\n    </div>\n  );\n}\n\nexport function Outline() {\n  return (\n    <ToggleGroup type=\"multiple\" variant=\"outline\" defaultValue={[\"email\"]} aria-label=\"Channels\">\n      <ToggleGroupItem value=\"email\">Email</ToggleGroupItem>\n      <ToggleGroupItem value=\"phone\">Phone</ToggleGroupItem>\n      <ToggleGroupItem value=\"imessage\">iMessage</ToggleGroupItem>\n    </ToggleGroup>\n  );\n}\n\nexport function Sizes() {\n  return (\n    <div className=\"grid gap-3\">\n      <ToggleGroup type=\"single\" size=\"sm\" defaultValue=\"left\" aria-label=\"Alignment, small\">\n        <ToggleGroupItem value=\"left\" aria-label=\"Align left\">\n          <TextAlignLeftIcon weight=\"bold\" />\n        </ToggleGroupItem>\n        <ToggleGroupItem value=\"center\" aria-label=\"Align center\">\n          <TextAlignCenterIcon weight=\"bold\" />\n        </ToggleGroupItem>\n        <ToggleGroupItem value=\"right\" aria-label=\"Align right\">\n          <TextAlignRightIcon weight=\"bold\" />\n        </ToggleGroupItem>\n      </ToggleGroup>\n      <ToggleGroup type=\"single\" spacing={0} defaultValue=\"day\" aria-label=\"Range\">\n        <ToggleGroupItem value=\"day\">Day</ToggleGroupItem>\n        <ToggleGroupItem value=\"week\">Week</ToggleGroupItem>\n        <ToggleGroupItem value=\"month\">Month</ToggleGroupItem>\n        <ToggleGroupItem value=\"year\" disabled>\n          Year\n        </ToggleGroupItem>\n      </ToggleGroup>\n      <ToggleGroup type=\"single\" orientation=\"vertical\" defaultValue=\"inbox\" aria-label=\"Folder\" className=\"w-48\">\n        <ToggleGroupItem value=\"inbox\" className=\"justify-start\">Inbox</ToggleGroupItem>\n        <ToggleGroupItem value=\"sent\" className=\"justify-start\">Sent</ToggleGroupItem>\n        <ToggleGroupItem value=\"spam\" className=\"justify-start\">Spam</ToggleGroupItem>\n      </ToggleGroup>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Outline",
+        "Sizes"
+      ],
+      "requires": [
+        "toggle-group"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/toggle-group/Preview"
+        },
+        {
+          "name": "Outline",
+          "url": "https://inkbox-ds.vercel.app/preview/toggle-group/Outline"
+        },
+        {
+          "name": "Sizes",
+          "url": "https://inkbox-ds.vercel.app/preview/toggle-group/Sizes"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Toggle Group",
+  "description": "The segmented choice: a lilac track of 38px choices where the chosen one is a white key with Shadow/S.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "toggle",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toggle-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ToggleGroup as ToggleGroupPrimitive } from \"radix-ui\";\nimport { type VariantProps } from \"class-variance-authority\";\n\nimport { toggleVariants } from \"@/components/ui/toggle\";\nimport { cn } from \"@/lib/utils\";\n\n// The console's segmented choice (Figma 427:2715, Modal - Created: \"Where does this agent run?\"): a lilac track with\n// 10px corners and a 2px inset holding 38px choices 8px apart; each choice is a 24px logo tile 8px from a 14px medium\n// ink label, 8px from the sides, and the chosen one is a white key with 8px corners and Shadow/S. With `spacing={0}`\n// the choices sit flush in the track. `variant=\"outline\"` drops the track: separate keys with the field edge, the chosen\n// one white with Shadow/S. Choosing is instant (no sliding key): the choice is made often and must feel immediate.\nconst ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants> & { spacing?: number; orientation?: \"horizontal\" | \"vertical\" }>({\n  size: \"default\",\n  variant: \"default\",\n  spacing: 2,\n  orientation: \"horizontal\",\n});\n\nfunction ToggleGroup({\n  className,\n  variant = \"default\",\n  size = \"default\",\n  spacing = 2,\n  orientation = \"horizontal\",\n  children,\n  ...props\n}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants> & { spacing?: number; orientation?: \"horizontal\" | \"vertical\" }) {\n  return (\n    <ToggleGroupPrimitive.Root\n      data-slot=\"toggle-group\"\n      data-variant={variant}\n      data-size={size}\n      data-spacing={spacing}\n      data-orientation={orientation}\n      orientation={orientation}\n      style={{ \"--gap\": spacing } as React.CSSProperties}\n      className={cn(\n        \"group/toggle-group flex w-fit max-w-full items-center gap-[calc(var(--spacing)*var(--gap))] data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch\",\n        variant === \"default\" && \"overflow-x-auto rounded-pill data-[orientation=vertical]:rounded-dialog bg-subtle p-0.5 [scrollbar-width:none]\",\n        className,\n      )}\n      {...props}\n    >\n      <ToggleGroupContext.Provider value={{ variant, size, spacing, orientation }}>{children}</ToggleGroupContext.Provider>\n    </ToggleGroupPrimitive.Root>\n  );\n}\n\nfunction ToggleGroupItem({ className, children, variant, size, ...props }: React.ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>) {\n  const context = React.useContext(ToggleGroupContext);\n  const v = context.variant || variant || \"default\";\n  return (\n    <ToggleGroupPrimitive.Item\n      data-slot=\"toggle-group-item\"\n      data-variant={v}\n      data-size={context.size || size}\n      data-spacing={context.spacing}\n      className={cn(\n        toggleVariants({ variant: v, size: context.size || size }),\n        // In the track the chosen choice is the white key, as in the segmented choice.\n        v === \"default\" && \"hover:bg-subtle-hover data-[state=on]:bg-surface data-[state=on]:text-fg data-[state=on]:shadow-s data-[state=on]:hover:bg-surface\",\n        \"focus-visible:z-10\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n    </ToggleGroupPrimitive.Item>\n  );\n}\n\nexport { ToggleGroup, ToggleGroupItem };\n"
+    }
+  ]
+}

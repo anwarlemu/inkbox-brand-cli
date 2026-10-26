@@ -1,0 +1,2653 @@
+{
+  "schemaVersion": 1,
+  "name": "Inkbox",
+  "homepage": "https://inkbox-ds.vercel.app",
+  "guide": "https://inkbox-ds.vercel.app/agents.md",
+  "items": [
+    {
+      "schemaVersion": 1,
+      "name": "theme",
+      "type": "theme",
+      "title": "Inkbox theme",
+      "description": "The Inkbox tokens and the Tailwind names that read them.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [],
+      "packages": [],
+      "tokens": {
+        "site": {
+          "--ds-color-brand": "#74629D",
+          "--ds-color-black": "#000000",
+          "--ds-color-white": "#FFFFFF",
+          "--ds-color-ink": "#3E2A53",
+          "--ds-color-lilac": "#F4F2F6",
+          "--ds-color-pink": "#F9B1B5",
+          "--ds-color-rose": "#8C5659",
+          "--ds-color-avatar": "#5063B1",
+          "--ds-color-bg-default": "#FFFFFF",
+          "--ds-color-bg-page": "#FFFFFF",
+          "--ds-color-bg-subtle": "#F4F2F6",
+          "--ds-color-bg-subtle-hover": "#ECE9F0",
+          "--ds-color-bg-frame": "#F4F2F6",
+          "--ds-color-bg-canvas": "#F4F2F6",
+          "--ds-color-bg-tint": "#F4F2F6",
+          "--ds-color-bg-brand": "#74629D",
+          "--ds-color-bg-inverse": "#3E2A53",
+          "--ds-color-bg-dark": "#3E2A53",
+          "--ds-color-bg-code": "#FFFFFE",
+          "--ds-color-bg-code-head": "#F0F0F0",
+          "--ds-color-bg-scrim": "rgb(62 42 83 / 0.12)",
+          "--ds-color-bg-off": "#B1ADBB",
+          "--ds-color-text-default": "#3E2A53",
+          "--ds-color-text-secondary": "#70637E",
+          "--ds-color-text-muted": "#998EA5",
+          "--ds-color-text-subtle": "#9E94A9",
+          "--ds-color-text-nav": "#3E2A53",
+          "--ds-color-text-faint": "#BCB3C5",
+          "--ds-color-text-inverse": "#FFFFFF",
+          "--ds-color-text-brand": "#74629D",
+          "--ds-color-text-on-brand": "#FFFFFF",
+          "--ds-color-text-label": "#74629D",
+          "--ds-color-icon-default": "#3E2A53",
+          "--ds-color-icon-secondary": "#5B4C6A",
+          "--ds-color-code-key": "#A31515",
+          "--ds-color-code-string": "#0451A5",
+          "--ds-color-code-line": "#237893",
+          "--ds-color-code-brace": "#F8CC5E",
+          "--ds-color-code-text": "#1A202C",
+          "--ds-color-code-punct": "#0431FA",
+          "--ds-color-code-line-active": "#0B216F",
+          "--ds-color-code-head-fg": "#4A4A4A",
+          "--ds-color-code-keyword": "#0000FF",
+          "--ds-color-code-comment": "#008000",
+          "--ds-color-code-number": "#098658",
+          "--ds-color-code-function": "#795E26",
+          "--ds-color-code-type": "#267F99",
+          "--ds-color-code-tag": "#800000",
+          "--ds-color-code-attr": "#E50000",
+          "--ds-color-border-default": "#D2C9DB",
+          "--ds-color-border-subtle": "#F3F1F5",
+          "--ds-color-border-strong": "#B1ADBB",
+          "--ds-color-border-field": "#D2C9DB",
+          "--ds-color-border-row": "rgb(102 102 99 / 0.12)",
+          "--ds-color-border-ring": "rgb(23 47 41 / 0.12)",
+          "--ds-color-shadow-drop": "rgb(23 47 41 / 0.08)",
+          "--ds-color-border-brand": "#74629D",
+          "--ds-color-border-pink": "#F9B1B5",
+          "--ds-color-border-code": "#E0E0E0",
+          "--ds-color-wash-hover": "rgb(62 42 83 / 0.04)",
+          "--ds-color-ring-tint": "rgb(116 98 157 / 0.24)",
+          "--ds-color-action-primary": "#74629D",
+          "--ds-color-action-primary-hover": "#67568E",
+          "--ds-color-action-primary-fg": "#FFFFFF",
+          "--ds-color-focus-ring": "#74629D",
+          "--ds-color-status-success": "#1CA721",
+          "--ds-color-status-success-bg": "#C6F6D5",
+          "--ds-color-status-warning": "#8A581D",
+          "--ds-color-status-warning-bg": "#F6E8C9",
+          "--ds-color-status-warning-fg": "#4A2F0B",
+          "--ds-color-status-warning-muted": "#8E7045",
+          "--ds-color-status-danger": "#BD5557",
+          "--ds-color-status-danger-strong": "#A71C1F",
+          "--ds-color-status-info": "#1C7390",
+          "--ds-color-status-info-bg": "#C9EBF6",
+          "--ds-color-status-info-fg": "#0D4152",
+          "--ds-color-tag-blue": "#BEE3F8",
+          "--ds-color-tag-blue-fg": "#2A4365",
+          "--ds-color-tag-purple": "#E9D8FD",
+          "--ds-color-tag-purple-fg": "#6D5C9B",
+          "--ds-color-tag-gray": "#EDF2F7",
+          "--ds-color-chart-series-1": "#74629D",
+          "--ds-color-chart-series-2": "#F9B1B5",
+          "--ds-color-chart-series-3": "#5063B1",
+          "--ds-color-chart-series-4": "#1C7390",
+          "--ds-color-chart-series-5": "#1CA721",
+          "--ds-font-sans": "var(--font-inter, \"Inter\"), ui-sans-serif, system-ui, sans-serif",
+          "--ds-font-display": "var(--font-inter, \"Inter\"), ui-sans-serif, system-ui, sans-serif",
+          "--ds-font-mono": "var(--font-plex-mono, \"IBM Plex Mono\"), ui-monospace, SFMono-Regular, Menlo, monospace",
+          "--ds-font-code": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+          "--ds-font-weight-regular": "400",
+          "--ds-font-weight-medium": "500",
+          "--ds-font-weight-semibold": "600",
+          "--ds-font-weight-bold": "700",
+          "--ds-font-weight-heading": "400",
+          "--ds-text-display": "2rem",
+          "--ds-text-h1": "1.5rem",
+          "--ds-text-h2": "1.375rem",
+          "--ds-text-h3": "1.25rem",
+          "--ds-text-h4": "1rem",
+          "--ds-text-body-lg": "1rem",
+          "--ds-text-body": "0.875rem",
+          "--ds-text-body-sm": "0.8125rem",
+          "--ds-text-caption": "0.75rem",
+          "--ds-text-micro": "0.6875rem",
+          "--ds-leading-tight": "1.2",
+          "--ds-leading-heading": "1.4",
+          "--ds-leading-display": "1.25",
+          "--ds-leading-snug": "1.25",
+          "--ds-leading-body": "1.5",
+          "--ds-leading-relaxed": "1.6",
+          "--ds-leading-code": "1.5",
+          "--ds-tracking-normal": "0",
+          "--ds-tracking-tight": "0",
+          "--ds-tracking-caps": "0.02em",
+          "--ds-space-0": "0",
+          "--ds-space-px": "1px",
+          "--ds-space-0-5": "0.125rem",
+          "--ds-space-1": "0.25rem",
+          "--ds-space-1-5": "0.375rem",
+          "--ds-space-2": "0.5rem",
+          "--ds-space-2-5": "0.625rem",
+          "--ds-space-3": "0.75rem",
+          "--ds-space-3-5": "0.875rem",
+          "--ds-space-4": "1rem",
+          "--ds-space-5": "1.25rem",
+          "--ds-space-6": "1.5rem",
+          "--ds-space-7": "1.75rem",
+          "--ds-space-8": "2rem",
+          "--ds-space-9": "2.25rem",
+          "--ds-space-9-5": "2.375rem",
+          "--ds-space-10": "2.5rem",
+          "--ds-space-10-5": "2.625rem",
+          "--ds-space-12": "3rem",
+          "--ds-space-14": "3.5rem",
+          "--ds-space-16": "4rem",
+          "--ds-space-20": "5rem",
+          "--ds-space-24": "6rem",
+          "--ds-layout-column": "75rem",
+          "--ds-layout-gutter": "1.5rem",
+          "--ds-layout-text": "42.5rem",
+          "--ds-layout-heading": "42rem",
+          "--ds-layout-header": "4rem",
+          "--ds-layout-rail": "18rem",
+          "--ds-frame-column": "min(100% - 2 * var(--ds-layout-gutter), var(--ds-layout-column))",
+          "--ds-radius-xs": "0.375rem",
+          "--ds-radius-sm": "0.5rem",
+          "--ds-radius-control": "0.75rem",
+          "--ds-radius-panel": "1rem",
+          "--ds-radius-dialog": "1.5rem",
+          "--ds-radius-pill": "9999px",
+          "--ds-shadow-s": "0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12)",
+          "--ds-shadow-card": "0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12)",
+          "--ds-shadow-line": "0 1px 0 rgb(102 102 99 / 0.12)",
+          "--ds-shadow-floating": "0 0 0 1px rgb(23 47 41 / 0.12), 0 2px 4px rgb(23 47 41 / 0.08), 0 12px 24px -8px rgb(62 42 83 / 0.16)",
+          "--ds-shadow-dialog": "0 24px 48px -16px rgb(62 42 83 / 0.16)",
+          "--ds-shadow-knob": "0 1px 2px rgb(62 42 83 / 0.24), 0 0 0 0.5px rgb(62 42 83 / 0.12)",
+          "--ds-shadow-focus": "0 0 0 3px rgb(116 98 157 / 0.24)",
+          "--ds-blur-scrim": "4px",
+          "--ds-duration-fast": "150ms",
+          "--ds-duration-base": "200ms",
+          "--ds-duration-moderate": "250ms",
+          "--ds-duration-slow": "300ms",
+          "--ds-easing-out": "cubic-bezier(0.23, 1, 0.32, 1)",
+          "--ds-easing-in-out": "cubic-bezier(0.77, 0, 0.175, 1)",
+          "--ds-easing-drawer": "cubic-bezier(0.32, 0.72, 0, 1)"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "name": "accordion",
+      "useFor": "Use for settings or answers people open one at a time (advanced options, FAQs). Pass type=\"single\" collapsible for one open at a time, type=\"multiple\" for several. Keep the label a short phrase; the content is 14px secondary text or a group of fields.",
+      "constraints": [
+        "Bold or purple trigger labels",
+        "A chevron at the left",
+        "Boxing each item in a card",
+        "Opening animation longer than 200ms"
+      ],
+      "source": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)",
+      "exports": [
+        "Accordion",
+        "AccordionContent",
+        "AccordionItem",
+        "AccordionTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/accordion",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/accordion.md",
+      "type": "ui",
+      "title": "Accordion",
+      "description": "Sections that open in place: 14px ink labels with a caret at the right, ruled by the faint lilac line.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "alert-dialog",
+      "useFor": "Use before an action that cannot be undone (delete an agent, rotate an API key) or when the person must acknowledge something. Name the action on its button (Delete agent), use variant=\"destructive\" for it, and keep Cancel beside it.",
+      "constraints": [
+        "OK and Cancel as labels",
+        "A close glyph on an alert dialog",
+        "Closing on a click outside",
+        "More than two actions"
+      ],
+      "source": "Figma 427:2715: Modal - Create Agent (panel, scrim, title) with the console's pill buttons",
+      "exports": [
+        "AlertDialog",
+        "AlertDialogAction",
+        "AlertDialogCancel",
+        "AlertDialogContent",
+        "AlertDialogDescription",
+        "AlertDialogFooter",
+        "AlertDialogHeader",
+        "AlertDialogMedia",
+        "AlertDialogOverlay",
+        "AlertDialogPortal",
+        "AlertDialogTitle",
+        "AlertDialogTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/alert-dialog",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/alert-dialog.md",
+      "type": "ui",
+      "title": "Alert Dialog",
+      "description": "The console's dialog for a question that must be answered: title, a secondary line and two pills.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "alert",
+      "useFor": "Use default for a panel that introduces a setup step (Initialize vault: glyph, 16px title, muted description). Use info for a fact the person should know (The vault is zero-knowledge), warning for something to act on now (Copy this API key now, with the reason in AlertAction), destructive for a failure. Lead with a filled Phosphor glyph.",
+      "constraints": [
+        "A dark or saturated alert background",
+        "More than one alert stacked for one message",
+        "Dismissable warnings for security notes",
+        "A bold title"
+      ],
+      "source": "Figma 427:2715: Vault (Initialize vault, zero-knowledge note), Modal - Created (Copy this API key now)",
+      "exports": [
+        "Alert",
+        "AlertAction",
+        "AlertDescription",
+        "AlertTitle",
+        "alertVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/alert",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/alert.md",
+      "type": "ui",
+      "title": "Alert",
+      "description": "The vault box on the lilac, the pale cyan info note, the sand warning banner with a note at the right, and a red error.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "aspect-ratio",
+      "useFor": "Wrap a screenshot, an attachment preview or a video in AspectRatio with ratio={16 / 9} (or 4 / 3, 1) so it keeps its shape at every width. Round and clip it with rounded-control and overflow-hidden.",
+      "constraints": [
+        "Stretching an image to fill without object-cover",
+        "Corners other than the card's 8px on media inside cards"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the 8px corners of its cards and wells",
+      "exports": [
+        "AspectRatio"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/aspect-ratio",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/aspect-ratio.md",
+      "type": "ui",
+      "title": "Aspect Ratio",
+      "description": "A frame that holds media at a fixed shape.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "attachment",
+      "useFor": "Show a file attached to an email, a message or a draft. Set state to idle while it waits, uploading or processing while it moves, error when it failed (say why in AttachmentDescription), and done when it is ready. Add AttachmentTrigger to open the file and AttachmentAction for remove or retry. Lay several out in an AttachmentGroup, which scrolls sideways.",
+      "constraints": [
+        "A colored card behind the file",
+        "Sizes in Inter",
+        "A spinner over the whole card",
+        "An icon that moves on hover"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the webhook cards (white, field edge, 8px corners) and the pink channel tiles of Create Agent Identity",
+      "exports": [
+        "Attachment",
+        "AttachmentAction",
+        "AttachmentActions",
+        "AttachmentContent",
+        "AttachmentDescription",
+        "AttachmentGroup",
+        "AttachmentMedia",
+        "AttachmentTitle",
+        "AttachmentTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/attachment",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/attachment.md",
+      "type": "ui",
+      "title": "Attachment",
+      "description": "A white file attachment with the field edge: horizontal rows and their pink file icons are fully rounded; vertical cards retain rounded corners. Names use 14px medium ink and sizes use IBM Plex Mono.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "avatar",
+      "useFor": "Use the default circle shape for people, identities and agent portraits, including in rails and lists: size sm in a 38px row. Use shape=\"square\" only when an explicit square variation is requested. Always give an AvatarFallback with the first initial. AvatarBadge marks a live agent; AvatarGroup shows who shares a mailbox.",
+      "constraints": [
+        "Gradient or random-colored fallbacks",
+        "Two-letter initials in the 22px tile"
+      ],
+      "source": "Figma 427:2715: the rail (Robert Ligthart), the agent picker (@acme), Modal - Created (@test-agent)",
+      "exports": [
+        "Avatar",
+        "AvatarBadge",
+        "AvatarFallback",
+        "AvatarGroup",
+        "AvatarGroupCount",
+        "AvatarImage"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/avatar",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/avatar.md",
+      "type": "ui",
+      "title": "Avatar",
+      "description": "Circular initial tiles and agent portraits, with a fallback, status dot and group.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "badge",
+      "useFor": "Use pink for a feature or role marker beside a label (BETA, ADMIN), success size lg with a filled check-circle for something granted (Included), blue, purple and gray at size sm for event tags (Email, Signed, Fire-and-forget), green size sm for a rule mode (Blacklist), and size well for a status reading (Active on green, Idle on gray, Edge on blue). Default (purple) and destructive are for counts and errors.",
+      "constraints": [
+        "Caps typed with CSS",
+        "A badge as a button",
+        "More than three badges in a row",
+        "Saturated fills behind text"
+      ],
+      "source": "Figma 427:2715: the rail (BETA, ADMIN), Create Agent Identity (Included), Webhooks (Email, Signed, Fire-and-forget), iMessage (Blacklist), Tunnel (Active, Idle, Edge), Inbox (Unread)",
+      "exports": [
+        "Badge",
+        "badgeVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/badge",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/badge.md",
+      "type": "ui",
+      "title": "Badge",
+      "description": "The pink BETA and ADMIN marks, the green Included pill, the pale webhook tags, and the tunnel's status wells.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "breadcrumb",
+      "useFor": "Use above a page head when a page sits deep in a hierarchy (Webhooks, then an endpoint, then a delivery). Fold middle levels into BreadcrumbEllipsis when the trail is long; use asChild to render your router's link.",
+      "constraints": [
+        "Purple links",
+        "Slashes as separators",
+        "A breadcrumb on a top-level page"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): page heads, muted text and links",
+      "exports": [
+        "Breadcrumb",
+        "BreadcrumbEllipsis",
+        "BreadcrumbItem",
+        "BreadcrumbLink",
+        "BreadcrumbList",
+        "BreadcrumbPage",
+        "BreadcrumbSeparator"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/breadcrumb",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/breadcrumb.md",
+      "type": "ui",
+      "title": "Breadcrumb",
+      "description": "A trail of 14px muted links ending in the current page in ink, with faint carets between.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "bubble",
+      "useFor": "Use inside Message for each piece of a conversation with an agent or a contact. Use the default (purple) variant with align end for what the person or their agent sent, secondary (lilac) for what arrived, tinted for another agent over Agent2Agent, muted for a system note, outline for a quoted message and destructive for one that failed to send. Stack consecutive bubbles in a BubbleGroup so only the last keeps the tail. BubbleReactions pins reactions to an edge.",
+      "constraints": [
+        "Bubbles in colors outside the palette",
+        "An entrance animation on each bubble",
+        "Text smaller than 14px",
+        "Square corners"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): iMessage and the inbox, in the action purple and the lilac",
+      "exports": [
+        "Bubble",
+        "BubbleContent",
+        "BubbleGroup",
+        "BubbleReactions",
+        "bubbleVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/bubble",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/bubble.md",
+      "type": "ui",
+      "title": "Bubble",
+      "description": "A message bubble: incoming on the lilac, outgoing in the action purple, 16px corners with a 4px tail corner.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "button-group",
+      "useFor": "Use to join related actions into one control (View as formatted beside Copy as markdown), a field with an action, or a field with a fixed part (the @inboxmail.com suffix as ButtonGroupText). Nest groups to keep space between sets.",
+      "constraints": [
+        "Joining a purple pill with an outline key",
+        "More than five buttons in a group",
+        "Joining unrelated actions"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the outline keys of the created dialog and the Email channel card's split field",
+      "exports": [
+        "ButtonGroup",
+        "ButtonGroupSeparator",
+        "ButtonGroupText",
+        "buttonGroupVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/button-group",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/button-group.md",
+      "type": "ui",
+      "title": "Button Group",
+      "description": "Buttons, fields and text segments joined into one bar with shared edges and outer corners only.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "button",
+      "useFor": "Use one default (purple pill) button per view for the main action, secondary for the alternatives beside it (Continue with GitHub), outline for actions inside content (View as formatted), soft for an action in a page head (Tunnel quickstart), ghost with size icon for row actions, and link for an inline action in text. Use type=\"submit\" in forms, or asChild with a link for navigation. Put a Phosphor glyph first for an action that adds or creates.",
+      "constraints": [
+        "Two purple pills side by side",
+        "A square or 8px-cornered main action",
+        "Bold or caps labels",
+        "An icon that moves on hover"
+      ],
+      "source": "Figma 427:2715: Create Agent, Enable iMessage, Log in, Continue with GitHub, View as formatted, Tunnel quickstart",
+      "exports": [
+        "Button",
+        "buttonVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/button",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/button.md",
+      "type": "ui",
+      "title": "Button",
+      "description": "The purple pill for the main action, the lilac pill, the white outline key, the soft lilac key, ghost glyphs and text links.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "calendar",
+      "useFor": "Use to pick a day, several days or a range (a delivery log window, a report period) when the month view helps. Set mode to single, multiple or range, pass selected and onSelect, and disable days that cannot be picked. For a field that opens a calendar, use Date Picker.",
+      "constraints": [
+        "Round day keys",
+        "A dark selected day",
+        "Animating between months"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): 8px keys, the lilac wash and the purple action",
+      "exports": [
+        "Calendar",
+        "CalendarDayButton",
+        "CalendarProps",
+        "DateRange"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/calendar",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/calendar.md",
+      "type": "ui",
+      "title": "Calendar",
+      "description": "A month grid of 36px keys: today in purple, selected days as purple keys, a range on a lilac band.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "card",
+      "useFor": "Use default for a small fact block in a grid (Trigger, Delivery, Response contract): a glyph-led 14px title and a muted description. Use raised for a white panel that sits on lilac or holds rows. Use muted for a grouped setting inside a dialog (a channel with its toggle in CardAction). Put a button or toggle in CardAction at the top right.",
+      "constraints": [
+        "Drop shadows on default cards",
+        "Corners other than rounded-dialog",
+        "A colored header bar",
+        "Nesting cards more than one level"
+      ],
+      "source": "Figma 427:2715: Webhooks - Event catalog (Trigger, Delivery, Response contract), Create Agent Identity (Email, Phone Number channel cards)",
+      "exports": [
+        "Card",
+        "CardAction",
+        "CardContent",
+        "CardDescription",
+        "CardFooter",
+        "CardHeader",
+        "CardTitle",
+        "cardVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/card",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/card.md",
+      "type": "ui",
+      "title": "Card",
+      "description": "White cards with the field edge, raised white panels, and lilac channel cards, all with 24px corners.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "carousel",
+      "useFor": "Use to page through a set of similar cards when space is short (agent templates, integrations). Give each CarouselItem a basis for how many show at once. Leave room either side for the arrow keys, or place them yourself.",
+      "constraints": [
+        "Autoplay",
+        "Dots as the only way to move",
+        "Slides of different heights in one row"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): white keys with Shadow/S",
+      "exports": [
+        "Carousel",
+        "CarouselContent",
+        "CarouselItem",
+        "CarouselNext",
+        "CarouselPrevious",
+        "useCarousel",
+        "CarouselApi"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/carousel",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/carousel.md",
+      "type": "ui",
+      "title": "Carousel",
+      "description": "A row of slides that snap into place, with white round previous and next keys outside it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "chart",
+      "useFor": "Use to show volume over time (messages sent, calls, webhook deliveries) or a share (deliveries by status). Name and color each series in a ChartConfig, wrap the chart in ChartContainer, and add ChartTooltip and ChartLegend. Keep to five series; the colors follow the series order.",
+      "constraints": [
+        "Gradients other than the area fade",
+        "3D or shadowed marks",
+        "More than five series",
+        "Colors outside the series tokens"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): muted labels, lilac rules, floating panels and the status colors",
+      "exports": [
+        "ChartConfig",
+        "AreaChart",
+        "BarChart",
+        "ChartContainer",
+        "ChartLegend",
+        "ChartLegendContent",
+        "ChartStyle",
+        "ChartTooltip",
+        "ChartTooltipContent",
+        "LineChart",
+        "PieChart",
+        "useChart"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/chart",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/chart.md",
+      "type": "ui",
+      "title": "Chart",
+      "description": "Line, area, bar and pie charts in SVG with lilac rules, 12px muted labels and a white floating tooltip.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "checkbox",
+      "useFor": "Use for independent on or off choices that apply when a form is submitted (event subscriptions, consent). Pair each checkbox with a Label 8px to its right. Use the indeterminate state for a parent that covers some of its children. For a setting that applies at once use Switch.",
+      "constraints": [
+        "A pink checked box",
+        "A round checkbox",
+        "A checkbox that acts immediately like a switch"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the radios' 18px size and gray edge, the action purple and the white checks",
+      "exports": [
+        "Checkbox"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/checkbox",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/checkbox.md",
+      "type": "ui",
+      "title": "Checkbox",
+      "description": "An 18px box with 4px corners and a gray edge that fills purple with a white check.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "code-block",
+      "useFor": "Use to show a payload, headers or a snippet someone will read or copy (Signature headers, Payload example). Give it a CodeBlockHeader with the language and a CodeBlockCopyButton, then CodeBlockContent with the code. Pass wrap for long single values such as signatures.",
+      "constraints": [
+        "A dark code block",
+        "Code in Inter",
+        "Highlight colors outside the editor theme"
+      ],
+      "source": "Figma 427:2715: Webhooks - Event catalog (Signature headers, Payload example)",
+      "exports": [
+        "CodeBlock",
+        "CodeBlockActions",
+        "CodeBlockContent",
+        "CodeBlockCopyButton",
+        "CodeBlockHeader",
+        "CodeBlockTitle",
+        "tokenize"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/code-block",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/code-block.md",
+      "type": "ui",
+      "title": "Code Block",
+      "description": "The event catalog's code viewer: a gray head with the language and a copy glyph over an off-white body with line numbers.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "collapsible",
+      "useFor": "Use for one optional group (Advanced settings under the channels). Make the trigger the whole row: a 14px ink label with a caret at the right that turns when open. For several sections, use Accordion.",
+      "constraints": [
+        "Hiding required fields in it",
+        "A trigger without a caret",
+        "Animating anything but the content height and the caret"
+      ],
+      "source": "Figma 427:2715: Create Agent Identity (Advanced settings - tunnel mode, phone state, line sharing)",
+      "exports": [
+        "Collapsible",
+        "CollapsibleContent",
+        "CollapsibleTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/collapsible",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/collapsible.md",
+      "type": "ui",
+      "title": "Collapsible",
+      "description": "A part that shows and hides in place, opening with its height.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "combobox",
+      "useFor": "Use instead of Select when there are more than about ten choices or people know what they are looking for (an agent, a contact, webhook events). Wrap ComboboxTrigger (or ComboboxChips with ComboboxChip and ComboboxChipsInput for several values) and ComboboxContent with ComboboxInput, ComboboxList, ComboboxItem rows and ComboboxEmpty in a Combobox with value and onValueChange (multiple for several). Pass items so the closed field can show labels. To let people add a new value, render an extra item for the search text from useCombobox().",
+      "constraints": [
+        "A combobox for five or fewer choices (use Select or a radio group)",
+        "Animating the highlight between rows",
+        "A list without an empty state",
+        "Chips in the purple"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the select trigger (Any State), the command menu and the lilac handle chip",
+      "exports": [
+        "Combobox",
+        "ComboboxChip",
+        "ComboboxChips",
+        "ComboboxChipsInput",
+        "ComboboxClear",
+        "ComboboxCollection",
+        "ComboboxContent",
+        "ComboboxEmpty",
+        "ComboboxGroup",
+        "ComboboxInput",
+        "ComboboxItem",
+        "ComboboxLabel",
+        "ComboboxList",
+        "ComboboxSeparator",
+        "ComboboxTrigger",
+        "ComboboxValue",
+        "useCombobox",
+        "useComboboxAnchor"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/combobox",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/combobox.md",
+      "type": "ui",
+      "title": "Combobox",
+      "description": "A pill trigger for one value, or a field with 24px corners for multiple lilac pill chips, opening a searchable menu with 16px corners.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "cmdk",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "command",
+      "useFor": "Use as a command palette (CommandDialog, opened with Command K) to jump to agents, mailboxes and pages, or inline as a searchable list. Give every item a filled glyph and the group a heading.",
+      "constraints": [
+        "Animating the palette open or closed",
+        "A palette without an empty state",
+        "Results without groups once there are more than ten"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the nav rows, section labels (Channels, Shared) and the dialog",
+      "exports": [
+        "Command",
+        "CommandDialog",
+        "CommandEmpty",
+        "CommandGroup",
+        "CommandInput",
+        "CommandItem",
+        "CommandList",
+        "CommandSeparator",
+        "CommandShortcut"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/command",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/command.md",
+      "type": "ui",
+      "title": "Command",
+      "description": "A search row over grouped 36px results with purple group headings, in a panel or a dialog with the shared 16px popup corners.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "cmdk",
+        "radix-ui",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "context-menu",
+      "useFor": "Use for shortcuts to actions on an item in a list (an email in the inbox, a contact). Every action must also be reachable another way, such as a row's menu button.",
+      "constraints": [
+        "Actions that exist only in the context menu",
+        "A context menu on text people need to select",
+        "Nested submenus beyond one level"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the email list items, nav rows and the raised panel",
+      "exports": [
+        "ContextMenu",
+        "ContextMenuCheckboxItem",
+        "ContextMenuContent",
+        "ContextMenuGroup",
+        "ContextMenuItem",
+        "ContextMenuLabel",
+        "ContextMenuPortal",
+        "ContextMenuRadioGroup",
+        "ContextMenuRadioItem",
+        "ContextMenuSeparator",
+        "ContextMenuShortcut",
+        "ContextMenuSub",
+        "ContextMenuSubContent",
+        "ContextMenuSubTrigger",
+        "ContextMenuTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/context-menu",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/context-menu.md",
+      "type": "ui",
+      "title": "Context Menu",
+      "description": "The dropdown menu's panel and rows, opened with a right click or a long press on an area.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "data-table",
+      "useFor": "Use for a list of records people manage (mailboxes, agents and lines, webhook subscriptions): pass columns (id, header, an accessor for sorting and filtering, a cell renderer), data and getRowId. Turn on selectable for bulk actions and put those actions in toolbar; set pageSize and pageSizes for long lists. For a short fixed list with no sorting or paging, use Table on its own. Keep row actions as ghost icon buttons in the last column.",
+      "constraints": [
+        "Zebra stripes",
+        "A border around the whole table instead of the three panels",
+        "Animating rows when sorting or paging",
+        "More than one purple pill in the toolbar"
+      ],
+      "source": "Figma 427:2715: Email (Mailboxes table and its pagination bar), iMessage (Agents and lines)",
+      "exports": [
+        "DataTable",
+        "DataTableColumnHeader",
+        "DataTablePagination",
+        "DataTableViewOptions",
+        "DataTableColumn",
+        "DataTableProps",
+        "SortState"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/data-table",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/data-table.md",
+      "type": "ui",
+      "title": "Data Table",
+      "description": "The console's table with a filter field, sortable heads, row checkboxes, a Columns menu and the lilac pagination bar.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "checkbox",
+        "dropdown-menu",
+        "input-group",
+        "pagination",
+        "select",
+        "table",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "date-picker",
+      "useFor": "Use DatePicker for one date (a key's expiry, when to send) and DateRangePicker for a period (the delivery log's range). Pass value and onValueChange, a placeholder, and presets for common choices (Today, Last 7 days). Pass calendar props such as disabled days through calendar. Give it a name to submit the date as YYYY-MM-DD with a form.",
+      "constraints": [
+        "A text field people must type a date into",
+        "A range picker for a single date",
+        "More than six presets",
+        "Closing a range before both ends are picked"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the select trigger (Any State) and the menu panel, with the calendar",
+      "exports": [
+        "DatePicker",
+        "DateRangePicker",
+        "formatDate",
+        "formatRange",
+        "DatePickerProps",
+        "DateRangePickerProps"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/date-picker",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/date-picker.md",
+      "type": "ui",
+      "title": "Date Picker",
+      "description": "The select trigger with a calendar glyph that opens the calendar in a white panel, for one date or a range, with optional presets.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "calendar",
+        "popover",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "dialog",
+      "useFor": "Use for a short task that needs the person's full attention (Create Agent Identity) or a result they must read before moving on (the new API key). Put the title in DialogHeader, the content in DialogBody and a full-width default Button at the end of the body for the one action.",
+      "constraints": [
+        "A dark scrim",
+        "A dialog that opens another dialog",
+        "A drop shadow under the panel",
+        "Scaling from zero"
+      ],
+      "source": "Figma 427:2715: Modal - Create Agent, Modal - Created, modal-bg",
+      "exports": [
+        "Dialog",
+        "DialogBody",
+        "DialogClose",
+        "DialogContent",
+        "DialogDescription",
+        "DialogFooter",
+        "DialogHeader",
+        "DialogOverlay",
+        "DialogPortal",
+        "DialogTitle",
+        "DialogTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/dialog",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/dialog.md",
+      "type": "ui",
+      "title": "Dialog",
+      "description": "A centered white panel with 16px corners over the blurred, ink-tinted page.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "direction",
+      "useFor": "Wrap an app or a section in DirectionProvider dir=\"rtl\" when its language reads right to left, and set dir on the element too. Menus, sliders, tabs and carousels then flip their keyboard and layout direction.",
+      "constraints": [
+        "Mixing directions inside one menu or form",
+        "Mirroring logos or code"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): no visual of its own",
+      "exports": [
+        "DirectionProvider",
+        "useDirection"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/direction",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/direction.md",
+      "type": "ui",
+      "title": "Direction",
+      "description": "Sets left-to-right or right-to-left for every component inside it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "drawer",
+      "useFor": "Use on phones for a task or a choice from the bottom of the screen (choose a phone line, confirm a key). Pair it with Dialog on larger screens when the same task is needed. Set direction for other edges.",
+      "constraints": [
+        "A drawer without its handle",
+        "Dragging that fights scrolling content (mark scroll areas data-drawer-no-drag)",
+        "A drawer on desktop for long forms"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): Modal - Create Agent (panel, title, scrim) and the field-edge lilac",
+      "exports": [
+        "Drawer",
+        "DrawerClose",
+        "DrawerContent",
+        "DrawerDescription",
+        "DrawerFooter",
+        "DrawerHeader",
+        "DrawerOverlay",
+        "DrawerPortal",
+        "DrawerTitle",
+        "DrawerTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/drawer",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/drawer.md",
+      "type": "ui",
+      "title": "Drawer",
+      "description": "A panel pulled up from the bottom edge with a handle, dragged away with a flick or a pull.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "dropdown-menu",
+      "useFor": "Use for actions on one thing behind a single control (an agent's row actions, the account menu), and for small option sets with DropdownMenuCheckboxItem or DropdownMenuRadioItem. Mark a destructive action with variant=\"destructive\" and keep it last, after a separator.",
+      "constraints": [
+        "Navigation between pages in a dropdown",
+        "More than one level of submenu",
+        "Animating the highlighted row",
+        "Icons that move on hover"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): nav rows (38px, 8px corners, filled glyphs, lilac current row), section labels (Channels), the raised panel",
+      "exports": [
+        "DropdownMenu",
+        "DropdownMenuCheckboxItem",
+        "DropdownMenuContent",
+        "DropdownMenuGroup",
+        "DropdownMenuItem",
+        "DropdownMenuLabel",
+        "DropdownMenuPortal",
+        "DropdownMenuRadioGroup",
+        "DropdownMenuRadioItem",
+        "DropdownMenuSeparator",
+        "DropdownMenuShortcut",
+        "DropdownMenuSub",
+        "DropdownMenuSubContent",
+        "DropdownMenuSubTrigger",
+        "DropdownMenuTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/dropdown-menu",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/dropdown-menu.md",
+      "type": "ui",
+      "title": "Dropdown Menu",
+      "description": "A raised white menu of 36px rows with filled glyphs, lilac highlight, purple section labels and checks.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "empty",
+      "useFor": "Use where a list or pane has nothing yet (Create Your First Agent, No email selected). Put EmptyOrbit (up to five filled glyphs of what the area holds) and EmptyMascot in an EmptyMedia variant=\"mascot\", then the title, a one-sentence description and one default Button with a plus. For a smaller pane, use EmptyMedia variant=\"icon\" with one glyph.",
+      "constraints": [
+        "More than one action",
+        "Animating the orbit",
+        "A title longer than five words",
+        "Gray stock illustrations"
+      ],
+      "source": "Figma 427:2715: Dashboard - empty state (Create Your First Agent), Agent Workspace - Inbox - Not selected (No email selected)",
+      "exports": [
+        "Empty",
+        "EmptyContent",
+        "EmptyDescription",
+        "EmptyHeader",
+        "EmptyMascot",
+        "EmptyMedia",
+        "EmptyOrbit",
+        "EmptyTitle"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/empty",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/empty.md",
+      "type": "ui",
+      "title": "Empty",
+      "description": "The centered empty state: the 3D octopus under an arc of glyph circles, a 22px bold title, a short description and a purple pill.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "field",
+      "useFor": "Wrap every form control in Field with a FieldLabel above it; add FieldDescription for a hint (Enter a vault key or generate a random one) and FieldError, with data-invalid on the Field and aria-invalid on the control, when the value is rejected. Group fields in FieldGroup, related choices in FieldSet with a FieldLegend. Put an action beside the label (Forgot password?) in a row with justify-between. Use orientation horizontal for a label beside its control, and FieldSeparator with \"or\" between a form and other ways in.",
+      "constraints": [
+        "A red label on an invalid field",
+        "A placeholder as the only label",
+        "Errors larger than 12px",
+        "Fields closer than 12px"
+      ],
+      "source": "Figma 427:2715: Login (Email address, Password, Forgot password?, or), Vault (Vault key and its description), Create Agent Identity (is not available, Will be displayed as)",
+      "exports": [
+        "Field",
+        "FieldContent",
+        "FieldDescription",
+        "FieldError",
+        "FieldGroup",
+        "FieldLabel",
+        "FieldLegend",
+        "FieldSeparator",
+        "FieldSet",
+        "FieldTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/field",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/field.md",
+      "type": "ui",
+      "title": "Field",
+      "description": "A field's label, control, description and error stacked 4px apart, fields 12px apart, with the 'or' hairline between two ways in.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "label",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "form",
+      "useFor": "Build a validated form with react-hook-form: wrap it in Form with the useForm result, give each field a FormField with a render function returning FormItem, FormLabel, FormControl around the one control, then FormDescription and FormMessage. FormControl passes the id, the described-by ids and aria-invalid to the control, so the red edge and the message appear together. Finish with one full-width default Button of type submit, showing a Spinner while it works.",
+      "constraints": [
+        "A red label on an invalid field",
+        "Validating on every keystroke before the first submit",
+        "A submit button that stays enabled while the request runs",
+        "More than one purple pill in the form"
+      ],
+      "source": "Figma 427:2715: Create Agent Identity (handle check states, Creating Agent Identity...), Login",
+      "exports": [
+        "Form",
+        "FormControl",
+        "FormDescription",
+        "FormField",
+        "FormItem",
+        "FormLabel",
+        "FormMessage",
+        "useFormField"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/form",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/form.md",
+      "type": "ui",
+      "title": "Form",
+      "description": "react-hook-form fields laid out as the console's forms: a 14px label, the control, a muted description and a 12px red message.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "label",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "react-hook-form"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "hover-card",
+      "useFor": "Use to preview what a link or an agent handle points to (the agent's addresses, its channels) for people with a pointer. Keep the same information reachable by clicking: hover cards do not open on touch.",
+      "constraints": [
+        "Actions that exist only inside the card",
+        "A card that opens instantly on hover",
+        "Long content"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panels and the avatar tile, with the shared popup radius",
+      "exports": [
+        "HoverCard",
+        "HoverCardContent",
+        "HoverCardTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/hover-card",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/hover-card.md",
+      "type": "ui",
+      "title": "Hover Card",
+      "description": "A raised white preview card with 16px corners that opens after a short pause on a link or handle.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input-group",
+      "useFor": "Use to attach context to a field: a fixed suffix (@inboxmail.com as a segment), a search glyph, a show or copy button, a character count under a textarea, or the live state of a check (spinner, green check-circle, red x-circle). Put InputGroupInput or InputGroupTextarea inside, then InputGroupAddon at inline-start, inline-end, block-start or block-end.",
+      "constraints": [
+        "Putting a separate Input inside the group",
+        "More than one action at each end",
+        "A suffix that people can edit"
+      ],
+      "source": "Figma 427:2715: the Email card's handle field with @inboxmail.com and the handle check states (checking, Available, Not Available) in Modal States",
+      "exports": [
+        "InputGroup",
+        "InputGroupAddon",
+        "InputGroupButton",
+        "InputGroupInput",
+        "InputGroupText",
+        "InputGroupTextarea"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/input-group",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/input-group.md",
+      "type": "ui",
+      "title": "Input Group",
+      "description": "The console's field with addons inside it: glyphs, text, a lilac suffix segment, buttons, or the handle check's state glyph.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input-otp",
+      "useFor": "Use for one-time codes from email or SMS (a login code, a vault unlock code). Set maxLength to the code's length and pattern to REGEXP_ONLY_DIGITS for numbers; split long codes into groups with InputOTPSeparator. Paste and SMS autofill fill every slot at once; onComplete fires when the code is full.",
+      "constraints": [
+        "Separate inputs per digit",
+        "Auto-submitting without a visible result",
+        "Hiding the characters of a one-time code"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): Form- Input's 40px, edge and focus",
+      "exports": [
+        "InputOTP",
+        "InputOTPGroup",
+        "InputOTPSeparator",
+        "InputOTPSlot",
+        "REGEXP_ONLY_CHARS",
+        "REGEXP_ONLY_DIGITS",
+        "REGEXP_ONLY_DIGITS_AND_CHARS"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/input-otp",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/input-otp.md",
+      "type": "ui",
+      "title": "Input OTP",
+      "description": "Joined 40px slots in the field's edge with a purple active slot and a blinking caret.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input",
+      "useFor": "Use for one line of text: a handle, an email, a key. Pair it with Label (or Field) above it. Set aria-invalid when the value is rejected and say why below it; set readOnly for a value the person cannot change (it sits on the lilac).",
+      "constraints": [
+        "A placeholder used as the only label",
+        "A pill-shaped field",
+        "A gray field background for an editable value"
+      ],
+      "source": "Figma 427:2715: Form- Input in Create Agent Identity, Login and Vault",
+      "exports": [
+        "Input",
+        "inputClassName"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/input",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/input.md",
+      "type": "ui",
+      "title": "Input",
+      "description": "The 40px field with 8px corners, the lilac-gray edge and a light purple placeholder.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "item",
+      "useFor": "Use for list rows that open something. An email: ItemHeader (sender, date) over ItemContent (ItemTitle subject, ItemDescription preview). A webhook event: ItemHeader (a sm Badge and an arrow) over the event name and its count. A rail row: size sm with ItemMedia variant=\"icon\" and a filled glyph. Mark the open one with aria-current=\"true\". Separate rows with ItemSeparator.",
+      "constraints": [
+        "Bold titles",
+        "Gray descriptions in email and event lists (they are purple)",
+        "A card border around every row in a list"
+      ],
+      "source": "Figma 427:2715: Agent Workspace - Inbox (email list), Webhooks - Event catalog (event list), the rail",
+      "exports": [
+        "Item",
+        "ItemActions",
+        "ItemContent",
+        "ItemDescription",
+        "ItemFooter",
+        "ItemGroup",
+        "ItemHeader",
+        "ItemMedia",
+        "ItemSeparator",
+        "ItemTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/item",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/item.md",
+      "type": "ui",
+      "title": "Item",
+      "description": "A row of content: an email in the inbox, a webhook event, or a rail row, washing lilac when hovered or selected.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils",
+        "separator"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "kbd",
+      "useFor": "Use to show a keyboard shortcut in a menu, a tooltip or help text (Kbd for one key, KbdGroup for a combination). Write the keys as people see them on the keyboard (⌘, Shift, K).",
+      "constraints": [
+        "A shortcut written in caps tracking",
+        "A dark key cap on white",
+        "Long words inside a key"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac @handle chip and its 4px tag corners",
+      "exports": [
+        "Kbd",
+        "KbdGroup"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/kbd",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/kbd.md",
+      "type": "ui",
+      "title": "Kbd",
+      "description": "A 20px lilac key cap with 4px corners and 12px medium text.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "label",
+      "useFor": "Name every field with a Label tied to it by htmlFor, 4px above the field. For a label with a hint or an action beside it (Forgot password?), use Field.",
+      "constraints": [
+        "Bold or caps labels",
+        "A label in the action purple"
+      ],
+      "source": "Figma 427:2715: Login (Email address, Password), Vault (Vault key)",
+      "exports": [
+        "Label"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/label",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/label.md",
+      "type": "ui",
+      "title": "Label",
+      "description": "A field's 14px regular ink label on a 24px line.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "marker",
+      "useFor": "Mark where a day begins (separator, \"Yesterday\"), where unread messages start (unread), or an event in a thread (default with a MarkerIcon, \"Ray joined the conversation\"). Use border to head a short list.",
+      "constraints": [
+        "Markers larger than 12px",
+        "A colored pill around a date",
+        "More than one unread line"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox dates (muted) and the rail rules",
+      "exports": [
+        "Marker",
+        "MarkerContent",
+        "MarkerIcon",
+        "markerVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/marker",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/marker.md",
+      "type": "ui",
+      "title": "Marker",
+      "description": "A 12px muted marker in a conversation or list, alone, between two hairlines, ruled underneath, or as the purple unread line.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "menubar",
+      "useFor": "Use for an app-style menu of commands in a dense tool, such as an editor for an agent's notes. In the console's pages prefer buttons and row menus.",
+      "constraints": [
+        "A menubar for site navigation (use Navigation Menu)",
+        "More than six triggers",
+        "Triggers without menus"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the tab track (Mailboxes, Contact rules, Custom domains) and the raised panel",
+      "exports": [
+        "Menubar",
+        "MenubarCheckboxItem",
+        "MenubarContent",
+        "MenubarGroup",
+        "MenubarItem",
+        "MenubarLabel",
+        "MenubarMenu",
+        "MenubarPortal",
+        "MenubarRadioGroup",
+        "MenubarRadioItem",
+        "MenubarSeparator",
+        "MenubarShortcut",
+        "MenubarSub",
+        "MenubarSubContent",
+        "MenubarSubTrigger",
+        "MenubarTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/menubar",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/menubar.md",
+      "type": "ui",
+      "title": "Menubar",
+      "description": "A lilac tab track of medium triggers whose menus are the dropdown menu's raised panels.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "message-scroller",
+      "useFor": "Wrap a conversation: MessageScroller, then MessageScrollerViewport around MessageScrollerContent, one MessageScrollerItem per message, and a MessageScrollerButton. Give the scroller a fixed height (it fills its parent). Set scrollAnchor on the item the person just sent so the reply grows below it. Use MessageScrollerProvider to reach the scroller from outside (a composer), and the hooks useMessageScroller, useMessageScrollerScrollable and useMessageScrollerVisibility for custom controls.",
+      "constraints": [
+        "Sliding the jump pill in and out",
+        "Scrolling away from what the reader is reading when a message arrives",
+        "A scroller without a fixed height"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox list and reading pane, the white key with Shadow/S",
+      "exports": [
+        "MessageScroller",
+        "MessageScrollerButton",
+        "MessageScrollerContent",
+        "MessageScrollerItem",
+        "MessageScrollerProvider",
+        "MessageScrollerViewport",
+        "useMessageScroller",
+        "useMessageScrollerScrollable",
+        "useMessageScrollerVisibility"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/message-scroller",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/message-scroller.md",
+      "type": "ui",
+      "title": "Message Scroller",
+      "description": "A conversation's scroll area that opens at the newest message, stays pinned to it as messages arrive, and offers a white Jump to latest pill once the reader scrolls up.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "message",
+      "useFor": "Build a conversation from Message rows inside a MessageGroup: MessageAvatar with an initial or a picture, MessageContent with a MessageHeader (the name, then a time element), the Bubble pieces and an optional MessageFooter (Delivered, Read). Set align end for the person's own messages; the row mirrors to the right.",
+      "constraints": [
+        "Round avatars",
+        "A bold sender name",
+        "Timestamps darker than the muted purple"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox rows (sender in ink, date muted) and the rail's initial tile",
+      "exports": [
+        "Message",
+        "MessageAvatar",
+        "MessageContent",
+        "MessageFooter",
+        "MessageGroup",
+        "MessageHeader"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/message",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/message.md",
+      "type": "ui",
+      "title": "Message",
+      "description": "One message in a conversation: a 32px avatar tile, the sender and time in 14px, the bubbles, and a 12px muted footer.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "native-select",
+      "useFor": "Use when the platform's own picker is better: on phones, for long lists such as countries or states, or in forms that must work without script. Otherwise use Select. Use NativeSelectOptGroup to group options.",
+      "constraints": [
+        "A field edge instead of the Shadow/S ring",
+        "A custom arrow image",
+        "A native select styled differently from Select on the same form"
+      ],
+      "source": "Figma 427:2715: the Any State and Shared selects in Create Agent Identity",
+      "exports": [
+        "NativeSelect",
+        "NativeSelectOptGroup",
+        "NativeSelectOption"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/native-select",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/native-select.md",
+      "type": "ui",
+      "title": "Native Select",
+      "description": "The browser's own select dressed as the console's: a white 40px field with the Shadow/S ring and an ink caret.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "navigation-menu",
+      "useFor": "Use for a site's top navigation with grouped destinations (Product, Docs). Put NavigationMenuLink rows with a title and a muted line inside each NavigationMenuContent. Pass viewport={false} to open each panel under its own trigger. navigationMenuTriggerStyle styles a plain link as a trigger; call it from a client component.",
+      "constraints": [
+        "Actions in a navigation menu",
+        "A navigation menu inside the console's rail (use Sidebar)",
+        "Panels taller than the screen"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the rail's nav rows and the raised panel",
+      "exports": [
+        "NavigationMenu",
+        "NavigationMenuContent",
+        "NavigationMenuIndicator",
+        "NavigationMenuItem",
+        "NavigationMenuLink",
+        "NavigationMenuList",
+        "NavigationMenuTrigger",
+        "NavigationMenuViewport",
+        "navigationMenuTriggerStyle"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/navigation-menu",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/navigation-menu.md",
+      "type": "ui",
+      "title": "Navigation Menu",
+      "description": "Nav-row triggers and links with panels that open in a raised white viewport.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "@phosphor-icons/react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "pagination",
+      "useFor": "Use under a table or list that has more than one page. Pass bar to set it in the lilac bar that sits 8px under a table, as the console does. Mark the current page with isActive and disable Previous on the first page with aria-disabled.",
+      "constraints": [
+        "A purple current page",
+        "Page numbers in the action purple",
+        "More than seven page links at once"
+      ],
+      "source": "Figma 427:2715: the pagination bar under the Email and iMessage tables",
+      "exports": [
+        "Pagination",
+        "PaginationContent",
+        "PaginationEllipsis",
+        "PaginationItem",
+        "PaginationLink",
+        "PaginationNext",
+        "PaginationPrevious"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/pagination",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/pagination.md",
+      "type": "ui",
+      "title": "Pagination",
+      "description": "Muted Previous and Next with carets around ink page numbers; the current page is a white key with Shadow/S.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "popover",
+      "useFor": "Use for a small form or detail tied to one control (rename a mailbox, set a phone line's state). Put a PopoverHeader with a PopoverTitle and PopoverDescription first, then the fields. For choosing one value from a list use Select or Combobox; for actions use Dropdown Menu.",
+      "constraints": [
+        "A popover that opens on hover (use Hover Card)",
+        "A dark or lilac popover panel",
+        "Scaling from the center instead of the trigger",
+        "Long forms that scroll inside a popover"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the raised white panel of the select and the selected tab (Shadow/S), the field and button sizes",
+      "exports": [
+        "Popover",
+        "PopoverAnchor",
+        "PopoverContent",
+        "PopoverDescription",
+        "PopoverHeader",
+        "PopoverTitle",
+        "PopoverTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/popover",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/popover.md",
+      "type": "ui",
+      "title": "Popover",
+      "description": "A raised white panel with 16px corners and the floating shadow that grows out of the control that opened it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "progress",
+      "useFor": "Use for a known amount (mailbox storage used, an upload, setup steps done). Put the value as text beside it (0%) and give it an aria-label. For unknown waits use Spinner.",
+      "constraints": [
+        "Striped or gradient fills",
+        "Progress for something that takes under a second",
+        "A track thicker than 8px"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the Email table's Storage column, the lilac wells and the purple action color",
+      "exports": [
+        "Progress"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/progress",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/progress.md",
+      "type": "ui",
+      "title": "Progress",
+      "description": "An 8px lilac pill track filled with the purple.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "questionnaire",
+      "useFor": "Use when an agent or a setup flow needs a few answers in a row (how to route calls, what to include in a summary). Pass the questions as items to Questionnaire, then render a QuestionnaireItem per question with a QuestionnaireTitle, a QuestionnaireDescription, QuestionnaireChoices of QuestionnaireChoice (add QuestionnaireInput for another answer) and a QuestionnaireError; end with QuestionnaireActions holding Previous, Skip, Next and Submit. Mark required questions; set multiple to allow several answers. onSubmit receives the native form event: read the answers with FormData.",
+      "constraints": [
+        "More than one question on screen",
+        "Animating between questions",
+        "A required question without its error message",
+        "A purple card fill for a chosen answer"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the radio and checks in Create Agent Identity and the Where does this agent run? picker",
+      "exports": [
+        "Questionnaire",
+        "QuestionnaireActions",
+        "QuestionnaireChoice",
+        "QuestionnaireChoiceDescription",
+        "QuestionnaireChoices",
+        "QuestionnaireDescription",
+        "QuestionnaireError",
+        "QuestionnaireInput",
+        "QuestionnaireItem",
+        "QuestionnaireNext",
+        "QuestionnairePrevious",
+        "QuestionnaireProgress",
+        "QuestionnaireSkip",
+        "QuestionnaireSubmit",
+        "QuestionnaireTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/questionnaire",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/questionnaire.md",
+      "type": "ui",
+      "title": "Questionnaire",
+      "description": "Questions asked one at a time: white choice cards with the brand's radio or checkbox and a shortcut key, a typed answer, a progress count and Previous, Skip and Next pills.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "input",
+        "kbd",
+        "progress",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "radio-group",
+      "useFor": "Use for one choice among two to five visible options (Tunnel TLS mode: Edge (default), Passthrough). Stack options 8px apart, each with its label 8px from the circle. For more options use Select; for an immediate view switch use Tabs or Toggle Group.",
+      "constraints": [
+        "A purple or filled dot for the chosen option",
+        "Radios laid out without labels",
+        "A single radio on its own"
+      ],
+      "source": "Figma 427:2715: Tunnel TLS mode radios in Create Agent Identity (Modal States)",
+      "exports": [
+        "RadioGroup",
+        "RadioGroupItem"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/radio-group",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/radio-group.md",
+      "type": "ui",
+      "title": "Radio Group",
+      "description": "18px circles; the chosen one takes a thick pink ring around a white center.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "resizable",
+      "useFor": "Use for a workspace whose panes people size themselves (the inbox list beside a message, a log beside its detail). Give each ResizablePanel a defaultSize in percent and sensible minSize; add withHandle when the edge needs to be found.",
+      "constraints": [
+        "Thick or colored dividers",
+        "Panels that can collapse to nothing without a minSize",
+        "Animating the panes while dragging"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the 1px rules between the rails and the inbox list",
+      "exports": [
+        "ResizableHandle",
+        "ResizablePanel",
+        "ResizablePanelGroup"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/resizable",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/resizable.md",
+      "type": "ui",
+      "title": "Resizable",
+      "description": "Panels split by the console's 1px lilac rule, which can be dragged or moved with the arrow keys.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "scroll-area",
+      "useFor": "Use for a panel with its own scroll (the email list, the event catalog, a long menu) inside a fixed-height layout. Give it a height (h-80, flex-1 in a column). Add a horizontal ScrollBar for wide content.",
+      "constraints": [
+        "Nested scroll areas in the same direction",
+        "Hiding the bar entirely on desktop",
+        "A dark thumb"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox and event lists, the field edge color for the thumb",
+      "exports": [
+        "ScrollArea",
+        "ScrollBar"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/scroll-area",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/scroll-area.md",
+      "type": "ui",
+      "title": "Scroll Area",
+      "description": "A region that scrolls inside the page with a thin lilac-gray bar.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "select",
+      "useFor": "Use to choose one value from a list of five or more (Any State for a phone number, Shared or Dedicated for an iMessage line). Give it a Label or an aria-label, a placeholder when nothing is chosen, and group long lists with SelectGroup and SelectLabel. Control it with value and onValueChange (values are non-empty strings), and give the root a name so a form submits the value with FormData.",
+      "constraints": [
+        "A field edge instead of the Shadow/S ring",
+        "A dark or purple list",
+        "Checkmarks at the left of the items",
+        "Animating items as they are highlighted"
+      ],
+      "source": "Figma 427:2715: Any State and Shared in Create Agent Identity (Modal States); the list is extrapolated as the console's menu",
+      "exports": [
+        "Select",
+        "SelectContent",
+        "SelectGroup",
+        "SelectItem",
+        "SelectLabel",
+        "SelectScrollDownButton",
+        "SelectScrollUpButton",
+        "SelectSeparator",
+        "SelectTrigger",
+        "SelectValue"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/select",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/select.md",
+      "type": "ui",
+      "title": "Select",
+      "description": "A white 40px field with the Shadow/S ring and an ink caret that opens the console's white menu.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "separator",
+      "useFor": "Use between groups: under a page head, above the rail's footer, between list rows, between toolbar groups (orientation=\"vertical\"). It is decorative unless you set decorative={false}.",
+      "constraints": [
+        "Darker rules than the faint lilac between rows",
+        "Double rules",
+        "Rules inside a lilac panel"
+      ],
+      "source": "Figma 427:2715: the rail's footer rule, page head rules, inbox list dividers",
+      "exports": [
+        "Separator"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/separator",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/separator.md",
+      "type": "ui",
+      "title": "Separator",
+      "description": "A 1px rule in the faint lilac, across or down.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sheet",
+      "useFor": "Use for a task beside the page that keeps its context, such as editing a mailbox or reading a call's details. Use side=\"right\" by default and side=\"left\" for the rail on phones. Put the title in SheetHeader and the main action in SheetFooter.",
+      "constraints": [
+        "A sheet that opens another sheet",
+        "A dark scrim",
+        "A sheet for a short confirmation (use Alert Dialog)"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): Modal - Create Agent (panel, title, close glyph, scrim)",
+      "exports": [
+        "Sheet",
+        "SheetClose",
+        "SheetContent",
+        "SheetDescription",
+        "SheetFooter",
+        "SheetHeader",
+        "SheetOverlay",
+        "SheetPortal",
+        "SheetTitle",
+        "SheetTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/sheet",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/sheet.md",
+      "type": "ui",
+      "title": "Sheet",
+      "description": "A white panel that slides from an edge over the blurred, ink-tinted page, with the dialog's title and close glyph.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sidebar",
+      "useFor": "Use for an app's main navigation. Wrap the app in SidebarProvider; put the lockup in SidebarHeader, groups of SidebarMenuButton rows (isActive on the current page, a filled Phosphor glyph first) in SidebarContent, and Help, the organization (SidebarMenuBadge with ADMIN) and the account in SidebarFooter; the page goes in SidebarInset. Use variant secondary for a second rail beside it (an agent's workspace), collapsible icon to let it narrow to its glyphs (rows then show their tooltip), and SidebarTrigger or Cmd B to toggle. On phones it opens in a sheet.",
+      "constraints": [
+        "A dark or purple rail",
+        "Line glyphs in the rows",
+        "Bold or purple row labels",
+        "A purple pill for the current row",
+        "Animating the rail when the keyboard shortcut toggles it"
+      ],
+      "source": "Figma 427:2715: the rail in Dashboard - empty state and every console screen; the second rail in Agent Workspace - Inbox",
+      "exports": [
+        "Sidebar",
+        "SidebarContent",
+        "SidebarFooter",
+        "SidebarGroup",
+        "SidebarGroupAction",
+        "SidebarGroupContent",
+        "SidebarGroupLabel",
+        "SidebarHeader",
+        "SidebarInput",
+        "SidebarInset",
+        "SidebarMenu",
+        "SidebarMenuAction",
+        "SidebarMenuBadge",
+        "SidebarMenuButton",
+        "SidebarMenuItem",
+        "SidebarMenuSkeleton",
+        "SidebarMenuSub",
+        "SidebarMenuSubButton",
+        "SidebarMenuSubItem",
+        "SidebarProvider",
+        "SidebarRail",
+        "SidebarSeparator",
+        "SidebarTrigger",
+        "useSidebar"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/sidebar",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/sidebar.md",
+      "type": "ui",
+      "title": "Sidebar",
+      "description": "The console's rail: 288px of white with a hairline edge, the lockup, 38px rows with filled glyphs, purple group labels and a ruled foot; the lilac second rail for an agent's workspace.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "input",
+        "separator",
+        "sheet",
+        "skeleton",
+        "tooltip",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react",
+        "class-variance-authority",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "skeleton",
+      "useFor": "Use in the shape of what will load (rows of the email list, a table's rows, an avatar), matching each part's size and corners (rounded-pill for buttons, avatars and small icon tiles). Show it only for loads longer than about 300ms.",
+      "constraints": [
+        "Shimmer gradients",
+        "Skeletons for content already on screen",
+        "A skeleton for a single button"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac fill and 8px corners of its wells",
+      "exports": [
+        "Skeleton"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/skeleton",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/skeleton.md",
+      "type": "ui",
+      "title": "Skeleton",
+      "description": "A lilac placeholder with 8px corners that breathes softly while content loads.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "slider",
+      "useFor": "Use to pick an approximate value in a range where the exact number matters less than its position (a daily send limit, a retry delay, a storage quota). Show the current value next to its label. Pass two values for a range.",
+      "constraints": [
+        "A slider for exact numbers (use Input)",
+        "A thick or colored knob",
+        "Ticks on every step"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the switch's knob and purple, the field's lilac-gray",
+      "exports": [
+        "Slider"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/slider",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/slider.md",
+      "type": "ui",
+      "title": "Slider",
+      "description": "A 6px lilac-gray track filled purple to the value, with the switch's white knob.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sonner",
+      "useFor": "Use to confirm something that happened in the background or will undo (API key copied, agent created, webhook paused). Mount Toaster once near the root and call toast(), toast.success(), toast.error() or toast.promise() from anywhere. Give undoable actions an action button.",
+      "constraints": [
+        "A toast for an error that blocks the task (say it in place instead)",
+        "Colored toast backgrounds",
+        "More than one sentence of description"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): white floating panels, filled status glyphs and the purple action",
+      "exports": [
+        "Toaster"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/sonner",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/sonner.md",
+      "type": "ui",
+      "title": "Sonner",
+      "description": "Toasts as white floating panels with a filled status glyph, an ink title, a muted description and a purple action.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": [
+        "@phosphor-icons/react",
+        "sonner"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "spinner",
+      "useFor": "Use inside the thing that is working: at the right of a field while the handle is checked (text-fg-brand), before the label of a button that is creating (Creating Agent Identity...). Disable the button while it spins.",
+      "constraints": [
+        "A full-page spinner for a short wait",
+        "A spinner without a label or button text saying what is happening",
+        "Colored spinners"
+      ],
+      "source": "Figma 427:2715: Modal States (Handle check, Creating...)",
+      "exports": [
+        "Spinner"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/spinner",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/spinner.md",
+      "type": "ui",
+      "title": "Spinner",
+      "description": "The console's turning eight-spoke glyph, in the color of the text around it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "surface",
+      "useFor": "Wrap an embedded panel or a preview in Surface so its overlays render inside it. Pick lilac for the second rail or a channel card's ground.",
+      "constraints": [],
+      "exports": [
+        "Surface",
+        "usePortalContainer"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/r/surface.md",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/surface.md",
+      "type": "lib",
+      "title": "Surface",
+      "description": "A white or lilac ground that also keeps the dialogs, menus and tooltips opened inside it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "switch",
+      "useFor": "Use to turn a setting or a channel on and off immediately (Phone Number, iMessage, Agent2Agent in Create Agent Identity). Put the label at the left and the switch at the right of the row, and give the switch an accessible name with aria-label or a Label. Use size sm in dense lists.",
+      "constraints": [
+        "A switch that needs a save button to apply",
+        "A label inside the track",
+        "A colored track other than purple when on",
+        "A knob that bounces"
+      ],
+      "source": "Figma 427:2715: Toggle (44 by 24) in the channel cards of Create Agent Identity, off and on states in Modal States",
+      "exports": [
+        "Switch"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/switch",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/switch.md",
+      "type": "ui",
+      "title": "Switch",
+      "description": "A 44 by 24 pill: off gray, purple when on, with a white knob that slides across.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "table",
+      "useFor": "Use for rows of records people scan and act on (mailboxes, agents and lines, webhooks). Put labels in TableHeader, rows in TableBody, totals or Pagination with bar in a TableFooter or under the table, and row actions as ghost icon buttons in the last cell. Keep cells to one line; truncate long values.",
+      "constraints": [
+        "Zebra striping",
+        "Vertical rules between cells",
+        "A dark or purple head row",
+        "Bold cell text"
+      ],
+      "source": "Figma 427:2715: Email (Mailboxes table) and iMessage (Agents and lines table)",
+      "exports": [
+        "Table",
+        "TableBody",
+        "TableCaption",
+        "TableCell",
+        "TableFooter",
+        "TableHead",
+        "TableHeader",
+        "TableRow"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/table",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/table.md",
+      "type": "ui",
+      "title": "Table",
+      "description": "The console's table: a lilac head with muted labels, a separate white body with Shadow/S and 64px rows, and a lilac foot.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tabs",
+      "useFor": "Use to switch between views of the same thing on a page (Mailboxes, Contact rules, Custom domains). Pass full to TabsList for two equal choices that fill a form's width (Login, Sign up).",
+      "constraints": [
+        "Underlined tabs",
+        "A purple selected tab",
+        "Animating the white key between tabs"
+      ],
+      "source": "Figma 427:2715: Email, iMessage, Webhooks and Login tabs",
+      "exports": [
+        "Tabs",
+        "TabsList",
+        "TabsTrigger",
+        "TabsContent"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/tabs",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/tabs.md",
+      "type": "ui",
+      "title": "Tabs",
+      "description": "A lilac track of medium labels; the selected tab is a white key with Shadow/S.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "textarea",
+      "useFor": "Use for free text longer than a line (Agent Description, a note, a message). Label it above like Input. It grows with its content; set rows or a min-h class to change the starting height.",
+      "constraints": [
+        "A textarea without a label",
+        "A gray background for an editable value",
+        "A fixed height that hides what was typed"
+      ],
+      "source": "Figma 427:2715: Agent Description (Form- Input, 72px) in Create Agent Identity",
+      "exports": [
+        "Textarea"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/textarea",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/textarea.md",
+      "type": "ui",
+      "title": "Textarea",
+      "description": "The field's 8px corners and lilac-gray edge around several lines of 14px text, 72px tall to start.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@chakra-ui/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toast",
+      "useFor": "Use when an app already calls the older toast() and useToast() API. Mount Toaster once and call toast({ title, description, action }); pass variant destructive for failures. For new work, use Sonner.",
+      "constraints": [
+        "Stacking more than three toasts",
+        "A toast that needs a decision before work continues",
+        "A purple or dark toast"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): white floating panels and outline keys",
+      "exports": [
+        "Toast",
+        "ToastAction",
+        "ToastClose",
+        "ToastDescription",
+        "Toaster",
+        "ToastProvider",
+        "ToastTitle",
+        "ToastViewport",
+        "toast",
+        "useToast",
+        "ToastActionElement",
+        "ToastProps"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/toast",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/toast.md",
+      "type": "ui",
+      "title": "Toast",
+      "description": "The Radix toast API in the same white floating look, with an outline action and a red edge for destructive toasts.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "class-variance-authority",
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toggle-group",
+      "useFor": "Use for a choice among a few options that changes what is shown next (Where does this agent run? Hermes, Openclaw, Codex, Claude Code). Use type single for one choice, multiple for several. Put a 24px logo tile or a 20px glyph before each label. Use variant outline for separate keys.",
+      "constraints": [
+        "A purple chosen key",
+        "A sliding indicator between choices",
+        "More than seven choices in one track"
+      ],
+      "source": "Figma 427:2715: Where does this agent run? in Modal - Created",
+      "exports": [
+        "ToggleGroup",
+        "ToggleGroupItem"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/toggle-group",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/toggle-group.md",
+      "type": "ui",
+      "title": "Toggle Group",
+      "description": "The segmented choice: a lilac track of 38px choices where the chosen one is a white key with Shadow/S.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "toggle",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toggle",
+      "useFor": "Use for a two-state control that changes how something shows (bold, show archived, pin). Give an icon-only toggle an aria-label. For a group of exclusive choices use Toggle Group; for a setting use Switch.",
+      "constraints": [
+        "A toggle that submits a form",
+        "A purple filled toggle",
+        "Icon motion when it turns on"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the soft key (Tunnel quickstart) and the segmented choice",
+      "exports": [
+        "Toggle",
+        "toggleVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/toggle",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/toggle.md",
+      "type": "ui",
+      "title": "Toggle",
+      "description": "A 38px key with a glyph or a medium label that holds the lilac (or turns white in outline) while pressed.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tooltip",
+      "useFor": "Use to explain an icon button or an info glyph in a few words (Tunnel, Connection, TLS). Wrap a toolbar or page in TooltipProvider so neighboring tooltips open at once after the first.",
+      "constraints": [
+        "Essential information only in a tooltip",
+        "Interactive content inside a tooltip",
+        "Sentences longer than one line or two",
+        "A white tooltip"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the info glyphs beside Tunnel, Connection, TLS and Tunnel TLS mode",
+      "exports": [
+        "Tooltip",
+        "TooltipContent",
+        "TooltipProvider",
+        "TooltipTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/tooltip",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/tooltip.md",
+      "type": "ui",
+      "title": "Tooltip",
+      "description": "A short ink label with white 13px text, 16px corners and a small arrow.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "radix-ui"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "trace",
+      "useFor": "Use to show what an agent did or is doing: each TraceLine has a TraceIcon (a filled Phosphor glyph for the tool), a TraceTitle and an optional TraceDescription (a duration or a count). Set status running, pending or error. Put a step with detail in TraceCollapsible with a TraceCollapsibleTrigger around its line and the detail in TraceCollapsibleContent. Wrap a line in a link or button to make it open something.",
+      "constraints": [
+        "Bold or ink step titles",
+        "A spinner on every running step",
+        "Colors other than the muted purple and red",
+        "Detail that opens without its hairline"
+      ],
+      "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox list's muted text and the Advanced settings disclosure",
+      "exports": [
+        "Trace",
+        "TraceCollapsible",
+        "TraceCollapsibleContent",
+        "TraceCollapsibleTrigger",
+        "TraceDescription",
+        "TraceIcon",
+        "TraceLine",
+        "TraceTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/trace",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/trace.md",
+      "type": "ui",
+      "title": "Trace",
+      "description": "An agent's steps as quiet 14px lines with a glyph, a running step that breathes and steps that open to their detail on a hairline.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "collapsible",
+        "utils"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "typography",
+      "useFor": "Use for written content (docs, help panes, agent prompts). TypographyH3 is the 20px page or dialog title; TypographyP is body copy; TypographyMuted the line under a title; TypographyInlineCode a key, host or ID. Interfaces built from components rarely need these.",
+      "constraints": [
+        "Bold titles",
+        "Letter spacing",
+        "Text sizes outside the scale",
+        "Purple body copy"
+      ],
+      "source": "Figma 427:2715: page titles (Vault, Webhooks), dialog titles, the email body, inline hosts and keys",
+      "exports": [
+        "TypographyBlockquote",
+        "TypographyH1",
+        "TypographyH2",
+        "TypographyH3",
+        "TypographyH4",
+        "TypographyInlineCode",
+        "TypographyLarge",
+        "TypographyLead",
+        "TypographyList",
+        "TypographyMuted",
+        "TypographyP",
+        "TypographySmall",
+        "TypographyTable"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/components/typography",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/typography.md",
+      "type": "ui",
+      "title": "Typography",
+      "description": "The console's type as components: regular titles, 14px body copy, muted lines, lists, quotes and inline keys.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "utils",
+      "useFor": "Compose every component's classes with cn so a caller's className replaces the default it conflicts with.",
+      "constraints": [],
+      "exports": [
+        "cn"
+      ],
+      "client": false,
+      "docsUrl": "https://inkbox-ds.vercel.app/r/utils.md",
+      "markdownUrl": "https://inkbox-ds.vercel.app/r/utils.md",
+      "type": "lib",
+      "title": "cn",
+      "description": "Merges class names and resolves conflicts between the brand's own scales (text-body, rounded-control, shadow-s).",
+      "surface": "site",
+      "kinds": [],
+      "requires": [],
+      "packages": [
+        "clsx",
+        "tailwind-merge"
+      ]
+    }
+  ]
+}

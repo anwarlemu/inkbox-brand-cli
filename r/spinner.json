@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "spinner",
+  "useFor": "Use inside the thing that is working: at the right of a field while the handle is checked (text-fg-brand), before the label of a button that is creating (Creating Agent Identity...). Disable the button while it spins.",
+  "constraints": [
+    "A full-page spinner for a short wait",
+    "A spinner without a label or button text saying what is happening",
+    "Colored spinners"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: Modal States (Handle check, Creating...)",
+  "exports": [
+    "Spinner"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/spinner",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/spinner.md",
+  "examples": [
+    {
+      "path": "examples/spinner.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport { Input } from \"@/components/ui/input\";\nimport { Spinner } from \"@/components/ui/spinner\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid w-full max-w-100 gap-4\">\n      <div className=\"relative\">\n        <Input aria-label=\"Agent handle\" defaultValue=\"acme-support\" className=\"pr-10\" />\n        <Spinner className=\"absolute top-1/2 right-3 -translate-y-1/2 text-fg-brand\" />\n      </div>\n      <Button disabled className=\"w-full\">\n        <Spinner />\n        Creating Agent Identity...\n      </Button>\n    </div>\n  );\n}\n\nexport function Sizes() {\n  return (\n    <div className=\"flex items-center gap-4 text-fg-brand\">\n      <Spinner className=\"size-4\" />\n      <Spinner />\n      <Spinner className=\"size-8\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Sizes"
+      ],
+      "requires": [
+        "spinner",
+        "button",
+        "input"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/spinner/Preview"
+        },
+        {
+          "name": "Sizes",
+          "url": "https://inkbox-ds.vercel.app/preview/spinner/Sizes"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Spinner",
+  "description": "The console's turning eight-spoke glyph, in the color of the text around it.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/spinner.tsx",
+      "content": "import { SpinnerIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's loading glyph (Figma 427:2715: the handle check, Creating Agent Identity...): eight short spokes\n// turning once every 0.8s at a constant speed, in the color of the text around it (the purple in a field, white on the\n// purple pill). It keeps turning with reduced motion: the turning is the only sign that work is happening.\nfunction Spinner({ className, ...props }: React.ComponentProps<\"svg\">) {\n  return <SpinnerIcon role=\"status\" weight=\"bold\" aria-label=\"Loading\" data-slot=\"spinner\" className={cn(\"size-5.5 shrink-0 animate-spin-steady\", className)} {...props} />;\n}\n\nexport { Spinner };\n"
+    }
+  ]
+}

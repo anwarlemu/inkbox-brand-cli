@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "name": "kbd",
+  "useFor": "Use to show a keyboard shortcut in a menu, a tooltip or help text (Kbd for one key, KbdGroup for a combination). Write the keys as people see them on the keyboard (⌘, Shift, K).",
+  "constraints": [
+    "A shortcut written in caps tracking",
+    "A dark key cap on white",
+    "Long words inside a key"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the lilac @handle chip and its 4px tag corners",
+  "exports": [
+    "Kbd",
+    "KbdGroup"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/kbd",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/kbd.md",
+  "examples": [
+    {
+      "path": "examples/kbd.tsx",
+      "content": "import { Kbd, KbdGroup } from \"@/components/ui/kbd\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid gap-3 text-body text-fg-secondary\">\n      <p className=\"flex items-center gap-2\">\n        Compose an email\n        <KbdGroup>\n          <Kbd>⌘</Kbd>\n          <Kbd>N</Kbd>\n        </KbdGroup>\n      </p>\n      <p className=\"flex items-center gap-2\">\n        Search mailboxes\n        <KbdGroup>\n          <Kbd>⌘</Kbd>\n          <Kbd>K</Kbd>\n        </KbdGroup>\n      </p>\n      <p className=\"flex items-center gap-2\">\n        Close a dialog <Kbd>Esc</Kbd>\n      </p>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "kbd"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/kbd/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Kbd",
+  "description": "A 20px lilac key cap with 4px corners and 12px medium text.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/kbd.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Extrapolated from the console's small lilac chips (the @handle chip under the handle field): a key is a 20px lilac\n// cap with 4px corners and a hairline Shadow/S ring, 12px medium secondary ink in Inter; glyphs inside are 12px. In a\n// tooltip (on the ink) it turns translucent white.\nfunction Kbd({ className, ...props }: React.ComponentProps<\"kbd\">) {\n  return (\n    <kbd\n      data-slot=\"kbd\"\n      className={cn(\n        \"pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-xs bg-subtle px-1.5 font-sans text-caption leading-none font-medium text-fg-secondary shadow-line select-none in-data-[slot=tooltip-content]:bg-white/15 in-data-[slot=tooltip-content]:text-white in-data-[slot=tooltip-content]:shadow-none [&_svg:not([class*='size-'])]:size-3\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction KbdGroup({ className, ...props }: React.ComponentProps<\"kbd\">) {\n  return <kbd data-slot=\"kbd-group\" className={cn(\"inline-flex items-center gap-1\", className)} {...props} />;\n}\n\nexport { Kbd, KbdGroup };\n"
+    }
+  ]
+}

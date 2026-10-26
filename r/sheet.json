@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "name": "sheet",
+  "useFor": "Use for a task beside the page that keeps its context, such as editing a mailbox or reading a call's details. Use side=\"right\" by default and side=\"left\" for the rail on phones. Put the title in SheetHeader and the main action in SheetFooter.",
+  "constraints": [
+    "A sheet that opens another sheet",
+    "A dark scrim",
+    "A sheet for a short confirmation (use Alert Dialog)"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): Modal - Create Agent (panel, title, close glyph, scrim)",
+  "exports": [
+    "Sheet",
+    "SheetClose",
+    "SheetContent",
+    "SheetDescription",
+    "SheetFooter",
+    "SheetHeader",
+    "SheetOverlay",
+    "SheetPortal",
+    "SheetTitle",
+    "SheetTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/sheet",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/sheet.md",
+  "examples": [
+    {
+      "path": "examples/sheet.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\nimport { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from \"@/components/ui/sheet\";\n\nfunction EditMailbox() {\n  return (\n    <>\n      <SheetHeader>\n        <SheetTitle>Edit mailbox</SheetTitle>\n        <SheetDescription>Mailboxes are provisioned and deleted with their owning identity.</SheetDescription>\n      </SheetHeader>\n      <div className=\"grid gap-4 px-6\">\n        <div className=\"grid gap-1\">\n          <Label htmlFor=\"sheet-name\">Display name</Label>\n          <Input id=\"sheet-name\" defaultValue=\"Acme support\" />\n        </div>\n        <div className=\"grid gap-1\">\n          <Label htmlFor=\"sheet-reply\">Reply-to address</Label>\n          <Input id=\"sheet-reply\" type=\"email\" placeholder=\"support@acme.com\" />\n        </div>\n      </div>\n      <SheetFooter>\n        <Button>Save changes</Button>\n        <SheetClose asChild>\n          <Button variant=\"secondary\">Cancel</Button>\n        </SheetClose>\n      </SheetFooter>\n    </>\n  );\n}\n\nexport function Preview() {\n  return (\n    <div className=\"flex justify-center\">\n      <Sheet>\n        <SheetTrigger asChild>\n          <Button variant=\"outline\">Edit mailbox</Button>\n        </SheetTrigger>\n        <SheetContent>\n          <EditMailbox />\n        </SheetContent>\n      </Sheet>\n    </div>\n  );\n}\n\nexport function Sides() {\n  const sides = [\"top\", \"right\", \"bottom\", \"left\"] as const;\n  return (\n    <div className=\"flex flex-wrap justify-center gap-3\">\n      {sides.map((side) => (\n        <Sheet key={side}>\n          <SheetTrigger asChild>\n            <Button variant=\"outline\" className=\"capitalize\">\n              {side}\n            </Button>\n          </SheetTrigger>\n          <SheetContent side={side}>\n            <SheetHeader>\n              <SheetTitle>Sheet from the {side}</SheetTitle>\n              <SheetDescription>Slides from its edge on the drawer curve.</SheetDescription>\n            </SheetHeader>\n          </SheetContent>\n        </Sheet>\n      ))}\n    </div>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"min-h-120\">\n      <Sheet defaultOpen>\n        <SheetContent>\n          <EditMailbox />\n        </SheetContent>\n      </Sheet>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Sides",
+        "Open"
+      ],
+      "requires": [
+        "sheet",
+        "button",
+        "input",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/sheet/Preview"
+        },
+        {
+          "name": "Sides",
+          "url": "https://inkbox-ds.vercel.app/preview/sheet/Sides"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/sheet/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Sheet",
+  "description": "A white panel that slides from an edge over the blurred, ink-tinted page, with the dialog's title and close glyph.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "radix-ui",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/sheet.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Dialog as SheetPrimitive } from \"radix-ui\";\nimport { XIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A panel from the edge of the screen, drawn as the console's dialog (Figma 427:2715: Create Agent Identity): white\n// over the blurred, ink-tinted page, a 20px regular title 24px in, a faint 20px close glyph and the same 24px sides. It\n// travels its own size from its edge on the drawer curve (300ms in, 200ms out); its inner corner takes the dialog's\n// 16px. Side panels are 384px wide (the full width on phones); top and bottom panels take their content's height.\nfunction Sheet(props: React.ComponentProps<typeof SheetPrimitive.Root>) {\n  return <SheetPrimitive.Root data-slot=\"sheet\" {...props} />;\n}\n\nfunction SheetTrigger(props: React.ComponentProps<typeof SheetPrimitive.Trigger>) {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\nfunction SheetClose(props: React.ComponentProps<typeof SheetPrimitive.Close>) {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\nfunction SheetPortal(props: React.ComponentProps<typeof SheetPrimitive.Portal>) {\n  const container = usePortalContainer();\n  return <SheetPrimitive.Portal data-slot=\"sheet-portal\" container={container} {...props} />;\n}\n\nfunction SheetOverlay({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Overlay>) {\n  return (\n    <SheetPrimitive.Overlay\n      data-slot=\"sheet-overlay\"\n      className={cn(\"fixed inset-0 z-50 bg-scrim backdrop-blur-[var(--ds-blur-scrim)] data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in\", className)}\n      {...props}\n    />\n  );\n}\n\nconst SIDES = {\n  right: \"inset-y-0 right-0 h-full w-full rounded-l-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-right data-[state=open]:animate-sheet-in-right\",\n  left: \"inset-y-0 left-0 h-full w-full rounded-r-panel sm:max-w-96 data-[state=closed]:animate-sheet-out-left data-[state=open]:animate-sheet-in-left\",\n  top: \"inset-x-0 top-0 h-auto max-h-[85dvh] rounded-b-panel data-[state=closed]:animate-sheet-out-top data-[state=open]:animate-sheet-in-top\",\n  bottom: \"inset-x-0 bottom-0 h-auto max-h-[85dvh] rounded-t-panel data-[state=closed]:animate-sheet-out-bottom data-[state=open]:animate-sheet-in-bottom\",\n} as const;\n\nfunction SheetContent({ className, children, side = \"right\", showCloseButton = true, instant = false, ...props }: React.ComponentProps<typeof SheetPrimitive.Content> & { side?: keyof typeof SIDES; showCloseButton?: boolean; instant?: boolean }) {\n  return (\n    <SheetPortal>\n      <SheetOverlay data-ds-motion={instant ? \"instant\" : undefined} />\n      <SheetPrimitive.Content\n        data-slot=\"sheet-content\"\n        data-ds-motion={instant ? \"instant\" : undefined}\n        data-side={side}\n        className={cn(\"fixed z-50 flex flex-col overflow-y-auto bg-surface text-fg shadow-dialog outline-none\", SIDES[side], className)}\n        {...props}\n      >\n        {children}\n        {showCloseButton && (\n          <SheetPrimitive.Close\n            data-slot=\"sheet-close\"\n            className=\"absolute top-5 right-5 inline-flex size-7 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none\"\n          >\n            <XIcon className=\"size-5.5\" />\n            <span className=\"sr-only\">Close</span>\n          </SheetPrimitive.Close>\n        )}\n      </SheetPrimitive.Content>\n    </SheetPortal>\n  );\n}\n\nfunction SheetHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"sheet-header\" className={cn(\"flex min-h-17 shrink-0 flex-col justify-center gap-1 py-5 pr-14 pl-6\", className)} {...props} />;\n}\n\nfunction SheetFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"sheet-footer\" className={cn(\"mt-auto flex shrink-0 flex-col gap-3 p-6\", className)} {...props} />;\n}\n\nfunction SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) {\n  return <SheetPrimitive.Title data-slot=\"sheet-title\" className={cn(\"font-sans text-h3 leading-heading font-normal text-fg\", className)} {...props} />;\n}\n\nfunction SheetDescription({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Description>) {\n  return <SheetPrimitive.Description data-slot=\"sheet-description\" className={cn(\"text-body leading-body text-fg-secondary\", className)} {...props} />;\n}\n\nexport { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger };\n"
+    }
+  ]
+}

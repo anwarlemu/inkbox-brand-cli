@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "name": "avatar",
+  "useFor": "Use the default circle shape for people, identities and agent portraits, including in rails and lists: size sm in a 38px row. Use shape=\"square\" only when an explicit square variation is requested. Always give an AvatarFallback with the first initial. AvatarBadge marks a live agent; AvatarGroup shows who shares a mailbox.",
+  "constraints": [
+    "Gradient or random-colored fallbacks",
+    "Two-letter initials in the 22px tile"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: the rail (Robert Ligthart), the agent picker (@acme), Modal - Created (@test-agent)",
+  "exports": [
+    "Avatar",
+    "AvatarBadge",
+    "AvatarFallback",
+    "AvatarGroup",
+    "AvatarGroupCount",
+    "AvatarImage"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/avatar",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/avatar.md",
+  "examples": [
+    {
+      "path": "examples/avatar.tsx",
+      "content": "import { CheckIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from \"@/components/ui/avatar\";\n\nexport function Preview() {\n  return (\n    <div className=\"grid gap-3\">\n      <div className=\"flex h-9.5 items-center gap-2.5 px-3\">\n        <Avatar size=\"sm\">\n          <AvatarFallback>R</AvatarFallback>\n        </Avatar>\n        <span className=\"text-body text-fg\">Robert Ligthart</span>\n      </div>\n      <div className=\"flex h-9.5 items-center gap-2.5 px-3\">\n        <Avatar size=\"sm\">\n          <AvatarFallback>A</AvatarFallback>\n        </Avatar>\n        <span className=\"text-body text-fg\">@acme</span>\n      </div>\n    </div>\n  );\n}\n\nexport function Sizes() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-4\">\n      <Avatar size=\"sm\">\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n      <Avatar>\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n      <Avatar size=\"lg\">\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n      <Avatar shape=\"circle\" size=\"sm\">\n        <AvatarImage src=\"/logo-mark.png\" alt=\"@test-agent\" />\n        <AvatarFallback>T</AvatarFallback>\n      </Avatar>\n      <Avatar shape=\"circle\">\n        <AvatarImage src=\"/logo-mark.png\" alt=\"@test-agent\" />\n        <AvatarFallback>T</AvatarFallback>\n      </Avatar>\n      <Avatar shape=\"circle\" size=\"lg\">\n        <AvatarImage src=\"/logo-mark.png\" alt=\"@test-agent\" />\n        <AvatarFallback>T</AvatarFallback>\n      </Avatar>\n    </div>\n  );\n}\n\nexport function WithBadge() {\n  return (\n    <div className=\"flex items-center gap-4\">\n      <Avatar>\n        <AvatarFallback>A</AvatarFallback>\n        <AvatarBadge />\n      </Avatar>\n      <Avatar size=\"lg\" shape=\"circle\">\n        <AvatarImage src=\"/logo-mark.png\" alt=\"@test-agent\" />\n        <AvatarFallback>T</AvatarFallback>\n        <AvatarBadge>\n          <CheckIcon weight=\"bold\" />\n        </AvatarBadge>\n      </Avatar>\n    </div>\n  );\n}\n\nexport function Group() {\n  return (\n    <AvatarGroup>\n      <Avatar>\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n      <Avatar>\n        <AvatarFallback>A</AvatarFallback>\n      </Avatar>\n      <Avatar>\n        <AvatarFallback>M</AvatarFallback>\n      </Avatar>\n      <AvatarGroupCount>+3</AvatarGroupCount>\n    </AvatarGroup>\n  );\n}\n\nexport function Fallback() {\n  return (\n    <div className=\"flex items-center gap-4\">\n      <Avatar size=\"lg\" shape=\"circle\">\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n      <Avatar size=\"lg\">\n        <AvatarFallback>R</AvatarFallback>\n      </Avatar>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Sizes",
+        "WithBadge",
+        "Group",
+        "Fallback"
+      ],
+      "requires": [
+        "avatar"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/avatar/Preview"
+        },
+        {
+          "name": "Sizes",
+          "url": "https://inkbox-ds.vercel.app/preview/avatar/Sizes"
+        },
+        {
+          "name": "WithBadge",
+          "url": "https://inkbox-ds.vercel.app/preview/avatar/WithBadge"
+        },
+        {
+          "name": "Group",
+          "url": "https://inkbox-ds.vercel.app/preview/avatar/Group"
+        },
+        {
+          "name": "Fallback",
+          "url": "https://inkbox-ds.vercel.app/preview/avatar/Fallback"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Avatar",
+  "description": "Circular initial tiles and agent portraits, with a fallback, status dot and group.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/avatar.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Avatar as ChakraAvatar } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Circular avatars with an avatar-blue fallback and a white initial; `square` remains an explicit shape option.\n// Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.\nfunction Avatar({ className, size = \"default\", shape = \"circle\", ...props }: React.ComponentProps<typeof ChakraAvatar.Root> & { size?: \"sm\" | \"default\" | \"lg\"; shape?: \"square\" | \"circle\" }) {\n  return (\n    <ChakraAvatar.Root\n      unstyled\n      data-slot=\"avatar\"\n      data-size={size}\n      data-shape={shape}\n      className={cn(\n        \"group/avatar relative flex size-8 shrink-0 select-none data-[size=lg]:size-10 data-[size=sm]:size-5.5\",\n        shape === \"circle\" ? \"rounded-pill\" : \"rounded-sm data-[size=lg]:rounded-control data-[size=sm]:rounded-xs\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction AvatarImage({ className, ...props }: React.ComponentProps<typeof ChakraAvatar.Image>) {\n  return <ChakraAvatar.Image data-slot=\"avatar-image\" className={cn(\"aspect-square size-full rounded-[inherit] object-cover\", className)} {...props} />;\n}\n\nfunction AvatarFallback({ className, ...props }: React.ComponentProps<typeof ChakraAvatar.Fallback>) {\n  return (\n    <ChakraAvatar.Fallback\n      data-slot=\"avatar-fallback\"\n      className={cn(\"flex size-full items-center justify-center rounded-[inherit] bg-avatar font-sans text-body leading-none text-white group-data-[size=lg]/avatar:text-body-lg group-data-[size=sm]/avatar:text-body\", className)}\n      {...props}\n    />\n  );\n}\n\n/** A status dot at the avatar's lower right (an agent online), ringed in white. */\nfunction AvatarBadge({ className, ...props }: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"avatar-badge\"\n      className={cn(\n        \"absolute -right-0.5 -bottom-0.5 z-10 inline-flex size-2.5 items-center justify-center rounded-pill bg-success text-white ring-2 ring-surface select-none group-data-[size=lg]/avatar:size-3 group-data-[size=sm]/avatar:size-2 [&>svg]:hidden group-data-[size=lg]/avatar:[&>svg]:block group-data-[size=lg]/avatar:[&>svg]:size-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\n/** Avatars overlapped by 8px, each ringed in white. */\nfunction AvatarGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"avatar-group\" className={cn(\"group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-surface\", className)} {...props} />;\n}\n\n/** The count of avatars not shown (+3), on the lilac. */\nfunction AvatarGroupCount({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"avatar-group-count\"\n      className={cn(\n        \"relative flex size-8 shrink-0 items-center justify-center rounded-pill bg-subtle font-sans text-caption leading-none text-fg-secondary ring-2 ring-surface group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-5.5 [&>svg]:size-4\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage };\n"
+    }
+  ]
+}

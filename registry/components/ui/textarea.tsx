@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 

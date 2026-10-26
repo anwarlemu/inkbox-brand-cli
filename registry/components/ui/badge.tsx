@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -40,7 +42,9 @@ const badgeVariants = cva(
 
 function Badge({ className, variant, size, asChild = false, ...props }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.span : "span";
-  return <Comp data-slot="badge" data-variant={variant ?? "default"} className={cn(badgeVariants({ variant, size }), className)} {...props} />;
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
+  return <Comp {...slotProps} data-slot="badge" data-variant={variant ?? "default"} className={cn(badgeVariants({ variant, size }), className)} {...props} />;
 }
 
 export { Badge, badgeVariants };

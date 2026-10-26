@@ -23,7 +23,7 @@ function Switch({ className, size = "default", onCheckedChange, ...props }: Swit
       )}
       {...props}
     >
-      <ChakraSwitch.HiddenInput />
+      <ChakraSwitch.HiddenInput role="switch" />
       <ChakraSwitch.Control data-slot="switch-control" className="flex size-full items-center rounded-pill bg-transparent p-0">
       <ChakraSwitch.Thumb
         data-slot="switch-thumb"

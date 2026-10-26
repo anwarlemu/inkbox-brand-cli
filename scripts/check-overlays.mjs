@@ -20,10 +20,13 @@ async function dialogLike(page, base, name, trigger, role = 'dialog') {
   const panel = page.getByRole(role);
   await visible(panel);
   await noOverflow(page, name);
-  assert.ok(await panel.first().evaluate((el) => el.contains(document.activeElement)), `${name}: focus moves into the ${role}`);
+  // Focus moves in a frame after the panel shows (Chakra and Radix both defer it): wait briefly for it.
+  const focused = await page.waitForFunction((r) => [...document.querySelectorAll(`[role=${r}]`)].some((el) => el.contains(document.activeElement)), role, { timeout: 2000 }).then(() => true, () => false);
+  assert.ok(focused, `${name}: focus moves into the ${role}`);
   await page.keyboard.press('Escape');
   await hidden(panel);
-  assert.ok(await button.evaluate((el) => el === document.activeElement), `${name}: focus returns to the trigger`);
+  const returned = await button.evaluate((el) => new Promise((done) => { const end = Date.now() + 2000; const tick = () => (el === document.activeElement ? done(true) : Date.now() > end ? done(false) : requestAnimationFrame(tick)); tick(); }));
+  assert.ok(returned, `${name}: focus returns to the trigger`);
 }
 
 export async function checkOverlays(page, base) {
@@ -57,11 +60,13 @@ export async function checkOverlays(page, base) {
     await account.focus();
     await page.keyboard.press('Enter');
     await visible(page.getByRole('menu'));
+    // Keys go to the open menu once it has taken focus, as they would for a person.
+    await page.waitForFunction(() => document.activeElement?.closest('[role=menu]') !== null, null, { timeout: 2000 });
     await page.keyboard.press('ArrowDown');
     assert.ok(await page.locator('[role=menuitem][data-highlighted]').count(), 'dropdown-menu: arrows highlight an item');
     await page.keyboard.press('Escape');
     await hidden(page.getByRole('menu'));
-    assert.ok(await account.evaluate((el) => el === document.activeElement), 'dropdown-menu: focus returns');
+    assert.ok(await account.evaluate((el) => new Promise((done) => { const end = Date.now() + 2000; const tick = () => (el === document.activeElement ? done(true) : Date.now() > end ? done(false) : requestAnimationFrame(tick)); tick(); })), 'dropdown-menu: focus returns');
 
     await open(page, base, 'context-menu');
     await page.locator('[data-slot="context-menu-trigger"]').first().click({ button: 'right' });

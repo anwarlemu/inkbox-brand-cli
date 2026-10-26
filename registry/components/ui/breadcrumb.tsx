@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { CaretRightIcon, DotsThreeIcon } from "@phosphor-icons/react/ssr";
@@ -21,8 +23,10 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 
 function BreadcrumbLink({ asChild, className, ...props }: React.ComponentProps<"a"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.a : "a";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="breadcrumb-link"
       className={cn("rounded-xs text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
       {...props}

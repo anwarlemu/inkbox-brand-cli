@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -28,8 +30,10 @@ function ButtonGroup({ className, orientation, ...props }: React.ComponentProps<
 
 function ButtonGroupText({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="button-group-text"
       className={cn("flex items-center gap-2 rounded-pill border border-line-field bg-subtle px-3.5 font-sans text-body leading-tight whitespace-nowrap text-fg-muted [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5.5", className)}
       {...props}

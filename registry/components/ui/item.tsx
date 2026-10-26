@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -38,7 +40,9 @@ const itemVariants = cva(
 
 function Item({ className, variant = "default", size = "default", asChild = false, ...props }: React.ComponentProps<"div"> & VariantProps<typeof itemVariants> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
-  return <Comp data-slot="item" data-variant={variant} data-size={size} className={cn(itemVariants({ variant, size, className }))} {...props} />;
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
+  return <Comp {...slotProps} data-slot="item" data-variant={variant} data-size={size} className={cn(itemVariants({ variant, size, className }))} {...props} />;
 }
 
 const itemMediaVariants = cva("flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none", {

@@ -114,7 +114,7 @@
    "id": "tabs-active",
    "name": "tabs",
    "example": "Preview",
-   "selector": "[data-slot=tabs-trigger][data-state=active]",
+   "selector": "[data-slot=tabs-trigger][data-state=active], [data-slot=tabs-trigger][data-selected]",
    "source": "Figma 427:2715 Email tabs: Mailboxes; pill radius override",
    "expected": {
     "height": "38px",

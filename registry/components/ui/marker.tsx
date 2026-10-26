@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -24,7 +26,9 @@ const markerVariants = cva(
 
 function Marker({ className, variant = "default", asChild = false, ...props }: React.ComponentProps<"div"> & VariantProps<typeof markerVariants> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
-  return <Comp data-slot="marker" data-variant={variant} role={variant === "default" ? undefined : "separator"} className={cn(markerVariants({ variant }), className)} {...props} />;
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
+  return <Comp {...slotProps} data-slot="marker" data-variant={variant} role={variant === "default" ? undefined : "separator"} className={cn(markerVariants({ variant }), className)} {...props} />;
 }
 
 function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {

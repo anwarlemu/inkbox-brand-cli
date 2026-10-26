@@ -528,7 +528,7 @@ export function Picker(props: any) { return <Select.Root name="card" value={prop
     expect(elementLayer('select.css', '.select-content { color: red } .select-item { color: red }', 'site').styled).toEqual([{selector:'.select-content',kind:'menu-panel'},{selector:'.select-item',kind:'menu-item'}]);
   });
   it('CLI add ships the corrected components, dependencies and theme', () => {
-    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0', 'radix-ui': '*', '@phosphor-icons/react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' } }), 'tsconfig.json': JSON.stringify({compilerOptions:{paths:{'@/*':['./*']}}}), 'app/globals.css': '@import "tailwindcss";' });
+    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', 'react-dom': '19.0.0', tailwindcss: '4.1.0', '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0', 'radix-ui': '*', '@phosphor-icons/react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' } }), 'tsconfig.json': JSON.stringify({compilerOptions:{paths:{'@/*':['./*']}}}), 'app/globals.css': '@import "tailwindcss";' });
     try {
       run(dir, 'add', 'dropdown-menu', 'select', 'popover', 'input', 'textarea', 'progress');
       for (const name of ['select', 'input', 'textarea', 'progress']) {

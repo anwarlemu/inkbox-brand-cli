@@ -9,6 +9,8 @@ async function open(page, base, name, example = 'Preview') {
 }
 
 const attr = (locator, name) => locator.getAttribute(name);
+// Checked state for ARIA widgets and native inputs alike (Chakra's switch, checkbox and radio are native inputs).
+const checked = async (locator) => String(await locator.isChecked());
 // State settles a frame or two after an event (Radix checks a radio on focus): poll briefly before asserting.
 async function settle(read, ok, timeout = 1500) {
   const end = Date.now() + timeout;
@@ -27,18 +29,19 @@ export async function checkInteractions(page, base) {
     // Switch, checkbox, toggle: a click and Space flip their state.
     await open(page, base, 'switch');
     const sw = page.getByRole('switch').first();
-    const was = await attr(sw, 'aria-checked');
-    await sw.click();
-    assert.notEqual(await attr(sw, 'aria-checked'), was, 'switch: click toggles');
+    const was = await checked(sw);
+    await sw.evaluate((el) => el.click()); // native inputs may be visually hidden behind their styled control
+    assert.notEqual(await checked(sw), was, 'switch: click toggles');
+    await sw.focus();
     await page.keyboard.press('Space');
-    assert.equal(await attr(sw, 'aria-checked'), was, 'switch: Space toggles back');
+    assert.equal(await checked(sw), was, 'switch: Space toggles back');
 
     await open(page, base, 'checkbox');
     const boxes = page.getByRole('checkbox');
     const child = boxes.nth(2);
-    const before = await attr(child, 'aria-checked');
-    await child.click();
-    assert.notEqual(await attr(child, 'aria-checked'), before, 'checkbox: click toggles');
+    const before = await checked(child);
+    await child.evaluate((el) => el.click()); // native inputs may be visually hidden behind their styled control
+    assert.notEqual(await checked(child), before, 'checkbox: click toggles');
 
     await open(page, base, 'toggle');
     const toggle = page.locator('[data-slot="toggle"]').first();
@@ -54,7 +57,7 @@ export async function checkInteractions(page, base) {
     await page.keyboard.down('ArrowDown');
     await page.waitForTimeout(60);
     await page.keyboard.up('ArrowDown');
-    assert.equal(await settle(() => attr(radios.nth(1), 'aria-checked'), (v) => v === 'true'), 'true', 'radio-group: arrow moves the choice');
+    assert.equal(await settle(() => checked(radios.nth(1)), (v) => v === 'true'), 'true', 'radio-group: arrow moves the choice');
 
     await open(page, base, 'toggle-group');
     const items = page.locator('[data-slot="toggle-group-item"]');

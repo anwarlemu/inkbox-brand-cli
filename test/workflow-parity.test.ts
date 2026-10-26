@@ -14,7 +14,7 @@ const roots: string[] = [];
 const put = (root: string, name: string, text: string) => { mkdirSync(dirname(join(root, name)), { recursive: true }); writeFileSync(join(root, name), text); };
 async function fixture(js = false, alias = '~') {
  const root = mkdtempSync(join(tmpdir(), 'ds-workflow-')); roots.push(root);
- const dependencies: Record<string, string> = { react: '19.2.0', tailwindcss: '4.1.0', vite: '7.0.0' };
+ const dependencies: Record<string, string> = { react: '19.2.0', 'react-dom': '19.2.0', tailwindcss: '4.1.0', vite: '7.0.0', '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0' };
  for (const item of await closure(['button', 'card'])) for (const dependency of item.packages ?? []) dependencies[dependency] = '*';
  put(root, 'package.json', JSON.stringify({ dependencies, type: 'module' }));
  put(root, js ? 'jsconfig.json' : 'tsconfig.json', JSON.stringify({ extends: './config/base.json', compilerOptions: { jsx: 'react-jsx' } }));

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { compile } from 'tailwindcss';
@@ -53,7 +53,7 @@ describe('complete token output', () => {
     try {
       const index = JSON.parse(read('apps/www/public/r/index.json')).items as { name: string }[];
       const items = index.map(item => JSON.parse(read(`apps/www/public/r/${item.name}.json`)));
-      const dependencies: Record<string, string> = { react: '19.2.8', tailwindcss: '4.3.3' };
+      const dependencies: Record<string, string> = { react: '19.2.8', 'react-dom': '19.2.8', tailwindcss: '4.3.3', '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0' };
       for (const item of items) for (const dependency of item.packages ?? []) dependencies[dependency] ??= '*';
       writeFileSync(join(root, 'package.json'), JSON.stringify({ private: true, dependencies }));
       writeFileSync(join(root, 'tsconfig.json'), JSON.stringify({ compilerOptions: { target: 'ES2022', module: 'ESNext', moduleResolution: 'Bundler', jsx: 'react-jsx', strict: true, skipLibCheck: true, noEmit: true, esModuleInterop: true, paths: { '@/*': ['./src/*'] } }, include: ['src'] }));
@@ -76,7 +76,12 @@ describe('complete token output', () => {
       expect(main.match(/_inkbox-ds\/brand.css/g)).toHaveLength(1);
       expect(main.match(/_inkbox-ds\/theme.css/g)).toHaveLength(1);
       expect(readFileSync(join(root, 'src/App.tsx'), 'utf8')).toContain('Existing content');
-      execFileSync(process.execPath, [join(ROOT, 'node_modules/typescript/bin/tsc'), '-p', join(root, 'tsconfig.json')], { cwd: root, encoding: 'utf8', timeout: 60_000 });
+      try {
+        execFileSync(process.execPath, [join(ROOT, 'node_modules/typescript/bin/tsc'), '-p', join(root, 'tsconfig.json')], { cwd: root, encoding: 'utf8', timeout: 60_000 });
+      } catch (error) {
+        // Show the compiler's diagnostics, not only the failed command.
+        throw new Error(`installed components do not type-check (node_modules ${lstatSync(join(root, 'node_modules')).isSymbolicLink() ? 'linked' : 'replaced'}, files ${readdirSync(root).join(' ')}):\n${String((error as { stdout?: string }).stdout ?? error).slice(0, 1500)}`);
+      }
     } finally { rmSync(root, { recursive: true, force: true }); }
   }, 90_000);
 });

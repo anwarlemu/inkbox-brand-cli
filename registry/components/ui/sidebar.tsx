@@ -280,8 +280,10 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
 /** A group's 13px purple label, 16px in from the rail; it folds away when the rail is narrowed to its glyphs. */
 function SidebarGroupLabel({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
@@ -296,8 +298,10 @@ function SidebarGroupLabel({ className, asChild = false, ...props }: React.Compo
 /** A group's action beside its label (the sliders glyph by Email and Agent2Agent): a 16px glyph, 16px from the edge. */
 function SidebarGroupAction({ className, asChild = false, ...props }: React.ComponentProps<"button"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.button : "button";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
@@ -352,12 +356,14 @@ function SidebarMenuButton({
   ...props
 }: React.ComponentProps<"button"> & { asChild?: boolean; isActive?: boolean; tooltip?: string | React.ComponentProps<typeof TooltipContent> } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? chakra.button : "button";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   const { isMobile, state } = useSidebar();
   // The tooltip names a row only while the rail shows glyphs alone; otherwise it stays shut, so it never catches Escape.
   const [tipOpen, setTipOpen] = React.useState(false);
   const showTip = state === "collapsed" && !isMobile;
   const button = (
-    <Comp
+    <Comp {...slotProps}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -380,8 +386,10 @@ function SidebarMenuButton({
 /** An action at a row's right end (a row's more glyph). `showOnHover` keeps it hidden until the row is hovered or open. */
 function SidebarMenuAction({ className, asChild = false, showOnHover = false, ...props }: React.ComponentProps<"button"> & { asChild?: boolean; showOnHover?: boolean }) {
   const Comp = asChild ? chakra.button : "button";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
@@ -447,8 +455,10 @@ function SidebarMenuSubItem({ className, ...props }: React.ComponentProps<"li">)
 
 function SidebarMenuSubButton({ asChild = false, size = "md", isActive = false, className, ...props }: React.ComponentProps<"a"> & { asChild?: boolean; size?: "sm" | "md"; isActive?: boolean }) {
   const Comp = asChild ? chakra.a : "a";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="sidebar-menu-sub-button"
       data-sidebar="menu-sub-button"
       data-size={size}

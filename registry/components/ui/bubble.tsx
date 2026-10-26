@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { chakra } from "@chakra-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -42,8 +44,10 @@ function Bubble({ variant = "default", align = "start", className, ...props }: R
 
 function BubbleContent({ asChild = false, className, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
+  // Chakra's factory renders its child in its place only when told to.
+  const slotProps = asChild ? { asChild: true } : {};
   return (
-    <Comp
+    <Comp {...slotProps}
       data-slot="bubble-content"
       className={cn(
         "w-fit max-w-full min-w-0 overflow-hidden rounded-dialog border border-transparent px-3.5 py-2.5 font-sans text-body leading-body break-words group-data-[align=end]/bubble:self-end [button]:cursor-pointer [button]:text-left [button,a]:outline-none [button,a]:transition-colors [button,a]:duration-150 [button,a]:ease-out [button,a]:focus-visible:outline-2 [button,a]:focus-visible:outline-offset-2 [button,a]:focus-visible:outline-focus-ring motion-reduce:transition-none",

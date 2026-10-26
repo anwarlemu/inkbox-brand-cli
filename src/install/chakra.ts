@@ -2,11 +2,14 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { parse } from '@babel/parser';
 import { walkFiles } from '../lib/glob.js';
+import { brand } from '../lib/brand.js';
 import { componentConfig, resolveAlias } from './config.js';
 import type { Project } from '../project/detect.js';
 import type { Writer } from './files.js';
 
 const CHAKRA_PACKAGES = ['@chakra-ui/react', '@emotion/react'];
+// The provider the CLI writes, named for the brand in brand.json (<Name>ChakraProvider).
+const PROVIDER = () => `${brand().name.replace(/[^A-Za-z0-9]/g, '')}ChakraProvider`;
 export const chakraPackages = () => CHAKRA_PACKAGES;
 
 export function missingChakraPackages(root: string) {
@@ -23,19 +26,19 @@ function moduleName(from: string, to: string) {
 function addImport(source: string, spec: string) {
 	if (source.includes(`from "${spec}"`) || source.includes(`from '${spec}'`)) return source;
 	const imports = [...source.matchAll(/^import[\s\S]*?;\s*$/gm)];
-	if (!imports.length) return `import { InkboxChakraProvider } from "${spec}";\n${source}`;
+	if (!imports.length) return `import { ${PROVIDER()} } from "${spec}";\n${source}`;
 	const last = imports.at(-1)!;
 	const end = last.index! + last[0].length;
-	return `${source.slice(0, end)}\nimport { InkboxChakraProvider } from "${spec}";${source.slice(end)}`;
+	return `${source.slice(0, end)}\nimport { ${PROVIDER()} } from "${spec}";${source.slice(end)}`;
 }
 
 /** Set up Chakra once at the application root while leaving the app's Tailwind reset and theme in control. */
 export function installChakraProvider(w: Writer, project: Project) {
 	const config = componentConfig(w.root, project);
 	const providerPath = `${relative(w.root, resolveAlias(w.root, `${config.aliases.ui}/provider`))}${config.tsx ? '.tsx' : '.jsx'}`;
-	const providerSource = `"use client";\n\nimport { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";\n\nconst inkboxSystem = createSystem(defaultConfig, { preflight: false });\n\nexport function InkboxChakraProvider({ children }${config.tsx ? ': { children: React.ReactNode }' : ''}) {\n  return <ChakraProvider value={inkboxSystem}>{children}</ChakraProvider>;\n}\n`;
+	const providerSource = `"use client";\n\nimport { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";\n\nconst brandSystem = createSystem(defaultConfig, { preflight: false });\n\nexport function ${PROVIDER()}({ children }${config.tsx ? ': { children: React.ReactNode }' : ''}) {\n  return <ChakraProvider value={brandSystem}>{children}</ChakraProvider>;\n}\n`;
 	const existingProvider = w.read(providerPath);
-	if (existingProvider && !existingProvider.includes('InkboxChakraProvider')) return { providerPath, warning: `${providerPath} already exists; merge InkboxChakraProvider into it before using Chakra components.` };
+	if (existingProvider && !existingProvider.includes(PROVIDER())) return { providerPath, warning: `${providerPath} already exists; merge ${PROVIDER()} into it before using Chakra components.` };
 	w.write(providerPath, providerSource);
 
 	const layout = project.layouts.find(file => /\/layout\.(tsx|jsx|js)$/.test(`/${file}`));
@@ -51,9 +54,9 @@ export function installChakraProvider(w: Writer, project: Project) {
 			}
 		};
 		visit(ast);
-		if (!source.includes('InkboxChakraProvider') && body) {
+		if (!source.includes(PROVIDER()) && body) {
 			const start = body.openingElement.end, end = body.closingElement.start;
-			const wrapped = `${source.slice(0, start)}<InkboxChakraProvider>${source.slice(start, end)}</InkboxChakraProvider>${source.slice(end)}`;
+			const wrapped = `${source.slice(0, start)}<${PROVIDER()}>${source.slice(start, end)}</${PROVIDER()}>${source.slice(end)}`;
 			w.write(layout, addImport(wrapped, moduleName(layout, providerPath.replace(/\.(tsx|jsx)$/, ''))));
 			return { providerPath, entry: layout };
 		}
@@ -77,13 +80,13 @@ export function installChakraProvider(w: Writer, project: Project) {
 			}
 		};
 		visit(ast);
-		if (!root || source.includes('InkboxChakraProvider')) continue;
-		const wrapped = `${source.slice(0, root.start)}<InkboxChakraProvider>${source.slice(root.start, root.end)}</InkboxChakraProvider>${source.slice(root.end)}`;
+		if (!root || source.includes(PROVIDER())) continue;
+		const wrapped = `${source.slice(0, root.start)}<${PROVIDER()}>${source.slice(root.start, root.end)}</${PROVIDER()}>${source.slice(root.end)}`;
 		w.write(entry, addImport(wrapped, moduleName(entry, providerPath.replace(/\.(tsx|jsx)$/, ''))));
 		return { providerPath, entry };
 	}
 
-	if (project.framework === 'astro') return { providerPath, warning: 'Wrap the React island that uses Inkbox components in InkboxChakraProvider.' };
-	if (existsSync(resolve(w.root, providerPath))) return { providerPath, warning: 'Wrap the application root in InkboxChakraProvider to use Chakra components.' };
-	return { providerPath, warning: 'Add a React entry point, then wrap its root in InkboxChakraProvider to use Chakra components.' };
+	if (project.framework === 'astro') return { providerPath, warning: `Wrap the React island that uses ${brand().name} components in ${PROVIDER()}.` };
+	if (existsSync(resolve(w.root, providerPath))) return { providerPath, warning: `Wrap the application root in ${PROVIDER()} to use Chakra components.` };
+	return { providerPath, warning: `Add a React entry point, then wrap its root in ${PROVIDER()} to use Chakra components.` };
 }

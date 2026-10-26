@@ -18,9 +18,36 @@ const CONTENT =
 const ITEM =
   "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle data-[inset]:pl-10.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary";
 
+// The trigger, so focus can go back to it when the menu closes.
+const TriggerRef = React.createContext<React.RefObject<HTMLElement | null> | null>(null);
+
 type MenuProps = Omit<React.ComponentProps<typeof ChakraMenu.Root>, "onOpenChange"> & { onOpenChange?: (open: boolean) => void };
-function DropdownMenu({ onOpenChange, ...props }: MenuProps) {
-  return <ChakraMenu.Root unstyled data-slot="dropdown-menu" onOpenChange={(details) => onOpenChange?.(details.open)} {...props} />;
+function DropdownMenu({ onOpenChange, onExitComplete, ...props }: MenuProps) {
+  const trigger = React.useRef<HTMLElement | null>(null);
+  const restore = React.useCallback(() => {
+    if (document.activeElement === document.body || document.activeElement === null) trigger.current?.focus();
+  }, []);
+  return (
+    <TriggerRef.Provider value={trigger}>
+      <ChakraMenu.Root
+        unstyled
+        data-slot="dropdown-menu"
+        onOpenChange={(details) => {
+          onOpenChange?.(details.open);
+          // Closing right after a keyboard open can leave focus on the page body (the menu's own first-item focus lands
+          // in the panel as it leaves). Hand it back to the trigger then; focus moved on purpose (a dialog an item opened)
+          // is left alone.
+          if (!details.open) requestAnimationFrame(() => requestAnimationFrame(restore));
+        }}
+        // And again once the panel has left: its unmount can drop focus after the close.
+        onExitComplete={() => {
+          onExitComplete?.();
+          restore();
+        }}
+        {...props}
+      />
+    </TriggerRef.Provider>
+  );
 }
 
 function DropdownMenuPortal(props: React.ComponentProps<typeof Portal>) {
@@ -29,15 +56,37 @@ function DropdownMenuPortal(props: React.ComponentProps<typeof Portal>) {
   return <Portal data-slot="dropdown-menu-portal" container={portalRef} {...props} />;
 }
 
-function DropdownMenuTrigger(props: React.ComponentProps<typeof ChakraMenu.Trigger>) {
-  return <ChakraMenu.Trigger data-slot="dropdown-menu-trigger" {...props} />;
+function DropdownMenuTrigger({ ref, ...props }: React.ComponentProps<typeof ChakraMenu.Trigger>) {
+  const trigger = React.useContext(TriggerRef);
+  const setRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      if (trigger) trigger.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [trigger, ref],
+  );
+  return <ChakraMenu.Trigger ref={setRef} data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-function DropdownMenuContent({ className, sideOffset = 6, align, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.Content>, "align"> & { sideOffset?: number; align?: "start" | "center" | "end" }) {
+function DropdownMenuContent({ className, sideOffset = 6, align, onFocus, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.Content>, "align"> & { sideOffset?: number; align?: "start" | "center" | "end" }) {
+  const trigger = React.useContext(TriggerRef);
   return (
     <DropdownMenuPortal>
       <ChakraMenu.Positioner data-align={align}>
-        <ChakraMenu.Content unstyled data-slot="dropdown-menu-content" style={{ marginBlockStart: sideOffset }} className={cn(CONTENT, "origin-(--transform-origin)", className)} {...props} />
+        <ChakraMenu.Content
+          unstyled
+          data-slot="dropdown-menu-content"
+          style={{ marginBlockStart: sideOffset }}
+          className={cn(CONTENT, "origin-(--transform-origin)", className)}
+          onFocus={(event) => {
+            onFocus?.(event);
+            // A keyboard open focuses the panel a moment later; if the menu closed first (a quick Escape), that focus
+            // would land in a panel that is leaving. Send it back to the trigger.
+            if (event.currentTarget.getAttribute("data-state") === "closed") trigger?.current?.focus();
+          }}
+          {...props}
+        />
       </ChakraMenu.Positioner>
     </DropdownMenuPortal>
   );
@@ -92,8 +141,10 @@ function DropdownMenuRadioItem({ className, children, value, ...props }: Omit<Re
   );
 }
 
-function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<typeof ChakraMenu.ItemGroupLabel> & { inset?: boolean }) {
-  return <ChakraMenu.ItemGroupLabel data-slot="dropdown-menu-label" data-inset={inset || undefined} className={cn("px-2.5 pt-2 pb-1 font-sans text-body-sm leading-tight text-fg-label data-[inset]:pl-10.5", className)} {...props} />;
+// A heading above items: shadcn's label stands alone, so it is a plain element rather than Chakra's group label (which
+// must sit inside a group).
+function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<"div"> & { inset?: boolean }) {
+  return <div data-slot="dropdown-menu-label" data-inset={inset || undefined} className={cn("px-2.5 pt-2 pb-1 font-sans text-body-sm leading-tight text-fg-label data-[inset]:pl-10.5", className)} {...props} />;
 }
 
 function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof ChakraMenu.Separator>) {

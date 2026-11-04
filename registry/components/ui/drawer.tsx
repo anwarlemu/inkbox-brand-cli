@@ -6,8 +6,8 @@ import { Dialog as DrawerPrimitive } from "radix-ui";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A drawer, drawn as the console's dialog (Figma 427:2715: Create Agent Identity) and pulled from an edge: white over
-// the blurred, ink-tinted page, 16px corners on its inner edge, a 40 by 4px handle in the field-edge lilac, a 20px
+// A drawer, drawn as the console's dialog and pulled from an edge: white over the blurred page under the ink at 32
+// percent, 16px corners on its inner edge, a 40 by 4px handle in the field-edge lilac, a 20px
 // regular title and 24px sides. It slides in on the drawer curve and can be dragged away: a flick (faster than 0.11px
 // per ms) or a pull past a third of its size closes it, a shorter pull springs back on the same curve, and pulling the
 // other way meets growing resistance instead of a wall. The drag follows the pointer even off the panel (pointer
@@ -146,7 +146,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-3 p-6", className)} {...props} />;
+  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 p-6", className)} {...props} />;
 }
 
 function DrawerTitle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) {

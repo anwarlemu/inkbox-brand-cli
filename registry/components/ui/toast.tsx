@@ -9,8 +9,9 @@ import { cn } from "@/lib/utils";
 
 // The Radix toast (shadcn's older toast API; prefer Sonner for new work). Same look as the Sonner toasts (extrapolated
 // from the Inkbox console, Figma 427:2715): a white panel with 16px corners, the floating shadow and 16px of padding, a
-// 14px medium ink title over a 14px muted description, an outline action key and a faint close glyph. `destructive`
-// edges it in red with a red title. It slides in from the right edge it lives on (300ms, the drawer curve) and fades
+// 14px medium ink title over a 14px muted description, an outline action key and the console's toast close key (a 32px squircle, a bold 16px X in the faint purple that
+// takes the lilac under the pointer). `destructive`
+// edges it in red with a red title. It slides in from the right edge it lives on (160ms, the drawer curve) and fades
 // out faster; a swipe to the right drags it with the finger and lets it go.
 const ToastProvider = ToastPrimitive.Provider;
 
@@ -46,7 +47,7 @@ function ToastAction({ className, ...props }: React.ComponentProps<typeof ToastP
     <ToastPrimitive.Action
       data-slot="toast-action"
       className={cn(
-        "inline-flex h-8 shrink-0 items-center justify-center self-center rounded-pill border border-line-field bg-surface px-2.5 font-sans text-body leading-tight font-medium text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle active:bg-subtle active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=destructive]/toast:text-danger-strong motion-reduce:transition-none",
+        "inline-flex h-8 shrink-0 items-center justify-center self-center rounded-pill border border-line-field bg-surface px-2.5 font-sans text-body leading-tight font-medium text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=destructive]/toast:text-danger-strong motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -59,10 +60,10 @@ function ToastClose({ className, ...props }: React.ComponentProps<typeof ToastPr
     <ToastPrimitive.Close
       data-slot="toast-close"
       aria-label="Close"
-      className={cn("absolute top-3 right-3 inline-flex size-6 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
+      className={cn("absolute top-2.5 right-2 inline-flex size-8 items-center justify-center rounded-control text-fg-faint outline-none transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg-muted active:bg-subtle-hover active:transition-none focus-visible:shadow-focus motion-reduce:transition-none", className)}
       {...props}
     >
-      <XIcon className="size-4" />
+      <XIcon weight="bold" className="size-4" />
     </ToastPrimitive.Close>
   );
 }

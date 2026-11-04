@@ -38,9 +38,9 @@ function ChooseLine({ onChoose }: { onChoose?: () => void }) {
         ))}
       </div>
       <DrawerFooter>
-        <Button onClick={onChoose}>Use {line} line</Button>
+        <Button variant="secondary" className="w-full" onClick={onChoose}>Use {line} line</Button>
         <DrawerClose asChild>
-          <Button variant="secondary">Cancel</Button>
+          <Button variant="ghost" className="w-full">Cancel</Button>
         </DrawerClose>
       </DrawerFooter>
     </>

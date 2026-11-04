@@ -5,7 +5,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 function EditMailbox() {
   return (
@@ -25,10 +25,7 @@ function EditMailbox() {
         </div>
       </div>
       <SheetFooter>
-        <Button>Save changes</Button>
-        <SheetClose asChild>
-          <Button variant="secondary">Cancel</Button>
-        </SheetClose>
+        <Button variant="secondary" className="w-full">Save changes</Button>
       </SheetFooter>
     </>
   );

@@ -7,9 +7,9 @@ export function Preview() {
     <div className="grid gap-3">
       <div className="flex h-9.5 items-center gap-2.5 px-3">
         <Avatar size="sm">
-          <AvatarFallback>R</AvatarFallback>
+          <AvatarFallback>J</AvatarFallback>
         </Avatar>
-        <span className="text-body text-fg">Robert Ligthart</span>
+        <span className="text-body text-fg">Jordan at Acme</span>
       </div>
       <div className="flex h-9.5 items-center gap-2.5 px-3">
         <Avatar size="sm">

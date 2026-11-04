@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 
 // A react-hook-form form laid out as the console's (Figma 427:2715, Create Agent Identity, Login, Vault). Each FormItem
 // is a field: its 14px regular ink label on a 24px line, 4px above the control; fields sit 12px apart in the form. A
-// FormDescription is 14px muted under the control; a FormMessage is the 12px red line ("(is not available)"). A field
+// FormDescription is 14px muted 8px under the control; a FormMessage is the 12px red line 4px under it ("(is not
+// available)"). A field
 // that fails keeps its label ink: only the control (aria-invalid, the red edge) and the message turn red.
 const Form = FormProvider;
 
@@ -64,7 +65,7 @@ function FormControl(props: React.ComponentProps<typeof chakra.div>) {
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
   const { formDescriptionId } = useFormField();
-  return <p data-slot="form-description" id={formDescriptionId} className={cn("m-0 font-sans text-body leading-body text-fg-muted", className)} {...props} />;
+  return <p data-slot="form-description" id={formDescriptionId} className={cn("m-0 mt-1 font-sans text-body leading-line-body text-fg-muted", className)} {...props} />;
 }
 
 function FormMessage({ className, children, ...props }: React.ComponentProps<"p">) {
@@ -72,7 +73,7 @@ function FormMessage({ className, children, ...props }: React.ComponentProps<"p"
   const body = error ? String(error.message ?? "") : children;
   if (!body) return null;
   return (
-    <p data-slot="form-message" id={formMessageId} role={error ? "alert" : undefined} className={cn("m-0 font-sans text-caption leading-body text-danger", className)} {...props}>
+    <p data-slot="form-message" id={formMessageId} role={error ? "alert" : undefined} className={cn("m-0 font-sans text-caption leading-line-caption text-danger", className)} {...props}>
       {body}
     </p>
   );

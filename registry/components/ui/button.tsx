@@ -6,38 +6,41 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// The console's buttons (Figma 427:2715). The main action is a 40px purple pill with a 14px regular white label and a
-// 20px glyph 8px from it (Create Agent, Enable iMessage, Log in). `secondary` is the same pill in lilac with ink text
-// (Continue with GitHub). `outline` is the 36px white key with fully rounded corners, the field edge and a medium purple label
-// (View as formatted, Copy as markdown). `soft` is the 38px lilac key in a page head (Tunnel quickstart). `ghost` is a
-// bare glyph or label that washes on hover (a row's edit pencil). Press feedback changes the fill immediately without resizing.
+// The console's keys (its Chakra theme and Figma 427:2715). The main action is a 40px purple pill with a 14px regular
+// white label 20px in from each side and its glyph 8px away (Create Agent, Log in); a Create or Add key with a Plus takes
+// a bold 16px Plus and a medium label. `secondary` and `soft` are the same pill in lilac with ink text (soft keeps 12px
+// sides). `outline` is the 36px white key with the field edge and a medium purple label (Copy as markdown). `ghost` is a
+// bare 32px glyph or label in the secondary icon color that turns purple under the pointer or while its menu is open,
+// with no wash. Every key but ghost and link darkens with an inset wash while pressed, at once; focus is the soft ring.
+// A disabled key keeps full opacity: filled keys turn lilac with muted text and the pointer shows not-allowed. For a
+// destructive outline or ghost key pass `text-danger` (ghost: `hover:text-danger-strong`).
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap font-sans text-body leading-tight outline-none select-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:brightness-95 active:transition-none disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-pill font-sans text-body leading-tight font-normal whitespace-nowrap outline-none select-none transition-[background-color,color,box-shadow] duration-fast ease-out focus-visible:shadow-focus disabled:cursor-not-allowed disabled:text-fg-muted motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5",
   {
     variants: {
       variant: {
-        default: "rounded-pill bg-primary px-5 text-on-primary hover:bg-primary-hover active:bg-primary-hover",
-        secondary: "rounded-pill bg-subtle px-5 text-fg hover:bg-subtle-hover active:bg-subtle-hover",
-        destructive: "rounded-pill bg-danger px-5 text-white hover:bg-danger-strong active:bg-danger-strong",
-        outline: "rounded-pill border border-line-field bg-surface px-2.5 font-medium text-fg-brand hover:bg-subtle active:bg-subtle",
-        soft: "rounded-pill bg-subtle px-3 text-fg hover:bg-subtle-hover active:bg-subtle-hover [&_svg:not([class*='size-'])]:size-6",
-        ghost: "rounded-pill text-icon-secondary hover:bg-subtle active:bg-subtle hover:text-fg data-[state=open]:bg-subtle",
-        link: "h-auto rounded-pill px-0 text-fg-brand underline-offset-4 hover:underline",
+        default: "bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-hover active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none disabled:shadow-none disabled:border-transparent disabled:bg-subtle disabled:text-fg-muted",
+        secondary: "bg-subtle text-fg hover:bg-subtle-hover active:bg-subtle-hover active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none disabled:shadow-none disabled:border-transparent disabled:bg-subtle disabled:text-fg-muted",
+        destructive: "bg-danger text-white hover:bg-danger-strong active:bg-danger-strong active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none disabled:shadow-none disabled:border-transparent disabled:bg-subtle disabled:text-fg-muted",
+        outline: "border border-line-field bg-surface font-medium text-fg-brand hover:bg-subtle active:bg-subtle active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none disabled:shadow-none disabled:border-transparent disabled:bg-subtle disabled:text-fg-muted",
+        soft: "bg-subtle text-fg hover:bg-subtle-hover active:bg-subtle-hover active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none disabled:shadow-none disabled:border-transparent disabled:bg-subtle disabled:text-fg-muted",
+        ghost: "bg-transparent text-icon-secondary hover:text-fg-brand active:text-fg aria-expanded:text-fg-brand data-[state=open]:text-fg-brand",
+        link: "h-auto px-0 text-fg-brand underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10",
-        sm: "h-9 [&_svg:not([class*='size-'])]:size-5.5",
+        default: "h-10 px-5",
+        sm: "h-9 px-5",
         lg: "h-11 px-6",
-        icon: "size-8 rounded-pill px-0",
-        "icon-sm": "size-7 rounded-pill px-0 [&_svg:not([class*='size-'])]:size-4.5",
+        icon: "size-8 px-0",
+        "icon-sm": "size-7 px-0 [&_svg:not([class*='size-'])]:size-4.5",
         "icon-lg": "size-10 px-0",
       },
     },
     compoundVariants: [
-      { variant: "outline", size: "default", className: "h-9" },
-      { variant: "soft", size: "default", className: "h-9.5 gap-2.5" },
+      { variant: "outline", size: "default", className: "h-9 px-3" },
+      { variant: "soft", size: "default", className: "px-3" },
       { variant: "ghost", size: "default", className: "h-8 px-2" },
-      { variant: "link", size: "default", className: "h-auto" },
+      { variant: "link", className: "h-auto px-0" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },

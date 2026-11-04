@@ -160,11 +160,11 @@ function ConsoleRail({ collapsible = "offcanvas" }: { collapsible?: "offcanvas" 
             <SidebarMenuBadge>ADMIN</SidebarMenuBadge>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Robert Ligthart">
+            <SidebarMenuButton tooltip="Jordan at Acme">
               <Avatar size="sm" className="data-[size=sm]:size-4.5">
-                <AvatarFallback className="text-micro">R</AvatarFallback>
+                <AvatarFallback className="text-micro">J</AvatarFallback>
               </Avatar>
-              <span>Robert Ligthart</span>
+              <span>Jordan at Acme</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           {collapsible === "icon" && <CollapseRow />}

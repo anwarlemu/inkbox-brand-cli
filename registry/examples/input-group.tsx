@@ -64,7 +64,7 @@ export function Addons() {
     <div className="grid w-full max-w-100.5 gap-3">
       <InputGroup>
         <InputGroupAddon>
-          <MagnifyingGlassIcon />
+          <MagnifyingGlassIcon className="size-4" />
         </InputGroupAddon>
         <InputGroupInput aria-label="Search mailboxes" placeholder="Search mailboxes" />
         <InputGroupAddon align="inline-end">

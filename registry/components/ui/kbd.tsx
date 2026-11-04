@@ -2,9 +2,8 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-// Extrapolated from the console's small lilac chips (the @handle chip under the handle field): a key is a 20px lilac
-// cap with 4px corners and a hairline Shadow/S ring, 12px medium secondary ink in Inter; glyphs inside are 12px. In a
-// tooltip (on the ink) it turns translucent white.
+// The console's search keys (console-search.tsx): a key is a 20px lilac cap with 6px corners and the Line/S hairline,
+// 12px medium secondary ink in Inter; glyphs inside are 12px. In a tooltip (on the ink) it turns translucent white.
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd

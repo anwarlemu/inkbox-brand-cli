@@ -9,8 +9,8 @@ import { Separator } from "@/components/ui/separator";
 
 // A row of content (Figma 427:2715): an email in the inbox list (sender and date over the subject and a purple preview),
 // a webhook event (a tag and an arrow over the event name and a purple count), a rail row (a 22px filled glyph and a
-// 14px label, 38px tall at size sm). `default` is bare and washes lilac under the pointer; a selected item
-// (aria-current or data-selected) sits on the lilac with 8px corners. `outline` takes the field edge, `muted` the lilac.
+// 14px label, 38px tall at size sm). `default` is bare and takes the hover wash under the pointer (100ms, as the
+// console's list rows do); a selected item (aria-current or data-selected) sits on the lilac with 12px corners. `outline` takes the field edge, `muted` the lilac.
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return <div role="list" data-slot="item-group" className={cn("group/item-group flex flex-col", className)} {...props} />;
 }
@@ -20,7 +20,7 @@ function ItemSeparator({ className, ...props }: React.ComponentProps<typeof Sepa
 }
 
 const itemVariants = cva(
-  "group/item flex flex-wrap items-center rounded-control border border-transparent font-sans text-body leading-body text-fg outline-none transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-subtle aria-[current=true]:bg-subtle data-[selected=true]:bg-subtle motion-reduce:transition-none [a]:hover:bg-subtle [button]:hover:bg-subtle",
+  "group/item flex flex-wrap items-center rounded-control border border-transparent font-sans text-body leading-body text-fg outline-none transition-[background-color] duration-fast ease-out focus-visible:shadow-focus aria-[current=page]:bg-subtle aria-[current=true]:bg-subtle data-[selected=true]:bg-subtle motion-reduce:transition-none [a]:hover:bg-wash-hover [button]:hover:bg-wash-hover aria-[current=page]:hover:bg-subtle aria-[current=true]:hover:bg-subtle data-[selected=true]:hover:bg-subtle",
   {
     variants: {
       variant: {

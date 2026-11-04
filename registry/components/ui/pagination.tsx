@@ -3,9 +3,12 @@ import { CaretLeftIcon, CaretRightIcon, DotsThreeIcon } from "@phosphor-icons/re
 
 import { cn } from "@/lib/utils";
 
-// The console's pagination (Figma 427:2715, under the Email and iMessage tables): 14px muted "Previous" and "Next" with
-// 16px carets, the page numbers in 14px ink, and the current page a 40 by 30 white key with fully rounded corners and Shadow/S.
-// `bar` sets it in the 42px lilac bar with 10px corners that sits 8px under a table, the pages at its right end.
+// The console's pagination (PaginationNavigator). Previous and Next are quiet keys: an 18px caret in a 28px box beside
+// a 14px ink label, 6px in on the caret's side and 12px on the label's, 12px corners and a hairline (0.5px) edge kept
+// clear until the pointer is over it, when the key fills with the lilac hover and the edge takes the field color
+// (100ms, ease-out). A disabled key fades to the subtle purple. The current page is 14px medium in the secondary icon
+// purple with no fill; other page numbers are quiet keys like Previous and Next. `bar` sets it under a table: centered
+// in a row at least 44px tall.
 function Pagination({ className, bar = false, ...props }: React.ComponentProps<"nav"> & { bar?: boolean }) {
   return (
     <nav
@@ -13,14 +16,14 @@ function Pagination({ className, bar = false, ...props }: React.ComponentProps<"
       aria-label="pagination"
       data-slot="pagination"
       data-bar={bar || undefined}
-      className={cn("flex w-full justify-center", bar && "min-h-10.5 items-center justify-end rounded-panel bg-subtle px-2 py-1.5", className)}
+      className={cn("flex w-full justify-center", bar && "min-h-11 items-center", className)}
       {...props}
     />
   );
 }
 
 function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) {
-  return <ul data-slot="pagination-content" className={cn("flex flex-row flex-wrap items-center gap-1", className)} {...props} />;
+  return <ul data-slot="pagination-content" className={cn("flex flex-row flex-wrap items-center gap-2", className)} {...props} />;
 }
 
 function PaginationItem(props: React.ComponentProps<"li">) {
@@ -29,8 +32,8 @@ function PaginationItem(props: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = { isActive?: boolean; size?: "icon" | "default" } & React.ComponentProps<"a">;
 
-const LINK =
-  "inline-flex h-7.5 shrink-0 items-center justify-center gap-1 rounded-pill font-sans text-body leading-tight whitespace-nowrap outline-none transition-[background-color,color,box-shadow] duration-150 ease-out active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+const KEY =
+  "inline-flex shrink-0 items-center justify-center rounded-control border-[0.5px] border-transparent bg-transparent font-sans text-body leading-tight whitespace-nowrap text-fg outline-none transition-[background-color,border-color] duration-fast ease-out hover:border-line-field hover:bg-subtle-hover focus-visible:shadow-focus aria-disabled:pointer-events-none aria-disabled:text-fg-subtle motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:shrink-0";
 
 function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
   return (
@@ -39,9 +42,10 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
       data-slot="pagination-link"
       data-active={isActive || undefined}
       className={cn(
-        LINK,
-        size === "icon" ? "min-w-10 px-2" : "px-2.5",
-        isActive ? "bg-surface text-fg shadow-s" : "text-fg hover:bg-subtle-hover in-data-[bar=true]:hover:bg-surface/70",
+        KEY,
+        "h-9",
+        size === "icon" ? "min-w-8 px-2" : "px-3",
+        isActive && "pointer-events-none font-medium text-icon-secondary hover:border-transparent hover:bg-transparent",
         className,
       )}
       {...props}
@@ -49,27 +53,36 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
   );
 }
 
-function PaginationPrevious({ className, children = "Previous", ...props }: React.ComponentProps<typeof PaginationLink>) {
+/** The caret's 28px box. */
+function Arrow({ children }: { children: React.ReactNode }) {
+  return <span className="flex size-7 items-center justify-center [&_svg]:size-4.5">{children}</span>;
+}
+
+function PaginationPrevious({ className, children = "Previous", isActive: _active, size: _size, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
-    <PaginationLink aria-label="Go to previous page" size="default" className={cn("text-fg-muted hover:text-fg", className)} {...props}>
-      <CaretLeftIcon aria-hidden />
+    <a aria-label="Go to previous page" data-slot="pagination-link" className={cn(KEY, "py-0.75 pr-3 pl-1.5", className)} {...props}>
+      <Arrow>
+        <CaretLeftIcon aria-hidden />
+      </Arrow>
       <span>{children}</span>
-    </PaginationLink>
+    </a>
   );
 }
 
-function PaginationNext({ className, children = "Next", ...props }: React.ComponentProps<typeof PaginationLink>) {
+function PaginationNext({ className, children = "Next", isActive: _active, size: _size, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
-    <PaginationLink aria-label="Go to next page" size="default" className={cn("text-fg-muted hover:text-fg", className)} {...props}>
+    <a aria-label="Go to next page" data-slot="pagination-link" className={cn(KEY, "py-0.75 pr-1.5 pl-3", className)} {...props}>
       <span>{children}</span>
-      <CaretRightIcon aria-hidden />
-    </PaginationLink>
+      <Arrow>
+        <CaretRightIcon aria-hidden />
+      </Arrow>
+    </a>
   );
 }
 
 function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span aria-hidden data-slot="pagination-ellipsis" className={cn("flex h-7.5 min-w-8 items-center justify-center text-fg-muted", className)} {...props}>
+    <span aria-hidden data-slot="pagination-ellipsis" className={cn("flex h-9 min-w-8 items-center justify-center text-fg-muted", className)} {...props}>
       <DotsThreeIcon weight="bold" className="size-4" />
       <span className="sr-only">More pages</span>
     </span>

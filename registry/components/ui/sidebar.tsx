@@ -13,15 +13,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-// The console's rail (Figma 427:2715: Dashboard - empty state, Agent Workspace - Inbox). The rail is 288px of white
-// with a 1px #F3F1F5 edge; a 64px head holds the lockup 16px in. Rows are 38px with 8px corners on a 40px pitch, 12px in
-// from the rail's sides: a filled glyph (the design's 22px, Phosphor's 24px) and a 14px regular ink label at 44px; the
-// current row sits on the lilac. A labeled group starts 12px below the last one with a 13px purple label 16px in and its
-// rows 8px under it; a group's action (the sliders glyph) sits 16px from the rail's right edge. The foot is ruled off
-// above. `secondary` is the agent workspace's second rail: lilac, with the current row in white. Collapsing to icons
-// narrows the rail to 63px (200ms, the strong ease-out); the keyboard shortcut toggles it instantly.
+// The console's rail (left-menu-panel and sidebar-metrics). The rail is 288px on the lilac with a hairline edge; a 64px
+// head holds the lockup 16px in. Rows are 36px pills 4px apart, 12px in from the rail's sides: an 18px filled glyph
+// 14.5px in and a 14px medium label 9px after it, both in the secondary icon purple. The current row fills with the
+// lilac hover; a row under the pointer with half of it (100ms, ease-out). A labeled group starts 12px below the last one
+// with a 14px medium purple label lined up with the glyphs; a group's action sits 16px from the rail's right edge. The
+// foot is ruled off above. `secondary` is the agent workspace's second rail, with the current row in white. Collapsing
+// to icons narrows the rail to its 36px glyph squares (each names itself in a tooltip 12px to the right); the keyboard
+// shortcut toggles it instantly. An unread count is the small red badge at a row's right end.
 const SIDEBAR_WIDTH = "var(--ds-layout-rail)";
-const SIDEBAR_WIDTH_ICON = "calc(var(--ds-space-9-5) + var(--ds-space-6) + 1px)";
+const SIDEBAR_WIDTH_ICON = "calc(var(--ds-space-9) + var(--ds-space-6) + 1px)";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 const MOBILE_QUERY = "(max-width: 767px)";
 
@@ -127,7 +128,7 @@ function Sidebar({
   ...props
 }: React.ComponentProps<"div"> & { side?: "left" | "right"; variant?: "sidebar" | "secondary" | "floating" | "inset"; collapsible?: "offcanvas" | "icon" | "none" }) {
   const { isMobile, state, openMobile, setOpenMobile, instant } = useSidebar();
-  const ground = variant === "secondary" || variant === "inset" ? "bg-subtle" : "bg-surface";
+  const ground = variant === "floating" ? "bg-surface" : "bg-subtle";
 
   if (collapsible === "none") {
     return (
@@ -164,14 +165,14 @@ function Sidebar({
       <div
         data-slot="sidebar-gap"
         className={cn(
-          "relative h-full w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-out group-data-[collapsible=offcanvas]/sidebar:w-0 group-data-[collapsible=icon]/sidebar:w-(--sidebar-width-icon) in-data-[instant=true]:transition-none motion-reduce:transition-none",
+          "relative h-full w-(--sidebar-width) bg-transparent transition-[width] duration-base ease-out group-data-[collapsible=offcanvas]/sidebar:w-0 group-data-[collapsible=icon]/sidebar:w-(--sidebar-width-icon) in-data-[instant=true]:transition-none motion-reduce:transition-none",
           (variant === "floating" || variant === "inset") && "group-data-[collapsible=icon]/sidebar:w-[calc(var(--sidebar-width-icon)+var(--ds-space-4))]",
         )}
       >
         <div
           data-slot="sidebar-container"
           className={cn(
-            "sticky top-0 z-10 flex h-svh max-h-full w-(--sidebar-width) overflow-hidden transition-[translate,width] duration-200 ease-out in-data-[instant=true]:transition-none motion-reduce:transition-none",
+            "sticky top-0 z-10 flex h-svh max-h-full w-(--sidebar-width) overflow-hidden transition-[translate,width] duration-base ease-out in-data-[instant=true]:transition-none motion-reduce:transition-none",
             side === "left" ? "left-0 group-data-[collapsible=offcanvas]/sidebar:-translate-x-full" : "ml-auto group-data-[collapsible=offcanvas]/sidebar:translate-x-full",
             variant === "floating" || variant === "inset" ? "p-2 group-data-[collapsible=icon]/sidebar:w-[calc(var(--sidebar-width-icon)+var(--ds-space-4))]" : "group-data-[collapsible=icon]/sidebar:w-(--sidebar-width-icon)",
             variant === "sidebar" && (side === "left" ? "border-r border-line-subtle" : "border-l border-line-subtle"),
@@ -222,7 +223,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
       onClick={toggleSidebar}
       title="Toggle the rail"
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 outline-none after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 after:bg-transparent after:transition-colors after:duration-150 after:ease-out hover:after:bg-line-field sm:flex",
+        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 outline-none after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 after:bg-transparent after:transition-colors after:duration-fast after:ease-out hover:after:bg-line-field sm:flex",
         "in-data-[side=left]:-right-4 in-data-[side=left]:cursor-w-resize in-data-[side=right]:left-0 in-data-[side=right]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
         className,
@@ -277,7 +278,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="sidebar-group" data-sidebar="group" className={cn("relative flex w-full min-w-0 flex-col px-3 py-3 [&:not(:has(>[data-slot=sidebar-group-label]))]:py-0", className)} {...props} />;
 }
 
-/** A group's 13px purple label, 16px in from the rail; it folds away when the rail is narrowed to its glyphs. */
+/** A group's 14px medium purple label, lined up with the rows' glyphs; it folds away when the rail is narrowed to its glyphs. */
 function SidebarGroupLabel({ className, asChild = false, ...props }: React.ComponentProps<"div"> & { asChild?: boolean }) {
   const Comp = asChild ? chakra.div : "div";
   // Chakra's factory renders its child in its place only when told to.
@@ -287,7 +288,7 @@ function SidebarGroupLabel({ className, asChild = false, ...props }: React.Compo
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
-        "mb-2 flex h-4 shrink-0 items-center px-1 font-sans text-body-sm leading-4 whitespace-nowrap text-fg-label outline-none transition-[margin,opacity] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:-mt-4 group-data-[collapsible=icon]/sidebar:opacity-0 motion-reduce:transition-none [&>svg]:size-4 [&>svg]:shrink-0",
+        "mb-1.75 flex h-4 shrink-0 items-center pl-[calc(var(--ds-space-1)*3.625)] font-sans text-body leading-4 font-medium whitespace-nowrap text-fg-label outline-none transition-[margin,opacity] duration-base ease-out focus-visible:shadow-focus group-data-[collapsible=icon]/sidebar:-mt-4 group-data-[collapsible=icon]/sidebar:opacity-0 motion-reduce:transition-none [&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}
       {...props}
@@ -305,7 +306,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }: React.Comp
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
-        "absolute top-2 right-3 flex size-6 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-2 right-3 flex size-6 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none transition-colors duration-fast ease-out hover:text-fg-brand active:text-fg focus-visible:shadow-focus group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-4.5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         className,
       )}
       {...props}
@@ -318,28 +319,28 @@ function SidebarGroupContent({ className, ...props }: React.ComponentProps<"div"
 }
 
 function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
-  return <ul data-slot="sidebar-menu" data-sidebar="menu" className={cn("flex w-full min-w-0 flex-col gap-0.5", className)} {...props} />;
+  return <ul data-slot="sidebar-menu" data-sidebar="menu" className={cn("flex w-full min-w-0 flex-col gap-1", className)} {...props} />;
 }
 
 function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
   return <li data-slot="sidebar-menu-item" data-sidebar="menu-item" className={cn("group/menu-item relative", className)} {...props} />;
 }
 
-// A row: the glyph sits 11px in (Phosphor's 24px box puts its center where the design's 22px glyph at 12px has it), the
-// label 9px after it, at the design's 44px. Hover washes the row; the current row takes the lilac (white on the lilac
-// rail). Narrowed to icons, the row is a 38px square around its glyph.
+// A row (sidebar-metrics): 36px, fully rounded, the 18px glyph 14.5px in and the label 9px after it, 14px medium in the
+// secondary icon purple. Hover washes the row with half the lilac hover; the current row takes the lilac hover (white
+// on the second rail). Narrowed to icons, the row is a 36px square around its glyph.
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button active:brightness-95 active:transition-none flex w-full cursor-pointer items-center gap-2.25 overflow-hidden rounded-pill pr-3 pl-2.75 text-left font-sans text-fg outline-none transition-[background-color,color] duration-150 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-data-[collapsible=icon]/sidebar:size-9.5! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
+  "peer/menu-button flex w-full cursor-pointer items-center gap-2.25 overflow-hidden rounded-pill pr-3 pl-[calc(var(--ds-space-1)*3.625)] text-left font-sans font-medium text-icon-secondary outline-none transition-[background-color,color] duration-fast ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-9 group-has-data-[sidebar=menu-badge]/menu-item:pr-10 group-data-[collapsible=icon]/sidebar:size-9! group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:p-0! group-data-[collapsible=icon]/sidebar:[&>span:not([data-slot=avatar])]:sr-only focus-visible:shadow-focus disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:bg-surface data-[state=open]:bg-subtle-hover motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-4.5",
   {
     variants: {
       variant: {
-        default: "hover:bg-subtle group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:hover:bg-surface group-data-[variant=inset]/sidebar:hover:bg-subtle-hover",
+        default: "hover:bg-subtle-hover/50 data-[active=true]:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:hover:bg-surface group-data-[variant=inset]/sidebar:data-[active=true]:hover:bg-surface",
         outline: "bg-surface shadow-s hover:bg-subtle",
       },
       size: {
-        default: "h-9.5 text-body leading-tight",
-        sm: "h-8 text-body-sm leading-tight [&>svg:not([class*='size-'])]:size-5",
-        lg: "h-12 text-body leading-tight group-data-[collapsible=icon]/sidebar:p-0!",
+        default: "h-9 text-body leading-snug",
+        sm: "h-8 text-body-sm leading-snug [&>svg:not([class*='size-'])]:size-4",
+        lg: "h-12 text-body leading-snug group-data-[collapsible=icon]/sidebar:p-0!",
       },
     },
     defaultVariants: { variant: "default", size: "default" },
@@ -378,7 +379,7 @@ function SidebarMenuButton({
   return (
     <Tooltip open={showTip && tipOpen} onOpenChange={setTipOpen}>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent side="right" align="center" {...content} />
+      <TooltipContent side="right" align="center" sideOffset={12} {...content} />
     </Tooltip>
   );
 }
@@ -393,7 +394,7 @@ function SidebarMenuAction({ className, asChild = false, showOnHover = false, ..
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
-        "absolute top-1.25 right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none active:brightness-95 active:transition-none transition-[background-color,color,opacity] duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
+        "absolute top-1 right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-pill text-icon-secondary outline-none transition-[color,opacity] duration-fast ease-out hover:text-fg-brand active:text-fg focus-visible:shadow-focus group-data-[collapsible=icon]/sidebar:hidden motion-reduce:transition-none [&>svg]:size-5 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden",
         "peer-data-[size=sm]/menu-button:top-0.5 peer-data-[size=lg]/menu-button:top-2.5",
         showOnHover && "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-fg md:opacity-0",
         className,
@@ -404,19 +405,20 @@ function SidebarMenuAction({ className, asChild = false, showOnHover = false, ..
 }
 
 /**
- * A mark at a row's right end, 12px in (ADMIN by My Organisation): the pink edge, pill corners and 12px pink text.
- * `count` is a quiet 13px number instead (unread mail). For a mark right after the label (BETA by Agent2Agent), put a
- * Badge with variant pink inside the row's button.
+ * A mark at a row's right end, 12px in (ADMIN by My Organisation): the pink edge, pill corners and 12px medium pink text,
+ * 22px tall. `count` is the console's unread count instead: 16px tall, at least 22px wide, 12px medium white on the
+ * red with 8px corners, 8px from the row's end. For a mark right after the label (BETA by Agent2Agent), put a Badge
+ * with variant pink inside the row's button.
  */
 function SidebarMenuBadge({ className, variant = "mark", ...props }: React.ComponentProps<"div"> & { variant?: "mark" | "count" }) {
   return (
     <div
       data-slot="sidebar-menu-badge"
       data-sidebar="menu-badge"
+      data-variant={variant}
       className={cn(
-        "pointer-events-none absolute top-2 right-3 flex h-5.5 items-center justify-center font-sans whitespace-nowrap select-none group-data-[collapsible=icon]/sidebar:hidden",
-        "peer-data-[size=sm]/menu-button:top-1.25 peer-data-[size=lg]/menu-button:top-3.25",
-        variant === "mark" ? "rounded-pill border border-pink bg-surface px-1.5 pt-px text-caption leading-none text-pink" : "min-w-5 px-1 text-body-sm text-fg-muted tabular-nums",
+        "pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center justify-center font-sans font-medium whitespace-nowrap select-none group-data-[collapsible=icon]/sidebar:hidden",
+        variant === "mark" ? "right-3 h-5.5 rounded-pill border border-pink bg-surface px-1.5 text-caption leading-none text-pink" : "right-2 h-4 min-w-5.5 rounded-sm bg-danger px-1.5 text-micro leading-none text-white tabular-nums",
         className,
       )}
       {...props}
@@ -430,8 +432,8 @@ function SidebarMenuSkeleton({ className, showIcon = false, ...props }: React.Co
   const id = React.useId();
   const width = `${50 + (([...id].reduce((sum, c) => (sum * 31 + c.charCodeAt(0)) % 997, 7) % 41))}%`;
   return (
-    <div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" className={cn("flex h-9.5 items-center gap-2.25 rounded-pill pr-3 pl-2.75", className)} {...props}>
-      {showIcon && <Skeleton className="size-5.5 rounded-pill" data-sidebar="menu-skeleton-icon" />}
+    <div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" className={cn("flex h-9 items-center gap-2.25 rounded-pill pr-3 pl-[calc(var(--ds-space-1)*3.625)]", className)} {...props}>
+      {showIcon && <Skeleton className="size-4.5 rounded-pill" data-sidebar="menu-skeleton-icon" />}
       <Skeleton className="h-3.5 max-w-(--skeleton-width) flex-1 rounded-xs" data-sidebar="menu-skeleton-text" style={{ "--skeleton-width": width } as React.CSSProperties} />
     </div>
   );
@@ -465,7 +467,7 @@ function SidebarMenuSubButton({ asChild = false, size = "md", isActive = false, 
       data-active={isActive || undefined}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "flex h-8 min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-pill px-2.5 font-sans text-fg-secondary outline-none active:brightness-95 active:transition-none transition-[background-color,color] duration-150 ease-out hover:bg-subtle active:bg-subtle hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle data-[active=true]:text-fg group-data-[variant=secondary]/sidebar:hover:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0",
+        "flex h-8 min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-pill px-2.5 font-sans font-medium text-icon-secondary outline-none transition-[background-color,color] duration-fast ease-out hover:bg-subtle-hover/50 focus-visible:shadow-focus aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-subtle-hover group-data-[variant=secondary]/sidebar:data-[active=true]:bg-surface motion-reduce:transition-none [&>span:last-child]:truncate [&>svg]:size-4.5 [&>svg]:shrink-0",
         size === "sm" ? "text-body-sm" : "text-body",
         className,
       )}

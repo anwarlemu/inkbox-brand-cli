@@ -24,12 +24,22 @@ export function Preview() {
 export function Tags() {
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <Badge variant="blue" size="sm">Email</Badge>
-      <Badge variant="purple" size="sm">Signed</Badge>
-      <Badge variant="gray" size="sm">Fire-and-forget</Badge>
-      <Badge variant="green" size="sm">Blacklist</Badge>
-      <Badge variant="blue" size="sm">Unread</Badge>
+      <Badge variant="green">Active</Badge>
+      <Badge variant="red">Failed</Badge>
+      <Badge variant="blue">Email</Badge>
+      <Badge variant="purple">Signed</Badge>
+      <Badge variant="gray">Fire-and-forget</Badge>
+      <Badge variant="yellow">Pending</Badge>
     </div>
+  );
+}
+
+export function Count() {
+  return (
+    <span className="flex items-center gap-2 text-body text-fg">
+      Inbox
+      <Badge variant="count">12</Badge>
+    </span>
   );
 }
 

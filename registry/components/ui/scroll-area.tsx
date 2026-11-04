@@ -27,7 +27,7 @@ function ScrollBar({ className, orientation = "vertical", ...props }: React.Comp
       className={cn("flex touch-none p-0.5 select-none", orientation === "vertical" && "h-full w-2.5", orientation === "horizontal" && "h-2.5 flex-col", className)}
       {...props}
     >
-      <ChakraScrollArea.Thumb data-slot="scroll-area-thumb" className="relative flex-1 rounded-pill bg-line-field transition-colors duration-150 ease-out hover:bg-line-strong motion-reduce:transition-none" />
+      <ChakraScrollArea.Thumb data-slot="scroll-area-thumb" className="relative flex-1 rounded-pill bg-line-field transition-colors duration-fast ease-out hover:bg-line-strong motion-reduce:transition-none" />
     </ChakraScrollArea.Scrollbar>
   );
 }

@@ -5,8 +5,9 @@ import { Avatar as ChakraAvatar } from "@chakra-ui/react";
 
 import { cn } from "@/lib/utils";
 
-// Circular avatars with an avatar-blue fallback and a white initial; `square` remains an explicit shape option.
-// Sizes: sm 22px (the rail), default 32px, lg 40px. The fallback shows until the image has loaded.
+// The console's avatar (src/components/ui/avatar.tsx): a circle in the avatar blue with one white initial (pass it uppercase) in
+// 14px regular (16px at lg). Sizes: sm 24px, default 32px, lg 40px. `square` rounds 6px at sm, 8px by default and 12px at
+// lg. The fallback shows until the image has loaded.
 function Avatar({ className, size = "default", shape = "circle", ...props }: React.ComponentProps<typeof ChakraAvatar.Root> & { size?: "sm" | "default" | "lg"; shape?: "square" | "circle" }) {
   return (
     <ChakraAvatar.Root
@@ -15,7 +16,7 @@ function Avatar({ className, size = "default", shape = "circle", ...props }: Rea
       data-size={size}
       data-shape={shape}
       className={cn(
-        "group/avatar relative flex size-8 shrink-0 select-none data-[size=lg]:size-10 data-[size=sm]:size-5.5",
+        "group/avatar relative flex size-8 shrink-0 select-none data-[size=lg]:size-10 data-[size=sm]:size-6",
         shape === "circle" ? "rounded-pill" : "rounded-sm data-[size=lg]:rounded-control data-[size=sm]:rounded-xs",
         className,
       )}
@@ -32,7 +33,7 @@ function AvatarFallback({ className, ...props }: React.ComponentProps<typeof Cha
   return (
     <ChakraAvatar.Fallback
       data-slot="avatar-fallback"
-      className={cn("flex size-full items-center justify-center rounded-[inherit] bg-avatar font-sans text-body leading-none text-white group-data-[size=lg]/avatar:text-body-lg group-data-[size=sm]/avatar:text-body", className)}
+      className={cn("flex size-full items-center justify-center rounded-[inherit] bg-avatar font-sans text-body leading-none font-normal text-white group-data-[size=lg]/avatar:text-body-lg group-data-[size=sm]/avatar:text-body", className)}
       {...props}
     />
   );
@@ -63,7 +64,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "relative flex size-8 shrink-0 items-center justify-center rounded-pill bg-subtle font-sans text-caption leading-none text-fg-secondary ring-2 ring-surface group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-5.5 [&>svg]:size-4",
+        "relative flex size-8 shrink-0 items-center justify-center rounded-pill bg-subtle font-sans text-caption leading-none text-fg-secondary ring-2 ring-surface group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4",
         className,
       )}
       {...props}

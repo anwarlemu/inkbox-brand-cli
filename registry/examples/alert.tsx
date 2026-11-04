@@ -1,18 +1,18 @@
-import { InfoIcon, LockIcon, WarningIcon, XCircleIcon } from "@phosphor-icons/react/ssr";
+import { CheckCircleIcon, InfoIcon, LockIcon, WarningIcon, XCircleIcon } from "@phosphor-icons/react/ssr";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
 export function Preview() {
   return (
-    <Alert className="max-w-200">
+    <Alert variant="muted" className="max-w-200">
       <LockIcon weight="fill" />
       <AlertTitle>Initialize vault</AlertTitle>
-      <AlertDescription className="grid gap-2">
+      <AlertDescription data-alerts="fill" className="grid gap-2">
         <p>Create an encrypted vault for your organization. The vault can store login credentials including MFA one-time passwords (OTP), SSH keys, API keys and other secrets for your agents.</p>
         <Alert variant="info">
           <InfoIcon weight="fill" />
-          <AlertTitle>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertTitle>
+          <AlertDescription>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertDescription>
         </Alert>
       </AlertDescription>
     </Alert>
@@ -23,7 +23,7 @@ export function Info() {
   return (
     <Alert variant="info" className="max-w-200">
       <InfoIcon weight="fill" />
-      <AlertTitle>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertTitle>
+      <AlertDescription>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertDescription>
     </Alert>
   );
 }
@@ -34,6 +34,16 @@ export function Warning() {
       <WarningIcon weight="fill" />
       <AlertTitle>Copy this API key now</AlertTitle>
       <AlertAction>For security, the full key cannot be shown again.</AlertAction>
+    </Alert>
+  );
+}
+
+export function Success() {
+  return (
+    <Alert variant="success">
+      <CheckCircleIcon weight="fill" />
+      <AlertTitle>Domain verified</AlertTitle>
+      <AlertDescription>Mail from you@acme.com now sends from your own domain.</AlertDescription>
     </Alert>
   );
 }

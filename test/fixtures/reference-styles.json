@@ -404,11 +404,12 @@
    "name": "checkbox",
    "example": "Preview",
    "selector": "[data-slot=checkbox]",
-   "source": "Requested compact control pill styling, 2026-10-24",
+   "source": "Requested 2026-11-04: always circular, Phosphor circle glyphs (a 22px box draws the 18px circle) on Chakra",
    "expected": {
-    "width": "18px",
-    "height": "18px",
-    "borderTopLeftRadius": "9996px"
+    "width": "22px",
+    "height": "22px",
+    "borderTopLeftRadius": "9996px",
+    "backgroundColor": "rgba(0, 0, 0, 0)"
    },
    "width": 1440
   },

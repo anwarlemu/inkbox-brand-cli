@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 // thumb in the field's lilac-gray on a clear track, darkening under the pointer.
 function ScrollArea({ className, children, ...props }: React.ComponentProps<typeof ChakraScrollArea.Root>) {
   return (
-    <ChakraScrollArea.Root data-slot="scroll-area" className={cn("relative overflow-hidden", className)} {...props}>
+    <ChakraScrollArea.Root unstyled data-slot="scroll-area" className={cn("relative overflow-hidden", className)} {...props}>
       <ChakraScrollArea.Viewport data-slot="scroll-area-viewport" className="size-full rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring">
         {children}
       </ChakraScrollArea.Viewport>
@@ -24,7 +24,7 @@ function ScrollBar({ className, orientation = "vertical", ...props }: React.Comp
     <ChakraScrollArea.Scrollbar
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
-      className={cn("flex touch-none p-0.5 select-none", orientation === "vertical" && "h-full w-2.5", orientation === "horizontal" && "h-2.5 flex-col", className)}
+      className={cn("absolute flex touch-none p-px select-none", orientation === "vertical" && "inset-y-0 right-0 w-2", orientation === "horizontal" && "inset-x-0 bottom-0 h-2 flex-col", className)}
       {...props}
     >
       <ChakraScrollArea.Thumb data-slot="scroll-area-thumb" className="relative flex-1 rounded-pill bg-line-field transition-colors duration-fast ease-out hover:bg-line-strong motion-reduce:transition-none" />

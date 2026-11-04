@@ -14,6 +14,7 @@ type SwitchProps = Omit<React.ComponentProps<typeof ChakraSwitch.Root>, "onCheck
 function Switch({ className, size = "default", onCheckedChange, ...props }: SwitchProps) {
   return (
     <ChakraSwitch.Root
+      unstyled
       data-slot="switch"
       data-size={size}
       onCheckedChange={(details) => onCheckedChange?.(details.checked)}

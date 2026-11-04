@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui";
-import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react/ssr";
+import { CaretRightIcon, CheckCircleIcon } from "@phosphor-icons/react/ssr";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -60,9 +60,9 @@ function ContextMenuCheckboxItem({ className, children, checked, ...props }: Rea
   return (
     <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" checked={checked} className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
     </ContextMenuPrimitive.CheckboxItem>
@@ -78,9 +78,9 @@ function ContextMenuRadioItem({ className, children, ...props }: React.Component
   return (
     <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
     </ContextMenuPrimitive.RadioItem>

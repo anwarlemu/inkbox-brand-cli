@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Menu as ChakraMenu, Portal } from "@chakra-ui/react";
-import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react/ssr";
+import { CaretRightIcon, CheckCircleIcon } from "@phosphor-icons/react/ssr";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -123,9 +123,9 @@ function DropdownMenuCheckboxItem({ className, children, checked, onCheckedChang
   return (
     <ChakraMenu.CheckboxItem unstyled data-slot="dropdown-menu-checkbox-item" value={itemValue} checked={checked} onCheckedChange={onCheckedChange} className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <ChakraMenu.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </ChakraMenu.ItemIndicator>
       </span>
     </ChakraMenu.CheckboxItem>
@@ -143,9 +143,9 @@ function DropdownMenuRadioItem({ className, children, value, ...props }: Omit<Re
   return (
     <ChakraMenu.RadioItem unstyled data-slot="dropdown-menu-radio-item" value={itemValue} className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <ChakraMenu.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </ChakraMenu.ItemIndicator>
       </span>
     </ChakraMenu.RadioItem>

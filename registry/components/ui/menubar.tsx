@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Menubar as MenubarPrimitive } from "radix-ui";
-import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react/ssr";
+import { CaretRightIcon, CheckCircleIcon } from "@phosphor-icons/react/ssr";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -76,9 +76,9 @@ function MenubarCheckboxItem({ className, children, checked, ...props }: React.C
   return (
     <MenubarPrimitive.CheckboxItem data-slot="menubar-checkbox-item" checked={checked} className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </MenubarPrimitive.ItemIndicator>
       </span>
     </MenubarPrimitive.CheckboxItem>
@@ -94,9 +94,9 @@ function MenubarRadioItem({ className, children, ...props }: React.ComponentProp
   return (
     <MenubarPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(ITEM, className)} {...props}>
       {children}
-      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
+      <span className="pointer-events-none ml-auto flex size-5 shrink-0 items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </MenubarPrimitive.ItemIndicator>
       </span>
     </MenubarPrimitive.RadioItem>

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { Command as CommandPrimitive } from "cmdk";
-import { CaretDownIcon, CheckIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react/ssr";
+import { CaretDownIcon, CheckCircleIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react/ssr";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -272,7 +272,7 @@ function ComboboxItem({ value, label, className, children, disabled, ...props }:
       {...props}
     >
       {children ?? text}
-      {selected && <CheckIcon aria-hidden weight="bold" className="absolute right-3 size-4 text-fg-brand" />}
+      {selected && <CheckCircleIcon aria-hidden weight="fill" className="absolute right-3 size-5 text-fg-brand" />}
     </CommandPrimitive.Item>
   );
 }

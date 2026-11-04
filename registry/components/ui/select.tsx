@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Select as SelectPrimitive } from "radix-ui";
-import { CaretDownIcon, CaretUpIcon, CheckIcon } from "@phosphor-icons/react/ssr";
+import { CaretDownIcon, CaretUpIcon, CheckCircleIcon } from "@phosphor-icons/react/ssr";
 
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
@@ -91,9 +91,9 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
       <span data-slot="select-item-text" className="min-w-0 flex-1 truncate [&_svg]:me-1.5 [&_svg]:inline-block [&_svg]:align-middle">
         <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       </span>
-      <span data-slot="select-item-indicator" className="flex size-4 shrink-0 items-center justify-center">
+      <span data-slot="select-item-indicator" className="flex size-5 shrink-0 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
+          <CheckCircleIcon weight="fill" className="size-5 text-fg-brand" />
         </SelectPrimitive.ItemIndicator>
       </span>
     </SelectPrimitive.Item>

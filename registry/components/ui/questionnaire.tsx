@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckIcon } from "@phosphor-icons/react/ssr";
+import { CheckCircleIcon, CircleIcon } from "@phosphor-icons/react/ssr";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -295,15 +295,15 @@ function QuestionnaireChoice({ value, disabled = false, index = 0, className, ch
         onChange={(event) => setAnswer(name, value, event.target.checked)}
         className="peer sr-only"
       />
-      <span
-        aria-hidden
-        data-slot="questionnaire-choice-indicator"
-        className={cn(
-          "pointer-events-none mt-px flex size-4.5 shrink-0 items-center justify-center border-[1.5px] border-line-strong bg-surface text-on-primary transition-[background-color,border-color,border-width] duration-150 ease-out motion-reduce:transition-none",
-          multiple ? "rounded-pill group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary" : "rounded-pill group-data-checked/questionnaire-choice:border-4 group-data-checked/questionnaire-choice:border-pink",
+      <span aria-hidden data-slot="questionnaire-choice-indicator" className="pointer-events-none flex size-5.5 shrink-0 items-center justify-center">
+        {multiple ? (
+          <>
+            <CircleIcon className="size-full text-line-strong group-data-checked/questionnaire-choice:hidden" />
+            <CheckCircleIcon weight="fill" className="hidden size-full text-brand group-data-checked/questionnaire-choice:block" />
+          </>
+        ) : (
+          <span className="size-4.5 rounded-pill border-[1.5px] border-line-strong bg-surface transition-[border-color,border-width] duration-150 ease-out group-data-checked/questionnaire-choice:border-[6px] group-data-checked/questionnaire-choice:border-brand motion-reduce:transition-none" />
         )}
-      >
-        {multiple && <CheckIcon weight="bold" className="hidden size-3.5 group-data-checked/questionnaire-choice:block" />}
       </span>
       <span data-slot="questionnaire-choice-label" className="flex min-w-0 flex-1 flex-col gap-0.5">
         {children}

@@ -1151,7 +1151,7 @@
 			},
 			"tailwind": "flex items-center gap-2 min-h-9 px-3 py-2 rounded-control text-fg text-body outline-none data-[highlighted]:bg-subtle-hover",
 			"rules": [
-				"Rows at least 36px tall with 12px corners, 4px apart, 14px ink with a 16px glyph; the highlighted row sits on the deeper lilac with no fade; a check sits at the end in the brand purple."
+				"Rows at least 36px tall with 12px corners, 4px apart, 14px ink with a 16px glyph; the highlighted row sits on the deeper lilac with no fade; a chosen row ends in a filled check circle in the brand purple."
 			],
 			"source": "Figma 427:2715 (extrapolated from the rail rows)",
 			"states": {

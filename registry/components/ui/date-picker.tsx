@@ -10,8 +10,9 @@ import { cn } from "@/lib/utils";
 // A date field (extrapolated from the Inkbox console, Figma 427:2715: the select trigger "Any State" and its menu
 // panel). The trigger is the select's white 40px key with 8px corners and the Shadow/S ring: a 24px calendar glyph in
 // the softer purple, the date in 14px ink (the placeholder in the light purple) and the bold caret at the right. The
-// calendar opens under it in the popover's white panel, growing from the trigger. Presets sit in a column of 36px rows
-// at the panel's left, the chosen one on the lilac. A single date closes the panel when picked; a range closes once both
+// calendar opens 8px under it in the popover's white panel, growing from the trigger (98 percent and a fade, 160ms).
+// Presets sit in a column of the menu's rows at the panel's left (36px, 12px corners, 4px apart, the deeper lilac under
+// the pointer with no fade), the chosen one on the deeper lilac too. A single date closes the panel when picked; a range closes once both
 // ends are set. Opening puts focus on the chosen day (or today), so the arrow keys work at once.
 const TRIGGER =
   "flex h-10 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-pill bg-surface pr-3 pl-3 font-sans text-body leading-tight whitespace-nowrap text-fg shadow-s outline-none transition-[box-shadow] duration-150 ease-out focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] disabled:cursor-not-allowed disabled:bg-subtle disabled:text-fg-muted aria-invalid:shadow-[0_0_0_1px_var(--ds-color-status-danger)] data-[empty=true]:text-fg-subtle motion-reduce:transition-none";
@@ -50,7 +51,7 @@ function Presets<T>({ presets, isActive, onPick }: { presets: Preset<T>[]; isAct
           type="button"
           aria-pressed={isActive(p)}
           onClick={() => onPick(p.value)}
-          className="flex h-9 shrink-0 items-center rounded-pill px-2.5 text-left font-sans text-body leading-tight whitespace-nowrap text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-pressed:bg-subtle motion-reduce:transition-none"
+          className="flex h-9 shrink-0 items-center rounded-control px-3 text-left font-sans text-body leading-tight font-normal whitespace-nowrap text-fg outline-none hover:bg-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-pressed:bg-subtle-hover"
         >
           {p.label}
         </button>

@@ -10,8 +10,9 @@ import { cn } from "@/lib/utils";
 
 // A command menu, extrapolated from the console (Figma 427:2715): a white panel with 16px corners; the search row is
 // 48px with a 20px magnifying glass in muted purple and 14px ink text over the rail's hairline; groups open with 13px
-// headings in the label purple ("Channels"), items are 36px pill rows, a 20px glyph in the action-glyph
-// purple and the lilac under the selected row; shortcuts are 12px muted. CommandDialog puts it in the console's dialog
+// headings in the brand purple, and items are drawn as the console's menu rows: at least 36px with 12px sides and 12px
+// corners, a 16px glyph in the label's color 12px from the 14px regular label, 4px apart, and the deeper lilac under
+// the selected row with no fade; shortcuts are 12px muted. CommandDialog puts it in the console's dialog
 // (16px corners, the blurred ink-tinted page) and opens without motion: it is summoned by keyboard many times a day.
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return <CommandPrimitive data-slot="command" data-ds-motion="instant" className={cn("flex size-full flex-col overflow-hidden rounded-panel bg-surface text-fg", className)} {...props} />;
@@ -70,14 +71,14 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
   return (
     <CommandPrimitive.Group
       data-slot="command-group"
-      className={cn("overflow-hidden text-fg [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:text-body-sm [&_[cmdk-group-heading]]:leading-tight [&_[cmdk-group-heading]]:text-fg-label", className)}
+      className={cn("overflow-hidden text-fg [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-caption [&_[cmdk-group-heading]]:leading-line-caption [&_[cmdk-group-heading]]:text-fg-brand [&_[cmdk-item]+[cmdk-item]]:mt-1", className)}
       {...props}
     />
   );
 }
 
 function CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return <CommandPrimitive.Separator data-slot="command-separator" className={cn("-mx-1 my-1 h-px bg-line-subtle", className)} {...props} />;
+  return <CommandPrimitive.Separator data-slot="command-separator" className={cn("my-2 h-px border-0 bg-line-subtle", className)} {...props} />;
 }
 
 function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
@@ -85,7 +86,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary",
+        "relative flex min-h-9 cursor-default items-center gap-3 rounded-control px-3 py-2 font-sans text-body leading-line-body font-normal text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-subtle-hover [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

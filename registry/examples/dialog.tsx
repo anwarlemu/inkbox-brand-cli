@@ -23,9 +23,9 @@ export function Preview() {
           </div>
           <div className="grid gap-1">
             <Label htmlFor="display">Agent display name</Label>
-            <Input id="display" placeholder="Robert" />
+            <Input id="display" placeholder="Acme support" />
           </div>
-          <Button className="mt-3 w-full">Create Agent Identity</Button>
+          <Button variant="secondary" className="mt-3 w-full">Create Agent Identity</Button>
         </DialogBody>
       </DialogContent>
     </Dialog>

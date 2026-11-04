@@ -7,10 +7,11 @@ import { XIcon } from "@phosphor-icons/react/ssr";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A panel from the edge of the screen, drawn as the console's dialog (Figma 427:2715: Create Agent Identity): white
-// over the blurred, ink-tinted page, a 20px regular title 24px in, a faint 20px close glyph and the same 24px sides. It
-// travels its own size from its edge on the drawer curve (300ms in, 200ms out); its inner corner takes the dialog's
-// 16px. Side panels are 384px wide (the full width on phones); top and bottom panels take their content's height.
+// A panel from the edge of the screen, drawn as the console's dialog and drawer: white over the blurred page under the
+// ink at 32 percent, a 20px regular title 24px in, the dialog's close key (a 36px squircle 16px from the corner, a bold
+// 20px X in the faint purple) and the same 24px sides. It travels its own size from its edge on the drawer curve (160ms
+// in, 120ms out); its inner corner takes the dialog's 16px. Side panels are 384px wide (the full width on phones); top
+// and bottom panels take their content's height.
 function Sheet(props: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
@@ -60,9 +61,9 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            className="absolute top-5 right-5 inline-flex size-7 items-center justify-center rounded-pill text-fg-faint outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none"
+            className="absolute top-4 right-4 inline-flex size-9 items-center justify-center rounded-control text-fg-faint outline-none transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg-muted active:bg-subtle-hover active:text-fg-muted active:transition-none focus-visible:shadow-focus motion-reduce:transition-none"
           >
-            <XIcon className="size-5.5" />
+            <XIcon className="size-5" weight="bold" />
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
         )}
@@ -72,11 +73,11 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-header" className={cn("flex min-h-17 shrink-0 flex-col justify-center gap-1 py-5 pr-14 pl-6", className)} {...props} />;
+  return <div data-slot="sheet-header" className={cn("flex shrink-0 flex-col justify-center gap-1 py-5 pr-14 pl-6", className)} {...props} />;
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-footer" className={cn("mt-auto flex shrink-0 flex-col gap-3 p-6", className)} {...props} />;
+  return <div data-slot="sheet-footer" className={cn("mt-auto flex shrink-0 flex-col gap-2 p-6", className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) {

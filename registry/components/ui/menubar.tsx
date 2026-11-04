@@ -9,17 +9,18 @@ import { cn } from "@/lib/utils";
 
 // A menu bar, extrapolated from the console (Figma 427:2715). The bar is the tab track: lilac with 10px corners and a
 // 2px inset, its triggers 36px with 8px corners and 14px medium ink, the open one a white key with Shadow/S. Its menus
-// are drawn as the dropdown menu (moving between them along the bar is instant: a closing panel that lingered would
-// dismiss the next one, and the move is made by keyboard and pointer many times): the panel is a raised white panel (16px corners, the floating
-// shadow) with 4px of padding; items are 36px rows with fully rounded corners like the rail's nav rows, a 20px glyph in the
-// action-glyph purple 10px from a 14px ink label, and the lilac under the highlighted row. Section labels are 13px in
-// the label purple ("Channels"), separators the rail's hairline, shortcuts 12px muted, destructive items red. The
-// panel grows out of its trigger from 96 percent with a fade; highlighting a row is instant (menus are used by keyboard
-// and many times a day).
+// are drawn as the console's menu, and moving between them along the bar is instant (a closing panel that lingered
+// would dismiss the next one, and the move is made by keyboard and pointer many times):
+// the panel is white with no edge, 16px corners, the floating shadow and 4px of padding; items are rows of at least
+// 36px (12px sides, 8px above and below) with 12px corners and a 14px regular ink label after a 16px glyph in the
+// label's color, 4px apart, with the deeper lilac under the highlighted row and no fade (menus are used by keyboard and
+// many times a day). Check and radio marks sit at the end of the row: a bold 16px check in the brand purple. Section
+// labels are 12px regular in the brand purple, separators the subtle hairline, shortcuts 12px muted, destructive items
+// red. The panel grows out of its trigger from 98 percent with a fade (160ms) and leaves at once.
 const CONTENT =
-  "z-50 max-h-(--radix-menubar-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=open]:animate-fade-in";
+  "z-50 max-h-(--radix-menubar-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
 const ITEM =
-  "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle data-[inset]:pl-10.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary";
+  "relative flex min-h-9 cursor-default items-center gap-3 rounded-control px-3 py-2 font-sans text-body leading-line-body font-normal text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle-hover data-[inset]:pl-10 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
 function Menubar({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.Root>) {
   return <MenubarPrimitive.Root data-slot="menubar" className={cn("flex h-10 w-fit items-center gap-1 rounded-pill bg-subtle p-0.5", className)} {...props} />;
@@ -73,13 +74,13 @@ function MenubarItem({ className, inset, variant = "default", ...props }: React.
 
 function MenubarCheckboxItem({ className, children, checked, ...props }: React.ComponentProps<typeof MenubarPrimitive.CheckboxItem>) {
   return (
-    <MenubarPrimitive.CheckboxItem data-slot="menubar-checkbox-item" checked={checked} className={cn(ITEM, "pl-10.5", className)} {...props}>
-      <span className="pointer-events-none absolute left-2.5 flex size-5.5 items-center justify-center">
+    <MenubarPrimitive.CheckboxItem data-slot="menubar-checkbox-item" checked={checked} className={cn(ITEM, className)} {...props}>
+      {children}
+      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4.5 text-fg-brand" />
+          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
         </MenubarPrimitive.ItemIndicator>
       </span>
-      {children}
     </MenubarPrimitive.CheckboxItem>
   );
 }
@@ -88,26 +89,26 @@ function MenubarRadioGroup(props: React.ComponentProps<typeof MenubarPrimitive.R
   return <MenubarPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />;
 }
 
-// The selected choice wears the console's radio mark: a pink ring around white.
+// The selected choice takes the same end check as a checkbox item (the console's menu option).
 function MenubarRadioItem({ className, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.RadioItem>) {
   return (
-    <MenubarPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(ITEM, "pl-10.5", className)} {...props}>
-      <span className="pointer-events-none absolute left-2.5 flex size-5.5 items-center justify-center">
+    <MenubarPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(ITEM, className)} {...props}>
+      {children}
+      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
-          <span className="block size-3.5 rounded-pill border-[3.5px] border-pink bg-surface" />
+          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
         </MenubarPrimitive.ItemIndicator>
       </span>
-      {children}
     </MenubarPrimitive.RadioItem>
   );
 }
 
 function MenubarLabel({ className, inset, ...props }: React.ComponentProps<typeof MenubarPrimitive.Label> & { inset?: boolean }) {
-  return <MenubarPrimitive.Label data-slot="menubar-label" data-inset={inset || undefined} className={cn("px-2.5 pt-2 pb-1 font-sans text-body-sm leading-tight text-fg-label data-[inset]:pl-10.5", className)} {...props} />;
+  return <MenubarPrimitive.Label data-slot="menubar-label" data-inset={inset || undefined} className={cn("mx-3 my-2 font-sans text-caption leading-line-caption font-normal text-fg-brand data-[inset]:pl-7", className)} {...props} />;
 }
 
 function MenubarSeparator({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.Separator>) {
-  return <MenubarPrimitive.Separator data-slot="menubar-separator" className={cn("-mx-1 my-1 h-px bg-line-subtle", className)} {...props} />;
+  return <MenubarPrimitive.Separator data-slot="menubar-separator" className={cn("my-2 h-px border-0 bg-line-subtle", className)} {...props} />;
 }
 
 function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) {
@@ -120,9 +121,9 @@ function MenubarSub(props: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
 
 function MenubarSubTrigger({ className, inset, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubTrigger> & { inset?: boolean }) {
   return (
-    <MenubarPrimitive.SubTrigger data-slot="menubar-sub-trigger" data-inset={inset || undefined} className={cn(ITEM, "data-[state=open]:bg-subtle", className)} {...props}>
+    <MenubarPrimitive.SubTrigger data-slot="menubar-sub-trigger" data-inset={inset || undefined} className={cn(ITEM, "data-[state=open]:bg-subtle-hover", className)} {...props}>
       {children}
-      <CaretRightIcon className="ml-auto size-4.5 text-fg-muted" />
+      <CaretRightIcon weight="bold" className="ml-auto size-4 text-fg-muted" />
     </MenubarPrimitive.SubTrigger>
   );
 }

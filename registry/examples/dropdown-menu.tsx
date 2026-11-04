@@ -24,7 +24,7 @@ import {
 function AccountItems() {
   return (
     <>
-      <DropdownMenuLabel>Robert Ligthart</DropdownMenuLabel>
+      <DropdownMenuLabel>Acme</DropdownMenuLabel>
       <DropdownMenuGroup>
         <DropdownMenuItem>
           <BuildingsIcon weight="fill" />

@@ -7,16 +7,17 @@ import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react/ssr";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A menu, extrapolated from the console (Figma 427:2715): the panel is a raised white panel (16px corners, the floating
-// shadow) with 4px of padding; items are 36px rows with fully rounded corners like the rail's nav rows, a 20px glyph in the
-// action-glyph purple 10px from a 14px ink label, and the lilac under the highlighted row. Section labels are 13px in
-// the label purple ("Channels"), separators the rail's hairline, shortcuts 12px muted, destructive items red. The
-// panel grows out of its trigger from 96 percent with a fade; highlighting a row is instant (menus are used by keyboard
-// and many times a day).
+// A menu, from the console's Chakra menu theme:
+// the panel is white with no edge, 16px corners, the floating shadow and 4px of padding; items are rows of at least
+// 36px (12px sides, 8px above and below) with 12px corners and a 14px regular ink label after a 16px glyph in the
+// label's color, 4px apart, with the deeper lilac under the highlighted row and no fade (menus are used by keyboard and
+// many times a day). Check and radio marks sit at the end of the row: a bold 16px check in the brand purple. Section
+// labels are 12px regular in the brand purple, separators the subtle hairline, shortcuts 12px muted, destructive items
+// red. The panel grows out of its trigger from 98 percent with a fade (160ms) and leaves in 100ms.
 const CONTENT =
-  "z-50 max-h-(--available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in";
+  "z-50 max-h-(--available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
 const ITEM =
-  "relative flex h-9 cursor-default items-center gap-2.5 rounded-pill px-2.5 font-sans text-body leading-tight text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle data-[inset]:pl-10.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5.5 [&_svg:not([class*='text-'])]:text-icon-secondary";
+  "relative flex min-h-9 cursor-default items-center gap-3 rounded-control px-3 py-2 font-sans text-body leading-line-body font-normal text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle-hover data-[inset]:pl-10 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
 // The trigger, so focus can go back to it when the menu closes.
 const TriggerRef = React.createContext<React.RefObject<HTMLElement | null> | null>(null);
@@ -69,7 +70,7 @@ function DropdownMenuTrigger({ ref, ...props }: React.ComponentProps<typeof Chak
   return <ChakraMenu.Trigger ref={setRef} data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-function DropdownMenuContent({ className, sideOffset = 6, align, onFocus, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.Content>, "align"> & { sideOffset?: number; align?: "start" | "center" | "end" }) {
+function DropdownMenuContent({ className, sideOffset = 8, align, onFocus, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.Content>, "align"> & { sideOffset?: number; align?: "start" | "center" | "end" }) {
   const trigger = React.useContext(TriggerRef);
   return (
     <DropdownMenuPortal>
@@ -96,13 +97,21 @@ function DropdownMenuGroup(props: React.ComponentProps<typeof ChakraMenu.ItemGro
   return <ChakraMenu.ItemGroup data-slot="dropdown-menu-group" {...props} />;
 }
 
+// An item's value identifies it to the menu (highlight, selection), so items without one each get their own: a label
+// when the children are plain text, otherwise a generated id (a shared fallback would highlight every such row at once).
+function useItemValue(value: string | undefined, children: React.ReactNode) {
+  const id = React.useId();
+  return value ?? (typeof children === "string" ? children : id);
+}
+
 function DropdownMenuItem({ className, inset, variant = "default", value, children, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.Item>, "value"> & { value?: string; inset?: boolean; variant?: "default" | "destructive" }) {
+  const itemValue = useItemValue(value, children);
   return (
     <ChakraMenu.Item unstyled
       data-slot="dropdown-menu-item"
       data-inset={inset || undefined}
       data-variant={variant}
-      value={value ?? (typeof children === "string" ? children : "menu-item")}
+      value={itemValue}
       className={cn(ITEM, "data-[variant=destructive]:text-danger data-[variant=destructive]:[&_svg]:text-danger", className)}
       {...props}
     >{children}</ChakraMenu.Item>
@@ -110,14 +119,15 @@ function DropdownMenuItem({ className, inset, variant = "default", value, childr
 }
 
 function DropdownMenuCheckboxItem({ className, children, checked, onCheckedChange, value, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.CheckboxItem>, "onCheckedChange" | "value"> & { value?: string; onCheckedChange?: (checked: boolean) => void }) {
+  const itemValue = useItemValue(value, children);
   return (
-    <ChakraMenu.CheckboxItem unstyled data-slot="dropdown-menu-checkbox-item" value={value ?? (typeof children === "string" ? children : "menu-checkbox-item")} checked={checked} onCheckedChange={onCheckedChange} className={cn(ITEM, "pl-10.5", className)} {...props}>
-      <span className="pointer-events-none absolute left-2.5 flex size-5.5 items-center justify-center">
+    <ChakraMenu.CheckboxItem unstyled data-slot="dropdown-menu-checkbox-item" value={itemValue} checked={checked} onCheckedChange={onCheckedChange} className={cn(ITEM, className)} {...props}>
+      {children}
+      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
         <ChakraMenu.ItemIndicator>
-          <CheckIcon weight="bold" className="size-4.5 text-fg-brand" />
+          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
         </ChakraMenu.ItemIndicator>
       </span>
-      {children}
     </ChakraMenu.CheckboxItem>
   );
 }
@@ -127,16 +137,17 @@ function DropdownMenuRadioGroup({ onValueChange, ...props }: RadioMenuProps) {
   return <ChakraMenu.RadioItemGroup data-slot="dropdown-menu-radio-group" onValueChange={(details) => onValueChange?.(details.value)} {...props} />;
 }
 
-// The selected choice wears the console's radio mark: a pink ring around white.
+// The selected choice takes the same end check as a checkbox item (the console's menu option).
 function DropdownMenuRadioItem({ className, children, value, ...props }: Omit<React.ComponentProps<typeof ChakraMenu.RadioItem>, "value"> & { value?: string }) {
+  const itemValue = useItemValue(value, children);
   return (
-    <ChakraMenu.RadioItem unstyled data-slot="dropdown-menu-radio-item" value={value ?? (typeof children === "string" ? children : "menu-radio-item")} className={cn(ITEM, "pl-10.5", className)} {...props}>
-      <span className="pointer-events-none absolute left-2.5 flex size-5.5 items-center justify-center">
+    <ChakraMenu.RadioItem unstyled data-slot="dropdown-menu-radio-item" value={itemValue} className={cn(ITEM, className)} {...props}>
+      {children}
+      <span className="pointer-events-none ml-auto flex size-4 shrink-0 items-center justify-center">
         <ChakraMenu.ItemIndicator>
-          <span className="block size-3.5 rounded-pill border-[3.5px] border-pink bg-surface" />
+          <CheckIcon weight="bold" className="size-4 text-fg-brand" />
         </ChakraMenu.ItemIndicator>
       </span>
-      {children}
     </ChakraMenu.RadioItem>
   );
 }
@@ -144,11 +155,11 @@ function DropdownMenuRadioItem({ className, children, value, ...props }: Omit<Re
 // A heading above items: shadcn's label stands alone, so it is a plain element rather than Chakra's group label (which
 // must sit inside a group).
 function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<"div"> & { inset?: boolean }) {
-  return <div data-slot="dropdown-menu-label" data-inset={inset || undefined} className={cn("px-2.5 pt-2 pb-1 font-sans text-body-sm leading-tight text-fg-label data-[inset]:pl-10.5", className)} {...props} />;
+  return <div data-slot="dropdown-menu-label" data-inset={inset || undefined} className={cn("mx-3 my-2 font-sans text-caption leading-line-caption font-normal text-fg-brand data-[inset]:pl-7", className)} {...props} />;
 }
 
 function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof ChakraMenu.Separator>) {
-  return <ChakraMenu.Separator data-slot="dropdown-menu-separator" className={cn("-mx-1 my-1 h-px bg-line-subtle", className)} {...props} />;
+  return <ChakraMenu.Separator data-slot="dropdown-menu-separator" className={cn("my-2 h-px border-0 bg-line-subtle", className)} {...props} />;
 }
 
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
@@ -161,9 +172,9 @@ function DropdownMenuSub({ onOpenChange, ...props }: MenuProps) {
 
 function DropdownMenuSubTrigger({ className, inset, children, ...props }: React.ComponentProps<typeof ChakraMenu.TriggerItem> & { inset?: boolean }) {
   return (
-    <ChakraMenu.TriggerItem unstyled data-slot="dropdown-menu-sub-trigger" data-inset={inset || undefined} className={cn(ITEM, "data-[state=open]:bg-subtle", className)} {...props}>
+    <ChakraMenu.TriggerItem unstyled data-slot="dropdown-menu-sub-trigger" data-inset={inset || undefined} className={cn(ITEM, "data-[state=open]:bg-subtle-hover", className)} {...props}>
       {children}
-      <CaretRightIcon className="ml-auto size-4.5 text-fg-muted" />
+      <CaretRightIcon weight="bold" className="ml-auto size-4 text-fg-muted" />
     </ChakraMenu.TriggerItem>
   );
 }

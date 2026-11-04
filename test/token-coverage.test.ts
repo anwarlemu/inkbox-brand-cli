@@ -45,7 +45,11 @@ describe('complete token output', () => {
 
   it('keeps the smallest and largest type and spacing steps available to conversion', () => {
     const out = convertCss('.micro { font-size:11px; padding:1px } .display { font-size:32px }', sitePalette(''), newStats());
-    for (const token of ['text-micro', 'text-display', 'space-px']) expect(out).toContain(`var(--ds-${token})`);
+    // The smallest type step may share its size with the caption; either name is the brand's smallest size.
+    const smallest = table['--ds-text-micro'];
+    const used = out.match(/\.micro \{ font-size:var\((--ds-text-[\w-]+)\)/)?.[1];
+    expect(used && table[used]).toBe(smallest);
+    for (const token of ['text-display', 'space-px']) expect(out).toContain(`var(--ds-${token})`);
   });
 
   it('installs the full token set through init and add, and type-checks every installed component', () => {

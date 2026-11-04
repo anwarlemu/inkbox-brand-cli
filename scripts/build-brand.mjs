@@ -55,6 +55,13 @@ const theme = [
 		`\t--transition-duration-${k.slice(14)}: var(${k});`,
 		`\t--transition-duration-${Number.parseFloat(v) * (v.endsWith('ms') ? 1 : 1000)}: var(${k});`,
 	]),
+	// The usual Tailwind steps follow the brand's by rank (150 is a hover, 200 an entrance, 300 the slowest move), so a
+	// class written as duration-150 keeps the brand's timing when the brand's steps are not those numbers.
+	...Object.entries({ 150: 'fast', 200: 'base', 250: 'moderate', 300: 'slow' })
+		.filter(([ms, step]) => `--ds-duration-${step}` in t && !Object.values(t).includes(`${ms}ms`))
+		.map(([ms, step]) => `\t--transition-duration-${ms}: var(--ds-duration-${step});`),
+	...Object.keys(t).filter((k) => k.startsWith('--ds-line-')).map((k) => `\t--leading-${k.slice(5)}: var(${k});`),
+	...Object.keys(t).filter((k) => /^--ds-(section|component)-padding$/.test(k)).map((k) => `\t--spacing-${k.slice(5, -8)}: var(${k});`),
 	'\t--default-transition-duration: var(--ds-duration-fast);',
 	'\t--default-transition-timing-function: var(--ds-easing-out);',
 	...Object.keys(t).filter((k) => k.startsWith('--ds-text-')).map((k) => `\t--text-${k.slice(10)}: var(${k});`),

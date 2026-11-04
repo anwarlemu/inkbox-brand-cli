@@ -34,8 +34,10 @@
 	/* Code: the light editor theme of the event catalog (a gray head over an off-white body). */
 	--ds-color-bg-code: #FFFFFE;
 	--ds-color-bg-code-head: #F0F0F0;
-	/* The page behind a dialog: the ink at 12 percent, over a light blur. */
-	--ds-color-bg-scrim: rgb(62 42 83 / 0.12);
+	/* The page behind a dialog: the ink at 32 percent, over a light blur (the console darkened it in November 2026). */
+	--ds-color-bg-scrim: rgb(62 42 83 / 0.32);
+	/* A sheet's body: a near-white that separates it from the page it slides over. */
+	--ds-color-bg-sheet: #FBFBFC;
 	/* A switch that is off, and a disabled control's fill. */
 	--ds-color-bg-off: #B1ADBB;
 
@@ -88,6 +90,8 @@
 	/* A code block's edge, its head's rule and its indent guides (the editor theme's gray). */
 	--ds-color-border-code: #E0E0E0;
 	--ds-color-wash-hover: rgb(62 42 83 / 0.04);
+	/* A key held down: the ink at 8 percent laid over its fill, so every key darkens the same way. */
+	--ds-color-wash-pressed: rgb(62 42 83 / 0.08);
 	--ds-color-ring-tint: rgb(116 98 157 / 0.24);
 
 	/* Actions and states. The main action is the purple pill. */
@@ -122,7 +126,7 @@
 	--ds-color-chart-series-5: #1CA721;
 
 	/* Type: Inter for everything, IBM Plex Mono for keys, hosts and IDs, the system monospace in code blocks. Body copy is 14px regular; medium for
-	   tabs and card titles; bold only for an empty state's title. No tracking. */
+	   tabs and card titles; semibold (600) is the heaviest weight, bold included. No tracking. */
 	--ds-font-sans: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
 	--ds-font-display: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
 	--ds-font-mono: var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -131,19 +135,22 @@
 	--ds-font-weight-regular: 400;
 	--ds-font-weight-medium: 500;
 	--ds-font-weight-semibold: 600;
-	--ds-font-weight-bold: 700;
+	--ds-font-weight-bold: 600;
 	--ds-font-weight-heading: 400;
-	/* Page and dialog titles are 20px regular; an empty state's title 22px bold; the rest 11 to 16px. */
+	/* Page and dialog titles are 20px regular; an empty state's title 24px; the rest 12 to 16px. */
 	--ds-text-display: 2rem;
 	--ds-text-h1: 1.5rem;
-	--ds-text-h2: 1.375rem;
+	--ds-text-h2: 1.5rem;
 	--ds-text-h3: 1.25rem;
 	--ds-text-h4: 1rem;
 	--ds-text-body-lg: 1rem;
 	--ds-text-body: 0.875rem;
 	--ds-text-body-sm: 0.8125rem;
 	--ds-text-caption: 0.75rem;
-	--ds-text-micro: 0.6875rem;
+	--ds-text-micro: 0.75rem;
+	/* Fixed line boxes: 20px under body copy, 16px under a caption. */
+	--ds-line-body: 20px;
+	--ds-line-caption: 16px;
 	--ds-leading-tight: 1.2;
 	--ds-leading-heading: 1.4;
 	--ds-leading-display: 1.25;
@@ -156,23 +163,24 @@
 	--ds-tracking-tight: 0;
 	--ds-tracking-caps: 0.02em;
 
-	/* Space (rem, so it follows the root); the design's spacing variables are 4, 8, 12, 16 and 24. */
+	/* Space (rem, so it follows the root); the design's spacing variables are 4, 8, 12, 16 and 24, and the console snaps
+	   the half steps to that 4px grid (0.5 is 4px, 2.5 is 12px, 3.5 is 16px, 9.5 is 40px). The px step stays a hairline. */
 	--ds-space-0: 0;
 	--ds-space-px: 1px;
-	--ds-space-0-5: 0.125rem;
+	--ds-space-0-5: 0.25rem;
 	--ds-space-1: 0.25rem;
 	--ds-space-1-5: 0.375rem;
 	--ds-space-2: 0.5rem;
-	--ds-space-2-5: 0.625rem;
+	--ds-space-2-5: 0.75rem;
 	--ds-space-3: 0.75rem;
-	--ds-space-3-5: 0.875rem;
+	--ds-space-3-5: 1rem;
 	--ds-space-4: 1rem;
 	--ds-space-5: 1.25rem;
 	--ds-space-6: 1.5rem;
 	--ds-space-7: 1.75rem;
 	--ds-space-8: 2rem;
 	--ds-space-9: 2.25rem;
-	--ds-space-9-5: 2.375rem;
+	--ds-space-9-5: 2.5rem;
 	--ds-space-10: 2.5rem;
 	--ds-space-10-5: 2.625rem;
 	--ds-space-12: 3rem;
@@ -180,6 +188,9 @@
 	--ds-space-16: 4rem;
 	--ds-space-20: 5rem;
 	--ds-space-24: 6rem;
+	/* A section's and a component's inner padding. */
+	--ds-section-padding: 24px;
+	--ds-component-padding: 16px;
 
 	/* Layout: a 288px rail, a 288px second rail, a 64px page head with 24px gutters. */
 	--ds-layout-column: 75rem;
@@ -197,7 +208,7 @@
 	--ds-radius-control: 0.75rem;
 	--ds-radius-panel: 1rem;
 	--ds-radius-dialog: 1.5rem;
-	--ds-radius-pill: 9999px;
+	--ds-radius-pill: 9996px;
 	/* Shadow/S: a raised white panel (a selected tab, a table's body, a select, a menu): a 1px ring and a short drop. */
 	--ds-shadow-s: 0 2px 4px rgb(23 47 41 / 0.08), 0 0 0 1px rgb(23 47 41 / 0.12);
 	/* A card: the same raised panel. */
@@ -213,11 +224,12 @@
 	--ds-blur-scrim: 4px;
 
 	/* Motion: a strong ease-out for every hover, press and entrance; in-out only for what travels on screen (a tab
-	   thumb, a switch knob). Never ease-in. */
-	--ds-duration-fast: 150ms;
-	--ds-duration-base: 200ms;
-	--ds-duration-moderate: 250ms;
-	--ds-duration-slow: 300ms;
+	   thumb, a switch knob). Never ease-in. The console keeps it quick: 100ms for hovers and exits, 120ms for
+	   entrances, 160ms for a popup or a sliding key. */
+	--ds-duration-fast: 100ms;
+	--ds-duration-base: 120ms;
+	--ds-duration-moderate: 120ms;
+	--ds-duration-slow: 160ms;
 	--ds-easing-out: cubic-bezier(0.23, 1, 0.32, 1);
 	--ds-easing-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 	--ds-easing-drawer: cubic-bezier(0.32, 0.72, 0, 1);

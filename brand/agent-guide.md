@@ -65,7 +65,7 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 ## Interaction and motion rules
 
 - Rare triggers (onboarding, occasional feedback, celebrations) may use expressive animation. Keep it interruptible and respect reduced motion; never make an action wait for it. Repeated feedback is a frequent interaction, even if it is called a celebration.
-- Tens of uses per day (hover effects, list navigation) get only subtle color, background, border-color, shadow or opacity changes, normally 150ms. Reuse one component variant and interaction treatment for each role.
+- Tens of uses per day (hover effects, list navigation) get only subtle color, background, border-color, shadow or opacity changes, normally 100ms (the fast step). Reuse one component variant and interaction treatment for each role.
 - Hundreds of uses per day, keyboard shortcuts and command palette toggles have no animation, transition or smooth-scroll wait. Use `data-ds-motion="instant"` on custom high-frequency surfaces, including portaled content. The command components already do this.
 - Show press feedback on pointer-down with `:active` (or `onPointerDown` for custom drawing), never after click/touch-up. Keep the actual action on accessible click/keyboard activation. Use `touch-action: manipulation` on ordinary controls to avoid the tap delay while preserving zoom.
 - Keep dimensions, padding, gaps and font metrics identical across hover, focus and pressed states. Never scale a button or change font weight from 400 to 500/600 on interaction. Change visual styling instead.

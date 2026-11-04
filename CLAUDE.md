@@ -46,7 +46,7 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 
 - No brand strings in `src/` (read `brand/brand.json`); `scripts/ci-limits.mjs` enforces it.
 - No em dashes; American spelling; sentence case.
-- Element styles use only brand tokens and follow the animation rules (no ease-in, no `transition: all`, 150 to 300ms);
+- Element styles use only brand tokens and follow the animation rules (no ease-in, no `transition: all`, 100 to 300ms);
   the tests check every value.
 - Restyle only: nothing the CLI writes may change a project's copy, elements or structure. The only markup it asks for
   is none: Inkbox has no markup touches.

@@ -64,7 +64,10 @@ export function scales() {
 	if (scaleCache) return scaleCache;
 	const t = tokens().site;
 	const px = (v: string) => (v.endsWith('rem') ? Number.parseFloat(v) * 16 : v.endsWith('px') ? Number.parseFloat(v) : Number.NaN);
-	const pick = (re: RegExp, read: (v: string) => number) => Object.entries(t).filter(([k]) => re.test(k)).map(([k, v]) => [k, read(v)] as [string, number]).filter(([, v]) => Number.isFinite(v) && v > 0);
+	// Steps that share a value snap to one name: a whole step over a half step (space-4 over space-3-5), else the first.
+	const half = (k: string) => /-\d+-5$/.test(k);
+	const pick = (re: RegExp, read: (v: string) => number) => Object.entries(t).filter(([k]) => re.test(k)).map(([k, v]) => [k, read(v)] as [string, number]).filter(([, v]) => Number.isFinite(v) && v > 0)
+		.filter(([k, v], _, all) => !all.some(([other, value]) => value === v && other !== k && (half(k) && !half(other) || half(k) === half(other) && all.findIndex(([n]) => n === other) < all.findIndex(([n]) => n === k))));
 	scaleCache = {
 		text: pick(/^--ds-text-/, px),
 		space: pick(/^--ds-space-/, px),

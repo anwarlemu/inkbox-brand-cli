@@ -60,7 +60,7 @@ describe('interaction policy', () => {
   expect(result).toContain('transition-delay: 0ms');
  });
  it('removes shorthand transition waits without changing rare animation delays', () => {
-  const css = '.button { transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1) 300ms, color var(--ds-duration-fast) 200ms; } .celebration { animation-delay: var(--ds-duration-base); }';
+  const css = '.button { transition: opacity 100ms cubic-bezier(0.2, 0, 0, 1) 300ms, color var(--ds-duration-fast) 200ms; } .celebration { animation-delay: var(--ds-duration-base); }';
   const result = convertCss(css, sitePalette(css), newStats());
   expect(result).toContain('opacity var(--ds-duration-fast) var(--ds-easing-out) 0ms');
   expect(result).toContain('color var(--ds-duration-fast) 0ms');

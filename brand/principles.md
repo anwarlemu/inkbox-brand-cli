@@ -16,23 +16,33 @@ for every action. It reads like a well-kept mail client, not a dashboard of char
   card and the tab track.
 - Ink is a deep purple (#3E2A53), never black. Secondary copy is #70637E; dates, table heads and descriptions are the
   muted purple #998EA5. The action purple (#74629D) is for the main action, links, rail labels and email previews.
-  Pink (#F9B1B5) is the one accent: BETA and ADMIN marks, a channel's icon tile, the selected radio.
+  Pink (#F9B1B5) is the one accent: BETA and ADMIN marks, a channel's icon tile.
 - One face: Inter. Body and controls are 14px regular; page and dialog titles 20px regular; tabs and card titles
-  medium; only an empty state's title is bold. Keys, hosts and IDs are IBM Plex Mono; code blocks use the system
+  medium; nothing is heavier than semibold. Keys, hosts and IDs are IBM Plex Mono; code blocks use the system
   monospace in a light editor theme. No caps except BETA and ADMIN; no tracking.
 - The main action is a 40px purple pill. Other actions: the lilac pill beside it, the 36px white outline key with
-  fully rounded corners for actions inside content, a 38px lilac key in a page head, ghost glyphs for row actions.
-- Fields are 40px with fully rounded corners and a lilac-gray edge (#D2C9DB). Raised white things (a selected tab, a table body,
+  fully rounded corners for actions inside content, a 40px lilac key in a page head, ghost glyphs for row actions that
+  turn purple under the pointer. A held key darkens with the ink at 8 percent laid over it; a disabled key goes lilac
+  with muted text. Focus is a soft purple ring.
+- A dialog's main action spans its width with no glyph (lilac to create or confirm, red to destroy); there is no
+  Cancel key, the X, Escape and the scrim close it.
+- Fields are 40px with fully rounded corners and a lilac-gray edge (#D2C9DB) that darkens under the pointer; a select is
+  the same pill with no edge, raised by Shadow/S. Raised white things (a selected tab, a table body,
   a select) carry Shadow/S: a 1px ring and a short drop. Corners: pills for buttons, compact controls, tabs, badges and horizontal
   attachments; circles for avatars and small icon or logo tiles; 12px content panels,
   16px dropdown menus and popup panels (command palettes, date pickers, popovers, tooltips, dialogs, sheets and toasts),
   table heads and banners; 24px cards (all variants and sizes) and multiple-selection fields.
-- Navigation is the rail: 38px rows with a filled 22px glyph and a 14px label; the current row sits on the lilac.
+- Navigation is the rail: 36px pill rows with an 18px glyph and a 14px medium label; the current row sits on the lilac
+  a step deeper.
+- Tabs are a segmented lilac track with a white key that slides to the chosen tab. Checkboxes are round; a chosen radio
+  is a purple ring. Menus and selects list 36px rows with the check at the end.
   A page opens with a head: a 20px title, a 14px muted line, a hairline under it.
 - Tables are three pieces: a lilac head, a white body with Shadow/S and 64px rows, a lilac pagination bar.
-- Dialogs are white with the shared 16px popup corners over the page tinted with the ink at 12 percent and lightly blurred.
+- Dialogs are white with the shared 16px popup corners over the page tinted with the ink at 32 percent and lightly
+  blurred; on a phone they fill the screen. Close keys are 36px with 12px corners.
 - Icons are filled (Phosphor fill weight) in ink or #5B4C6A; chevrons, close and plus are line glyphs.
-- Empty states have the octopus with five glyph circles around it, a 22px bold title and a pill action.
+- Empty states have the octopus with five glyph circles around it, a short title and a pill action.
+- Motion is quick: 100ms for hovers and exits, 120ms for a dialog, 160ms for a popup or the sliding tab key.
 
 ## Always
 

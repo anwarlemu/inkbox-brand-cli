@@ -14,7 +14,7 @@ type Entry = { name: string; title: string };
 // A rail row, as the console draws one (Agent Workspace, Email, Vault): 38px tall with 8px corners, a 22px glyph 10px
 // from a 14px regular ink label; the current page sits on the lilac. Hover washes the row; there is no motion.
 const ROW =
-  "flex h-9.5 items-center gap-2.5 rounded-pill px-3 text-body leading-tight text-fg outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-subtle motion-reduce:transition-none [&_svg]:size-6 [&_svg]:shrink-0";
+  "flex h-9 items-center gap-2 rounded-pill px-2.5 text-body leading-snug font-medium text-icon-secondary outline-none transition-colors duration-150 ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-bg-subtle-hover)_50%,transparent)] focus-visible:shadow-focus aria-[current=page]:bg-subtle-hover motion-reduce:transition-none [&_svg]:size-4.5 [&_svg]:shrink-0";
 
 const PAGES = [
   { href: "/", label: "Introduction", icon: BookOpenTextIcon },
@@ -29,7 +29,7 @@ function Groups({ entries, query, onNavigate }: { entries: Entry[]; query: strin
   return (
     <>
       {!q && (
-        <ul className="grid gap-0.5">
+        <ul className="grid gap-1">
           {PAGES.map(({ href, label, icon: Icon }) => (
             <li key={href}>
               <Link href={href} onNavigate={onNavigate} aria-current={pathname === href ? "page" : undefined} className={ROW}>
@@ -43,12 +43,12 @@ function Groups({ entries, query, onNavigate }: { entries: Entry[]; query: strin
       <div>
         <p className="ds-label mb-2 px-1 text-body-sm leading-tight text-fg-label">Components</p>
         {shown.length ? (
-          <ul className="grid gap-0.5">
+          <ul className="grid gap-1">
             {shown.map((e) => {
               const href = `/components/${e.name}`;
               return (
                 <li key={e.name}>
-                  <Link href={href} scroll={false} onNavigate={onNavigate} data-item={e.name} aria-current={pathname === href ? "page" : undefined} className={cn(ROW, "h-8.5")}>
+                  <Link href={href} scroll={false} onNavigate={onNavigate} data-item={e.name} aria-current={pathname === href ? "page" : undefined} className={ROW}>
                     {e.title}
                   </Link>
                 </li>
@@ -94,8 +94,8 @@ export function DocsRail({ entries }: { entries: Entry[] }) {
           <Lockup />
         </Link>
         <div className="relative mx-3 mb-3 mt-3 lg:mt-1">
-          <MagnifyingGlassIcon aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4.5 -translate-y-1/2 text-fg-muted" />
-          <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" className="h-9 pl-9" />
+          <MagnifyingGlassIcon aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-fg-subtle" />
+          <Input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" className="h-9 pl-9" />
         </div>
         <div className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain px-3 pb-6 [scrollbar-width:thin]">
           <Groups entries={entries} query={query} onNavigate={close} />

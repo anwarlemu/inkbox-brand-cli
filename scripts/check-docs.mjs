@@ -51,11 +51,11 @@ try {
   console.log(`Local production navigation: median ${Math.round(timings[Math.floor(timings.length / 2)])}ms, p95 ${Math.round(timings[Math.floor(timings.length * 0.95)])}ms (includes automation overhead).`);
 
   await page.goto(`${base}/components/button`);
-  await nav.getByRole('searchbox').fill('card');
+  await nav.getByRole('textbox', { name: 'Filter components' }).fill('card');
   await nav.locator('a[data-item="card"]').click();
   await page.waitForURL('**/components/card');
-  assert.equal(await nav.getByRole('searchbox').inputValue(), 'card');
-  await nav.getByRole('searchbox').fill('zzz');
+  assert.equal(await nav.getByRole('textbox', { name: 'Filter components' }).inputValue(), 'card');
+  await nav.getByRole('textbox', { name: 'Filter components' }).fill('zzz');
   await nav.getByText('Nothing matches.').waitFor();
   console.log('PASS: rail filter narrows the list and is kept after navigation.');
 
@@ -88,7 +88,7 @@ try {
   await page.goto(`${base}/components/button`);
   const toggle = page.getByRole('button', { name: 'Open the library' });
   await toggle.click();
-  await nav.getByRole('searchbox').fill('checkbox');
+  await nav.getByRole('textbox', { name: 'Filter components' }).fill('checkbox');
   await nav.locator('a[data-item="checkbox"]').click();
   await page.waitForURL('**/components/checkbox');
   assert.equal(await page.getByRole('button', { name: 'Open the library' }).getAttribute('aria-expanded'), 'false');

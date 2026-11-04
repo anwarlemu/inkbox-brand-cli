@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { ArrowDownIcon, ArrowUpIcon, CaretUpDownIcon, ColumnsIcon, MagnifyingGlassIcon } from "@phosphor-icons/react/ssr";
+import { ArrowDownIcon, ArrowUpIcon, CaretLeftIcon, CaretRightIcon, CaretUpDownIcon, ColumnsIcon, MagnifyingGlassIcon } from "@phosphor-icons/react/ssr";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
@@ -59,7 +58,7 @@ function DataTableColumnHeader({ title, sorted, onSort, className }: { title: Re
       type="button"
       data-slot="data-table-column-header"
       onClick={onSort}
-      className={cn("-mx-2 inline-flex h-8 items-center gap-1.5 rounded-pill px-2 font-sans text-body leading-tight font-normal text-fg-muted outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:bg-subtle-hover active:bg-subtle-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring data-[sorted=true]:text-fg motion-reduce:transition-none", className)}
+      className={cn("-mx-2 inline-flex h-8 items-center gap-1.5 rounded-pill px-2 font-sans text-body leading-tight font-normal text-fg-muted outline-none transition-[background-color,color] duration-fast ease-out hover:bg-subtle-hover hover:text-fg focus-visible:shadow-focus active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed)] active:transition-none data-[sorted=true]:text-fg motion-reduce:transition-none", className)}
       data-sorted={!!sorted}
     >
       {title}
@@ -91,23 +90,16 @@ function DataTableViewOptions({ columns, visible, onVisibleChange }: { columns: 
   );
 }
 
-/** The page numbers around the current one: the ends, its neighbors and ellipses between. */
-function pageList(page: number, count: number): (number | "gap")[] {
-  if (count <= 7) return Array.from({ length: count }, (_, i) => i);
-  const set = new Set([0, count - 1, page - 1, page, page + 1].filter((p) => p >= 0 && p < count));
-  const sorted = [...set].sort((a, b) => a - b);
-  return sorted.flatMap((p, i) => (i && p - sorted[i - 1] > 1 ? (["gap", p] as const) : [p]));
-}
-
-/** The lilac bar under the table: the selection count, rows per page and the pages. */
+/** The pager under the table, as the console draws it: ghost 28px keys with 16px carets around the page number (14px,
+ * the secondary purple, at least 32px wide), centered in a row at least 44px tall. The selection count and rows per
+ * page sit at its left. */
 function DataTablePagination({ page, pageCount, onPageChange, pageSize, pageSizes, onPageSizeChange, selected, total, className }: { page: number; pageCount: number; onPageChange: (page: number) => void; pageSize?: number; pageSizes?: number[]; onPageSizeChange?: (size: number) => void; selected?: number; total?: number; className?: string }) {
-  const go = (p: number) => (e: React.MouseEvent) => {
-    e.preventDefault();
+  const go = (p: number) => () => {
     if (p >= 0 && p < pageCount) onPageChange(p);
   };
   return (
-    <Pagination bar className={cn("flex-wrap justify-between gap-x-4 gap-y-1", className)}>
-      <div className="flex min-h-7.5 flex-wrap items-center gap-x-4 gap-y-1 pl-2 text-body leading-tight text-fg-muted">
+    <nav aria-label="Pagination" data-slot="data-table-pagination" className={cn("grid min-h-11 grid-cols-1 items-center gap-x-4 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]", className)}>
+      <div className="flex min-h-7 flex-wrap items-center justify-center gap-x-4 gap-y-1 text-body leading-tight text-fg-muted sm:justify-start">
         {selected !== undefined && total !== undefined && (
           <span aria-live="polite">
             {selected} of {total} selected
@@ -117,7 +109,7 @@ function DataTablePagination({ page, pageCount, onPageChange, pageSize, pageSize
           <span className="flex items-center gap-2">
             <span id="data-table-page-size">Rows per page</span>
             <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
-              <SelectTrigger size="sm" aria-labelledby="data-table-page-size" className="h-7.5 w-18 pr-2 pl-2.5">
+              <SelectTrigger size="sm" aria-labelledby="data-table-page-size" className="w-20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -131,28 +123,18 @@ function DataTablePagination({ page, pageCount, onPageChange, pageSize, pageSize
           </span>
         )}
       </div>
-      <PaginationContent className="ml-auto">
-        <PaginationItem>
-          <PaginationPrevious href="#" onClick={go(page - 1)} aria-disabled={page === 0 || undefined} tabIndex={page === 0 ? -1 : undefined} />
-        </PaginationItem>
-        {pageList(page, pageCount).map((p, i) =>
-          p === "gap" ? (
-            <PaginationItem key={`gap-${i}`}>
-              <PaginationEllipsis />
-            </PaginationItem>
-          ) : (
-            <PaginationItem key={p}>
-              <PaginationLink href="#" isActive={p === page} onClick={go(p)} aria-label={`Page ${p + 1}`}>
-                {p + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ),
-        )}
-        <PaginationItem>
-          <PaginationNext href="#" onClick={go(page + 1)} aria-disabled={page >= pageCount - 1 || undefined} tabIndex={page >= pageCount - 1 ? -1 : undefined} />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+      <div className="flex items-center justify-center gap-1">
+        <Button variant="ghost" size="icon-sm" aria-label="Previous page" onClick={go(page - 1)} disabled={page === 0}>
+          <CaretLeftIcon className="size-4" />
+        </Button>
+        <span aria-current="page" className="min-w-8 text-center text-body leading-tight text-fg-secondary tabular-nums">
+          {page + 1}
+        </span>
+        <Button variant="ghost" size="icon-sm" aria-label="Next page" onClick={go(page + 1)} disabled={page >= pageCount - 1}>
+          <CaretRightIcon className="size-4" />
+        </Button>
+      </div>
+    </nav>
   );
 }
 
@@ -178,10 +160,12 @@ type DataTableProps<T> = {
   toolbar?: React.ReactNode;
   /** What a row is called in labels ("mailbox"). */
   rowName?: string;
+  /** The boxed table (default) or the console's borderless list table. */
+  variant?: "default" | "open";
   className?: string;
 };
 
-function DataTable<T>({ columns, data, getRowId, filter = {}, selectable = false, selection: selectionProp, onSelectionChange, hideViewOptions = false, pageSize: pageSizeProp = 10, pageSizes, defaultSort = null, empty = "No results.", toolbar, rowName = "row", className }: DataTableProps<T>) {
+function DataTable<T>({ columns, data, getRowId, filter = {}, selectable = false, selection: selectionProp, onSelectionChange, hideViewOptions = false, pageSize: pageSizeProp = 10, pageSizes, defaultSort = null, empty = "No results.", toolbar, rowName = "row", variant = "default", className }: DataTableProps<T>) {
   const [query, setQuery] = React.useState("");
   const [sort, setSort] = React.useState<SortState>(defaultSort);
   const [page, setPage] = React.useState(0);
@@ -221,10 +205,10 @@ function DataTable<T>({ columns, data, getRowId, filter = {}, selectable = false
           {filter && (
             <InputGroup className="max-w-80 min-w-48 flex-1">
               <InputGroupAddon>
-                <MagnifyingGlassIcon />
+                <MagnifyingGlassIcon className="size-3.5 text-fg-subtle" />
               </InputGroupAddon>
               <InputGroupInput
-                type="search"
+                type="text"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -248,9 +232,9 @@ function DataTable<T>({ columns, data, getRowId, filter = {}, selectable = false
         </div>
       )}
       <div>
-        <Table>
+        <Table variant={variant}>
           <TableHeader>
-            <TableRow className="hover:[&>td]:bg-transparent">
+            <TableRow data-empty="">
               {selectable && (
                 <TableHead>
                   <Checkbox
@@ -288,8 +272,8 @@ function DataTable<T>({ columns, data, getRowId, filter = {}, selectable = false
                 );
               })
             ) : (
-              <TableRow className="hover:[&>td]:bg-surface">
-                <TableCell colSpan={shown.length + (selectable ? 1 : 0)} className="h-24 text-center whitespace-normal text-fg-muted">
+              <TableRow data-empty="">
+                <TableCell colSpan={shown.length + (selectable ? 1 : 0)} className="h-auto px-6 py-12 text-center whitespace-normal text-fg-muted">
                   {empty}
                 </TableCell>
               </TableRow>

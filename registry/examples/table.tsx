@@ -104,3 +104,27 @@ export function WithFooter() {
     </Table>
   );
 }
+
+/** The console's borderless list table: a clear head over the row line, rows that wash on hover. */
+export function Open() {
+  return (
+    <Table variant="open">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Email address</TableHead>
+          <TableHead>Agent</TableHead>
+          <TableHead className="text-right">Created</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {MAILBOXES.map((m, i) => (
+          <TableRow key={m.address} data-state={i === 1 ? "selected" : undefined}>
+            <TableCell>{m.address}</TableCell>
+            <TableCell className="text-rose">{m.agent}</TableCell>
+            <TableCell className="text-right">{m.created}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}

@@ -3,16 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// The console's cards (Figma 427:2715). `default` is the webhook Trigger and Delivery card: white, a 1px #D2C9DB edge,
-// 24px corners, 14px in; a 14px ink title led by a 16px filled glyph and a 14px muted description. `raised` is the white
-// panel lifted by Shadow/S (a table's body). `muted` is the dialog's channel card: lilac, 24px corners, no edge, 12px above and
-// below, a 16px medium title (52px tall with a 28px glyph tile). Size sm tightens the insides to 12px.
+// The console's cards (the Card theme: 24px corners throughout). `default` (also `outline`) is white with the 1px field
+// edge, 14px in: the webhook Trigger and Delivery cards, a 14px ink title led by a 16px filled glyph over a 14px muted
+// description. `raised` (also `elevated`) is white on the card shadow. `muted` (also `filled`) is the lilac card with no
+// edge: the dialog's channel card, 12px above and below with a 16px medium title. Size sm tightens the insides to 12px.
 const cardVariants = cva("group/card flex flex-col gap-3 rounded-dialog py-3.5 font-sans text-body leading-body text-fg data-[size=sm]:gap-2 data-[size=sm]:py-3", {
   variants: {
     variant: {
       default: "border border-line-field bg-surface",
-      raised: "bg-surface shadow-s",
+      outline: "border border-line-field bg-surface",
+      raised: "bg-surface shadow-card",
+      elevated: "bg-surface shadow-card",
       muted: "bg-subtle py-3",
+      filled: "bg-subtle py-3",
     },
   },
   defaultVariants: { variant: "default" },
@@ -36,7 +39,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("flex min-w-0 items-center gap-1.5 text-body leading-body text-fg group-data-[variant=muted]/card:text-body-lg group-data-[variant=muted]/card:font-medium [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5", className)}
+      className={cn("flex min-w-0 items-center gap-1.5 text-body leading-body text-fg group-data-[variant=muted]/card:text-body-lg group-data-[variant=muted]/card:font-medium group-data-[variant=filled]/card:text-body-lg group-data-[variant=filled]/card:font-medium [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5", className)}
       {...props}
     />
   );

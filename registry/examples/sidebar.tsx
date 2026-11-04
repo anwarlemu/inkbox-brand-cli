@@ -29,6 +29,7 @@ import {
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -50,7 +51,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-type Row = { title: string; icon: React.ComponentType<{ weight?: "fill" | "regular"; className?: string }>; weight?: "fill" | "regular"; beta?: boolean };
+type Row = { title: string; icon: React.ComponentType<{ weight?: "fill" | "regular"; className?: string }>; weight?: "fill" | "regular"; beta?: boolean; count?: number };
 
 const TOP: Row[] = [
   { title: "Agent Workspace", icon: RobotIcon },
@@ -73,7 +74,7 @@ const SHARED: Row[] = [
 function Rows({ rows, current, onSelect }: { rows: Row[]; current: string; onSelect: (title: string) => void }) {
   return (
     <SidebarMenu>
-      {rows.map(({ title, icon: Icon, weight = "fill", beta }) => (
+      {rows.map(({ title, icon: Icon, weight = "fill", beta, count }) => (
         <SidebarMenuItem key={title}>
           <SidebarMenuButton isActive={current === title} tooltip={title} onClick={() => onSelect(title)}>
             <Icon weight={weight} />
@@ -84,6 +85,11 @@ function Rows({ rows, current, onSelect }: { rows: Row[]; current: string; onSel
               </Badge>
             )}
           </SidebarMenuButton>
+          {count ? (
+            <SidebarMenuBadge variant="count">
+              {count}
+            </SidebarMenuBadge>
+          ) : null}
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
@@ -155,10 +161,10 @@ function ConsoleRail({ collapsible = "offcanvas" }: { collapsible?: "offcanvas" 
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Robert Ligthart">
-              <Avatar size="sm" className="m-px size-5">
-                <AvatarFallback className="text-body-sm">R</AvatarFallback>
+              <Avatar size="sm" className="data-[size=sm]:size-4.5">
+                <AvatarFallback className="text-micro">R</AvatarFallback>
               </Avatar>
-              <span className="ml-0.5">Robert Ligthart</span>
+              <span>Robert Ligthart</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           {collapsible === "icon" && <CollapseRow />}
@@ -177,14 +183,17 @@ function ConsoleRail({ collapsible = "offcanvas" }: { collapsible?: "offcanvas" 
   );
 }
 
-function PageHead({ title, description }: { title: string; description: string }) {
+/** The console's page head: a 20px regular title on a 28px line, the muted description 4px under it, actions at the
+ * right, and the row hairline under it all (16px below the words, 16px above the page). */
+function PageHead({ title, description, actions }: { title: string; description: string; actions?: React.ReactNode }) {
   return (
-    <header className="flex items-start gap-3 border-b border-line-subtle px-6 py-4">
+    <header className="mx-6 mt-5 mb-4 flex items-start gap-3 border-b border-line-row pb-4">
       <SidebarTrigger className="-ml-2 md:hidden" />
-      <div>
-        <h1 className="text-h3 leading-heading font-normal text-fg">{title}</h1>
-        <p className="text-body text-fg-muted">{description}</p>
+      <div className="min-w-0 flex-1">
+        <h1 className="text-h3 leading-7 font-normal text-fg">{title}</h1>
+        <p className="mt-1 text-body text-fg-muted">{description}</p>
       </div>
+      {actions && <div className="ml-auto flex h-7 shrink-0 items-center gap-3">{actions}</div>}
     </header>
   );
 }
@@ -194,7 +203,7 @@ export function Preview() {
     <SidebarProvider className="h-270 min-h-0 overflow-hidden rounded-panel border border-line-subtle">
       <ConsoleRail />
       <SidebarInset>
-        <PageHead title="Vault" description="Zero-knowledge encrypted secret store for your agents." />
+        <PageHead title="Vault" description="Zero-knowledge encrypted secret store for your agents." actions={<Button>Add secret</Button>} />
       </SidebarInset>
     </SidebarProvider>
   );
@@ -212,7 +221,7 @@ export function Icons() {
 }
 
 const WORKSPACE: { label: string; action?: boolean; rows: Row[] }[] = [
-  { label: "Email", action: true, rows: [{ title: "Inkbox", icon: TrayIcon }, { title: "Sent", icon: PaperPlaneTiltIcon }, { title: "Spam", icon: WarningIcon }, { title: "Blocked", icon: ProhibitIcon, weight: "regular" }] },
+  { label: "Email", action: true, rows: [{ title: "Inkbox", icon: TrayIcon, count: 3 }, { title: "Sent", icon: PaperPlaneTiltIcon }, { title: "Spam", icon: WarningIcon }, { title: "Blocked", icon: ProhibitIcon, weight: "regular" }] },
   { label: "Phone", rows: [{ title: "Calls", icon: PhoneIcon }, { title: "Texts", icon: ChatTextIcon }, { title: "iMessage ", icon: AppleLogoIcon }, { title: "Blocked ", icon: ProhibitIcon, weight: "regular" }] },
   { label: "Agent2Agent", action: true, rows: [{ title: "Sessions", icon: ArrowsClockwiseIcon, weight: "regular" }] },
   { label: "Tunnel", rows: [{ title: "Tunnel", icon: ArrowsLeftRightIcon, weight: "regular" }] },
@@ -228,10 +237,10 @@ export function SecondRail() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton aria-haspopup="menu">
-                <Avatar size="sm" className="m-px size-5">
-                  <AvatarFallback className="text-body-sm">A</AvatarFallback>
+                <Avatar size="sm" className="data-[size=sm]:size-4.5">
+                  <AvatarFallback className="text-micro">A</AvatarFallback>
                 </Avatar>
-                <span className="ml-0.5 flex-1">@acme</span>
+                <span className="flex-1">@acme</span>
                 <CaretDownIcon weight="bold" className="size-4 text-fg" />
               </SidebarMenuButton>
             </SidebarMenuItem>

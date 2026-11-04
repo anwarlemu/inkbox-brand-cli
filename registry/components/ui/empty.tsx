@@ -3,8 +3,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// The console's empty states (Figma 427:2715: Create Your First Agent, No email selected). Centered: the media, a 22px
-// bold ink title, a 14px description on 24px lines in the secondary purple, at most 248px wide, then the action (a purple pill). The
+// The console's empty states (Figma 427:2715: Create Your First Agent, No email selected). Centered: the media, the
+// H2 ink title in the heaviest weight (24px semibold), a 14px description on 24px lines in the secondary purple, at most 248px wide, then the action (a purple pill). The
 // `mascot` media is the 3D octopus with a soft shadow under it; EmptyOrbit arcs up to five 40px white circles holding
 // the channel glyphs above it. Nothing moves: the empty state is seen every time the page loads.
 function Empty({ className, ...props }: React.ComponentProps<"div">) {

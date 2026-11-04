@@ -28,7 +28,7 @@ function BreadcrumbLink({ asChild, className, ...props }: React.ComponentProps<"
   return (
     <Comp {...slotProps}
       data-slot="breadcrumb-link"
-      className={cn("rounded-xs text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none", className)}
+      className={cn("rounded-xs text-fg-muted outline-none transition-colors duration-fast ease-out hover:text-fg focus-visible:shadow-focus motion-reduce:transition-none", className)}
       {...props}
     />
   );

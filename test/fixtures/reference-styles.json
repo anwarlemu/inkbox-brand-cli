@@ -101,12 +101,12 @@
    "name": "tabs",
    "example": "Preview",
    "selector": "[data-slot=tabs-list]",
-   "source": "Figma 427:2715 Email tabs; pill radius override",
+   "source": "console-agencidev 41e55a9 Tabs theme (segmented tablist)",
    "expected": {
-    "height": "42px",
+    "height": "40px",
     "backgroundColor": "#F4F2F6",
-    "borderTopLeftRadius": "9999px",
-    "paddingTop": "2px"
+    "borderTopLeftRadius": "20px",
+    "paddingTop": "4px"
    },
    "width": 1440
   },
@@ -115,13 +115,25 @@
    "name": "tabs",
    "example": "Preview",
    "selector": "[data-slot=tabs-trigger][data-state=active], [data-slot=tabs-trigger][data-selected]",
-   "source": "Figma 427:2715 Email tabs: Mailboxes; pill radius override",
+   "source": "console-agencidev 41e55a9 Tabs theme (segmented tab, selected)",
    "expected": {
-    "height": "38px",
+    "height": "32px",
+    "color": "#3E2A53",
+    "fontWeight": "400",
+    "fontSize": "13px"
+   },
+   "width": 1440
+  },
+  {
+   "id": "tabs-key",
+   "name": "tabs",
+   "example": "Preview",
+   "selector": "[data-slot=tabs-key]",
+   "source": "console-agencidev 41e55a9 src/components/ui/tabs.tsx (the sliding key)",
+   "expected": {
+    "height": "32px",
     "backgroundColor": "#FFFFFF",
-    "borderTopLeftRadius": "9999px",
-    "fontWeight": "500",
-    "fontSize": "14px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -217,7 +229,7 @@
     "borderTopColor": "#F9B1B5",
     "fontSize": "12px",
     "height": "22px",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "lineHeight": "12px"
    },
    "width": 1440
@@ -240,10 +252,10 @@
    "name": "alert",
    "example": "Warning",
    "selector": "[data-slot=alert]",
-   "source": "Figma 427:2715 Copy this API key now; rounded radius override",
+   "source": "console-agencidev 41e55a9 Alert theme (warning)",
    "expected": {
     "backgroundColor": "#F6E8C9",
-    "borderTopLeftRadius": "16px",
+    "borderTopLeftRadius": "12px",
     "color": "#4A2F0B"
    },
    "width": 1440
@@ -253,7 +265,7 @@
    "name": "alert",
    "example": "Info",
    "selector": "[data-slot=alert]",
-   "source": "Figma 427:2715 Vault: zero-knowledge note; rounded radius override",
+   "source": "console-agencidev 41e55a9 Alert theme (info)",
    "expected": {
     "backgroundColor": "#C9EBF6",
     "borderTopLeftRadius": "12px",
@@ -301,11 +313,12 @@
    "name": "pagination",
    "example": "Preview",
    "selector": "[data-slot=pagination-link][aria-current=page]",
-   "source": "Figma 427:2715 pagination: 1",
+   "source": "console-agencidev 41e55a9 src/components/navigation/PaginationNavigator.tsx (current page)",
    "expected": {
-    "backgroundColor": "#FFFFFF",
-    "color": "#3E2A53",
-    "fontSize": "14px"
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "color": "#5B4C6A",
+    "fontSize": "14px",
+    "fontWeight": "500"
    },
    "width": 1440
   },
@@ -326,10 +339,10 @@
    "name": "empty",
    "example": "Preview",
    "selector": "[data-slot=empty-title]",
-   "source": "Figma 427:2715 Create Your First Agent",
+   "source": "console-agencidev 41e55a9 src/components/empty-state.tsx (text-h2, the bold token, now semibold)",
    "expected": {
-    "fontSize": "22px",
-    "fontWeight": "700",
+    "fontSize": "24px",
+    "fontWeight": "600",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -350,12 +363,13 @@
    "name": "sidebar",
    "example": "Preview",
    "selector": "[data-slot=sidebar-menu-button]",
-   "source": "Figma 427:2715 rail rows; pill radius override",
+   "source": "console-agencidev 41e55a9 src/components/layout/sidebar-metrics.ts",
    "expected": {
-    "height": "38px",
+    "height": "36px",
     "fontSize": "14px",
-    "borderTopLeftRadius": "9999px",
-    "color": "#3E2A53"
+    "fontWeight": "500",
+    "borderTopLeftRadius": "9996px",
+    "color": "#5B4C6A"
    },
    "width": 1440
   },
@@ -381,7 +395,7 @@
    "expected": {
     "width": "36px",
     "height": "36px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -431,7 +445,7 @@
    "expected": {
     "height": "22px",
     "lineHeight": "12px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   }

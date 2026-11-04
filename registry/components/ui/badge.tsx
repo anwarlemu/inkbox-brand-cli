@@ -6,13 +6,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// Every badge in the console (Figma 427:2715). `pink` is BETA and ADMIN: a 1px pink edge, fully rounded corners, 12px pink text,
-// 22px tall with 6px sides and a 1px top inset to optically center the uppercase label. `success` is the Included pill:
-// white with a 1px green edge, a filled check-circle (22px, the design's 20px glyph at Phosphor's proportions) 4px in and a 14px green label, 28px tall. `blue`, `purple` and `gray` are the webhook tags (Email, Signed,
-// Fire-and-forget) at size sm: 11px medium on the pale fill, fully rounded corners, 17px tall; `green` is the Blacklist tag.
-// At size `well` they become the tunnel's 38px status wells (Active, Idle, Edge): 14px ink, fully rounded corners.
+// The console's badges (the Badge theme): a 28px pill with 12px sides, a 12px medium label on a 1 line, no caps, a light
+// fill under dark ink. green is success, red the pink with the strong red, blue the tag blue with the info ink, purple
+// the tag purple with the deep purple, gray the lilac hover, yellow the warning sand. `count` is the rail's small red
+// number (16px tall, at least 22px wide, 8px corners, white on the red). `pink` is the 22px plan mark (BETA, ADMIN) with a
+// pink edge, `success` the white Included pill with a green edge. Size `well` makes the tunnel's 38px status wells;
+// sm and lg remain for dense tags and the Included pill.
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-pill border border-transparent font-sans whitespace-nowrap transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none [&>svg]:pointer-events-none [&>svg]:shrink-0",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-pill border border-transparent font-sans font-medium whitespace-nowrap normal-case transition-[background-color,color] duration-fast ease-out focus-visible:shadow-focus focus-visible:outline-none motion-reduce:transition-none [&>svg]:pointer-events-none [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -22,20 +23,27 @@ const badgeVariants = cva(
         outline: "border-line-field bg-surface text-fg [a&]:hover:bg-subtle",
         ghost: "text-fg-secondary [a&]:hover:bg-subtle",
         link: "text-fg-brand underline-offset-4 [a&]:hover:underline",
-        pink: "rounded-pill border-pink bg-surface pt-px text-pink",
+        pink: "rounded-pill border-pink bg-surface text-pink",
         success: "rounded-pill border-success bg-surface text-success",
-        green: "bg-success-bg text-fg",
-        blue: "bg-tag-blue text-tag-blue-fg",
-        purple: "bg-tag-purple text-tag-purple-fg",
-        gray: "bg-tag-gray text-fg",
+        green: "bg-success-bg text-success",
+        red: "bg-pink text-danger-strong",
+        blue: "bg-tag-blue text-info-fg",
+        purple: "bg-tag-purple text-primary-hover",
+        gray: "bg-subtle-hover text-fg",
+        yellow: "bg-warning-bg text-warning-fg",
+        count: "rounded-sm bg-danger text-white",
       },
       size: {
-        sm: "h-4.5 px-1 text-micro leading-tight font-medium [&>svg]:size-3.5",
-        default: "h-5.5 px-1.5 text-caption leading-none [&>svg]:size-4",
+        sm: "h-4.5 px-1 text-micro leading-tight [&>svg]:size-3.5",
+        default: "h-7 px-3 text-caption leading-none [&>svg]:size-4",
         lg: "h-7 gap-1.5 pr-2.5 pl-1 text-body leading-tight [&>svg]:size-5.5",
-        well: "h-9.5 rounded-pill px-3.5 text-body leading-tight text-fg [&>svg]:size-5.5",
+        well: "h-9.5 rounded-pill px-3.5 text-body leading-tight font-normal text-fg [&>svg]:size-5.5",
       },
     },
+    compoundVariants: [
+      { variant: "pink", size: "default", className: "h-5.5 px-1.5" },
+      { variant: "count", size: "default", className: "h-4 min-w-5.5 px-1.5 text-micro tabular-nums" },
+    ],
     defaultVariants: { variant: "default", size: "default" },
   },
 );

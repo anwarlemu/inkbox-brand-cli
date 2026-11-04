@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "name": "badge",
+  "useFor": "Use green, red, blue, purple, gray or yellow for a status or tag (Active, Failed, Email, Signed, Draft, Pending). Use pink for a feature or role mark beside a label (BETA, ADMIN), success size lg with a filled check-circle for something granted (Included), count for an unread number, and size well for a status reading (Active on green, Idle on gray, Edge on blue). Default (purple) and destructive are for counts and errors.",
+  "constraints": [
+    "Caps typed with CSS",
+    "A badge as a button",
+    "More than three badges in a row",
+    "Saturated fills behind text",
+    "Regular-weight badge labels"
+  ],
+  "documentation": "",
+  "source": "Console Badge theme and the rail's notification count; Figma 427:2715: the rail (BETA, ADMIN), Create Agent Identity (Included), Tunnel (Active, Idle, Edge)",
+  "exports": [
+    "Badge",
+    "badgeVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/badge",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/badge.md",
+  "examples": [
+    {
+      "path": "examples/badge.tsx",
+      "content": "import { CheckCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Badge } from \"@/components/ui/badge\";\n\nexport function Preview() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <span className=\"flex items-center gap-2.5 text-body text-fg\">\n        Agent2Agent\n        <Badge variant=\"pink\">BETA</Badge>\n      </span>\n      <span className=\"flex items-center gap-2.5 text-body text-fg\">\n        My Organisation\n        <Badge variant=\"pink\">ADMIN</Badge>\n      </span>\n      <Badge variant=\"success\" size=\"lg\">\n        <CheckCircleIcon weight=\"fill\" />\n        Included\n      </Badge>\n    </div>\n  );\n}\n\nexport function Tags() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-1.5\">\n      <Badge variant=\"green\">Active</Badge>\n      <Badge variant=\"red\">Failed</Badge>\n      <Badge variant=\"blue\">Email</Badge>\n      <Badge variant=\"purple\">Signed</Badge>\n      <Badge variant=\"gray\">Fire-and-forget</Badge>\n      <Badge variant=\"yellow\">Pending</Badge>\n    </div>\n  );\n}\n\nexport function Count() {\n  return (\n    <span className=\"flex items-center gap-2 text-body text-fg\">\n      Inbox\n      <Badge variant=\"count\">12</Badge>\n    </span>\n  );\n}\n\nexport function Status() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-6\">\n      <Badge variant=\"green\" size=\"well\">Active</Badge>\n      <Badge variant=\"gray\" size=\"well\">Idle</Badge>\n      <Badge variant=\"blue\" size=\"well\">Edge</Badge>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-2\">\n      <Badge>3 new</Badge>\n      <Badge variant=\"secondary\">Draft</Badge>\n      <Badge variant=\"outline\">Webhook</Badge>\n      <Badge variant=\"destructive\">Failed</Badge>\n      <Badge variant=\"ghost\">Archived</Badge>\n      <Badge variant=\"link\" asChild>\n        <a href=\"https://inkbox.ai/docs\" target=\"_blank\" rel=\"noreferrer\">Docs</a>\n      </Badge>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Tags",
+        "Count",
+        "Status",
+        "Variants"
+      ],
+      "requires": [
+        "badge"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/badge/Preview"
+        },
+        {
+          "name": "Tags",
+          "url": "https://inkbox-ds.vercel.app/preview/badge/Tags"
+        },
+        {
+          "name": "Count",
+          "url": "https://inkbox-ds.vercel.app/preview/badge/Count"
+        },
+        {
+          "name": "Status",
+          "url": "https://inkbox-ds.vercel.app/preview/badge/Status"
+        },
+        {
+          "name": "Variants",
+          "url": "https://inkbox-ds.vercel.app/preview/badge/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Badge",
+  "description": "28px pills with 12px medium labels on light fills (green, red, blue, purple, gray, yellow), the pink plan mark, the green Included pill, the red unread count and the tunnel's status wells.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/badge.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { chakra } from \"@chakra-ui/react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's badges (the Badge theme): a 28px pill with 12px sides, a 12px medium label on a 1 line, no caps, a light\n// fill under dark ink. green is success, red the pink with the strong red, blue the tag blue with the info ink, purple\n// the tag purple with the deep purple, gray the lilac hover, yellow the warning sand. `count` is the rail's small red\n// number (16px tall, at least 22px wide, 8px corners, white on the red). `pink` is the 22px plan mark (BETA, ADMIN) with a\n// pink edge, `success` the white Included pill with a green edge. Size `well` makes the tunnel's 38px status wells;\n// sm and lg remain for dense tags and the Included pill.\nconst badgeVariants = cva(\n  \"inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-pill border border-transparent font-sans font-medium whitespace-nowrap normal-case transition-[background-color,color] duration-fast ease-out focus-visible:shadow-focus focus-visible:outline-none motion-reduce:transition-none [&>svg]:pointer-events-none [&>svg]:shrink-0\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-primary text-on-primary [a&]:hover:bg-primary-hover\",\n        secondary: \"bg-subtle text-fg [a&]:hover:bg-subtle-hover\",\n        destructive: \"bg-danger text-white\",\n        outline: \"border-line-field bg-surface text-fg [a&]:hover:bg-subtle\",\n        ghost: \"text-fg-secondary [a&]:hover:bg-subtle\",\n        link: \"text-fg-brand underline-offset-4 [a&]:hover:underline\",\n        pink: \"rounded-pill border-pink bg-surface text-pink\",\n        success: \"rounded-pill border-success bg-surface text-success\",\n        green: \"bg-success-bg text-success\",\n        red: \"bg-pink text-danger-strong\",\n        blue: \"bg-tag-blue text-info-fg\",\n        purple: \"bg-tag-purple text-primary-hover\",\n        gray: \"bg-subtle-hover text-fg\",\n        yellow: \"bg-warning-bg text-warning-fg\",\n        count: \"rounded-sm bg-danger text-white\",\n      },\n      size: {\n        sm: \"h-4.5 px-1 text-micro leading-tight [&>svg]:size-3.5\",\n        default: \"h-7 px-3 text-caption leading-none [&>svg]:size-4\",\n        lg: \"h-7 gap-1.5 pr-2.5 pl-1 text-body leading-tight [&>svg]:size-5.5\",\n        well: \"h-9.5 rounded-pill px-3.5 text-body leading-tight font-normal text-fg [&>svg]:size-5.5\",\n      },\n    },\n    compoundVariants: [\n      { variant: \"pink\", size: \"default\", className: \"h-5.5 px-1.5\" },\n      { variant: \"count\", size: \"default\", className: \"h-4 min-w-5.5 px-1.5 text-micro tabular-nums\" },\n    ],\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\nfunction Badge({ className, variant, size, asChild = false, ...props }: React.ComponentProps<\"span\"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {\n  const Comp = asChild ? chakra.span : \"span\";\n  // Chakra's factory renders its child in its place only when told to.\n  const slotProps = asChild ? { asChild: true } : {};\n  return <Comp {...slotProps} data-slot=\"badge\" data-variant={variant ?? \"default\"} className={cn(badgeVariants({ variant, size }), className)} {...props} />;\n}\n\nexport { Badge, badgeVariants };\n"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "separator",
+  "useFor": "Use between groups: under a page head, above the rail's footer, between list rows, between toolbar groups (orientation=\"vertical\"). It is decorative unless you set decorative={false}.",
+  "constraints": [
+    "Darker rules than the faint lilac between rows",
+    "Double rules",
+    "Rules inside a lilac panel"
+  ],
+  "documentation": "",
+  "source": "Figma 427:2715: the rail's footer rule, page head rules, inbox list dividers",
+  "exports": [
+    "Separator"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/separator",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/separator.md",
+  "examples": [
+    {
+      "path": "examples/separator.tsx",
+      "content": "import { Separator } from \"@/components/ui/separator\";\n\nexport function Preview() {\n  return (\n    <div className=\"w-full max-w-96\">\n      <p className=\"text-body text-fg\">Webhooks</p>\n      <p className=\"text-body text-fg-muted\">Manage subscriptions and review payloads.</p>\n      <Separator className=\"my-4\" />\n      <div className=\"flex h-5 items-center gap-4 text-body whitespace-nowrap text-fg\">\n        <span>Mailboxes</span>\n        <Separator orientation=\"vertical\" />\n        <span>Contact rules</span>\n        <Separator orientation=\"vertical\" />\n        <span>Custom domains</span>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "separator"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/separator/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Separator",
+  "description": "A 1px rule in the faint lilac, across or down.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/separator.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Separator as ChakraSeparator } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's rules: a 1px line in the faint lilac (#F3F1F5) under a page head, at the rail's edge, between list\n// items and above the rail's footer. Decorative by default.\nfunction Separator({ className, orientation = \"horizontal\", decorative = true, ...props }: Omit<React.ComponentProps<typeof ChakraSeparator>, \"orientation\"> & { orientation?: \"horizontal\" | \"vertical\"; decorative?: boolean }) {\n  return (\n    <ChakraSeparator\n      unstyled\n      data-slot=\"separator\"\n      aria-hidden={decorative || undefined}\n      orientation={orientation}\n      className={cn(\"shrink-0 bg-line-subtle data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Separator };\n"
+    }
+  ]
+}

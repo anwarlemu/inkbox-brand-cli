@@ -8,8 +8,8 @@ import { toggleVariants } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 
 // The console's segmented choice (Figma 427:2715, Modal - Created: "Where does this agent run?"): a lilac track with
-// 10px corners and a 2px inset holding 38px choices 8px apart; each choice is a 24px logo tile 8px from a 14px medium
-// ink label, 8px from the sides, and the chosen one is a white key with 8px corners and Shadow/S. With `spacing={0}`
+// fully rounded corners and a 2px inset holding 40px choices 8px apart; each choice is a 24px logo tile 8px from a 14px medium
+// ink label, 12px from the sides, and the chosen one is a white pill with Shadow/S. With `spacing={0}`
 // the choices sit flush in the track. `variant="outline"` drops the track: separate keys with the field edge, the chosen
 // one white with Shadow/S. Choosing is instant (no sliding key): the choice is made often and must feel immediate.
 const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants> & { spacing?: number; orientation?: "horizontal" | "vertical" }>({
@@ -61,7 +61,7 @@ function ToggleGroupItem({ className, children, variant, size, ...props }: React
       className={cn(
         toggleVariants({ variant: v, size: context.size || size }),
         // In the track the chosen choice is the white key, as in the segmented choice.
-        v === "default" && "hover:bg-subtle-hover data-[state=on]:bg-surface data-[state=on]:text-fg data-[state=on]:shadow-s data-[state=on]:hover:bg-surface",
+        v === "default" && "hover:bg-subtle-hover data-[state=on]:bg-surface data-[state=on]:text-fg data-[state=on]:hover:bg-surface data-[state=on]:shadow-s data-[state=on]:focus-visible:shadow-[var(--ds-shadow-s),var(--ds-shadow-focus)] data-[state=on]:active:shadow-[inset_0_0_0_9996px_var(--ds-color-wash-pressed),var(--ds-shadow-s)]",
         "focus-visible:z-10",
         className,
       )}

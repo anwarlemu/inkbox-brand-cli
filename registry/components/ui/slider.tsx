@@ -6,8 +6,8 @@ import { Slider as ChakraSlider } from "@chakra-ui/react";
 import { cn } from "@/lib/utils";
 
 // Extrapolated from the console's switch (Figma "Toggle"): a 6px pill track in the field's lilac-gray, filled with the
-// action purple up to the value, and a 20px white knob with the switch knob's soft drop. Under the pointer or keyboard
-// focus the knob takes a soft purple halo; it never animates its position (it follows the pointer). Pass two values for
+// action purple up to the value, and a 20px white knob with the switch knob's soft drop. Under the pointer it takes a soft purple
+// halo and on keyboard focus the soft ring; it never animates its position (it follows the pointer). Pass two values for
 // a range.
 type SliderProps = Omit<React.ComponentProps<typeof ChakraSlider.Root>, "onValueChange" | "aria-label" | "aria-labelledby"> & { onValueChange?: (value: number[]) => void; "aria-label"?: string | string[]; "aria-labelledby"?: string | string[] };
 function Slider({ className, defaultValue, value, min = 0, max = 100, onValueChange, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, ...props }: SliderProps) {
@@ -42,7 +42,7 @@ function Slider({ className, defaultValue, value, min = 0, max = 100, onValueCha
           index={index}
           key={index}
           aria-label={Array.isArray(ariaLabel) ? ariaLabel[index] : ariaLabel ?? (values.length > 1 ? (index === 0 ? "Minimum" : "Maximum") : undefined)}
-          className="block size-5 shrink-0 cursor-grab rounded-pill bg-surface shadow-knob outline-none transition-[box-shadow] duration-150 ease-out hover:shadow-[var(--ds-shadow-knob),0_0_0_4px_var(--ds-color-ring-tint)] focus-visible:shadow-[var(--ds-shadow-knob),0_0_0_4px_var(--ds-color-ring-tint)] active:cursor-grabbing disabled:pointer-events-none motion-reduce:transition-none"
+          className="block size-5 shrink-0 cursor-grab rounded-pill bg-surface shadow-knob outline-none transition-[box-shadow] duration-fast ease-out hover:shadow-[var(--ds-shadow-knob),0_0_0_4px_var(--ds-color-ring-tint)] focus-visible:shadow-[var(--ds-shadow-knob),var(--ds-shadow-focus)] active:cursor-grabbing disabled:pointer-events-none motion-reduce:transition-none"
         ><ChakraSlider.HiddenInput /></ChakraSlider.Thumb>
       ))}
       </ChakraSlider.Control>

@@ -1,7 +1,7 @@
 {
  "reference": "Figma \"Inkbox (Copy) (Copy)\", section \"New\" (node 427:2715), the console screens",
  "captured": "2026-10-23",
- "method": "Colors sampled from the 1x renders, type fitted to text layer widths, sizes and radii from layer geometry; component radii updated to the requested rounded styling",
+ "method": "Colors sampled from the 1x renders, type fitted to text layer widths, sizes and radii from layer geometry; component radii updated to the requested rounded styling; values the console (console-agencidev, agencidev/console 41e55a9) sets differently are taken from it and named in each source",
  "viewport": {
   "width": 1440,
   "height": 1000
@@ -12,13 +12,13 @@
    "name": "button",
    "example": "Preview",
    "selector": "[data-slot=button][data-variant=default]",
-   "source": "Figma 427:2715 Create Agent, Enable iMessage",
+   "source": "Figma 427:2715 Create Agent, Enable iMessage; the console sets a Create or Add key with a Plus in medium (console-agencidev src/theme/index.ts)",
    "expected": {
     "height": "40px",
     "backgroundColor": "#74629D",
     "color": "#FFFFFF",
     "fontSize": "14px",
-    "fontWeight": "400",
+    "fontWeight": "500",
     "paddingLeft": "20px"
    },
    "width": 1440
@@ -32,7 +32,7 @@
    "expected": {
     "height": "36px",
     "borderTopColor": "#D2C9DB",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "color": "#74629D",
     "fontWeight": "500"
    },
@@ -43,11 +43,11 @@
    "name": "button",
    "example": "Preview",
    "selector": "[data-slot=button][data-variant=soft]",
-   "source": "Figma 427:2715 Tunnel quickstart; pill radius override",
+   "source": "Figma 427:2715 Tunnel quickstart; pill radius override; console soft key 40px (console-agencidev src/theme/index.ts)",
    "expected": {
-    "height": "38px",
+    "height": "40px",
     "backgroundColor": "#F4F2F6",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -70,13 +70,13 @@
    "name": "input",
    "example": "Preview",
    "selector": "input[data-slot=input]",
-   "source": "Figma 427:2715 Form- Input; pill radius override",
+   "source": "Figma 427:2715 Form- Input; pill radius override; console field padding 16px (console-agencidev src/theme/index.ts)",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "borderTopColor": "#D2C9DB",
     "fontSize": "14px",
-    "paddingLeft": "14px",
+    "paddingLeft": "16px",
     "color": "#3E2A53",
     "placeholderColor": "#9E94A9"
    },
@@ -87,11 +87,11 @@
    "name": "label",
    "example": "Preview",
    "selector": "[data-slot=label]",
-   "source": "Figma 427:2715 Login: Email address",
+   "source": "Figma 427:2715 Login: Email address; console FormLabel line height 24px (console-agencidev src/theme/index.ts)",
    "expected": {
     "fontSize": "14px",
     "fontWeight": "400",
-    "lineHeight": "21px",
+    "lineHeight": "24px",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -105,7 +105,7 @@
    "expected": {
     "height": "42px",
     "backgroundColor": "#F4F2F6",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "paddingTop": "2px"
    },
    "width": 1440
@@ -119,7 +119,7 @@
    "expected": {
     "height": "38px",
     "backgroundColor": "#FFFFFF",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "fontWeight": "500",
     "fontSize": "14px"
    },
@@ -158,10 +158,10 @@
    "name": "switch",
    "example": "Preview",
    "selector": "[data-slot=switch][data-state=unchecked]",
-   "source": "Figma 427:2715 Toggle (off)",
+   "source": "Figma 427:2715 Toggle (off); console Switch: 44 by 24 track inside 4px of padding (console-agencidev src/theme/index.ts)",
    "expected": {
-    "width": "44px",
-    "height": "24px",
+    "width": "52px",
+    "height": "32px",
     "backgroundColor": "#B1ADBB"
    },
    "width": 1440
@@ -171,10 +171,10 @@
    "name": "switch",
    "example": "Preview",
    "selector": "[data-slot=switch][data-state=checked]",
-   "source": "Figma 427:2715 Toggle (on)",
+   "source": "Figma 427:2715 Toggle (on); console Switch: 44 by 24 track inside 4px of padding (console-agencidev src/theme/index.ts)",
    "expected": {
-    "width": "44px",
-    "height": "24px",
+    "width": "52px",
+    "height": "32px",
     "backgroundColor": "#74629D"
    },
    "width": 1440
@@ -184,11 +184,11 @@
    "name": "radio-group",
    "example": "Preview",
    "selector": "[data-slot=radio-group-item][data-state=checked]",
-   "source": "Figma 427:2715 Tunnel TLS mode: Edge (default)",
+   "source": "Figma 427:2715 Tunnel TLS mode: Edge (default); console checked radio: 6px brand ring (console-agencidev src/theme/index.ts)",
    "expected": {
     "width": "18px",
     "height": "18px",
-    "borderTopColor": "#F9B1B5"
+    "borderTopColor": "#74629D"
    },
    "width": 1440
   },
@@ -200,7 +200,7 @@
    "source": "Figma 427:2715 Any State; pill radius override",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "backgroundColor": "#FFFFFF",
     "fontSize": "14px"
    },
@@ -217,7 +217,7 @@
     "borderTopColor": "#F9B1B5",
     "fontSize": "12px",
     "height": "22px",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "lineHeight": "12px"
    },
    "width": 1440
@@ -354,7 +354,7 @@
    "expected": {
     "height": "38px",
     "fontSize": "14px",
-    "borderTopLeftRadius": "9999px",
+    "borderTopLeftRadius": "9996px",
     "color": "#3E2A53"
    },
    "width": 1440
@@ -381,7 +381,7 @@
    "expected": {
     "width": "36px",
     "height": "36px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -394,7 +394,7 @@
    "expected": {
     "width": "18px",
     "height": "18px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -406,7 +406,7 @@
    "source": "Requested compact control pill styling, 2026-10-24",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -418,7 +418,7 @@
    "source": "Requested compact control pill styling, 2026-10-24",
    "expected": {
     "height": "40px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   },
@@ -431,7 +431,7 @@
    "expected": {
     "height": "22px",
     "lineHeight": "12px",
-    "borderTopLeftRadius": "9999px"
+    "borderTopLeftRadius": "9996px"
    },
    "width": 1440
   }

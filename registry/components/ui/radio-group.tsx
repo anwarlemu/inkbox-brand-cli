@@ -6,7 +6,8 @@ import { RadioGroup as ChakraRadioGroup } from "@chakra-ui/react";
 import { cn } from "@/lib/utils";
 
 // The console's radios (Tunnel TLS mode: Edge (default), Passthrough): an 18px circle on white. Unselected it has a
-// 1.5px gray edge; selected it takes a thick 4px pink ring around a white center. Options stack 8px apart, each label
+// 1.5px strong edge; selected it takes a 6px brand purple ring around a white center, with no inner dot. The edge's
+// color and width change at the fast step; keyboard focus is the soft ring. Options stack 8px apart, each label
 // 14px ink 8px from its circle (wrap item and label in a `label`, or pair them with htmlFor).
 type RadioGroupProps = Omit<React.ComponentProps<typeof ChakraRadioGroup.Root>, "onValueChange"> & { onValueChange?: (value: string | null) => void };
 function RadioGroup({ className, onValueChange, ...props }: RadioGroupProps) {
@@ -19,7 +20,7 @@ function RadioGroupItem({ className, ...props }: React.ComponentProps<typeof Cha
       data-slot="radio-group-item"
       unstyled
       className={cn(
-        "peer relative aspect-square size-4.5 shrink-0 cursor-pointer rounded-pill border-[1.5px] border-line-strong bg-surface outline-none active:brightness-95 active:transition-none transition-[border-color,border-width] duration-150 ease-out hover:border-fg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger data-[state=checked]:border-4 data-[state=checked]:border-pink motion-reduce:transition-none",
+        "peer relative aspect-square size-4.5 shrink-0 cursor-pointer rounded-pill border-[1.5px] border-line-strong bg-surface outline-none transition-[border-color,border-width,box-shadow] duration-fast ease-out data-focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger data-[state=checked]:border-[6px] data-[state=checked]:border-brand motion-reduce:transition-none",
         className,
       )}
       {...props}

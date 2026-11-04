@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 // A one-time code field, written for the console's look (extrapolated from Figma "Form- Input"): joined 40px slots in
 // the field's lilac-gray edge with fully rounded outer corners, 16px medium ink characters, and the active slot in the purple edge
-// with the soft focus ring and a blinking 1px caret. One real input lies over the slots, so typing, deleting, pasting
+// with the soft focus ring and a blinking 1px caret; disabled, the slots sit on the lilac with muted characters. One real input lies over the slots, so typing, deleting, pasting
 // a whole code, autofill from SMS and arrow keys all work as in any field. `pattern` limits each character.
 const REGEXP_ONLY_DIGITS = "^\\d+$";
 const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
@@ -69,7 +69,7 @@ function InputOTP({ maxLength, value: valueProp, defaultValue = "", onChange, on
 
   return (
     <InputOTPContext.Provider value={{ slots, invalid, disabled }}>
-      <div data-slot="input-otp" className={cn("relative flex items-center gap-2 has-disabled:opacity-50", containerClassName)}>
+      <div data-slot="input-otp" className={cn("relative flex items-center gap-2", containerClassName)}>
         {children}
         <input
           ref={input}
@@ -135,15 +135,16 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function InputOTPSlot({ index, className, ...props }: React.ComponentProps<"div"> & { index: number }) {
-  const { slots, invalid } = React.useContext(InputOTPContext);
+  const { slots, invalid, disabled } = React.useContext(InputOTPContext);
   const { char, hasFakeCaret, isActive } = slots[index] ?? { char: null, hasFakeCaret: false, isActive: false };
   return (
     <div
       data-slot="input-otp-slot"
       data-active={isActive || undefined}
       aria-invalid={invalid || undefined}
+      data-disabled={disabled || undefined}
       className={cn(
-        "relative -ml-px flex size-10 items-center justify-center border border-line-field bg-surface font-sans text-body-lg leading-none font-medium text-fg transition-[border-color,box-shadow] duration-150 ease-out first:ml-0 first:rounded-l-pill last:rounded-r-pill aria-invalid:border-danger data-active:z-10 data-active:border-line-brand data-active:shadow-focus aria-invalid:data-active:shadow-none motion-reduce:transition-none",
+        "relative -ml-px flex size-10 items-center justify-center border border-line-field bg-surface font-sans text-body-lg leading-none font-medium text-fg transition-[border-color,box-shadow] duration-fast ease-out first:ml-0 first:rounded-l-pill last:rounded-r-pill aria-invalid:border-danger data-active:z-10 data-active:border-line-brand data-active:shadow-focus aria-invalid:data-active:shadow-none data-disabled:bg-subtle data-disabled:text-fg-muted motion-reduce:transition-none",
         className,
       )}
       {...props}

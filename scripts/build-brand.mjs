@@ -73,11 +73,11 @@ const theme = [
 	'\t--ease-in-out: var(--ds-easing-in-out);',
 	'\t--ease-drawer: var(--ds-easing-drawer);',
 ];
-// Motion (Emil Kowalski's rules): overlays scale out of their trigger from 0.96 with a fade, dialogs stay centered,
+// Motion (Emil Kowalski's rules): popups grow out of their trigger from 0.98 with a fade over 160ms, dialogs stay centered,
 // sheets and drawers travel their own size on the drawer curve, exits are shorter than entrances, and nothing starts
 // from scale(0) or eases in. With reduced motion every entrance and exit is a fade only.
 const motion = `@theme {
-	--animate-pop-in: ds-pop-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-pop-in: ds-pop-in var(--ds-duration-slow) var(--ds-easing-out);
 	--animate-pop-out: ds-pop-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
 	--animate-fade-in: ds-fade-in var(--ds-duration-fast) var(--ds-easing-out);
 	--animate-fade-out: ds-fade-out var(--ds-duration-fast) var(--ds-easing-out) forwards;
@@ -105,14 +105,14 @@ const motion = `@theme {
 	@keyframes ds-pop-in {
 		from {
 			opacity: 0;
-			transform: scale(0.96);
+			transform: scale(0.98);
 		}
 	}
 
 	@keyframes ds-pop-out {
 		to {
 			opacity: 0;
-			transform: scale(0.96);
+			transform: scale(0.98);
 		}
 	}
 

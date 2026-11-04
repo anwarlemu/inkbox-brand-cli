@@ -96,7 +96,7 @@ function CreateRow({ known }: { known: string[] }) {
     <>
       <ComboboxSeparator />
       <ComboboxItem value={value} label={value}>
-        <PlusIcon />
+        <PlusIcon weight="bold" className="size-4" />
         Create &ldquo;{value}&rdquo;
       </ComboboxItem>
     </>

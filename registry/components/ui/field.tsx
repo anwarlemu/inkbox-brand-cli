@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 // A form's fields as the console lays them out (Figma 427:2715, Login, Vault, Create Agent Identity). A field is its
-// 14px label on a 24px line, 4px above the control; fields sit 12px apart. A description under it is 14px muted
-// (Vault key: "Enter a vault key or generate a random one"); an error is 12px red (is not available). "or" between two
-// ways in is 14px muted on a hairline. A field marked data-invalid keeps its label ink: only the control and the
+// 14px label on a 24px line, 4px above the control; fields sit 12px apart. A description under the control is 14px muted
+// 8px below it (Vault key: "Enter a vault key or generate a random one"); an error is 12px red 4px below it (is not
+// available). "or" between two ways in is 14px muted between two hairlines, 12px from each. A field marked data-invalid keeps its label ink: only the control and the
 // message turn red.
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return <fieldset data-slot="field-set" className={cn("m-0 flex min-w-0 flex-col gap-4 border-0 p-0 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3", className)} {...props} />;
@@ -49,7 +49,7 @@ function Field({ className, orientation = "vertical", ...props }: React.Componen
 }
 
 function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="field-content" className={cn("group/field-content flex min-w-0 flex-1 flex-col gap-0.5 leading-body", className)} {...props} />;
+  return <div data-slot="field-content" className={cn("group/field-content flex min-w-0 flex-1 flex-col gap-0.5 leading-6", className)} {...props} />;
 }
 
 // A label that wraps a whole field becomes a choice card: the field edge and 8px corners, 14px in; the checked one takes
@@ -59,8 +59,8 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
     <Label
       data-slot="field-label"
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-body group-data-[disabled=true]/field:opacity-50",
-        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-control has-[>[data-slot=field]]:border has-[>[data-slot=field]]:border-line-field has-[>[data-slot=field]]:transition-[background-color,border-color] has-[>[data-slot=field]]:duration-150 has-[>[data-slot=field]]:ease-out *:data-[slot=field]:p-3.5 has-[>[data-slot=field]]:hover:bg-subtle has-data-[state=checked]:border-line-brand has-data-[state=checked]:bg-subtle motion-reduce:transition-none",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-6 group-data-[disabled=true]/field:opacity-50",
+        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-control has-[>[data-slot=field]]:border has-[>[data-slot=field]]:border-line-field has-[>[data-slot=field]]:transition-[background-color,border-color] has-[>[data-slot=field]]:duration-fast has-[>[data-slot=field]]:ease-out *:data-[slot=field]:p-3.5 has-[>[data-slot=field]]:hover:bg-subtle has-data-[state=checked]:border-line-brand has-data-[state=checked]:bg-subtle motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -77,7 +77,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="field-description"
       className={cn(
-        "m-0 font-sans text-body leading-body font-normal text-fg-muted group-has-[[data-orientation=horizontal]]/field:text-balance [[data-variant=legend]+&]:-mt-1 [&>a]:text-fg-brand [&>a]:underline-offset-4 [&>a:hover]:underline",
+        "m-0 font-sans text-body leading-line-body font-normal text-fg-muted group-has-[[data-orientation=horizontal]]/field:text-balance [[data-slot=field]>*+&]:mt-1 [[data-variant=legend]+&]:-mt-1 [&>a]:text-fg-brand [&>a]:underline-offset-4 [&>a:hover]:underline",
         className,
       )}
       {...props}
@@ -85,16 +85,17 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-/** The "or" between two ways in: a hairline across the form with a 14px muted word on the page color. */
+/** The "or" between two ways in: a 14px muted word between two hairlines (the console's FieldSeparator). */
 function FieldSeparator({ children, className, ...props }: React.ComponentProps<"div"> & { children?: React.ReactNode }) {
   return (
-    <div data-slot="field-separator" data-content={!!children} className={cn("relative flex h-6 items-center text-body leading-body", className)} {...props}>
-      <div aria-hidden className="absolute inset-x-0 top-1/2 h-px bg-line-subtle" />
+    <div data-slot="field-separator" data-content={!!children} className={cn("relative flex h-6 items-center gap-3 text-body leading-body", className)} {...props}>
+      <div aria-hidden className="h-px flex-1 bg-line-subtle" />
       {children && (
-        <span data-slot="field-separator-content" className="relative mx-auto block w-fit bg-surface px-3 text-fg-muted">
+        <span data-slot="field-separator-content" className="shrink-0 text-fg-muted">
           {children}
         </span>
       )}
+      {children && <div aria-hidden className="h-px flex-1 bg-line-subtle" />}
     </div>
   );
 }
@@ -109,7 +110,7 @@ function FieldError({ className, children, errors, ...props }: React.ComponentPr
   }, [children, errors]);
   if (!content) return null;
   return (
-    <div role="alert" data-slot="field-error" className={cn("font-sans text-caption leading-body font-normal text-danger", className)} {...props}>
+    <div role="alert" data-slot="field-error" className={cn("font-sans text-caption leading-line-caption font-normal text-danger", className)} {...props}>
       {content}
     </div>
   );

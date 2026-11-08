@@ -72,6 +72,7 @@ function libraryRecipe(item: string, variant: string): Recipe | undefined {
 
 /** The app's own theme color keys (--color-primary) while a selection is applied; see classEdit. */
 let appColors = new Set<string>();
+export const appThemeColors = () => appColors;
 export function setAppThemeColors(keys: Iterable<string>) {
 	appColors = new Set([...keys].filter((k) => k.startsWith('--color-')));
 }
@@ -79,7 +80,11 @@ export function setAppThemeColors(keys: Iterable<string>) {
 /** Only these element kinds (and library items) are restyled, when a selection names some; see plan/scope.ts. */
 let only: Set<string> | undefined;
 
-function recipe(tag: string, classes: string, attrs: string, surface: Surface, context: string[] = []): Recipe | undefined {
+/**
+ * What a raw element is: its element kind (brand/elements.json), and for a button or badge the library item and the
+ * variant its classes and attributes intend (primary, outline, ghost, destructive). Undefined for content and artwork.
+ */
+export function classify(tag: string, classes: string, attrs: string, surface: Surface, context: string[] = []): { kind: string; item?: string; variant?: string; explicit: boolean } | undefined {
 	const name = tag.split('.').pop()!;
 	const component = /^[A-Z]/.test(name) ? kebab(name).replace(/^-/, '') : '';
 	if (/^(svg|path|rect|circle|stop|canvas|img|figure|video)$/i.test(name) || CONTENT.test(`${component} ${classes}`)) return;
@@ -88,27 +93,32 @@ function recipe(tag: string, classes: string, attrs: string, surface: Surface, c
 	if (/type\s*=\s*["']?(color|range)\b/.test(attrs)) return;
 	const kind = /^(input|textarea|select)$/.test(el.tag) ? 'input' : /(?:^|\s)(badge|chip|pill|tag)(?:$|\s)/.test(split.heads) ? 'chip' : kindOf(el, surface);
 	if (!kind) return;
-	if (only && !only.has(kind)) return;
-	const def = elements()[surface][kind];
+	const item = /button/.test(kind) || el.tag === 'button' ? 'button' : kind === 'chip' ? 'badge' : undefined;
+	if (!item) return { kind, explicit: false };
+	const variant = attrs.match(/(?:data-)?variant\s*=\s*["'{]*([\w-]+)/)?.[1]
+		?? `${split.words} ${attrs.match(/data-status\s*=\s*["']([\w-]+)/)?.[1] ?? ''}`.match(/(?:^|[\s_-])(destructive|danger|success|secondary|outline|outlined|ghost|quiet|soft|link|pink|green|blue|purple|gray)(?=$|[\s_-])/)?.[1];
+	const aliases: Record<string, string> = { danger: 'destructive', quiet: 'ghost', outlined: 'outline', primary: 'default', solid: 'default', filled: 'default' };
+	// A utility-styled button with no fill of its own is a quiet (or outlined) one: the filled variant would give it
+	// the fill's white text on the page's white.
+	const utilities = /(^|\s)(p[xytrbl]?-[\d.[]|rounded(-[\w[]+)?(?=\s|$)|text-(xs|sm|base|lg|\d?xl)\b|font-(normal|medium|semibold|bold)\b)/.test(classes);
+	const ownFill = /(^|\s)!?bg-(?!transparent\b|none\b|inherit\b)/.test(classes);
+	const ownEdge = /(^|\s)!?border(?=\s|$|-(?!0\b|none\b|transparent\b))/.test(classes);
+	const site = brand().variants.site;
+	const unfilled = item === 'button' && utilities && !ownFill ? (ownEdge ? site.outlined : site.quiet ?? site.outlined) : undefined;
+	const selected = variant ? aliases[variant] ?? variant : item === 'button' ? unfilled ?? (kind === 'button-secondary' ? 'outline' : kind === 'header-action' ? 'soft' : 'default') : component === 'badge' ? 'default' : 'blue';
+	return { kind, item, variant: selected, explicit: !!variant };
+}
+
+function recipe(tag: string, classes: string, attrs: string, surface: Surface, context: string[] = []): Recipe | undefined {
+	const c = classify(tag, classes, attrs, surface, context);
+	if (!c) return;
+	if (only && !only.has(c.kind)) return;
+	const def = elements()[surface][c.kind];
 	if (!def) return;
 	const result: Recipe = { '': cssColors(def.css) };
 	for (const [state, css] of Object.entries(def.states ?? {})) result[canonical(state)] = cssColors(css);
 	for (const [state, css] of Object.entries(classRecipe(def.tailwind))) result[state] = { ...result[state], ...css };
-	const item = /button/.test(kind) || el.tag === 'button' ? 'button' : kind === 'chip' ? 'badge' : undefined;
-	if (item) {
-		const variant = attrs.match(/(?:data-)?variant\s*=\s*["'{]*([\w-]+)/)?.[1]
-			?? `${split.words} ${attrs.match(/data-status\s*=\s*["']([\w-]+)/)?.[1] ?? ''}`.match(/(?:^|[\s_-])(destructive|danger|success|secondary|outline|outlined|ghost|quiet|soft|link|pink|green|blue|purple|gray)(?=$|[\s_-])/)?.[1];
-		const aliases: Record<string, string> = { danger: 'destructive', quiet: 'ghost', outlined: 'outline', primary: 'default', solid: 'default', filled: 'default' };
-		// A utility-styled button with no fill of its own is a quiet (or outlined) one: the filled variant would give it
-		// the fill's white text on the page's white.
-		const utilities = /(^|\s)(p[xytrbl]?-[\d.[]|rounded(-[\w[]+)?(?=\s|$)|text-(xs|sm|base|lg|\d?xl)\b|font-(normal|medium|semibold|bold)\b)/.test(classes);
-		const ownFill = /(^|\s)!?bg-(?!transparent\b|none\b|inherit\b)/.test(classes);
-		const ownEdge = /(^|\s)!?border(?=\s|$|-(?!0\b|none\b|transparent\b))/.test(classes);
-		const site = brand().variants.site;
-		const unfilled = item === 'button' && utilities && !ownFill ? (ownEdge ? site.outlined : site.quiet ?? site.outlined) : undefined;
-		const selected = variant ? aliases[variant] ?? variant : item === 'button' ? unfilled ?? (kind === 'button-secondary' ? 'outline' : kind === 'header-action' ? 'soft' : 'default') : component === 'badge' ? 'default' : 'blue';
-		return libraryRecipe(item, selected) ?? (variant ? undefined : result);
-	}
+	if (c.item) return libraryRecipe(c.item, c.variant!) ?? (c.explicit ? undefined : result);
 	return result;
 }
 

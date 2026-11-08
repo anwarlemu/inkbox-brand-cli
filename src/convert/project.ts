@@ -11,6 +11,7 @@ import { type Palette, classPalette, nativePalette, sitePalette } from './palett
 import { convertClasses, convertScript, tailwindColor } from './script.js';
 import { convertSvgMark } from './svg.js';
 import { applyComponentColors } from './components.js';
+import { applyElementLooks } from './looks.js';
 
 // Applies component colors at their usage sites; other style scales retain their existing conversion.
 
@@ -55,14 +56,16 @@ export function convertProject(project: Project, files: string[], surface: Surfa
 		const counted = total();
 		let after = before;
 		// A selection of element kinds: only those elements' colors change; every other value stays the app's own.
-		if (cover === 'kinds') after = base.preserveColors ? applyComponentColors(rel, after, surface, stats, tailwind === 'theme', scope?.kinds(rel) ?? []) : before;
+		// Raw elements take their kind's full look and other classes the brand's steps (Tailwind 4 class lists).
+		const looks = tailwind === 'theme' && base.preserveColors && /\.(tsx|jsx)$/.test(rel);
+		if (cover === 'kinds') after = base.preserveColors ? applyComponentColors(rel, looks ? applyElementLooks(after, surface, stats, scope?.kinds(rel) ?? []) : after, surface, stats, tailwind === 'theme', scope?.kinds(rel) ?? []) : before;
 		else if (STYLES.test(rel)) after = convertCss(before, /\.(sass|styl)$/.test(rel) ? { ...pal, lines: true } : pal, stats);
 		else if (MARKUP.test(rel)) {
 			after = convertMarkup(before, pal, stats);
 			if (tailwind) after = after.replace(/(\sclass(?:Name)?\s*=\s*)(["'])([^"']*)\2/g, (all, head: string, q: string, cls: string) => `${head}${q}${convertClasses(cls, pal, stats, tailwind === 'theme')}${q}`);
 		} else if (SCRIPT.test(rel)) after = convertScript(before, tailwind ? classPalette(before, pal === base ? layoutPalette : pal, tailwindColor) : pal, stats, { tailwind, theme: brandTheme });
 		else if (!base.preserveColors && (NATIVE.test(rel) || ANDROID_XML.test(rel) || THEME_DATA.test(rel))) after = convertNative(before, pal, stats, brandTheme, rel.endsWith('.xml') || rel.endsWith('.xaml'));
-		if (base.preserveColors && cover === 'full') after = applyComponentColors(rel, after, surface, stats, tailwind === 'theme');
+		if (base.preserveColors && cover === 'full') after = applyComponentColors(rel, looks ? applyElementLooks(after, surface, stats) : after, surface, stats, tailwind === 'theme');
 		if (after !== before) {
 			written.push(rel);
 			perFile[rel] = total() - counted;

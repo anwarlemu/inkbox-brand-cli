@@ -325,7 +325,7 @@ const SIZE = /^(h|min-h|px|py|p|pl|pr|pt|pb|ps|pe|gap|size)-/;
 const CONTROLS = new Set(['button', 'badge', 'input', 'textarea', 'kbd']);
 
 const base = (cls: string) => cls.split(':').pop()!.replace(/^!/, '');
-function isLook(cls: string, control: boolean) {
+export function isLook(cls: string, control: boolean) {
 	const b = base(cls);
 	if (KEEP_TEXT.test(b)) return false;
 	// The brand's shape utilities (ds-cut-frame) and their parameters ([--ds-shape-fill:...], any state) draw the look.

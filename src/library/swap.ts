@@ -232,9 +232,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			const before = earlier.find((x) => x.file === c.file && x.name === c.name && x.action === 'style');
 			if (classes && before) return before;
 		}
-		// A selection names this item: a component built on its own cva (shadcn's button.tsx) takes the library's look in
-		// its variants and sizes, in its own file. (The whole app reaches it through the shadcn theme instead.)
-		if (scope && item && content && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && /\bcva\(/.test(current.get(c.file)!)) {
+		// A component built on its own cva (shadcn's button.tsx) takes the library's look in its variants and sizes, in its
+		// own file, for the whole app and for a selection that names its item.
+		if (item && content && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && /\bcva\(/.test(current.get(c.file)!)) {
 			const restyled = restyleCva(current.get(c.file)!, c.item, content, surface);
 			if (restyled) {
 				write(c.file, restyled);

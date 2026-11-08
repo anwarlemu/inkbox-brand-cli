@@ -270,8 +270,40 @@ export function adaptComponent(text: string, c: AppComponent, item: string, surf
 	if (adapter.prelude) out = out.slice(0, c.span.start) + `${adapter.prelude}\n\n` + out.slice(c.span.start);
 	const names = [`${adapter.exportName} as ${local}`, ...(adapter.extraImports ?? [])];
 	const imports = [`import { ${names.join(', ')} } from "${importFrom}";`, ...(adapter.prelude ? ['import type { ComponentProps as DsComponentProps } from "react";'] : [])];
-	return insertImports(out, imports);
+	return insertImports(dropOrphanStyles(text, out), imports);
 }
+
+/**
+ * The class maps the old body read (const styles = { primary: 'bg-indigo-600 ...' }) are unused once it renders the
+ * library's item; left in, they fail noUnusedLocals (the Vite template's default) and the swap is reverted. Removes a
+ * file-level, unexported constant that holds only class strings, when the swap left it unread.
+ */
+export function dropOrphanStyles(before: string, after: string) {
+	let ast: any;
+	try {
+		ast = parse(after, { sourceType: 'module', plugins: ['jsx', 'typescript'] });
+	} catch {
+		return after;
+	}
+	const strings = (n: any): boolean =>
+		n?.type === 'StringLiteral' ||
+		(n?.type === 'TemplateLiteral' && !n.expressions.length) ||
+		(n?.type === 'ArrayExpression' && n.elements.every(strings)) ||
+		(n?.type === 'ObjectExpression' && n.properties.every((p: any) => p.type === 'ObjectProperty' && !p.computed && strings(p.value))) ||
+		((n?.type === 'TSAsExpression' || n?.type === 'TSSatisfiesExpression') && strings(n.expression));
+	const uses = (text: string, name: string) => (text.match(new RegExp(`(?<![\\w$.])${name}(?![\\w$])`, 'g')) ?? []).length;
+	const drop: { start: number; end: number }[] = [];
+	for (const node of ast.program.body) {
+		if (node.type !== 'VariableDeclaration' || node.declarations.length !== 1) continue;
+		const [d] = node.declarations;
+		if (d.id?.type !== 'Identifier' || !strings(d.init)) continue;
+		if (uses(after, d.id.name) === 1 && uses(before, d.id.name) > 1) drop.push({ start: node.start, end: node.end });
+	}
+	let out = after;
+	for (const { start, end } of drop.reverse()) out = out.slice(0, start) + out.slice(end).replace(/^[ \t]*\n(?:[ \t]*\n)?/, '');
+	return out;
+}
+
 
 /** Adds import lines after the file's last import (after a "use client" directive when there is no import). */
 function insertImports(text: string, lines: string[]) {
@@ -363,7 +395,11 @@ export function restyleRoot(text: string, c: AppComponent, item: string, library
 	for (const lit of sorted) {
 		// A separator (" ") or an empty string between expressions is not a class list.
 		if (!lit.value.trim()) continue;
-		const kept = lit.value.split(/\s+/).filter((cls) => cls && !isLook(cls, control));
+		const library = libraryClassList.split(/\s+/).filter((cls) => cls && isLook(cls, control));
+		const present = lit.value.split(/\s+/).filter(Boolean);
+		// Already the library's look (a second run): leave the order as it is.
+		if (lit === first && library.every((cls) => present.includes(cls)) && present.every((cls) => !isLook(cls, control) || library.includes(cls))) continue;
+		const kept = present.filter((cls) => !isLook(cls, control));
 		// Only the library's look (and a control's size) is taken: its layout classes (flex, gap, padding on a card) would
 		// change how the component lays out its children.
 		const next = lit === first ? [...kept, ...libraryClassList.split(/\s+/).filter((cls) => cls && !kept.includes(cls) && isLook(cls, control))] : kept;

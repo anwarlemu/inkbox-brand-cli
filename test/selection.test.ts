@@ -3,14 +3,15 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { preToolUse } from '../src/hooks/handlers.js';
+import { preToolUse, stop } from '../src/hooks/handlers.js';
 import { changedFiles } from '../src/check/engine.js';
 import { scopeTheme, tokensOnly, unlayer } from '../src/install/styles.js';
 import { missingChakraPackages } from '../src/install/chakra.js';
 import { binCommand } from '../src/install/agents.js';
-import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
+import { adaptComponent, dropOrphanStyles, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
-import { componentColorEdits } from '../src/convert/components.js';
+import { applyComponentColors, componentColorEdits } from '../src/convert/components.js';
+import { newStats } from '../src/convert/css.js';
 import { loadItem, loadItemSync } from '../src/library/registry.js';
 import { brand } from '../src/lib/brand.js';
 import { coverage, itemFor, kindsForItems, resolveTargets } from '../src/plan/scope.js';
@@ -430,5 +431,96 @@ describe('bugs found applying to real apps', () => {
 		expect(out).toContain('.ds-label');
 		expect(out).toContain('--ds-color-x: #000');
 		expect(out).not.toMatch(/@layer base|touch-action|transition: none/);
+	});
+});
+
+describe('fixes shared with the sibling engine', () => {
+	it('before apply, check --changed and the stop hook hold only the values a change adds', () => {
+		const page = 'export default function Page() {\n  return <main className="bg-gray-50 text-gray-900">Acme</main>;\n}\n';
+		const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.2.0', tailwindcss: '4.1.0' } }), 'app/page.tsx': page });
+		try {
+			execFileSync('git', ['add', '-A'], { cwd: dir });
+			execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@acme.test', 'commit', '-qm', 'app'], { cwd: dir });
+			writeFileSync(join(dir, 'app/page.tsx'), page.replace('Acme', 'Acme <span className="text-fg">ships</span>'));
+			expect(cli(dir, 'check', '--changed').stdout).toMatch(/existing styles stay its own/);
+			expect(stop(dir, { session_id: 's1' } as never)).toEqual({});
+			writeFileSync(join(dir, 'app/page.tsx'), page.replace('Acme', 'Acme <span className="text-red-500">ships</span>'));
+			const out = cli(dir, 'check', '--changed', '--json');
+			expect(out.status).toBe(1);
+			expect(JSON.parse(out.stdout).findings.map((f: { snippet: string }) => f.snippet)).toEqual([expect.stringContaining('text-red-500')]);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('the shadcn theme on apply', () => {
+	const css = '@import "tailwindcss";\n\n@theme inline {\n  --color-background: var(--background);\n  --color-primary: var(--primary);\n  --color-border: var(--border);\n  --radius-lg: var(--radius);\n}\n\n:root {\n  --background: oklch(1 0 0);\n  --primary: oklch(0.2 0 0);\n  --border: oklch(0.9 0 0);\n  --radius: 0.625rem;\n}\n';
+	const files = { 'package.json': JSON.stringify({ dependencies: DEPS }), 'components.json': JSON.stringify({ tsx: true, tailwind: { css: 'app/globals.css' }, aliases: { components: '@/components', ui: '@/components/ui', utils: '@/lib/utils', lib: '@/lib', hooks: '@/hooks' } }), 'tsconfig.json': JSON.stringify({ compilerOptions: { paths: { '@/*': ['./*'] } } }), 'app/globals.css': css, 'app/page.tsx': 'export default function Page() { return <main className="p-4">Acme</main>; }\n' };
+	it('the whole app points its roles and radii at the brand; init and a selection leave them', () => {
+		const applied = project(files), initialized = project(files), selected = project(files);
+		try {
+			cli(applied, 'apply');
+			const out = read(applied, 'app/globals.css');
+			expect(out).toContain('--color-background: var(--ds-color-bg-page);');
+			expect(out).toContain('--color-border: var(--ds-color-border-default);');
+			expect(out).toMatch(/--radius-lg: var\(--ds-radius-control\);/);
+			cli(initialized, 'init');
+			expect(read(initialized, 'app/globals.css')).not.toContain('--color-background: var(--ds-color-bg-page)');
+			cli(selected, 'apply', 'button');
+			expect(read(selected, 'app/globals.css')).not.toContain('--color-background: var(--ds-color-bg-page)');
+		} finally {
+			for (const d of [applied, initialized, selected]) rmSync(d, { recursive: true });
+		}
+	});
+});
+
+describe('more fixes shared with the sibling engine', () => {
+	it('a stylesheet button on a light ground takes the outline colors, so its dark label stays readable', () => {
+		const css = '.btn { border: 1px solid #d1d5db; background: #fff; color: #111827; }\n.btn-primary { background: #4f46e5; color: #fff; }\n';
+		const out = applyComponentColors('style.css', css, 'site', newStats(), false);
+		expect(out).not.toMatch(/\.btn \{[^}]*action-primary\)/);
+		expect(out).toContain('.btn-primary { background: var(--ds-color-action-primary); color: var(--ds-color-action-primary-fg); }');
+	});
+	it('every registry item lists only installable npm package names', () => {
+		const items = JSON.parse(readFileSync(join(ROOT, 'apps/www/public/r/index.json'), 'utf8')).items as { name: string; packages?: string[] }[];
+		for (const item of items) for (const pkg of item.packages ?? []) expect(pkg, item.name).toMatch(/^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/);
+	});
+});
+
+describe('reruns and class maps (shared with the sibling engine)', () => {
+	it('a swap drops a file-level class map only the old body read, and keeps one still read elsewhere', () => {
+		const before = 'const styles = { primary: "bg-indigo-600 text-white", ghost: "text-indigo-600" };\nexport function B({ variant }: { variant: "primary" }) { return <button className={styles[variant]} />; }\n';
+		const after = 'const styles = { primary: "bg-indigo-600 text-white", ghost: "text-indigo-600" };\nexport function B({ variant }: { variant: "primary" }) { return <DsButton variant="default" />; }\n';
+		expect(dropOrphanStyles(before, after)).not.toContain('const styles');
+		const still = `${after}export const other = styles.ghost;\n`;
+		expect(dropOrphanStyles(`${before}export const other = styles.ghost;\n`, still)).toContain('const styles');
+	});
+	it('a second root restyle keeps the class order the first one wrote', () => {
+		const text = 'export function StatCard({ label }: { label: string }) { return <div className="rounded-xl border bg-white p-6">{label}</div>; }';
+		const [c] = componentsIn('stat-card.tsx', text);
+		const once = restyleRoot(text, c, 'card', 'rounded-dialog border border-line-field bg-surface')!;
+		const [again] = componentsIn('stat-card.tsx', once);
+		expect(restyleRoot(once, again, 'card', 'rounded-dialog border border-line-field bg-surface')).toBeUndefined();
+	});
+});
+
+describe('the provider, set up once (shared with the sibling engine)', () => {
+	it('a second add wraps nothing again, warns of nothing, and keeps a provider the app edited', () => {
+		const layout = "import './globals.css';\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  );\n}\n";
+		const dir = project({ 'package.json': JSON.stringify({ dependencies: DEPS }), 'tsconfig.json': JSON.stringify({ compilerOptions: { paths: { '@/*': ['./*'] } } }), 'app/globals.css': '@import "tailwindcss";', 'app/layout.tsx': layout });
+		try {
+			expect(cli(dir, 'add', 'button').stdout).not.toMatch(/Wrap the application root/);
+			const wrapped = read(dir, 'app/layout.tsx');
+			expect(wrapped.match(/ChakraProvider>/g)).toHaveLength(2);
+			expect(cli(dir, 'add', 'badge').stdout).not.toMatch(/Wrap the application root/);
+			expect(read(dir, 'app/layout.tsx')).toBe(wrapped);
+			const provider = read(dir, 'components/ui/provider.tsx');
+			writeFileSync(join(dir, 'components/ui/provider.tsx'), `${provider}\n// Acme theme tweaks\n`);
+			cli(dir, 'add', 'card');
+			expect(read(dir, 'components/ui/provider.tsx')).toContain('Acme theme tweaks');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
 	});
 });

@@ -158,8 +158,19 @@ function classEdit(value: string, offset: number, def: Recipe, theme: boolean): 
 	return { start: offset, end: offset + value.length, text: `${variants}${m[1]}${prefix}-${theme ? themeClass(token) ?? `[${target}]` : `[${target}]`}${modifier}${m[4] ?? ''}` };
 }
 
+/** Whether a color reads as a light ground (white, near-white): a button drawn on one is the outline key, not the filled one. */
+const lightGround = (value: string) => {
+	const rgba = parseColor(value.trim().replace(/\s*!important$/i, ''));
+	if (!rgba || rgba[3] < 0.5) return false;
+	const [r, g, b] = rgba.map((c, i) => (i < 3 ? c / 255 : c));
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.85;
+};
+
 function stylesheetEdits(css: string, offset: number, surface: Surface, edits: ColorEdit[]) {
-	for (const d of declarations(css)) {
+	const all = declarations(css);
+	// A rule with a light background and no variant in its name is a secondary key: it takes the outline's colors.
+	const light = new Set(all.filter((d) => /^background(-color)?$/.test(d.prop) && lightGround(d.value)).map((d) => d.selector));
+	for (const d of all) {
 		if (d.fontFace || !d.selector || d.prop.startsWith('--') || CONTENT.test(d.selector)) continue;
 		const mapped = d.selector.split(',').map((selector) => {
 			// Leave pseudo-elements and ambiguous functional selectors for review.
@@ -167,7 +178,8 @@ function stylesheetEdits(css: string, offset: number, surface: Surface, edits: C
 			const last = selector.trim().split(/\s*[>+~]\s*|\s+/).pop()!;
 			const tag = last.match(/^[a-z][\w-]*/i)?.[0] ?? 'div';
 			const classes = [...last.matchAll(/\.([\w-]+)/g)].map((m) => m[1]).join(' ');
-			const def = recipe(tag, classes, last.match(/\[[^\]]*\]/g)?.join(' ') ?? '', surface);
+			const attrs = last.match(/\[[^\]]*\]/g)?.join(' ') ?? '';
+			const def = recipe(tag, classes, light.has(d.selector) && !/variant/.test(attrs) ? `${attrs} data-variant="outline"` : attrs, surface);
 			if (!def) return;
 			const states = [...last.matchAll(/:(hover|active|focus-visible|focus|disabled|checked)\b|\[(?:aria|data)-[^\]]+\]|\[disabled\]/g)].map((m) => m[0]).filter((s) => !/^\[data-(variant|status|slot)=/.test(s));
 			if (states.length > 1) return;

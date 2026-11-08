@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { changedFiles, checkable, formatFinding, newFindings, runCheck, scopedCheckText } from '../check/engine.js';
+import { changedFiles, checkable, formatFinding, newFindings, onlyNewFindings, runCheck, scopedCheckText } from '../check/engine.js';
 import { describeScope } from '../plan/scope.js';
 import { installPreCommit } from '../install/agents.js';
 import { Writer } from '../install/files.js';
@@ -100,7 +100,7 @@ export function stop(root: string, input: HookInput): HookResult {
 	const s = session(root, sessionIdOf(input));
 	const changed = changedFiles(root).filter((f) => checkable(f) && existsSync(join(root, f)) && statSync(join(root, f)).mtimeMs >= s.entry.startedAt);
 	if (changed.length) {
-		const result = runCheck(root, { paths: changed });
+		const result = runCheck(root, { paths: changed, onlyNew: onlyNewFindings(root) });
 		const own = result.findings.filter((f) => f.rule !== 'override-approval');
 		if (own.length) {
 			s.entry.stopBlocks++;

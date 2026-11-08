@@ -70,8 +70,9 @@ function importsOf(name: string, paths: string[]) {
 	const internal = new Set<string>();
 	const npm = new Set<string>();
 	for (const p of paths) {
-		const text = readFileSync(join(REG, p), 'utf8');
-		for (const m of text.matchAll(/(?:from|import)\s+["']([^"']+)["']/g)) {
+		// Comments out first: prose such as `takes over from "Screening"` is not an import.
+		const text = readFileSync(join(REG, p), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+		for (const m of text.matchAll(/(?:^|[;}\s])(?:from|import)\s+["']([^"']+)["']/g)) {
 			const spec = m[1];
 			if (spec.startsWith('@/')) {
 				const dep = byPath.get(spec.slice(2));
@@ -79,7 +80,8 @@ function importsOf(name: string, paths: string[]) {
 				else if (dep !== name) internal.add(dep);
 			} else if (!spec.startsWith('.')) {
 				const pkg = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
-				if (!IGNORED.has(pkg)) npm.add(pkg);
+				if (!/^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(pkg)) problems.push(`${name}: imports ${spec}, which is not a valid npm package name`);
+				else if (!IGNORED.has(pkg)) npm.add(pkg);
 			}
 		}
 	}

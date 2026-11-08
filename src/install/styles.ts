@@ -55,6 +55,23 @@ export function tokensOnly(css: string): string {
 	return `${blocks.filter(keep).map((b) => b.trim()).join('\n\n')}\n`;
 }
 
+// shadcn's theme roles and the brand theme names they take (build/theme.css), for restyling an app built on shadcn.
+const SHADCN_ROLES: [string, string][] = [
+	['background', 'page'], ['foreground', 'fg'], ['card', 'surface'], ['card-foreground', 'fg'], ['popover', 'surface'], ['popover-foreground', 'fg'],
+	['primary-foreground', 'on-primary'], ['secondary', 'subtle'], ['secondary-foreground', 'fg'], ['muted', 'subtle'], ['muted-foreground', 'fg-muted'],
+	['accent', 'subtle'], ['accent-foreground', 'fg'], ['destructive', 'danger'], ['border', 'line'], ['input', 'line-field'], ['ring', 'line-ring'],
+];
+const SHADCN_RADII: [string, string][] = [['md', 'control'], ['lg', 'control'], ['xl', 'panel'], ['2xl', 'panel'], ['3xl', 'dialog'], ['4xl', 'dialog']];
+
+/** The shadcn theme variables mapped to the brand's values, read from the brand theme's own aliases. */
+export function shadcnBridge(aliases: string) {
+	const value = (name: string) => aliases.match(new RegExp(`(?:^|\\n)\\s*${name}:\\s*([^;]+);`))?.[1].trim();
+	const out: [string, string][] = [];
+	for (const [role, theme] of SHADCN_ROLES) { const v = value(`--color-${theme}`); if (v) out.push([`--color-${role}`, v]); }
+	for (const [size, theme] of SHADCN_RADII) { const v = value(`--radius-${theme}`); if (v) out.push([`--radius-${size}`, v]); }
+	return out;
+}
+
 /** The stylesheet with every `@layer base { ... }` replaced by its rules. */
 export function unlayer(css: string): string {
 	let out = '';
@@ -129,7 +146,7 @@ function tailwindDefaults(root: string): Map<string, string> {
 	}
 }
 
-export function installStyles(w: Writer, project: Project, surface: Surface, styleText: string, { scoped = false } = {}): StyleInstall {
+export function installStyles(w: Writer, project: Project, surface: Surface, styleText: string, { scoped = false, restyle = false } = {}): StyleInstall {
 	const bin = brand().bin;
 	const notes: string[] = [];
 	const main = project.mainStylesheet;
@@ -190,6 +207,12 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 			if (previous >= 0 && finish >= previous) after = after.slice(0, previous).trimEnd() + after.slice(finish + end.length);
 			const aliases = readFileSync(pkgPath('build', 'theme.css'), 'utf8').match(/@theme inline\s*\{([^}]+)\}/)?.[1] ?? '';
 			const overrides = aliases.split('\n').filter(line => { const key = line.match(/(--[\w.-]+):/)?.[1]; return key && after.includes(`${key}:`); }).map(line => { const key = line.match(/(--[\w.-]+):/)![1]; return scopedKeys.has(key) ? line.replace(/:.*$/, `: ${scopedKeys.get(key)};`) : line; });
+			// Restyling a whole shadcn app: its theme's roles point at the brand's, so every shadcn component takes the
+			// brand. A selection leaves them: they would restyle every shadcn component outside it.
+			if (restyle && !scoped) {
+				const own = new Set(overrides.map(line => line.match(/(--[\w.-]+):/)?.[1]));
+				for (const [key, value] of shadcnBridge(aliases)) if (!own.has(key) && new RegExp(`${key}\\s*:`).test(after)) overrides.push(`\t${key}: ${value};`);
+			}
 			if (overrides.length) after = upsertBlock(after, `@theme inline {\n${overrides.join('\n')}\n}`, start, end);
 		}
 		if (w.write(main, after)) imported = main;

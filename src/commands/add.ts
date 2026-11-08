@@ -79,7 +79,7 @@ export async function add(names: string[], opts: AddOptions) {
 		else { w.write(file.path, file.content); written.push(file.path); }
 	}
 	const conflicts = [...files.values()].filter(f => f.action === 'conflict').map(f => f.path);
-	if (conflicts.length) warnings.push(`${conflicts.length} existing files differ and were kept. Review add --diff before using --overwrite.`);
+	if (conflicts.length) warnings.push(`${conflicts.length} existing ${conflicts.length === 1 ? 'file differs and was' : 'files differ and were'} kept: ${conflicts.join(', ')}. Review add --diff before using --overwrite.`);
 	const source = styledFiles(root);
 	if (chakraNeeded) {
 		const setup = installChakraProvider(w, project);
@@ -101,7 +101,7 @@ export async function add(names: string[], opts: AddOptions) {
 		w.write('.ds/installed.json', `${JSON.stringify(installed, null, 2)}\n`);
 	}
 	const filter = typeof opts.diff === 'string' ? opts.diff : typeof opts.view === 'string' ? opts.view : undefined;
-	const preview = [...files.values()].filter(file => !filter || file.path === filter || file.path.endsWith(`/${filter}`)).map(file => ({ path: file.path, action: file.action, ...(opts.view ? { content: file.content } : {}), ...(opts.diff ? { diff: createTwoFilesPatch(file.path, file.path, file.before ?? '', file.content) } : {}) }));
+	const preview = [...files.values()].filter(file => !filter || file.path === filter || file.path.endsWith(`/${filter}`)).map(file => ({ path: file.path, action: file.action, ...(opts.view ? { content: file.content } : {}), ...(opts.diff && file.action !== 'unchanged' ? { diff: createTwoFilesPatch(file.path, file.path, file.before ?? '', file.content) } : {}) }));
 	if (filter && !preview.length) throw new Error(`No planned file matches ${filter}. Run add --dry-run to list paths.`);
 	if (opts.json) return console.log(JSON.stringify({ schemaVersion: 1, ok: true, dryRun: readonly, items: items.map(i => i.name), written, kept, conflicts, changes: w.changes, files: preview, packages: [...npm], packagesInstalled, warnings }, null, 2));
 	console.log([`${readonly ? 'Planned' : 'Added'} ${items.map(i => i.name).join(', ')}.`, ...preview.map(file => `${file.action}: ${file.path}${'content' in file ? `\n${file.content}` : ''}${'diff' in file ? `\n${file.diff}` : ''}`), ...warnings].join('\n'));

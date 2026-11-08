@@ -1,4 +1,5 @@
 import { asJavaScript, componentConfig, componentFile, resolveAlias, tsConfig } from '../install/config.js';
+import { providerName } from '../install/chakra.js';
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -123,8 +124,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	if (!index.length) return undefined;
 	const kindsOf = (item: string) => index.find((i) => i.name === item)?.kinds ?? [];
 	const overlayFiles = styledFiles(root).filter((f) => /\.(tsx|jsx)$/.test(f) && !LIBRARY_DIR.test(f));
-	const files = overlayFiles.filter((f) => !ROUTE_FILE.test(f));
 	const texts = new Map(overlayFiles.map((f) => [f, readFileSync(join(root, f), 'utf8')]));
+	// The Chakra provider this CLI writes is setup, not one of the app's components.
+	const files = overlayFiles.filter((f) => !ROUTE_FILE.test(f) && !texts.get(f)!.includes(`export function ${providerName()}(`));
 
 	// Find and identify every component, and how the app uses each.
 	const found = files.flatMap((f) => componentsIn(f, texts.get(f)!));

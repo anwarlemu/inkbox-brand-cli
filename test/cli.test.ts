@@ -429,7 +429,9 @@ export function Button({ variant = "primary", size, loading, className, children
 		const out = adaptComponent(BUTTON, button, 'button', 'site', '@/components/ds/button', button.values)!;
 		expect(out).toContain('import { Button as DsButton } from "@/components/ds/button";');
 		expect(out).toContain('"primary": "default"');
-		expect(out).toContain('"danger": "outline"');
+		// The library's button has a destructive variant: danger buttons stay red and filled.
+		expect(out).toContain('"danger": "destructive"');
+		expect(out).not.toContain('border-danger text-danger');
 		expect(out).toContain('"small": "sm"');
 		expect(out).toContain('type ButtonProps');
 		expect(out).toContain('disabled={!!rest.disabled || !!loading}');

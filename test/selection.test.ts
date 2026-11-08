@@ -347,6 +347,26 @@ describe('bugs found applying to real apps', () => {
 		const text = ['Card', 'CardHeader', 'CardTitle', 'CardAction', 'CardFooter'].map((n) => `export function ${n}({ className, ...props }: React.ComponentProps<"div">) { return <div data-slot="x" className={cn("rounded-xl bg-card", className)} {...props} />; }`).join('\n');
 		expect(componentsIn('components/ui/card.tsx', text).map((c) => [c.name, identify(c, 'site').item])).toEqual([['Card', 'card'], ['CardHeader', undefined], ['CardTitle', undefined], ['CardAction', undefined], ['CardFooter', undefined]]);
 	});
+	it('swaps a JavaScript component without an import alias, keeping its default variant', () => {
+		const dir = project({
+			'package.json': JSON.stringify({ dependencies: { ...DEPS, next: undefined, vite: '7.0.0' } }),
+			'index.html': '<!doctype html><html><head></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>',
+			'src/index.css': '@import "tailwindcss";\n',
+			'src/main.jsx': 'import "./index.css";\nimport { PrimaryButton } from "./components/primary-button";\nexport const App = () => <PrimaryButton variant="danger">Delete</PrimaryButton>;\n',
+			'src/components/primary-button.jsx': 'export function PrimaryButton({ variant = "primary", className = "", children, ...props }) {\n  const tone = variant === "danger" ? "bg-[#dc2626] text-white" : "bg-[#4f46e5] text-white";\n  return <button className={`rounded-md px-4 ${tone} ${className}`} {...props}>{children}</button>;\n}\n',
+		});
+		try {
+			expect(cli(dir, 'apply', 'button').status).toBe(0);
+			const out = read(dir, 'src/components/primary-button.jsx');
+			expect(out).toContain('from "./ds/button"');
+			expect(out).toMatch(/"primary": "default"/);
+			expect(out).toMatch(/"danger": "destructive"/);
+			expect(out).not.toMatch(/: Record<|as DsComponentProps|import type/);
+			expect(read(dir, 'src/components/ds/button.jsx')).toContain('from "../../lib/');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
 	it('a root restyle leaves the separators between class expressions alone', () => {
 		const text = 'export function Tag({ className }: { className?: string }) { return <span className={["rounded-full bg-green-100", className].join(" ")}>x</span>; }';
 		const [tag] = componentsIn('Tag.tsx', text);

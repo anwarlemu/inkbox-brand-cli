@@ -1,4 +1,4 @@
-import { configureRegistry } from '../install/config.js';
+import { componentConfig, configureRegistry, prepareTransforms } from '../install/config.js';
 import { chakraPackages, installChakraProvider, missingChakraPackages } from '../install/chakra.js';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
@@ -106,8 +106,10 @@ export function selfInstall(root: string, opts: RunOptions, handoff = true) {
 	process.exit(handOff.status ?? 1);
 }
 
-function setUp(root: string, opts: RunOptions, previous?: State, selection?: Selection) {
+async function setUp(root: string, opts: RunOptions, previous?: State, selection?: Selection) {
 	const project = detectProject(root);
+	// A JavaScript app's library files and adapters are written without types.
+	if (!project.typescript) await prepareTransforms(componentConfig(root, project));
 	const files = styledFiles(root);
 	// Nothing to restyle (the wrong folder): stop before writing anything.
 	if (!files.length) throw new Error(`No app to restyle in ${root}: no pages, stylesheets or components were found. Run it from the app's folder or pass --cwd <app> (in a monorepo, the app's folder, such as --cwd apps/web). To start a new app: ${cli()} create --template next --name my-app.`);

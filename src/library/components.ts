@@ -178,10 +178,15 @@ export function componentsIn(file: string, text: string): AppComponent[] {
 		const param = fn.params?.[0];
 		const params: AppComponent['params'] = { names: [] };
 		let typeNode: Node | undefined;
+		// A prop's default (variant = "primary") is one of its values even when no type or use names it.
+		const defaults: Record<string, string[]> = {};
 		if (param?.type === 'ObjectPattern') {
 			for (const p of param.properties) {
 				if (p.type === 'RestElement') params.rest = p.argument?.name;
-				else if (p.key?.name) params.names.push(p.key.name);
+				else if (p.key?.name) {
+					params.names.push(p.key.name);
+					if (p.value?.type === 'AssignmentPattern' && p.value.right?.type === 'StringLiteral') defaults[p.key.name] = [p.value.right.value];
+				}
 			}
 			typeNode = param.typeAnnotation?.typeAnnotation;
 		} else if (param?.type === 'Identifier') {
@@ -195,8 +200,8 @@ export function componentsIn(file: string, text: string): AppComponent[] {
 		const props = [...new Set([...params.names, ...members.names])];
 		const values: Record<string, string[]> = {};
 		for (const p of props) {
-			const v = members.values[p] ?? cva[p];
-			if (v?.length && VARIANT_PROPS.has(p)) values[p] = v;
+			const v = [...new Set([...(members.values[p] ?? cva[p] ?? []), ...(defaults[p] ?? [])])];
+			if (v.length && VARIANT_PROPS.has(p)) values[p] = v;
 		}
 		for (const [k, v] of Object.entries(cva)) if (VARIANT_PROPS.has(k) && !values[k]) values[k] = v;
 		const el = firstElement(jsx);

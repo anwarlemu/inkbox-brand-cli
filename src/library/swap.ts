@@ -1,4 +1,4 @@
-import { componentConfig, componentFile, resolveAlias, tsConfig } from '../install/config.js';
+import { asJavaScript, componentConfig, componentFile, resolveAlias, tsConfig } from '../install/config.js';
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -35,7 +35,7 @@ function readJson(path: string) {
 
 /** Where the library's interface components go (components/ds, apart from the app's own), and the aliases they use. */
 export function componentLayout(project: Project): { uiDir: string; aliases: Aliases } | undefined {
-	if (!project.hasAlias) return undefined;
+	// Without an import alias the library's files import each other by relative paths (componentFile maps them).
 	const config = componentConfig(project.root, project);
 	const aliases = { ...config.aliases, ui: `${config.aliases.components}/ds`, utils: `${config.aliases.lib}/${brand().bin}-utils` };
 	return { uiDir: relative(project.root, resolveAlias(project.root, aliases.ui)), aliases };
@@ -144,7 +144,14 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	});
 
 	const result: SwapResult = { swapped: [], styled: [], reverted: [], added: [], packages: [], checked: false, decisions: [], uses: [] };
-	const canAdapt = !!layout && project.typescript;
+	const canAdapt = !!layout;
+	// The adapter's import of the library component: the alias, or a path relative to the component's file.
+	const importOf = (file: string, item: string) => {
+		const spec = `${layout!.aliases.ui}/${item}`;
+		if (!spec.startsWith('.')) return spec;
+		const to = relative(dirname(join(root, file)), join(root, layout!.uiDir, item)).split('\\').join('/');
+		return to.startsWith('.') ? to : `./${to}`;
+	};
 	const backups = new Map<string, string | undefined>();
 	const current = new Map(texts);
 	const write = (rel: string, content: string) => {
@@ -192,7 +199,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 		const values = { ...c.values };
 		for (const [k, v] of Object.entries(c.useValues)) values[k] = [...new Set([...(values[k] ?? []), ...v])];
 		if (canAdapt && item && c.confidence >= SWAP_FLOOR && c.exported && adaptable(c.item)) {
-			const adapted = adaptComponent(current.get(c.file)!, c, c.item, surface, `${layout!.aliases.ui}/${c.item}`, values);
+			let adapted = adaptComponent(current.get(c.file)!, c, c.item, surface, importOf(c.file, c.item), values);
+			// A JavaScript app gets the adapter without its types.
+			if (adapted && /\.jsx?$/.test(c.file)) adapted = asJavaScript(adapted, c.file);
 			if (adapted) {
 				install(item);
 				write(c.file, adapted);

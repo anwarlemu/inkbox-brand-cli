@@ -2,6 +2,7 @@ import { parse } from '@babel/parser';
 import type { Surface } from '../project/surface.js';
 import type { AppComponent } from './components.js';
 import { brand } from '../lib/brand.js';
+import { loadItemSync } from './registry.js';
 
 // Two ways an identified component takes the library's look.
 //
@@ -90,10 +91,13 @@ function button({ c, surface, local, values }: Ctx): Adapter | undefined {
 	const variants = [...(values.variant ?? []), 'default'];
 	const sizes = [...(values.size ?? []), 'default'];
 	const key = c.name.toUpperCase();
+	// A library button with a destructive variant takes danger values as it; otherwise the outline in the danger color.
+	const destructive = /\bdestructive\s*:/.test(loadItemSync('button')?.files?.[0]?.content ?? '');
+	const table: [RegExp, string][] = destructive ? [[DANGER, 'destructive'], ...BUTTON_VARIANTS(surface)] : BUTTON_VARIANTS(surface);
 	const prelude = [
-		mapLiteral(`DS_${key}_VARIANT`, variants, BUTTON_VARIANTS(surface), variantsFor(surface).outlined),
+		mapLiteral(`DS_${key}_VARIANT`, variants, table, variantsFor(surface).outlined),
 		mapLiteral(`DS_${key}_SIZE`, sizes, SIZES(), defaultSize()),
-		...(a.get('variant') ? [`const DS_${key}_DANGER = new Set<string>(${JSON.stringify([...new Set(variants)].filter((v) => DANGER.test(v)))});`] : []),
+		...(a.get('variant') && !destructive ? [`const DS_${key}_DANGER = new Set<string>(${JSON.stringify([...new Set(variants)].filter((v) => DANGER.test(v)))});`] : []),
 	].join('\n');
 	const v = a.get('variant');
 	const s = a.get('size');
@@ -101,7 +105,7 @@ function button({ c, surface, local, values }: Ctx): Adapter | undefined {
 	const left = a.get('leftIcon') ?? a.get('startIcon') ?? a.get('icon');
 	const right = a.get('rightIcon') ?? a.get('endIcon');
 	const full = a.get('fullWidth') ?? a.get('block');
-	const classes = [a.get('className'), v ? `DS_${key}_DANGER.has(String(${v})) ? "border-danger text-danger" : undefined` : undefined, full ? `${full} ? "w-full" : undefined` : undefined].filter(Boolean);
+	const classes = [a.get('className'), v && !destructive ? `DS_${key}_DANGER.has(String(${v})) ? "border-danger text-danger" : undefined` : undefined, full ? `${full} ? "w-full" : undefined` : undefined].filter(Boolean);
 	// Disabled while loading, and whenever the app passes disabled (destructured, or still inside the rest).
 	const passedDisabled = a.get('disabled') ?? (c.params.rest ? `${c.params.rest}.disabled` : 'false');
 	const disabled = loading ? `disabled={!!${passedDisabled} || !!${loading}}` : '';

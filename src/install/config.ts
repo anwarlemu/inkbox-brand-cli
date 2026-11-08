@@ -83,6 +83,12 @@ export async function prepareTransforms(config: ComponentConfig) {
  toJavaScript = (content, path) => transformSync(content, { filename: path, configFile: false, babelrc: false, plugins: [[stripTypes, { isTSX: path.endsWith('.tsx'), allowDeclareFields: true }]] })?.code ?? content;
 }
 
+/** A file's TypeScript and JSX as plain JavaScript and JSX (after prepareTransforms), for an app without TypeScript. */
+export function asJavaScript(content: string, path: string) {
+ if (!toJavaScript) throw new Error('Prepare JavaScript transforms before writing JavaScript components.');
+ return toJavaScript(content, path.replace(/\.jsx?$/, '.tsx'));
+}
+
 export function componentFile(root: string, file: { path: string; content: string }, config: ComponentConfig, outputPath?: string) {
 	if (!/^(components|lib|hooks)\//.test(file.path) || file.path.split(/[\\/]/).includes('..')) throw new Error(`Invalid component path: ${file.path}`);
 	const spec = mapImport(`@/${file.path.replace(/\.[jt]sx?$/, '')}`, config);

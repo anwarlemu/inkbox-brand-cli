@@ -1,5 +1,6 @@
 import { componentConfig, configureRegistry, prepareTransforms } from '../install/config.js';
 import { chakraPackages, installChakraProvider, missingChakraPackages } from '../install/chakra.js';
+import { baseLayerFor } from '../install/base.js';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -40,6 +41,8 @@ export type RunOptions = {
 	withShared?: boolean;
 	/** `apply` with no targets: a selection applied before widens to the whole app. */
 	widen?: boolean;
+	/** `create`: a new app, branded whole (its base layer included). */
+	fresh?: boolean;
 };
 
 /** What one run applies (`work`, its parts) and what the app has applied once it is done (`recorded`; undefined is the whole app). */
@@ -163,7 +166,9 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 	// Native apps have no stylesheet: their colors were converted in their own code; fonts are added as app fonts.
 	let styles: ReturnType<typeof installStyles> = { stylesDir: '', brandCss: '', imported: undefined, linked: [], fonts: 'app fonts', notes: [`${brand().fonts.native}; sizes, radii and spacing are in \`tokens\`.`] };
 	// A selection installs the tokens, theme and fonts its components need, not the base layer that restyles every page.
-	if (project.framework !== 'native') step(recorded ? 'shared setup: brand tokens, theme and fonts (no base layer while a selection is applied)' : 'shared setup: brand stylesheet, theme and fonts', () => (styles = installStyles(w, project, mixed ? 'site' : surface, styleText, { scoped: !!recorded, restyle: true })));
+	// An app set up whole before (create, or init with no pages) keeps its base layer under a selection.
+	const base = baseLayerFor(project, 'apply', { whole: !recorded });
+	if (project.framework !== 'native') step(!base.full ? 'shared setup: brand tokens, theme and fonts (no base layer while a selection is applied)' : 'shared setup: brand stylesheet, theme and fonts', () => (styles = installStyles(w, project, mixed ? 'site' : surface, styleText, { scoped: !base.full, restyle: true })));
 	// Every element the stylesheets name gets the brand's styling at once; the tasks refine from there.
 	let layer: ReturnType<typeof installElementLayer> = { count: 0, files: [], styled: [] };
 	if (project.framework !== 'native') step('element styles for the classes this stylesheet names (ds:elements block)', () => (layer = installElementLayer(w, styledFiles(root), (rel) => (mixed ? surfaceOf(rel, found) : surface), scoped)));

@@ -37,7 +37,7 @@ export async function create(opts: { template?: string; name?: string; surface?:
 			// The upstream installer owns shared workspace routing and package-manager selection.
 			const registry = `${brand().registryUrl}/r/${opts.surface === 'product' && hasProduct() ? 'shadcn-product' : 'shadcn'}`;
 			shadcn(['add', `${registry}/theme.json`, ...components.map(name => `${registry}/${name}.json`), '--yes', '--overwrite'], process.cwd(), opts.json);
-			init({ surface: opts.surface, install: false, json: opts.json });
-		} else await add(components, { surface: opts.surface, install: false, overwrite: true, json: opts.json });
+			init({ surface: opts.surface, install: false, json: opts.json, fresh: true });
+		} else await add(components, { surface: opts.surface, install: false, overwrite: true, json: opts.json, fresh: true });
 	} finally { process.chdir(previous); }
 }

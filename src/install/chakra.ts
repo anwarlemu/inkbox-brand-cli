@@ -23,9 +23,16 @@ export function missingChakraPackages(root: string, next = false) {
 }
 
 /** The provider file: Chakra without its global reset, and in Next, an Emotion registry so server and client agree. */
-function providerSource(tsx: boolean, next: boolean) {
+/**
+ * Chakra gives the library's components behavior only: its reset and its global styles (the page's color, background
+ * and line height, placeholder and selection colors, font features) would restyle the app's own pages. Earlier
+ * versions wrote the default system (`legacy`), which is upgraded when it is found unedited.
+ */
+const systemLine = (legacy: boolean) => (legacy ? 'const brandSystem = createSystem(defaultConfig, { preflight: false });' : '// Behavior only: no reset and no global styles, so the app\'s own pages keep their look.\nconst brandSystem = createSystem({ ...defaultConfig, globalCss: {} }, { preflight: false });');
+
+function providerSource(tsx: boolean, next: boolean, legacy = false) {
 	const t = (s: string) => (tsx ? s : '');
-	if (!next) return `"use client";\n\nimport { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";\n\nconst brandSystem = createSystem(defaultConfig, { preflight: false });\n\nexport function ${PROVIDER()}({ children }${t(': { children: React.ReactNode }')}) {\n  return <ChakraProvider value={brandSystem}>{children}</ChakraProvider>;\n}\n`;
+	if (!next) return `"use client";\n\nimport { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";\n\n${systemLine(legacy)}\n\nexport function ${PROVIDER()}({ children }${t(': { children: React.ReactNode }')}) {\n  return <ChakraProvider value={brandSystem}>{children}</ChakraProvider>;\n}\n`;
 	return `"use client";
 
 import * as React from "react";
@@ -34,7 +41,7 @@ import { CacheProvider } from "@emotion/react";
 import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 import { useServerInsertedHTML } from "next/navigation";
 
-const brandSystem = createSystem(defaultConfig, { preflight: false });
+${systemLine(legacy)}
 
 // Chakra styles through Emotion, which writes <style> tags inline while the server renders and moves them on the
 // client, so hydration would not match. Each server render's styles go to the head once, through Next.
@@ -96,7 +103,7 @@ export function installChakraProvider(w: Writer, project: Project) {
 	const existingProvider = w.read(providerPath);
 	if (existingProvider && !existingProvider.includes(PROVIDER())) return { providerPath, warning: `${providerPath} already exists; merge ${PROVIDER()} into it before using Chakra components.` };
 	// A provider this CLI wrote (any version) is brought up to date; one the app edited is kept as the app wrote it.
-	const generated = [false, true].flatMap((next) => [providerSource(config.tsx, next), `"use client";\n\nimport { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";\n\nconst brandSystem = createSystem(defaultConfig, { preflight: false });\n\nexport function ${PROVIDER()}({ children }${config.tsx ? ': { children: React.ReactNode }' : ''}) {\n  return <ChakraProvider value={brandSystem}>{children}</ChakraProvider>;\n}\n`]);
+	const generated = [false, true].flatMap((next) => [providerSource(config.tsx, next), providerSource(config.tsx, next, true)]);
 	if (!existingProvider || generated.includes(existingProvider)) w.write(providerPath, providerSource(config.tsx, project.framework === 'next'));
 
 	const layout = project.layouts.find(file => /\/layout\.(tsx|jsx|js)$/.test(`/${file}`));

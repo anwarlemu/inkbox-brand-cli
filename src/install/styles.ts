@@ -174,7 +174,7 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 	// Tailwind 3 compiles each imported stylesheet on its own and rejects an @layer base without its @tailwind base:
 	// the defaults go unlayered there, imported before the app's own rules (which still win, as later rules).
 	if (project.tailwindMajor && project.tailwindMajor < 4) css = unlayer(css);
-	if (scoped) css = `/* A selection was applied (.ds/state.json): tokens, theme and fonts only, no base layer. Applying the whole app adds it. */\n${tokensOnly(css)}${scopeCss}`;
+	if (scoped) css = `/* Tokens, theme and fonts for the library's components; no base layer, so the app's own pages keep their look. Applying the whole app (apply with no targets) adds it. */\n${tokensOnly(css)}${scopeCss}`;
 	else css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.
 	if (!next && (!main || !tailwind4)) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;

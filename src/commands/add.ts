@@ -9,6 +9,7 @@ import { installStyles } from '../install/styles.js';
 import { installAgents } from '../install/agents.js';
 import { componentConfig, componentFile, configureRegistry, prepareTransforms } from '../install/config.js';
 import { installChakraProvider } from '../install/chakra.js';
+import { baseLayerFor } from '../install/base.js';
 import { closure, loadIndex, loadIndexSync } from '../library/registry.js';
 import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
 import { profile } from '../project/surface.js';
@@ -86,13 +87,15 @@ export async function add(names: string[], opts: AddOptions) {
 		if (setup.warning) warnings.push(setup.warning);
 	}
 	const saved = w.json('.ds/config.json');
+	const base = baseLayerFor(project, 'add', { fresh: opts.fresh });
 	const surface = (opts.surface ?? saved?.surface ?? (hasProduct() ? profile(root, source).surface : 'site')) as 'site' | 'product';
 	configureRegistry(w, project, surface);
 	if (items.some(item => item.type === 'theme')) {
 		const text = source.filter(f => STYLES.test(f) || MARKUP.test(f)).map(f => readFileSync(join(root, f), 'utf8')).join('\n');
-		warnings.push(...installStyles(w, project, surface, text).notes);
+		// Components only: the app's pages keep their look (see install/base.ts for when the base layer comes too).
+		warnings.push(...installStyles(w, project, surface, text, { scoped: !base.full }).notes);
 	}
-	w.write('.ds/config.json', `${JSON.stringify({ ...saved, schemaVersion: 1, brand: brand().bin, surface }, null, 2)}\n`);
+	w.write('.ds/config.json', `${JSON.stringify({ ...saved, schemaVersion: 1, brand: brand().bin, surface, baseLayer: base.full }, null, 2)}\n`);
 	installAgents(w);
 
 	if (!readonly) {

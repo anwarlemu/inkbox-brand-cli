@@ -11,6 +11,7 @@ import { findProjectRoot } from '../lib/paths.js';
 import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
 import { notMonorepoRoot, selfInstall, type RunOptions } from './run.js';
 import { installChakraProvider, missingChakraPackages } from '../install/chakra.js';
+import { baseLayerFor } from '../install/base.js';
 
 /** Set up a design-system workspace without converting the application's existing styles or creating a restyle queue. */
 export function init(opts: RunOptions) {
@@ -32,8 +33,10 @@ export function init(opts: RunOptions) {
 	const surface = (opts.surface ?? w.json('.ds/config.json')?.surface ?? (hasProduct() ? profile(root, files).surface : 'site')) as 'site' | 'product';
 	configureRegistry(w, project, surface);
 	const text = files.filter(f => STYLES.test(f) || MARKUP.test(f)).map(f => readFileSync(root + '/' + f, 'utf8')).join('\n');
-	const styles = project.framework === 'native' ? undefined : installStyles(w, project, surface, text);
-	w.write('.ds/config.json', JSON.stringify({ ...w.json('.ds/config.json'), schemaVersion: 1, brand: brand().bin, surface }, null, 2) + '\n');
+	// The base layer only in an app with no pages of its own yet (or a new one); otherwise its pages keep their look.
+	const base = baseLayerFor(project, 'init', { fresh: opts.fresh });
+	const styles = project.framework === 'native' ? undefined : installStyles(w, project, surface, text, { scoped: !base.full });
+	w.write('.ds/config.json', JSON.stringify({ ...w.json('.ds/config.json'), schemaVersion: 1, brand: brand().bin, surface, baseLayer: base.full }, null, 2) + '\n');
 	installAgents(w);
 	const next = componentsSupported ? [`${cli()} list --surface ${surface} --json`, `${cli()} inspect <name> --json`, `${cli()} add <name> --surface ${surface} --json`] : [`${cli()} guide`, `${cli()} tokens --json`, `${cli()} check --changed --json`];
 	emit(opts, { schemaVersion: 1, mode: 'build', dryRun: !!opts.dryRun, surface, framework: project.framework, changes: w.changes, styles, guide: '.ds/agent-guide.md', componentsSupported, next }, () => [

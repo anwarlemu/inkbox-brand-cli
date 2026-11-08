@@ -524,3 +524,68 @@ describe('the provider, set up once (shared with the sibling engine)', () => {
 		}
 	});
 });
+
+describe('add and init leave the pages they do not touch alone', () => {
+	const brandCss = (dir: string) => read(dir, `app/_${bin}/brand.css`);
+	it('add in an app with pages installs tokens, theme and fonts, without the base layer or Chakra global styles', () => {
+		const dir = project({ ...APP, 'node_modules/tailwindcss/package.json': JSON.stringify({ name: 'tailwindcss', version: '4.1.0', exports: { './theme.css': './theme.css' } }), 'node_modules/tailwindcss/theme.css': '@theme default {\n  --font-sans: ui-sans-serif, system-ui;\n  --font-weight-bold: 700;\n}\n' });
+		try {
+			expect(cli(dir, 'add', 'button').status).toBe(0);
+			expect(brandCss(dir)).toContain('--ds-color');
+			expect(brandCss(dir)).not.toContain('@layer base');
+			// Components still render the brand: its font and type inside [data-slot].
+			expect(brandCss(dir)).toMatch(/:where\(\[data-slot\]\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\)/);
+			expect(JSON.parse(read(dir, '.ds/config.json')).baseLayer).toBe(false);
+			expect(read(dir, 'components/ui/provider.tsx')).toContain('globalCss: {}');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('add after a selection keeps it a selection; add after the whole app keeps the base layer', () => {
+		const selected = project(APP), whole = project(APP);
+		try {
+			cli(selected, 'apply', '/settings');
+			cli(selected, 'add', 'card');
+			expect(brandCss(selected)).not.toContain('@layer base');
+			cli(whole, 'apply');
+			cli(whole, 'add', 'card');
+			expect(brandCss(whole)).toContain('@layer base');
+		} finally {
+			rmSync(selected, { recursive: true });
+			rmSync(whole, { recursive: true });
+		}
+	});
+	it('init in an app with no pages yet brings the base layer, and a later add keeps it', () => {
+		const dir = project({ 'package.json': APP['package.json'], 'tsconfig.json': APP['tsconfig.json'], 'app/globals.css': '@import "tailwindcss";\n', 'app/layout.tsx': APP['app/layout.tsx'].replace(/\n.*SiteNav.*\n/g, '\n') });
+		try {
+			expect(cli(dir, 'init').status).toBe(0);
+			expect(brandCss(dir)).toContain('@layer base');
+			writeFileSync(join(dir, 'app/page.tsx'), 'export default function Page() { return <main>Acme</main>; }\n');
+			cli(dir, 'add', 'card');
+			expect(brandCss(dir)).toContain('@layer base');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('init in an app that has pages leaves them alone', () => {
+		const dir = project(APP);
+		try {
+			expect(cli(dir, 'init').status).toBe(0);
+			expect(brandCss(dir)).not.toContain('@layer base');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('an unedited provider from an earlier version loses Chakra global styles; an edited one is kept', () => {
+		const dir = project(APP);
+		try {
+			cli(dir, 'add', 'button');
+			const legacy = read(dir, 'components/ui/provider.tsx').replace(/\/\/ Behavior only[^\n]*\nconst brandSystem = createSystem\(\{ \.\.\.defaultConfig, globalCss: \{\} \}, \{ preflight: false \}\);/, 'const brandSystem = createSystem(defaultConfig, { preflight: false });');
+			writeFileSync(join(dir, 'components/ui/provider.tsx'), legacy);
+			cli(dir, 'add', 'badge');
+			expect(read(dir, 'components/ui/provider.tsx')).toContain('globalCss: {}');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});

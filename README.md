@@ -46,6 +46,12 @@ npx inkbox-ds guide
 ```
 
 `init` does not convert existing components. The bare command does; see "Update an existing interface" below.
+
+`init` and `add` install what the library's components need: brand tokens, the Tailwind theme, fonts and the
+provider they render in. The components render fully styled (the brand font and type inside them), and the app's
+existing pages keep their look. The base layer (the page's type, colors, headings, links and focus on every element)
+comes only with a decision to brand the whole app: `apply` with no targets, `create`, or `init` in an app with no
+pages yet. An app set up with the base layer keeps it on every later `add` or selection.
 Requires Node.js 20 or later. Read [the agent guide](https://inkbox-ds.vercel.app/agents.md) with any coding agent.
 The same guide is installed at `.ds/agent-guide.md`. Agents that do not auto-load project instructions should read it explicitly.
 

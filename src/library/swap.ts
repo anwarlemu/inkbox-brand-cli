@@ -9,6 +9,7 @@ import { adaptable, adaptComponent, libraryClasses, lookOf, restyleRoot, variant
 import { restyleOverlays } from './overlay-styles.js';
 import { type Identified, componentsIn, identify, usesIn } from './components.js';
 import { itemName, loadIndexSync, loadItemSync, type RegistryItem } from './registry.js';
+import { type StoredScope, componentInScope, coverage, kindsIn, scopeItems } from '../plan/scope.js';
 
 // Identify, then apply. Every component the app defines is identified (what it is, from its name, what it renders,
 // its props and how it is used; see components.ts) and gets one of three outcomes:
@@ -115,7 +116,7 @@ const ROOT_STYLED = new Set(['button', 'badge', 'card', 'input', 'textarea', 'la
 const ROUTE_FILE = /(^|\/)(page|layout|template|loading|error|not-found|default|_app|_document|root)\.(tsx|jsx)$/;
 const LIBRARY_DIR = /(^|\/)components\/ds\//;
 
-export function applyComponents(project: Project, surfaceOf: (rel: string) => Surface, { dryRun = false } = {}): SwapResult | undefined {
+export function applyComponents(project: Project, surfaceOf: (rel: string) => Surface, { dryRun = false, scope = undefined as StoredScope | undefined } = {}): SwapResult | undefined {
 	const root = project.root;
 	const layout = componentLayout(project);
 	const index = loadIndexSync();
@@ -176,8 +177,12 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 		}
 	};
 	const exportNameOf = new Map<string, string>();
+	const earlier = previousDecisions(root);
 	const decide = (c: Identified): Decision => {
 		const d = { file: c.file, name: c.name, item: c.item, confidence: Math.round(c.confidence * 100) / 100, signals: c.signals, uses: c.uses };
+		// A component swapped on an earlier run renders the library's already: leave it as it is.
+		const adapterOf = c.root?.tag.match(/^Ds([A-Z]\w*)$/)?.[1];
+		if (adapterOf && new RegExp(`\\bas Ds${adapterOf}\\b[^;]*from\\s*["'][^"']*/ds/[\\w-]+["']`).test(current.get(c.file)!)) return earlier.find((x) => x.file === c.file && x.name === c.name && x.action === 'swap') ?? { ...d, item: c.item ?? adapterOf.replace(/[A-Z]/g, (m, i: number) => `${i ? '-' : ''}${m.toLowerCase()}`), action: 'swap', reason: `renders the library's ${c.item ?? adapterOf} (swapped on an earlier run)` };
 		if (!c.item) return { ...d, action: 'refine', reason: 'no library item covers it' };
 		const item = loadItemSync(c.item);
 		const surface = surfaceOf(c.file);
@@ -217,6 +222,8 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	for (const c of identified) byFile.set(c.file, [...(byFile.get(c.file) ?? []), c]);
 	for (const [file, list] of byFile) {
 		for (const first of [...list].sort((a, b) => b.confidence - a.confidence)) {
+			// A selection: only the components it names, by item, by name or by the page files they are in.
+			if (!componentInScope(scope, first)) continue;
 			const fresh = componentsIn(file, current.get(file)!).find((x) => x.name === first.name);
 			if (!fresh) continue;
 			result.decisions.push(decide({ ...first, ...fresh }));
@@ -224,7 +231,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	}
 	// Compound primitives have several styled parts under a portal; a root-only pass cannot reach them.
 	for (const file of overlayFiles) {
-		const styled = restyleOverlays(current.get(file)!, surfaceOf(file));
+		const cover = coverage(scope, file);
+		if (cover === 'none') continue;
+		const styled = restyleOverlays(current.get(file)!, surfaceOf(file), cover === 'kinds' ? (family) => scopeItems(scope!).includes(family) || !!kindsIn(scope, file)?.includes(family) : undefined);
 		if (!styled.parts.length) continue;
 		if (styled.text !== current.get(file)) write(file, styled.text);
 		if (!result.styled.includes(file)) result.styled.push(file);
@@ -232,6 +241,8 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	}
 	result.packages = [...packages];
 	if (dryRun) return result;
+	// A selection adds its decisions to the earlier ones; the whole app replaces them.
+	if (scope) result.decisions = [...previousDecisions(root).filter((d) => !result.decisions.some((x) => x.file === d.file && x.name === d.name)), ...result.decisions];
 	writeInventory(root, result.decisions);
 	if (!result.swapped.length && !result.styled.length) return result;
 	if (packages.size) {
@@ -304,6 +315,14 @@ export function recordStyledSelectors(root: string, styled: { file: string; sele
 	const kept = decisions.filter((d) => !d.file.match(/\.(css|scss|less)$/));
 	const added = styled.map((x): Decision => ({ file: x.file, name: x.selector, item: x.kind, confidence: 1, signals: [`class names a ${x.kind}`], uses: 0, action: 'style', reason: `its CSS takes the brand's ${x.kind} styling (the element layer)` }));
 	if (kept.length || added.length) writeInventory(root, [...kept, ...added]);
+}
+
+function previousDecisions(root: string): Decision[] {
+	try {
+		return JSON.parse(readFileSync(join(root, '.ds', 'components.json'), 'utf8')).components ?? [];
+	} catch {
+		return [];
+	}
 }
 
 /** The decisions, for the agent's tasks and `look`: what each component is, what was done, and why. */

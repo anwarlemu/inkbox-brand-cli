@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Screen } from '../project/screens.js';
 import type { Surface } from '../project/surface.js';
+import type { StoredScope } from './scope.js';
 
 // The project's progress, in .ds/state.json (committed, so a teammate or a new session picks up where it stopped).
 
@@ -26,6 +27,8 @@ export type State = {
 	/** Screens left as they are, with the reason; listed for the person in the final summary. */
 	skipped: Record<string, string>;
 	reviews: Record<string, Review>;
+	/** The components and pages the brand was applied to; absent when it was applied to the whole app. */
+	scope?: StoredScope;
 };
 
 const path = (root: string) => join(root, '.ds', 'state.json');

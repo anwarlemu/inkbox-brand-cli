@@ -187,13 +187,28 @@ function safeWrapper(text: string, c: AppComponent) {
   const source = text.slice(c.body.start, c.body.end);
   const ast: any = parse(`const wrapper = () => ${source}`, { sourceType: 'module', plugins: ['typescript', 'jsx'] });
   let node = ast.program.body[0].declarations[0].init.body;
+  // Local constants that only compute class strings from props (const tone = variant === "primary" ? "bg-..." : "...")
+  // are part of the look the library replaces; anything else (hooks, calls, handlers) is behavior and stops the swap.
+  const computed = new Set<string>();
   if (node.type === 'BlockStatement') {
-   if (node.body.length !== 1 || node.body[0].type !== 'ReturnStatement') return false;
-   node = node.body[0].argument;
+   const statements = node.body;
+   const last = statements[statements.length - 1];
+   if (last?.type !== 'ReturnStatement') return false;
+   for (const stmt of statements.slice(0, -1)) {
+    if (stmt.type !== 'VariableDeclaration' || stmt.kind !== 'const') return false;
+    for (const d of stmt.declarations) {
+     if (d.id.type !== 'Identifier' || !classOnly(d.init)) return false;
+     computed.add(d.id.name);
+    }
+   }
+   node = last.argument;
+   while (node?.type === 'ParenthesizedExpression') node = node.expression;
   }
   if (node?.type !== 'JSXElement') return false;
   const access = (expression: any) => expression?.type === 'Identifier' ? expression.name : expression?.type === 'MemberExpression' && expression.object?.name === c.params.identifier ? expression.property?.name : undefined;
+  const mentions = (n: any): boolean => !!n && typeof n === 'object' && (n.type === 'Identifier' && computed.has(n.name) || Object.entries(n).some(([k, v]) => k !== 'loc' && (Array.isArray(v) ? v.some(mentions) : v && typeof v === 'object' && mentions(v))));
   for (const attr of node.openingElement.attributes) {
+   if (computed.size && attr.type === 'JSXAttribute' && attr.name?.name !== 'className' && mentions(attr.value)) return false;
    if (attr.type === 'JSXSpreadAttribute') {
     if (attr.argument.type !== 'Identifier' || ![c.params.identifier, c.params.rest].includes(attr.argument.name)) return false;
    } else if (attr.name?.name !== 'className') {
@@ -204,6 +219,39 @@ function safeWrapper(text: string, c: AppComponent) {
   }
   return node.children.every((child: any) => child.type === 'JSXText' ? !child.value.trim() : child.type === 'JSXExpressionContainer' && access(child.expression) === 'children');
  } catch { return false; }
+}
+
+/** An expression that only picks or joins class strings: literals, the component's values, comparisons and choices. */
+function classOnly(n: any): boolean {
+ if (!n) return false;
+ switch (n.type) {
+  case 'StringLiteral':
+  case 'NumericLiteral':
+  case 'BooleanLiteral':
+  case 'NullLiteral':
+  case 'Identifier':
+   return true;
+  case 'TemplateLiteral':
+   return n.expressions.every(classOnly);
+  case 'ConditionalExpression':
+   return classOnly(n.test) && classOnly(n.consequent) && classOnly(n.alternate);
+  case 'LogicalExpression':
+  case 'BinaryExpression':
+   return classOnly(n.left) && classOnly(n.right);
+  case 'UnaryExpression':
+   return n.operator === '!' && classOnly(n.argument);
+  case 'MemberExpression':
+   // A lookup in a class map (SIZES[size]) or a prop (props.variant).
+   return classOnly(n.object) && (n.computed ? classOnly(n.property) : n.property?.type === 'Identifier');
+  case 'ParenthesizedExpression':
+  case 'TSAsExpression':
+  case 'TSNonNullExpression':
+   return classOnly(n.expression);
+  case 'ArrayExpression':
+   return n.elements.every(classOnly);
+  default:
+   return false;
+ }
 }
 
 export function adaptComponent(text: string, c: AppComponent, item: string, surface: Surface, importFrom: string, values: Record<string, string[]>): string | undefined {
@@ -309,6 +357,8 @@ export function restyleRoot(text: string, c: AppComponent, item: string, library
 	const sorted = [...literals].sort((a, b) => b.start - a.start);
 	const first = literals.reduce((a, b) => (a.start < b.start ? a : b));
 	for (const lit of sorted) {
+		// A separator (" ") or an empty string between expressions is not a class list.
+		if (!lit.value.trim()) continue;
 		const kept = lit.value.split(/\s+/).filter((cls) => cls && !isLook(cls, control));
 		const next = lit === first ? [...kept, ...libraryClassList.split(/\s+/).filter((cls) => !kept.includes(cls))] : kept;
 		const value = next.join(' ');

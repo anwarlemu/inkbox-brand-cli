@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { changedFiles, checkable, checkText, formatFinding, newFindings, runCheck } from '../check/engine.js';
+import { changedFiles, checkable, formatFinding, newFindings, runCheck, scopedCheckText } from '../check/engine.js';
+import { describeScope } from '../plan/scope.js';
 import { installPreCommit } from '../install/agents.js';
 import { Writer } from '../install/files.js';
 import { brand, cli, isOwnFile } from '../lib/brand.js';
@@ -49,7 +50,7 @@ export function sessionStart(root: string, input: HookInput = {}): HookResult {
 	if (!state) return { stdout: `${b.name} design system is installed here. Read .ds/agent-guide.md or run \`${cli()} guide\`, then inspect components with \`${cli()} show <name>\`. Build to the user’s brief; use the bare command only for a requested conversion.` };
 	const screens = mainScreens(state);
 	const done = screens.filter((sc, i) => taskStatus(root, state, sc, i).done).length;
-	return { stdout: [`${b.name} design system is active (${state.surface}): ${done} of ${screens.length} screens done.`, done < screens.length ? `Continue with \`${cli()}\`: it prints the next task.` : 'Keep new work on the brand: style values are brand tokens; `look <file>` shows how each element is styled.', 'Writes with off-brand values are blocked; you cannot finish while the check fails.'].join('\n') };
+	return { stdout: [`${b.name} design system is active (${state.surface}${state.scope ? `, applied to ${describeScope(state.scope)} only; files outside it keep their own styles and are not checked` : ''}): ${done} of ${screens.length} screens done.`, done < screens.length ? `Continue with \`${cli()}\`: it prints the next task.` : 'Keep new work on the brand: style values are brand tokens; `look <file>` shows how each element is styled.', 'Writes with off-brand values are blocked; you cannot finish while the check fails.'].join('\n') };
 }
 
 const APPLY_BRAND = /\b(apply|applying|restyle|rebrand|re-brand|reskin|re-skin|theme)\b[\s\S]{0,80}\b(brand|design system|styl\w*|look|tokens?)\b|\b(brand|design system)\b[\s\S]{0,40}\b(onto|to (this|my|the|our))\b/i;
@@ -69,8 +70,10 @@ export function preToolUse(root: string, input: HookInput): HookResult {
 	const s = session(root, sessionIdOf(input));
 	for (const write of writes) {
 		const colorSurface = state?.colors === 'components' ? surfaceOf(write.relPath, { surface: state.surface, mixed: state.mixed, product: 0, site: 0, reasons: [] }) : undefined;
-		const after = checkText(write.relPath, write.after, colorSurface);
-		const before = write.before ? checkText(write.relPath, write.before, colorSurface) : { findings: [], overrides: [] };
+		// Outside the applied selection the app keeps its own styles: nothing to block there.
+		const after = scopedCheckText(state?.scope, write.relPath, write.after, colorSurface);
+		if (!after) continue;
+		const before = write.before ? scopedCheckText(state?.scope, write.relPath, write.before, colorSurface)! : { findings: [], overrides: [] };
 		const introduced = newFindings(before.findings, after.findings);
 		if (introduced.length) {
 			blocked.push(`${write.relPath}: ${introduced.length} off-brand value${introduced.length > 1 ? 's' : ''}`, ...introduced.slice(0, 25).map(formatFinding));

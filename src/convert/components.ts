@@ -1,6 +1,6 @@
 import { declarations } from '../check/rules.js';
 import { elementName, jsxAttr, literalAttr, loadSource, type Node } from '../check/source.js';
-import { elements, themeClass, tokens } from '../lib/brand.js';
+import { brand, elements, themeClass, tokens } from '../lib/brand.js';
 import { libraryClasses } from '../library/adapt.js';
 import { loadItemSync } from '../library/registry.js';
 import { kindOf, splitClasses } from '../plan/elements.js';
@@ -70,6 +70,9 @@ function libraryRecipe(item: string, variant: string): Recipe | undefined {
 	return result;
 }
 
+/** Only these element kinds (and library items) are restyled, when a selection names some; see plan/scope.ts. */
+let only: Set<string> | undefined;
+
 function recipe(tag: string, classes: string, attrs: string, surface: Surface, context: string[] = []): Recipe | undefined {
 	const name = tag.split('.').pop()!;
 	const component = /^[A-Z]/.test(name) ? kebab(name).replace(/^-/, '') : '';
@@ -79,6 +82,7 @@ function recipe(tag: string, classes: string, attrs: string, surface: Surface, c
 	if (/type\s*=\s*["']?(color|range)\b/.test(attrs)) return;
 	const kind = /^(input|textarea|select)$/.test(el.tag) ? 'input' : /(?:^|\s)(badge|chip|pill|tag)(?:$|\s)/.test(split.heads) ? 'chip' : kindOf(el, surface);
 	if (!kind) return;
+	if (only && !only.has(kind)) return;
 	const def = elements()[surface][kind];
 	if (!def) return;
 	const result: Recipe = { '': cssColors(def.css) };
@@ -89,7 +93,14 @@ function recipe(tag: string, classes: string, attrs: string, surface: Surface, c
 		const variant = attrs.match(/(?:data-)?variant\s*=\s*["'{]*([\w-]+)/)?.[1]
 			?? `${split.words} ${attrs.match(/data-status\s*=\s*["']([\w-]+)/)?.[1] ?? ''}`.match(/(?:^|[\s_-])(destructive|danger|success|secondary|outline|outlined|ghost|quiet|soft|link|pink|green|blue|purple|gray)(?=$|[\s_-])/)?.[1];
 		const aliases: Record<string, string> = { danger: 'destructive', quiet: 'ghost', outlined: 'outline', primary: 'default', solid: 'default', filled: 'default' };
-		const selected = variant ? aliases[variant] ?? variant : item === 'button' ? (kind === 'button-secondary' ? 'outline' : kind === 'header-action' ? 'soft' : 'default') : component === 'badge' ? 'default' : 'blue';
+		// A utility-styled button with no fill of its own is a quiet (or outlined) one: the filled variant would give it
+		// the fill's white text on the page's white.
+		const utilities = /(^|\s)(p[xytrbl]?-[\d.[]|rounded(-[\w[]+)?(?=\s|$)|text-(xs|sm|base|lg|\d?xl)\b|font-(normal|medium|semibold|bold)\b)/.test(classes);
+		const ownFill = /(^|\s)!?bg-(?!transparent\b|none\b|inherit\b)/.test(classes);
+		const ownEdge = /(^|\s)!?border(?=\s|$|-(?!0\b|none\b|transparent\b))/.test(classes);
+		const site = brand().variants.site;
+		const unfilled = item === 'button' && utilities && !ownFill ? (ownEdge ? site.outlined : site.quiet ?? site.outlined) : undefined;
+		const selected = variant ? aliases[variant] ?? variant : item === 'button' ? unfilled ?? (kind === 'button-secondary' ? 'outline' : kind === 'header-action' ? 'soft' : 'default') : component === 'badge' ? 'default' : 'blue';
 		return libraryRecipe(item, selected) ?? (variant ? undefined : result);
 	}
 	return result;
@@ -170,7 +181,16 @@ function stylesheetEdits(css: string, offset: number, surface: Surface, edits: C
 }
 
 /** Conservative edits for identified components only. Unknown roles, dynamic styles and content colors stay. */
-export function componentColorEdits(rel: string, text: string, surface: Surface = 'site', theme = true): ColorEdit[] {
+export function componentColorEdits(rel: string, text: string, surface: Surface = 'site', theme = true, kinds?: Iterable<string>): ColorEdit[] {
+	only = kinds ? new Set(kinds) : undefined;
+	try {
+		return colorEdits(rel, text, surface, theme);
+	} finally {
+		only = undefined;
+	}
+}
+
+function colorEdits(rel: string, text: string, surface: Surface, theme: boolean): ColorEdit[] {
 	recipeCache.clear();
 	const edits: ColorEdit[] = [];
 	if (STYLES.test(rel)) stylesheetEdits(text, 0, surface, edits);
@@ -231,8 +251,8 @@ export function componentColorEdits(rel: string, text: string, surface: Surface 
 	return edits;
 }
 
-export function applyComponentColors(rel: string, text: string, surface: Surface, stats: Stats, theme: boolean) {
-	for (const edit of componentColorEdits(rel, text, surface, theme).sort((a, b) => b.start - a.start)) {
+export function applyComponentColors(rel: string, text: string, surface: Surface, stats: Stats, theme: boolean, kinds?: Iterable<string>) {
+	for (const edit of componentColorEdits(rel, text, surface, theme, kinds).sort((a, b) => b.start - a.start)) {
 		if (text.slice(edit.start, edit.end) === edit.text) continue;
 		text = text.slice(0, edit.start) + edit.text + text.slice(edit.end);
 		stats.colors++;

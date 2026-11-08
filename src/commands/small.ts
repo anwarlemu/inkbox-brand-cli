@@ -7,6 +7,7 @@ import { color, emit } from '../lib/output.js';
 import { findProjectRoot } from '../lib/paths.js';
 import { elementsIn, renderElement } from '../plan/elements.js';
 import { readState, writeState } from '../plan/state.js';
+import { describeScope } from '../plan/scope.js';
 import { type Surface, surfaceOf } from '../project/surface.js';
 
 const relTo = (root: string, p: string) => relative(root, isAbsolute(p) ? p : join(process.cwd(), p)).split('\\').join('/');
@@ -55,15 +56,17 @@ export function look(target: string | undefined, opts: { surface?: string; json?
 }
 
 /** `check [files]`: the deterministic value check used by hooks, pre-commit and CI. */
-export function check(paths: string[], opts: { fix?: boolean; changed?: boolean; json?: boolean }) {
+export function check(paths: string[], opts: { fix?: boolean; changed?: boolean; json?: boolean; all?: boolean }) {
 	const root = findProjectRoot();
-	const result = runCheck(root, { paths: paths.map((p) => relTo(root, p)), fix: opts.fix, changed: opts.changed });
+	const result = runCheck(root, { paths: paths.map((p) => relTo(root, p)), fix: opts.fix, changed: opts.changed, all: opts.all });
+	const scope = opts.all ? undefined : readState(root)?.scope;
 	emit(opts, result, () =>
 		[
 			...result.findings.slice(0, 200).map(formatFinding),
 			result.findings.length > 200 ? `...and ${result.findings.length - 200} more` : '',
-			result.findings.length ? color.red(`${result.findings.length} values are not brand tokens (${result.files} files, ${result.ms}ms).`) : color.green(`Every style value is a brand token (${result.files} files, ${result.ms}ms).`),
+			result.findings.length ? color.red(`${result.findings.length} values are not brand tokens (${result.files} files, ${result.ms}ms).`) : color.green(`Every style value${scope ? ' in the applied selection' : ''} is a brand token (${result.files} files, ${result.ms}ms).`),
 			result.fixed ? `Applied ${result.fixed} token fixes.` : '',
+			scope && result.outside ? color.dim(`${result.outside} files are outside the applied selection (${describeScope(scope)}) and keep their own styles; \`${cli()} check --all\` checks them too.`) : '',
 		]
 			.filter(Boolean)
 			.join('\n'),

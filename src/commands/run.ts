@@ -17,18 +17,51 @@ import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js
 import { listScreens, shellFiles } from '../project/screens.js';
 import { type Surface, profile, surfaceOf } from '../project/surface.js';
 import { type State, readState, writeState } from '../plan/state.js';
+import { type ScopeSpec, type StoredScope, coverage, describeScope, kindsIn, resolveScope, resolveTargets, scopeItems, scopeLeft, scopePages, specOf, unresolvedMessage, widen } from '../plan/scope.js';
 import { mainScreens, pickMain, renderBatch, renderTask, taskStatus, touchNote } from '../plan/tasks.js';
 
 // The one command: the first run installs the brand and applies component colors and style scales; every run after that prints the
 // next task, until each main screen passes its review and the whole project passes the check.
 
-export type RunOptions = { colors?: 'components'; surface?: string; theme?: string; redo?: boolean; dryRun?: boolean; install?: boolean; json?: boolean };
+export type RunOptions = {
+	colors?: 'components';
+	surface?: string;
+	theme?: string;
+	redo?: boolean;
+	dryRun?: boolean;
+	install?: boolean;
+	json?: boolean;
+	/** `apply` with what to apply to: routes, files or globs, library items or the app's components. */
+	targets?: string[];
+	components?: string | string[];
+	pages?: string | string[];
+	withShared?: boolean;
+	/** `apply` with no targets: a selection applied before widens to the whole app. */
+	widen?: boolean;
+};
+
+/** What one run applies (`work`, its parts) and what the app has applied once it is done (`recorded`; undefined is the whole app). */
+type Selection = { work: ScopeSpec[]; recorded?: ScopeSpec[] };
 
 export function run(opts: RunOptions) {
 	const root = findProjectRoot();
-	selfInstall(root, opts);
 	const existing = readState(root);
-	if (!existing || opts.redo || opts.surface || opts.theme) return setUp(root, opts, existing);
+	const named = !!(opts.targets?.length || opts.components?.length || opts.pages?.length);
+	let selection: Selection | undefined;
+	if (named) {
+		// Resolve before anything is written (or installed): a target that matches nothing stops the run.
+		const project = detectProject(root);
+		const files = styledFiles(root);
+		const found = profile(root, files);
+		const screens = listScreens(project, files, found);
+		const resolution = resolveTargets(root, screens, files, opts);
+		if (resolution.unresolved.length) throw new Error(unresolvedMessage(resolution.unresolved));
+		// Once the whole app is applied it stays applied; otherwise the new targets join the earlier ones.
+		selection = { work: [resolution.spec], recorded: existing && !existing.scope ? undefined : [...(existing?.scope?.parts ?? []), resolution.spec] };
+	} else if (existing?.scope && opts.redo) selection = { work: existing.scope.parts, recorded: existing.scope.parts };
+	selfInstall(root, opts);
+	if (selection) return setUp(root, opts, existing, selection);
+	if (!existing || opts.redo || opts.surface || opts.theme || (existing.scope && opts.widen)) return setUp(root, opts, existing);
 	return next(root, existing, opts);
 }
 
@@ -64,10 +97,16 @@ export function selfInstall(root: string, opts: RunOptions, handoff = true) {
 	process.exit(handOff.status ?? 1);
 }
 
-function setUp(root: string, opts: RunOptions, previous?: State) {
+function setUp(root: string, opts: RunOptions, previous?: State, selection?: Selection) {
 	const project = detectProject(root);
 	const files = styledFiles(root);
 	const found = profile(root, files);
+	// A selection (plan/scope.ts): the files and element kinds this run changes, and what the app has applied after it.
+	const allScreens = listScreens(project, files, found);
+	const stored = (specs: ScopeSpec[]): StoredScope => specs.reduce<StoredScope | undefined>((acc, spec) => widen(acc, { ...specOf(spec), resolved: resolveScope(project, allScreens, files, specOf(spec)) }), undefined)!;
+	const work = selection ? stored(selection.work) : undefined;
+	const recorded = selection?.recorded ? stored(selection.recorded) : undefined;
+	const scoped = work ? { cover: (rel: string) => coverage(work, rel), kinds: (rel: string) => kindsIn(work, rel) } : undefined;
 	if (opts.surface && !['site', 'product'].includes(opts.surface)) throw new Error('--surface is site or product.');
 	if (opts.surface === 'product' && !hasProduct()) throw new Error(`${brand().name} has a site only: every project gets the site's look.`);
 	const surface: Surface = (opts.surface as Surface | undefined) ?? previous?.surface ?? found.surface;
@@ -82,34 +121,66 @@ function setUp(root: string, opts: RunOptions, previous?: State) {
 			return {};
 		}
 	})();
-	const swap = (pkgJson.dependencies?.react || pkgJson.devDependencies?.react) && (project.tailwindMajor ?? 0) >= 4 ? applyComponents(project, (rel) => (mixed ? surfaceOf(rel, found) : surface), { dryRun: opts.dryRun }) : undefined;
-	const converted = convertProject(project, files, mixed ? 'site' : surface, { dryRun: opts.dryRun, theme });
+	// What each step changes, file by file, with why (`--dry-run --json` lists it so an agent can confirm first).
+	const plan = new Map<string, { file: string; reasons: string[]; changes: number }>();
+	const note = (file: string, reason: string, changes = 1) => {
+		const entry = plan.get(file) ?? { file, reasons: [], changes: 0 };
+		if (!entry.reasons.includes(reason)) entry.reasons.push(reason);
+		entry.changes += changes;
+		plan.set(file, entry);
+	};
+	const swap = (pkgJson.dependencies?.react || pkgJson.devDependencies?.react) && (project.tailwindMajor ?? 0) >= 4 ? applyComponents(project, (rel) => (mixed ? surfaceOf(rel, found) : surface), { dryRun: opts.dryRun, scope: work }) : undefined;
+	for (const d of swap?.decisions ?? []) if (d.action !== 'refine' && !swap?.reverted.includes(d.file) && (swap?.swapped.includes(d.file) || swap?.styled.includes(d.file))) note(d.file, `${d.name}: ${d.reason}`);
+	for (const f of swap?.added ?? []) note(f, 'library component the swapped components render (shared setup)');
+	const converted = convertProject(project, files, mixed ? 'site' : surface, { dryRun: opts.dryRun, theme, scope: scoped });
+	for (const [f, n] of Object.entries(converted.perFile)) note(f, scoped?.cover(f) === 'kinds' ? `colors of the selected elements (${scopeItems(work!).join(', ')}) to brand tokens` : 'style values to brand tokens', n);
 	const w = new Writer(root, opts.dryRun);
+	const step = (reason: string, fn: () => void) => {
+		const from = w.changes.length;
+		fn();
+		for (const c of w.changes.slice(from)) note(c.file, reason);
+	};
 	const styleText = files.filter((f) => STYLES.test(f) || MARKUP.test(f)).map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
 	// Native apps have no stylesheet: their colors were converted in their own code; fonts are added as app fonts.
-	const styles = project.framework === 'native' ? { stylesDir: '', brandCss: '', imported: undefined, linked: [], fonts: 'app fonts', notes: [`${brand().fonts.native}; sizes, radii and spacing are in \`tokens\`.`] } : installStyles(w, project, mixed ? 'site' : surface, styleText);
+	let styles: ReturnType<typeof installStyles> = { stylesDir: '', brandCss: '', imported: undefined, linked: [], fonts: 'app fonts', notes: [`${brand().fonts.native}; sizes, radii and spacing are in \`tokens\`.`] };
+	// A selection installs the tokens, theme and fonts its components need, not the base layer that restyles every page.
+	if (project.framework !== 'native') step(recorded ? 'shared setup: brand tokens, theme and fonts (no base layer while a selection is applied)' : 'shared setup: brand stylesheet, theme and fonts', () => (styles = installStyles(w, project, mixed ? 'site' : surface, styleText, { scoped: !!recorded })));
 	// Every element the stylesheets name gets the brand's styling at once; the tasks refine from there.
-	const layer = project.framework === 'native' ? { count: 0, files: [] as string[], styled: [] } : installElementLayer(w, styledFiles(root), (rel) => (mixed ? surfaceOf(rel, found) : surface));
+	let layer: ReturnType<typeof installElementLayer> = { count: 0, files: [], styled: [] };
+	if (project.framework !== 'native') step('element styles for the classes this stylesheet names (ds:elements block)', () => (layer = installElementLayer(w, styledFiles(root), (rel) => (mixed ? surfaceOf(rel, found) : surface), scoped)));
 	if (!opts.dryRun) recordStyledSelectors(root, layer.styled);
-	const dots = project.framework !== 'native' && (surface === 'site' || mixed) && brand().touches.hero?.script ? installDots(w, project) : [];
-	configureRegistry(w, project, surface);
-	installAgents(w);
-	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true, colorSurface: project.framework === 'native' ? undefined : surface }).fixed;
+	let dots: string[] = [];
+	if (!recorded && project.framework !== 'native' && (surface === 'site' || mixed) && brand().touches.hero?.script) step('shared setup: the hero script', () => (dots = installDots(w, project)));
+	step('shared setup: component registry configuration', () => configureRegistry(w, project, surface));
+	step('shared setup: agent rules, hooks and the pre-commit check', () => installAgents(w));
+	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true, colorSurface: project.framework === 'native' ? undefined : surface, scope: work, all: !work }).fixed;
 	const screens = listScreens(detectProject(root), styledFiles(root), { ...found, surface, mixed });
 	const shell = shellFiles(project, files);
-	const main = pickMain(root, screens, shell);
+	// A selection's tasks are its pages; a selection of components alone has no screen to review, only the check.
+	const scopedMain = (s: StoredScope) => screens.filter((x) => scopePages(s).pages.includes(x.url ?? '') || scopePages(s).files.includes(x.file)).map((x) => x.id);
+	const main = recorded ? scopedMain(recorded) : selection && previous?.main ? previous.main : pickMain(root, screens, shell);
 	// A site's home gets the brand's touches now (brand.json); the agent only checks them.
-	const touched = !opts.dryRun && screens[0] && (surface === 'site' || mixed) && project.framework !== 'native' ? installTouches(new Writer(root), screens[0].files.filter((f) => !shell.includes(f) || /home|index/i.test(f))) : [];
+	const touched = !opts.dryRun && !work && screens[0] && (surface === 'site' || mixed) && project.framework !== 'native' ? installTouches(new Writer(root), screens[0].files.filter((f) => !shell.includes(f) || /home|index/i.test(f))) : [];
 	if (screens[0]) screens[0].files = [...new Set([...screens[0].files, ...shell])];
-	const state: State = { version: 2, colors: project.framework === 'native' ? undefined : 'components', surface, mixed, theme, appliedAt: new Date().toISOString(), baseUrl: previous?.baseUrl, screens, main, marked: previous?.marked ?? [], skipped: previous?.skipped ?? {}, reviews: previous?.reviews ?? {} };
+	// Running again with nothing to change leaves the state as it was (the same apply twice is a no-op).
+	const appliedAt = plan.size || !previous?.appliedAt ? new Date().toISOString() : previous.appliedAt;
+	const state: State = { version: 2, colors: project.framework === 'native' ? undefined : 'components', surface, mixed, theme, appliedAt, baseUrl: previous?.baseUrl, screens, main, marked: previous?.marked ?? [], skipped: previous?.skipped ?? {}, reviews: previous?.reviews ?? {}, ...(recorded ? { scope: recorded } : {}) };
 	if (!opts.dryRun) writeState(root, state);
 	const left = opts.dryRun ? undefined : runCheck(root);
+	const changes = [...plan.values()].map((e) => ({ file: e.file, reason: e.reasons.join('; '), changes: e.changes }));
 	const s = converted.stats;
 	const values = s.colors + s.fonts + s.type + s.radius + s.spacing + s.motion + s.shadows;
 	const harness = runningHarness();
-	emit(opts, { surface, mixed, evidence: found.reasons, converted: { files: converted.written.length, ...s }, fixed, left: left?.findings.length, styles, dots, layer, swap, changes: w.changes, screens: screens.map((x) => x.id) }, () =>
+	const scopeData = work ? { applied: describeScope(work), recorded: describeScope(recorded), items: scopeItems(work), components: work.parts.flatMap((p) => p.own), pages: scopePages(work).pages, files: [...new Set(work.parts.flatMap((p) => p.resolved.files ?? []))], kinds: [...new Set(work.parts.flatMap((p) => p.resolved.kinds ?? []))], sharedLeftOut: scopeLeft(work) } : undefined;
+	emit(opts, { surface, mixed, evidence: found.reasons, scope: scopeData ?? 'the whole app', files: changes, converted: { files: converted.written.length, ...s }, fixed, left: left?.findings.length, styles, dots, layer, swap, changes: w.changes, screens: screens.map((x) => x.id) }, () =>
 		[
-			color.bold(`${brand().name} design system ${opts.dryRun ? 'dry run (nothing written)' : previous ? 'applied again' : 'installed and applied'}.`),
+			color.bold(`${brand().name} design system ${opts.dryRun ? 'dry run (nothing written)' : previous ? 'applied again' : 'installed and applied'}${work ? ` to ${describeScope(work)}` : ''}.`),
+			...(work ? [
+				`  Only the selection changes${scopeItems(work).length ? ` (${scopeItems(work).join(', ')}: the app's components identified as ${scopeItems(work).length > 1 ? 'these' : 'it'}, and the colors of the elements of ${scopeItems(work).length > 1 ? 'these kinds' : 'that kind'})` : ''}; everything else keeps its own styles, apart from the shared setup (brand tokens, theme and fonts).`,
+				...(scopeLeft(work).length ? [color.yellow(`  Left out, shared with other pages: ${scopeLeft(work).slice(0, 6).join(', ')}${scopeLeft(work).length > 6 ? ` and ${scopeLeft(work).length - 6} more` : ''}. Name them, or add --with-shared, to include them.`)] : []),
+				`  ${recorded ? `Applied so far: ${describeScope(recorded)}. \`${cli()} apply\` with no targets applies the whole app.` : 'The whole app was already applied; it stays applied.'} The checks and hooks enforce the brand only inside what is applied.`,
+				...(opts.dryRun ? ['  Files it would change (`--json` lists each with the reason):', ...changes.map((c) => `    ${c.file}: ${c.reason}`)] : []),
+			] : []),
 			`  This is ${mixed ? 'a site with product screens (each route gets its own look)' : surface === 'product' ? 'a product: an app people work in' : 'a site: pages people read and act on'}. Evidence: ${found.reasons.slice(0, 4).join('; ') || 'none, so it is treated as a site'}.${opts.surface || !hasProduct() ? '' : ` Wrong? \`${cli()} --surface ${surface === 'site' ? 'product' : 'site'}\`.`}`,
 			`  Converted ${values} style values in ${converted.written.length} files to brand tokens${converted.palette.mode === 'dark' && theme !== 'dark' ? ' (identified dark surfaces take the brand\'s light theme)' : ''}; ${fixed} additional token fixes.${left ? ` ${left.findings.length} left to change by hand, listed in the tasks.` : ''}`,
 			...(project.framework === 'native' ? [] : ['  Color tokens apply to identified components and their states. Shared palettes, artwork, charts and unrelated colors are preserved.']),
@@ -122,7 +193,9 @@ function setUp(root: string, opts: RunOptions, previous?: State) {
 			...(converted.rasterLogos.length ? [`  Logo images drawn for the dark site (not recolored): ${converted.rasterLogos.join(', ')}. Check each on white; a white one-color mark needs filter: brightness(0).`] : []),
 			...styles.notes.map((n) => color.yellow(`  Note: ${n}`)),
 			`  Agents are kept on it: the rules are in AGENTS.md and CLAUDE.md, and hooks check every write in Claude Code, Codex and Cursor, plus a git pre-commit check.${harness === 'codex' ? ' Tell the user: Codex runs the hooks once they trust them with /hooks.' : ''}`,
-			`  ${screens.length} screens found; ${main.length} of them, chosen to cover every distinct layout and kind of element, are reviewed: ${main.join(', ')}. The rest share their styles and are covered by the check.`,
+			recorded
+				? `  ${main.length ? `Screens to review: ${main.join(', ')}.` : 'No screen to review: the named components are covered by the check.'}`
+				: `  ${screens.length} screens found; ${main.length} of them, chosen to cover every distinct layout and kind of element, are reviewed: ${main.join(', ')}. The rest share their styles and are covered by the check.`,
 			'',
 			...(opts.dryRun ? [] : [nextText(root, state)]),
 		].join('\n'),
@@ -147,7 +220,7 @@ function nextText(root: string, state: State) {
 		const byFile = new Map<string, number>();
 		for (const f of all.findings) byFile.set(f.file, (byFile.get(f.file) ?? 0) + 1);
 		return [
-			color.bold(`Task ${total} of ${total}: the rest of the project (${all.findings.length} values in ${byFile.size} files are not brand tokens yet).`),
+			color.bold(`Task ${total} of ${total}: the rest of ${state.scope ? `the selection (${describeScope(state.scope)})` : 'the project'} (${all.findings.length} values in ${byFile.size} files are not brand tokens yet).`),
 			...[...byFile].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([f, n]) => `    ${String(n).padStart(4)}  ${f}`),
 			`  \`${cli()} check <file>\` lists each value with the token to use. Then run \`${cli()}\` again.`,
 			...all.findings.slice(0, 3).map((f) => color.dim(`  e.g. ${formatFinding(f)}`)),
@@ -156,7 +229,7 @@ function nextText(root: string, state: State) {
 	const selfScored = screens.filter((s) => state.reviews[s.id]?.by === 'self').map((s) => s.id);
 	const skipped = Object.entries(state.skipped ?? {}).filter(([id]) => screens.some((s) => s.id === id));
 	return [
-		color.bold(skipped.length ? `Done: every main screen passed its review or was skipped, and the whole project passes the check.` : `Done: every main screen passed its review and the whole project passes the check.`),
+		color.bold(state.scope ? `Done: ${screens.length ? 'every screen in the selection passed its review and ' : ''}the selection (${describeScope(state.scope)}) passes the check. The rest of the app keeps its own styles.` : skipped.length ? `Done: every main screen passed its review or was skipped, and the whole project passes the check.` : `Done: every main screen passed its review and the whole project passes the check.`),
 		...(skipped.length ? [color.yellow(`  Skipped (tell the person each one and why):`), ...skipped.map(([id, why]) => color.yellow(`    ${id}: ${why}`))] : []),
 		...screens.flatMap((s) => {
 			const r = state.reviews[s.id];

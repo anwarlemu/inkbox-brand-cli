@@ -7,6 +7,7 @@ import { checkIcons, type RawFinding, runRules } from './rules.js';
 import { lineOf, loadSource } from './source.js';
 import { componentColorEdits } from '../convert/components.js';
 import { readState } from '../plan/state.js';
+import { type StoredScope, coverage, kindsIn } from '../plan/scope.js';
 import { type Surface, surfaceOf } from '../project/surface.js';
 
 export type Finding = { file: string; line: number; column: number; rule: string; message: string; hint: string; snippet: string; fix?: { start: number; end: number; text: string }; overridden?: string };
@@ -15,7 +16,7 @@ export type CheckResult = { files: number; findings: Finding[]; overrides: Findi
 /** Files the check reads: styles, templates and scripts. Native code is converted to brand literals and not checked. */
 export const checkable = (rel: string) => STYLES.test(rel) || MARKUP.test(rel) || SCRIPT.test(rel);
 
-export function checkText(relPath: string, text: string, colorSurface?: Surface): { findings: Finding[]; overrides: Finding[] } {
+export function checkText(relPath: string, text: string, colorSurface?: Surface, kinds?: string[]): { findings: Finding[]; overrides: Finding[] } {
 	const file = loadSource(relPath, text);
 	const findings: Finding[] = [];
 	const overrides: Finding[] = [];
@@ -27,7 +28,9 @@ export function checkText(relPath: string, text: string, colorSurface?: Surface)
 	} catch (error) {
 		raw = [{ rule: 'crash', message: `check crashed: ${(error as Error).message}`, hint: 'Report this to the design system owners.', offset: 0 }];
 	}
-	const colorEdits = colorSurface ? componentColorEdits(relPath, text, colorSurface) : undefined;
+	const colorEdits = colorSurface ? componentColorEdits(relPath, text, colorSurface, true, kinds) : undefined;
+	// A selection of element kinds checks only those elements' colors; the rest of the file is the app's own.
+	if (kinds) raw = raw.filter((r) => r.rule === 'raw-color' && colorEdits);
 	for (const r of raw) {
 		if (r.rule === 'raw-color' && colorEdits) {
 			const edit = colorEdits.find((e) => r.offset >= e.start && r.offset < e.end);
@@ -75,18 +78,32 @@ function expandPath(root: string, rel: string): string[] {
 	return styledFiles(abs).map((f) => relative(root, join(abs, f)));
 }
 
-export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; changed?: boolean; colorSurface?: Surface } = {}): CheckResult {
+/**
+ * The check of one file as the applied selection sees it (plan/scope.ts): undefined when the file is outside it, the
+ * whole file, or only the colors of the selected element kinds. With no selection every file is checked in full.
+ */
+export function scopedCheckText(scope: StoredScope | undefined, rel: string, text: string, colorSurface?: Surface) {
+	const cover = coverage(scope, rel);
+	if (cover === 'none') return undefined;
+	return checkText(rel, text, colorSurface, cover === 'kinds' ? kindsIn(scope, rel) : undefined);
+}
+
+export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; changed?: boolean; colorSurface?: Surface; all?: boolean; scope?: StoredScope } = {}): CheckResult & { outside: number } {
 	const started = performance.now();
 	const state = readState(root);
 	const colorsFor = (rel: string) => opts.colorSurface ?? (state?.colors === 'components' ? surfaceOf(rel, { surface: state.surface, mixed: state.mixed, product: 0, site: 0, reasons: [] }) : undefined);
 	const all = opts.paths?.length ? opts.paths.flatMap((p) => expandPath(root, p)) : opts.changed ? changedFiles(root) : styledFiles(root);
-	const files = all.filter((rel) => checkable(rel) && !isOwnFile(rel) && existsSync(join(root, rel)));
+	const candidates = all.filter((rel) => checkable(rel) && !isOwnFile(rel) && existsSync(join(root, rel)));
+	// The brand is enforced only where it was applied: a selection leaves the rest of the app to its own styles.
+	const scope = opts.all ? undefined : opts.scope ?? state?.scope;
+	const files = candidates.filter((rel) => coverage(scope, rel) !== 'none');
 	const findings: Finding[] = [];
 	const overrides: Finding[] = [];
 	let fixed = 0;
 	for (const rel of files) {
 		let text = readFileSync(join(root, rel), 'utf8');
-		let result = checkText(rel, text, colorsFor(rel));
+		const check = (t: string) => scopedCheckText(scope, rel, t, colorsFor(rel))!;
+		let result = check(text);
 		if (opts.fix) {
 			const fixes = result.findings.map((f) => f.fix).filter((f): f is NonNullable<Finding['fix']> => !!f);
 			if (fixes.length) {
@@ -94,7 +111,7 @@ export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; 
 				text = applied.text;
 				fixed += applied.applied;
 				writeFileSync(join(root, rel), text);
-				result = checkText(rel, text, colorsFor(rel));
+				result = check(text);
 			}
 		}
 		findings.push(...result.findings);
@@ -109,7 +126,7 @@ export function runCheck(root: string, opts: { paths?: string[]; fix?: boolean; 
 		seen.add(key);
 		findings.push({ ...o, rule: 'override-approval', message: `ds-override not approved: ${o.rule} (${o.overridden})`, hint: `A person approves it in a terminal with \`${cli()} approve\`. Agents cannot; remove the override and fix the value instead.`, fix: undefined });
 	}
-	return { files: files.length, findings, overrides, fixed, ms: Math.round(performance.now() - started) };
+	return { files: files.length, findings, overrides, fixed, ms: Math.round(performance.now() - started), outside: candidates.length - files.length };
 }
 
 export const formatFinding = (f: Finding) => `${f.file}:${f.line}  ${f.rule}  ${f.message}. ${f.hint}`;

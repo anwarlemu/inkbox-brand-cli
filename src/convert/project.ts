@@ -14,9 +14,11 @@ import { applyComponentColors } from './components.js';
 
 // Applies component colors at their usage sites; other style scales retain their existing conversion.
 
-export type ConvertResult = { written: string[]; stats: Stats; palette: Palette; marks: string[]; rasterLogos: string[] };
+export type ConvertResult = { written: string[]; stats: Stats; palette: Palette; marks: string[]; rasterLogos: string[]; perFile: Record<string, number> };
+/** How much of each file a selection covers (plan/scope.ts): every value, only the colors of its element kinds, or nothing. */
+export type ConvertScope = { cover: (rel: string) => 'full' | 'kinds' | 'none'; kinds: (rel: string) => string[] | undefined };
 
-export function convertProject(project: Project, files: string[], surface: Surface, { dryRun = false, theme = 'light' as 'light' | 'dark' } = {}): ConvertResult {
+export function convertProject(project: Project, files: string[], surface: Surface, { dryRun = false, theme = 'light' as 'light' | 'dark', scope = undefined as ConvertScope | undefined } = {}): ConvertResult {
 	const root = project.root;
 	const read = (rel: string) => readFileSync(join(root, rel), 'utf8');
 	const styleFiles = files.filter((rel) => STYLES.test(rel) || MARKUP.test(rel));
@@ -43,19 +45,27 @@ export function convertProject(project: Project, files: string[], surface: Surfa
 
 	const stats = newStats();
 	const written: string[] = [];
+	const perFile: Record<string, number> = {};
+	const total = () => Object.values(stats).reduce((a, b) => a + b, 0);
 	for (const rel of files) {
+		const cover = scope?.cover(rel) ?? 'full';
+		if (cover === 'none') continue;
 		const before = read(rel);
 		const pal = paletteFor(rel);
+		const counted = total();
 		let after = before;
-		if (STYLES.test(rel)) after = convertCss(before, /\.(sass|styl)$/.test(rel) ? { ...pal, lines: true } : pal, stats);
+		// A selection of element kinds: only those elements' colors change; every other value stays the app's own.
+		if (cover === 'kinds') after = base.preserveColors ? applyComponentColors(rel, after, surface, stats, tailwind === 'theme', scope?.kinds(rel) ?? []) : before;
+		else if (STYLES.test(rel)) after = convertCss(before, /\.(sass|styl)$/.test(rel) ? { ...pal, lines: true } : pal, stats);
 		else if (MARKUP.test(rel)) {
 			after = convertMarkup(before, pal, stats);
 			if (tailwind) after = after.replace(/(\sclass(?:Name)?\s*=\s*)(["'])([^"']*)\2/g, (all, head: string, q: string, cls: string) => `${head}${q}${convertClasses(cls, pal, stats, tailwind === 'theme')}${q}`);
 		} else if (SCRIPT.test(rel)) after = convertScript(before, tailwind ? classPalette(before, pal === base ? layoutPalette : pal, tailwindColor) : pal, stats, { tailwind, theme: brandTheme });
 		else if (!base.preserveColors && (NATIVE.test(rel) || ANDROID_XML.test(rel) || THEME_DATA.test(rel))) after = convertNative(before, pal, stats, brandTheme, rel.endsWith('.xml') || rel.endsWith('.xaml'));
-		if (base.preserveColors) after = applyComponentColors(rel, after, surface, stats, tailwind === 'theme');
+		if (base.preserveColors && cover === 'full') after = applyComponentColors(rel, after, surface, stats, tailwind === 'theme');
 		if (after !== before) {
 			written.push(rel);
+			perFile[rel] = total() - counted;
 			if (!dryRun) writeFileSync(join(root, rel), after);
 		}
 	}
@@ -64,7 +74,7 @@ export function convertProject(project: Project, files: string[], surface: Surfa
 	// redrawn in brand text; raster logos are listed for the agent to check, since they cannot be recolored in code.
 	const marks: string[] = [];
 	const rasterLogos: string[] = [];
-	if (!base.preserveColors && base.mode === 'dark' && brandTheme !== 'product-dark') {
+	if (!scope && !base.preserveColors && base.mode === 'dark' && brandTheme !== 'product-dark') {
 		const drawn = files.filter((rel) => MARKUP.test(rel) || SCRIPT.test(rel) || STYLES.test(rel)).map(read).join('\n');
 		const isDrawn = (name: string) => new RegExp(`(src(set)?\\s*=\\s*["'{][^"'}]*|url\\(\\s*["']?[^)]*|import[^;]*|:\\s*["'][^"']*)${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(drawn);
 		for (const rel of walkFiles(root, ['**/*.svg'], ['**/node_modules/**'])) {
@@ -83,5 +93,5 @@ export function convertProject(project: Project, files: string[], surface: Surfa
 			if (src && !rasterLogos.includes(src)) rasterLogos.push(src);
 		}
 	}
-	return { written, stats, palette: base, marks, rasterLogos: rasterLogos.slice(0, 8) };
+	return { written, stats, palette: base, marks, rasterLogos: rasterLogos.slice(0, 8), perFile };
 }

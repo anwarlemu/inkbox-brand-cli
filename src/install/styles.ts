@@ -17,7 +17,44 @@ export type StyleInstall = { stylesDir: string; brandCss: string; imported?: str
 const STYLE_DIR = (bin: string) => `_${bin}`;
 const IMPORT_RE = (bin: string) => new RegExp(`@import\\s+["']\\./_?${bin}/(?:brand|theme)\\.css["'];\\n?`, 'g');
 
-export function installStyles(w: Writer, project: Project, surface: Surface, styleText: string): StyleInstall {
+/**
+ * The brand stylesheet for a selection (plan/scope.ts): its tokens, keyframes, fonts and its own ds- classes, without
+ * the base layer and the global rules that restyle every element on every page (body type, headings, links, focus,
+ * motion), so only the named components and pages change.
+ */
+export function tokensOnly(css: string): string {
+	const blocks: string[] = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < css.length; i++) {
+		const c = css[i];
+		if (c === '/' && css[i + 1] === '*') {
+			const end = css.indexOf('*/', i + 2);
+			i = end < 0 ? css.length : end + 1;
+			continue;
+		}
+		if (c === '{') depth++;
+		else if (c === '}' && --depth === 0) {
+			blocks.push(css.slice(start, i + 1));
+			start = i + 1;
+		} else if (c === ';' && depth === 0) {
+			blocks.push(css.slice(start, i + 1));
+			start = i + 1;
+		}
+	}
+	const keep = (block: string) => {
+		const head = block.replace(/\/\*[\s\S]*?\*\//g, '').trim().split('{')[0].trim();
+		if (/^@(import|charset|font-face|keyframes|-webkit-keyframes|property|theme)\b/.test(head)) return true;
+		if (/^:root\b/.test(head)) return true;
+		if (/^\.ds-[\w-]+(\s*,\s*\.ds-[\w-]+)*$/.test(head)) return true;
+		// A media query that only re-declares tokens (a system dark theme).
+		if (/^@media\b/.test(head)) return !block.slice(block.indexOf('{') + 1, block.lastIndexOf('}')).replace(/\/\*[\s\S]*?\*\//g, '').replace(/:root\s*\{[^{}]*\}/g, '').trim();
+		return false;
+	};
+	return `${blocks.filter(keep).map((b) => b.trim()).join('\n\n')}\n`;
+}
+
+export function installStyles(w: Writer, project: Project, surface: Surface, styleText: string, { scoped = false } = {}): StyleInstall {
 	const bin = brand().bin;
 	const notes: string[] = [];
 	const main = project.mainStylesheet;
@@ -31,7 +68,8 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 		const dark = Object.entries(tokens().dark).map(([k, v]) => `\t\t${k}: ${v};`).join('\n');
 		css += `\n@media (prefers-color-scheme: dark) {\n\t:root {\n${dark}\n\t}\n}\n`;
 	}
-	css += groundAliases(styleText);
+	if (scoped) css = `/* A selection was applied (.ds/state.json): tokens, theme and fonts only, no base layer. Applying the whole app adds it. */\n${tokensOnly(css)}`;
+	else css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.
 	if (!next && (!main || !tailwind4)) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;
 	w.write(`${dir}/brand.css`, css);

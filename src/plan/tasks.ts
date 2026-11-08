@@ -51,6 +51,8 @@ export function taskStatus(root: string, state: State, screen: Screen, index: nu
 /** The screens that are tasks: those chosen by layout at setup (`state.main`), else the first few. */
 export const mainScreens = (state: State) => {
 	const chosen = state.main?.map((id) => state.screens.find((s) => s.id === id)).filter((s): s is Screen => !!s);
+	// A selection reviews only its own pages (none when it names components alone).
+	if (state.scope) return chosen ?? [];
 	return chosen?.length ? chosen : state.screens.slice(0, MAX_SCREENS);
 };
 

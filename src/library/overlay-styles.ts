@@ -31,7 +31,7 @@ function classLiterals(n: Node | undefined): Node[] {
 	return [];
 }
 
-export function restyleOverlays(text: string, surface: Surface): { text: string; parts: string[] } {
+export function restyleOverlays(text: string, surface: Surface, allow: (family: string) => boolean = () => true): { text: string; parts: string[] } {
 	let ast: Node;
 	try { ast = parse(text, { sourceType: 'module', plugins: ['jsx', 'typescript'] }) as unknown as Node; }
 	catch { return { text, parts: [] }; }
@@ -54,6 +54,7 @@ export function restyleOverlays(text: string, surface: Surface): { text: string;
 		const found = name.type === 'JSXIdentifier' ? named.get(name.name) : name.type === 'JSXMemberExpression' && namespaces.has(name.object?.name) ? { family: namespaces.get(name.object.name)!, part: name.property.name } : undefined;
 		if (!found) return;
 		const { family, part } = found;
+		if (!allow(family)) return;
 		const menu = family === 'dropdown-menu' || family === 'context-menu' || family === 'select';
 		const kind = family === 'select' && part === 'Trigger' ? 'input' : menu ? ROWS.has(part) ? 'menu-item' : ['Content', 'SubContent'].includes(part) ? 'menu-panel' : undefined : part === 'Content' ? 'popover-panel' : undefined;
 		if (!kind) return;

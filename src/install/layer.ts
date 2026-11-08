@@ -58,12 +58,12 @@ const decls = (list: [string, string][], pad: string) => list.map(([k, v]) => `$
 const withState = (selectors: string[], state: string) => selectors.map((x) => `${x}${state}`).join(',\n');
 
 /** The block for one stylesheet, or '' when it names no element it is safe to style. */
-export function elementLayer(rel: string, text: string, surface: Surface): { block: string; count: number; styled: { selector: string; kind: string }[] } {
+export function elementLayer(rel: string, text: string, surface: Surface, allow: (kind: string) => boolean = () => true): { block: string; count: number; styled: { selector: string; kind: string }[] } {
 	const bySelector = new Map<string, string>();
 	for (const hit of elementsIn(rel, text.replace(BLOCK, ''), surface)) {
 		const sel = hit.selector;
 		// Bare tags (button, a) are left to the base layer: one selector would restyle every one of them.
-		if (!sel || !SURE[hit.kind] || /[&%@:]/.test(sel) || !lastClasses(sel).some((c) => SURE[hit.kind].test(c))) continue;
+		if (!sel || !SURE[hit.kind] || !allow(hit.kind) || /[&%@:]/.test(sel) || !lastClasses(sel).some((c) => SURE[hit.kind].test(c))) continue;
 		if (!bySelector.has(sel)) bySelector.set(sel, hit.kind);
 	}
 	const byKind = new Map<string, string[]>();
@@ -93,14 +93,16 @@ export function elementLayer(rel: string, text: string, surface: Surface): { blo
 }
 
 /** Writes the element layer into every stylesheet that names brand elements; returns how many, the files, and each selector styled as which kind. */
-export function installElementLayer(w: Writer, files: string[], surfaceOf: (rel: string) => Surface) {
+export function installElementLayer(w: Writer, files: string[], surfaceOf: (rel: string) => Surface, scope?: { cover: (rel: string) => 'full' | 'kinds' | 'none'; kinds: (rel: string) => string[] | undefined }) {
 	let count = 0;
 	const written: string[] = [];
 	const styled: { file: string; selector: string; kind: string }[] = [];
 	for (const rel of files) {
 		if (!/\.(css|scss|less)$/.test(rel) || isOwnFile(rel)) continue;
+		const cover = scope?.cover(rel) ?? 'full';
+		if (cover === 'none') continue;
 		const text = readFileSync(join(w.root, rel), 'utf8');
-		const { block, count: n, styled: s } = elementLayer(rel, text, surfaceOf(rel));
+		const { block, count: n, styled: s } = elementLayer(rel, text, surfaceOf(rel), cover === 'kinds' ? (kind) => !!scope?.kinds(rel)?.includes(kind) : undefined);
 		const without = text.replace(BLOCK, '');
 		if (!block) {
 			if (without !== text) w.write(rel, without);

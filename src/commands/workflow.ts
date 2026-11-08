@@ -24,7 +24,19 @@ export function workflow(program: Command) {
 	program.command('create').description('Scaffold a framework using shadcn and install the brand workflow')
 		.option('-t, --template <template>', 'next, vite, start, react-router or astro', 'vite').requiredOption('-n, --name <name>', 'new application directory').option('--surface <surface>', 'site or product').option('--monorepo', 'create a shared UI workspace').option('--dry-run', 'show the scaffold command without writing').option('-y, --yes', 'noninteractive setup')
 		.action((_opts, cmd) => create(cmd.optsWithGlobals()));
-	program.command('apply').description('Restyle an existing application; preserves its content and behavior').option('--surface <surface>', 'site or product').option('--redo', 'reapply conversion').option('--dry-run', 'preview conversion without writing').action((_opts, cmd) => run({ ...cmd.optsWithGlobals(), colors: 'components' }));
+	program.command('apply [targets...]').description('Restyle an existing application, or only the components or pages named; preserves its content and behavior')
+		.addHelpText('after', `
+Targets (each resolves in order: a route, a file or glob, a library component, an app component):
+  apply                               the whole app (widens an earlier selection)
+  apply button card dialog            those library components, wherever the app uses them
+  apply PrimaryButton                 one of the app's own components
+  apply /settings /billing            those pages, by route
+  apply app/settings/page.tsx         a page by file, or "app/(marketing)/**/page.tsx" in quotes
+  apply button --pages /settings      buttons on the settings page only
+  apply ... --dry-run --json          every file it would change, and why`)
+		.option('--components <names>', 'comma-separated library components or app components (for names that are also routes or files)').option('--pages <routes>', 'comma-separated routes, files or globs').option('--with-shared', 'include the layouts and shell files the named pages share with other pages')
+		.option('--surface <surface>', 'site or product').option('--redo', 'apply again what was applied before (the recorded selection or the whole app)').option('--dry-run', 'preview conversion without writing').option('--json', 'JSON output')
+		.action((targets: string[], _opts, cmd) => { const o = cmd.optsWithGlobals(); return run({ ...o, targets, colors: 'components', widen: !targets.length && !o.components && !o.pages }); });
 	for (const name of ['search', 'list']) program.command(`${name} [query]`).description('Search components by name, use, type and surface')
 		.option('-q, --query <query>', 'search terms').option('-t, --type <type>', 'comma-separated component types').option('--surface <surface>', 'site or product').option('-l, --limit <count>', 'maximum results').option('-o, --offset <count>', 'results to skip')
 		.action((query, _opts, cmd) => search(query, cmd.optsWithGlobals()));

@@ -126,6 +126,24 @@ npx inkbox-ds apply --dry-run
 npx inkbox-ds apply
 ```
 
+To restyle only part of an app, name it. Each target is a route, a file or glob, a library component (any case:
+`Button`, `alert-dialog`) or one of the app's own components (`PrimaryButton`):
+
+```sh
+npx inkbox-ds apply button card dialog          # those components, wherever the app uses them
+npx inkbox-ds apply /settings /billing          # those pages and the components only they use
+npx inkbox-ds apply "app/(marketing)/**/page.tsx"
+npx inkbox-ds apply button --pages /settings    # buttons on the settings page only
+npx inkbox-ds apply /settings --with-shared     # also the layout and shell files it shares
+npx inkbox-ds apply button --dry-run --json     # each file it would change, with the reason
+```
+
+Nothing outside the selection changes apart from the shared setup (brand tokens, theme and fonts, without the base
+layer, and the provider the library's components render in): pages outside it render as before. A name that matches
+nothing stops the run with the closest names. The selection is recorded in `.ds/state.json`: `apply --redo` repeats
+it, a later `apply <more>` adds to it, and a bare `apply` takes the whole app. The checks, hooks and pre-commit
+enforce the brand only inside the selection; `check --all` checks every file.
+
 Subsequent runs report the next screen to review. `--redo` repeats conversion after an update. Component decisions
 are recorded in `.ds/components.json`. The conversion also installs checks for Claude Code, Codex, Cursor and Git
 commits. Adding individual components with `add` does not run this conversion.

@@ -1,5 +1,6 @@
-import { chmodSync, existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { chmodSync, existsSync, readFileSync, realpathSync } from 'node:fs';
+import { dirname, isAbsolute, join, relative } from 'node:path';
 import { brand, cli } from '../lib/brand.js';
 import { agentGuide } from '../lib/guide.js';
 import { PKG_ROOT, pkgPath } from '../lib/paths.js';
@@ -22,14 +23,49 @@ export function runningHarness(env = process.env): Harness | undefined {
 
 export const contract = () => readFileSync(pkgPath('brand', 'contract.md'), 'utf8').replaceAll('{{brand}}', brand().name).replaceAll('{{cli}}', cli()).trim();
 
-/** How each harness finds the project's copy of the CLI from the directory it runs hooks in. */
+/** The git work tree a folder is in (its top), or undefined outside one. */
+export function gitTop(root: string) {
+	try {
+		return execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	} catch {
+		return undefined;
+	}
+}
+
+const real = (p: string) => {
+	try {
+		return realpathSync(p);
+	} catch {
+		return p;
+	}
+};
+
+/** The folder whose node_modules holds the project's copy of the CLI: the app's own, or a monorepo root's (hoisted). */
+function installedAt(root: string) {
+	for (let dir = root; ; dir = dirname(dir)) {
+		if (existsSync(join(dir, 'node_modules', brand().bin, 'bin.js'))) return dir;
+		if (dirname(dir) === dir || existsSync(join(dir, '.git'))) return undefined;
+	}
+}
+
+/**
+ * How each harness finds the project's copy of the CLI from the directory it runs hooks in, by a path relative to
+ * the project (committed hooks must work on every machine), including a copy hoisted to a monorepo root.
+ */
 export function binCommand(root: string, harness: Harness | 'other') {
 	const bin = brand().bin;
-	if (!existsSync(join(root, 'node_modules', bin, 'bin.js'))) return `node "${join(PKG_ROOT, 'bin.js')}"`;
-	if (harness === 'claude-code') return `node "$CLAUDE_PROJECT_DIR/node_modules/${bin}/bin.js"`;
-	if (harness === 'cursor') return `node "$CURSOR_PROJECT_DIR/node_modules/${bin}/bin.js"`;
-	if (harness === 'codex') return `node "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/node_modules/${bin}/bin.js"`;
-	return `node node_modules/${bin}/bin.js`;
+	const at = installedAt(root);
+	if (!at) return `node "${join(PKG_ROOT, 'bin.js')}"`;
+	const up = relative(root, at).split('\\').join('/');
+	const from = (base: string) => `${base}${up ? `/${up}` : ''}/node_modules/${bin}/bin.js`;
+	if (harness === 'claude-code') return `node "${from('$CLAUDE_PROJECT_DIR')}"`;
+	if (harness === 'cursor') return `node "${from('$CURSOR_PROJECT_DIR')}"`;
+	if (harness === 'codex') {
+		const top = gitTop(root);
+		const fromTop = top ? relative(real(top), real(at)).split('\\').join('/') : '';
+		return `node "$(git rev-parse --show-toplevel 2>/dev/null || pwd)${fromTop ? `/${fromTop}` : ''}/node_modules/${bin}/bin.js"`;
+	}
+	return `node ${up || '.'}/node_modules/${bin}/bin.js`.replace(/^node \.\//, 'node ');
 }
 
 function mergeHooks(existing: any, cmd: string, harness: 'claude-code' | 'codex') {
@@ -80,11 +116,24 @@ export function installAgents(w: Writer) {
 	if (ignore.length) w.write('.gitignore', `${gitignore.trimEnd()}\n${ignore.join('\n')}\n`.replace(/^\n/, ''));
 }
 
-/** The check in .git/hooks/pre-commit. Git does not share that folder, so session start puts it back on a fresh clone. */
+/**
+ * The check in the repository's pre-commit hook. Git does not share that folder, so session start puts it back on a
+ * fresh clone. In a monorepo the hook lives at the repository's top and checks each app from its own folder.
+ */
 export function installPreCommit(w: Writer) {
-	if (!existsSync(join(w.root, '.git'))) return;
-	const rel = '.git/hooks/pre-commit';
+	const top = gitTop(w.root);
+	if (!top) return;
+	let hooks: string;
+	try {
+		hooks = execFileSync('git', ['rev-parse', '--git-path', 'hooks'], { cwd: w.root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	} catch {
+		return;
+	}
+	const rel = relative(w.root, join(isAbsolute(hooks) ? hooks : join(w.root, hooks), 'pre-commit')).split('\\').join('/');
+	const app = relative(real(top), real(w.root)).split('\\').join('/');
 	const existing = w.read(rel) ?? '#!/bin/sh\n';
-	const block = `${binCommand(w.root, 'other')} check --changed || { echo "${cli()} check failed. Fix the errors above before committing."; exit 1; }`;
-	if (w.write(rel, upsertBlock(existing.startsWith('#!') ? existing : `#!/bin/sh\n${existing}`, block, '# ds:pre-commit:start', '# ds:pre-commit:end')) && !w.dryRun) chmodSync(join(w.root, rel), 0o755);
+	const check = `${binCommand(w.root, 'other')} check --changed`;
+	const block = `${app ? `(cd "${app}" && ${check})` : check} || { echo "${cli()} check failed${app ? ` in ${app}` : ''}. Fix the errors above before committing."; exit 1; }`;
+	const marker = app ? ` ${app}` : '';
+	if (w.write(rel, upsertBlock(existing.startsWith('#!') ? existing : `#!/bin/sh\n${existing}`, block, `# ds:pre-commit:start${marker}`, `# ds:pre-commit:end${marker}`)) && !w.dryRun) chmodSync(join(w.root, rel), 0o755);
 }

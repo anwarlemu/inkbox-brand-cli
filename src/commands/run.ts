@@ -15,7 +15,7 @@ import { installDots, installStyles } from '../install/styles.js';
 import { brand, cli, hasProduct } from '../lib/brand.js';
 import { color, emit } from '../lib/output.js';
 import { PKG_ROOT, findProjectRoot } from '../lib/paths.js';
-import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
+import { MARKUP, STYLES, detectProject, styledFiles, workspaceApps } from '../project/detect.js';
 import { listScreens, shellFiles } from '../project/screens.js';
 import { type Surface, profile, surfaceOf } from '../project/surface.js';
 import { type State, readState, writeState } from '../plan/state.js';
@@ -45,8 +45,15 @@ export type RunOptions = {
 /** What one run applies (`work`, its parts) and what the app has applied once it is done (`recorded`; undefined is the whole app). */
 type Selection = { work: ScopeSpec[]; recorded?: ScopeSpec[] };
 
+/** A monorepo root holds apps, each set up on its own: stop before writing anything, and name them. */
+export function notMonorepoRoot(root: string, command: string) {
+	const apps = workspaceApps(root);
+	if (apps.length) throw new Error(`${root} is a monorepo root. Run it for one app: ${apps.slice(0, 4).map((a) => `\`${cli()} ${command} --cwd ${a}\``).join(', ')}${apps.length > 4 ? ` (and ${apps.length - 4} more apps)` : ''}, or from inside the app's folder.`);
+}
+
 export function run(opts: RunOptions) {
 	const root = findProjectRoot();
+	notMonorepoRoot(root, 'apply');
 	const existing = readState(root);
 	const named = !!(opts.targets?.length || opts.components?.length || opts.pages?.length);
 	let selection: Selection | undefined;
@@ -102,6 +109,8 @@ export function selfInstall(root: string, opts: RunOptions, handoff = true) {
 function setUp(root: string, opts: RunOptions, previous?: State, selection?: Selection) {
 	const project = detectProject(root);
 	const files = styledFiles(root);
+	// Nothing to restyle (the wrong folder): stop before writing anything.
+	if (!files.length) throw new Error(`No app to restyle in ${root}: no pages, stylesheets or components were found. Run it from the app's folder or pass --cwd <app> (in a monorepo, the app's folder, such as --cwd apps/web). To start a new app: ${cli()} create --template next --name my-app.`);
 	const found = profile(root, files);
 	// A selection (plan/scope.ts): the files and element kinds this run changes, and what the app has applied after it.
 	const allScreens = listScreens(project, files, found);

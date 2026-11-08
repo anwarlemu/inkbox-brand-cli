@@ -116,3 +116,30 @@ export function styledFiles(root: string): string[] {
 		.filter((rel) => STYLES.test(rel) || MARKUP.test(rel) || SCRIPT.test(rel) || NATIVE.test(rel) || ANDROID_XML.test(rel) || THEME_DATA.test(rel))
 		.filter((rel) => !isOwnFile(rel) && !SKIP.test(rel) && !/(^|\/)(scripts|tests?|__tests__|e2e|cypress|playwright|docs?\/ops|migrations?|seeds?)\//.test(rel));
 }
+
+/**
+ * The apps of a monorepo root (npm, yarn or bun workspaces, or pnpm-workspace.yaml): each workspace folder with a
+ * package.json. Empty when the folder is not a workspace root, or is itself an app (it has a framework of its own).
+ */
+export function workspaceApps(root: string): string[] {
+	let pkg: { workspaces?: string[] | { packages?: string[] }; dependencies?: Record<string, string>; devDependencies?: Record<string, string> } = {};
+	try {
+		pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+	} catch {}
+	const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+	if (['next', 'react', 'vite', 'astro', 'nuxt', 'vue', '@sveltejs/kit'].some((d) => deps[d])) return [];
+	let globs = Array.isArray(pkg.workspaces) ? pkg.workspaces : pkg.workspaces?.packages ?? [];
+	if (!globs.length && existsSync(join(root, 'pnpm-workspace.yaml'))) globs = [...readFileSync(join(root, 'pnpm-workspace.yaml'), 'utf8').matchAll(/^\s*-\s*["']?([^"'\n#]+?)["']?\s*$/gm)].map((m) => m[1]);
+	const out: string[] = [];
+	for (const glob of globs.filter((g) => !g.startsWith('!'))) {
+		const base = glob.replace(/\/\*\*?$/, '');
+		if (base === glob) {
+			if (existsSync(join(root, glob, 'package.json'))) out.push(glob);
+			continue;
+		}
+		if (!existsSync(join(root, base))) continue;
+		for (const entry of readdirSync(join(root, base), { withFileTypes: true })) if (entry.isDirectory() && existsSync(join(root, base, entry.name, 'package.json'))) out.push(`${base}/${entry.name}`);
+	}
+	return out.sort();
+}
+

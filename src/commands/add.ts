@@ -12,7 +12,7 @@ import { installChakraProvider } from '../install/chakra.js';
 import { closure, loadIndex, loadIndexSync } from '../library/registry.js';
 import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
 import { profile } from '../project/surface.js';
-import { selfInstall, type RunOptions } from './run.js';
+import { notMonorepoRoot, selfInstall, type RunOptions } from './run.js';
 
 type AddOptions = RunOptions & { overwrite?: boolean; all?: boolean; path?: string; diff?: boolean | string; view?: boolean | string };
 
@@ -21,7 +21,9 @@ export function readPackage(root: string): { dependencies?: Record<string, strin
 }
 
 export async function add(names: string[], opts: AddOptions) {
-	const root = findProjectRoot(), project = detectProject(root), pkg = readPackage(root);
+	const root = findProjectRoot();
+	notMonorepoRoot(root, 'add');
+	const project = detectProject(root), pkg = readPackage(root);
 	const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 	let reactVersion = deps.react ?? '';
 	try { reactVersion = JSON.parse(readFileSync(join(root, 'node_modules/react/package.json'), 'utf8')).version; } catch {}

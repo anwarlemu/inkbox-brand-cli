@@ -9,13 +9,14 @@ import { profile } from '../project/surface.js';
 import { emit } from '../lib/output.js';
 import { findProjectRoot } from '../lib/paths.js';
 import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
-import { selfInstall, type RunOptions } from './run.js';
+import { notMonorepoRoot, selfInstall, type RunOptions } from './run.js';
 import { installChakraProvider, missingChakraPackages } from '../install/chakra.js';
 
 /** Set up a design-system workspace without converting the application's existing styles or creating a restyle queue. */
 export function init(opts: RunOptions) {
 	if (opts.surface && !['site', 'product'].includes(opts.surface)) throw new Error('--surface is site or product.');
 	const root = findProjectRoot();
+	notMonorepoRoot(root, 'init');
 	selfInstall(root, opts);
 	const project = detectProject(root);
 	const componentsSupported = ['next', 'react', 'vite', 'astro'].includes(project.framework) && (project.tailwindMajor ?? 0) >= 4;

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { brand, cli, isOwnFile } from '../lib/brand.js';
 import { MARKUP, SCRIPT, STYLES, styledFiles } from '../project/detect.js';
@@ -61,11 +61,16 @@ export function applyFixes(text: string, fixes: NonNullable<Finding['fix']>[]) {
 	return { text: out, applied };
 }
 
-/** Files changed in git (staged, unstaged, untracked), for pre-commit and the stop hook. */
+/**
+ * Files changed in git (staged, unstaged, untracked), for pre-commit and the stop hook, relative to the project. Git
+ * names them from the repository's top, which is a folder above an app in a monorepo.
+ */
 export function changedFiles(root: string) {
 	try {
-		const out = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], { cwd: root, encoding: 'utf8' });
-		return out.split('\n').filter(Boolean).map((l) => l.slice(3).replace(/^.* -> /, '').replace(/^"|"$/g, ''));
+		const top = execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+		const out = execFileSync('git', ['status', '--porcelain', '--untracked-files=all', '--', '.'], { cwd: root, encoding: 'utf8' });
+		const here = realpathSync(root);
+		return out.split('\n').filter(Boolean).map((l) => relative(here, join(realpathSync(top), l.slice(3).replace(/^.* -> /, '').replace(/^"|"$/g, ''))).split('\\').join('/')).filter((p) => p && !p.startsWith('..'));
 	} catch {
 		return [];
 	}

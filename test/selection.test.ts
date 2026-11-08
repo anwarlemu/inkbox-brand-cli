@@ -4,8 +4,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { preToolUse } from '../src/hooks/handlers.js';
+import { changedFiles } from '../src/check/engine.js';
 import { scopeTheme, tokensOnly } from '../src/install/styles.js';
 import { missingChakraPackages } from '../src/install/chakra.js';
+import { binCommand } from '../src/install/agents.js';
 import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
 import { componentColorEdits } from '../src/convert/components.js';
@@ -109,6 +111,56 @@ describe('apply to a selection', () => {
 		}
 	});
 
+	it('stops with the fix in a folder with no app, writing nothing', () => {
+		const dir = project({ 'README.md': '# Acme' });
+		try {
+			const out = cli(dir, 'apply');
+			expect(out.status).toBe(1);
+			expect(out.stderr).toContain('No app to restyle');
+			expect(out.stderr).toContain('--cwd');
+			expect(existsSync(join(dir, '.ds'))).toBe(false);
+			expect(existsSync(join(dir, 'AGENTS.md'))).toBe(false);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+
+	it('stops at a monorepo root and names the apps to run it for', () => {
+		const dir = project({ 'package.json': JSON.stringify({ private: true, workspaces: ['apps/*'] }), ...Object.fromEntries(Object.entries(APP).map(([k, v]) => [`apps/web/${k}`, v])) });
+		try {
+			for (const args of [['apply'], ['apply', 'button'], ['add', 'button']]) {
+				const out = cli(dir, ...args);
+				expect(out.status).toBe(1);
+				expect(out.stderr).toContain(`--cwd apps/web`);
+			}
+			expect(existsSync(join(dir, '.ds'))).toBe(false);
+			expect(cli(dir, 'apply', 'button', '--cwd', 'apps/web').status).toBe(0);
+			expect(readState(join(dir, 'apps/web'))?.scope?.parts[0].items).toEqual(['button']);
+			// The repository's pre-commit checks the app from its own folder, and sees the app's changed files.
+			const hook = read(dir, '.git/hooks/pre-commit');
+			expect(hook).toContain('(cd "apps/web" && node ');
+			const page = join(dir, 'apps/web/app/team/page.tsx');
+			writeFileSync(page, readFileSync(page, 'utf8').replace('rounded-md bg-primary', 'rounded-md bg-[#ff0000]'));
+			expect(changedFiles(join(dir, 'apps/web'))).toContain('app/team/page.tsx');
+			expect(spawnSync('sh', ['.git/hooks/pre-commit'], { cwd: dir, encoding: 'utf8' }).status).toBe(1);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+
+	it('hook commands find a CLI hoisted to the monorepo root by a path relative to the app', () => {
+		const dir = project({ 'package.json': '{}', [`node_modules/${bin}/bin.js`]: '', 'apps/web/package.json': '{}' });
+		try {
+			expect(binCommand(join(dir, 'apps/web'), 'claude-code')).toBe(`node "$CLAUDE_PROJECT_DIR/../../node_modules/${bin}/bin.js"`);
+			expect(binCommand(join(dir, 'apps/web'), 'other')).toBe(`node ../../node_modules/${bin}/bin.js`);
+			expect(binCommand(dir, 'claude-code')).toBe(`node "$CLAUDE_PROJECT_DIR/node_modules/${bin}/bin.js"`);
+			expect(binCommand(dir, 'other')).toBe(`node node_modules/${bin}/bin.js`);
+			expect(binCommand(join(dir, 'apps/web'), 'codex')).toContain(`--show-toplevel 2>/dev/null || pwd)/node_modules/${bin}/bin.js`);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+
 	it('a dry run lists every file with the reason and the changes, and writes nothing', () => {
 		const dir = project(APP);
 		try {
@@ -146,8 +198,11 @@ describe('apply to a selection', () => {
 			const check = cli(dir, 'check');
 			expect(check.status).toBe(0);
 			expect(cli(dir, 'check', '--all').status).toBe(1);
-			const again = changed(dir, APP);
+			// Applying the same selection again (and a card, restyled at its root) changes nothing the second time.
+			expect(cli(dir, 'apply', 'card').status).toBe(0);
+			const again = [...changed(dir, APP), '.ds/components.json', '.ds/state.json'];
 			const snapshot = Object.fromEntries(again.map((f) => [f, read(dir, f)]));
+			expect(cli(dir, 'apply', 'card').status).toBe(0);
 			expect(cli(dir, 'apply', 'button').status).toBe(0);
 			expect(Object.fromEntries(again.map((f) => [f, read(dir, f)]))).toEqual(snapshot);
 		} finally {

@@ -199,7 +199,9 @@ export function unresolvedMessage(unresolved: Resolution['unresolved']) {
 /** The recorded selection with one more part (the same selection named again is not added twice). */
 export function widen(scope: StoredScope | undefined, part: ScopePart): StoredScope {
 	const key = (p: ScopeSpec) => JSON.stringify([[...p.items].sort(), p.own.map((o) => `${o.file}#${o.name}`).sort(), [...p.pages].sort(), [...p.files].sort(), p.withShared]);
-	return { parts: [...(scope?.parts ?? []).filter((p) => key(p) !== key(part)), part] };
+	const parts = scope?.parts ?? [];
+	// Naming a part again keeps its place (the same apply twice leaves the state as it was).
+	return parts.some((p) => key(p) === key(part)) ? { parts: parts.map((p) => (key(p) === key(part) ? part : p)) } : { parts: [...parts, part] };
 }
 
 export const specOf = (p: ScopeSpec): ScopeSpec => ({ items: p.items, own: p.own, pages: p.pages, files: p.files, withShared: p.withShared });

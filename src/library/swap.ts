@@ -216,6 +216,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 				result.styled.push(c.file);
 				return { ...d, action: 'style', reason: `its element takes the library's ${c.item} look${canAdapt && adaptable(c.item) ? ' (a swap would drop some of its props)' : ''}` };
 			}
+			// Restyled on an earlier run: nothing left to change, and the decision stands.
+			const before = earlier.find((x) => x.file === c.file && x.name === c.name && x.action === 'style');
+			if (classes && before) return before;
 		}
 		return { ...d, action: 'refine', reason: `a ${c.item}, styled by the element layer and the converter` };
 	};
@@ -245,7 +248,7 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	result.packages = [...packages];
 	if (dryRun) return result;
 	// A selection adds its decisions to the earlier ones; the whole app replaces them.
-	if (scope) result.decisions = [...previousDecisions(root).filter((d) => !result.decisions.some((x) => x.file === d.file && x.name === d.name)), ...result.decisions];
+	if (scope) result.decisions = [...previousDecisions(root).filter((d) => !result.decisions.some((x) => x.file === d.file && x.name === d.name)), ...result.decisions].sort((a, b) => a.file.localeCompare(b.file) || a.name.localeCompare(b.name));
 	writeInventory(root, result.decisions);
 	if (!result.swapped.length && !result.styled.length) return result;
 	if (packages.size) {

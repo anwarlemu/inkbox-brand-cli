@@ -324,6 +324,9 @@ const SIGNATURES: Signature[] = [
 	{ item: 'section', surface: 'site', names: /^(section|sectionheading|sectionheader|sectiontitle)$/, tags: ['section'] },
 ];
 
+// A component named for a part of another (CardHeader, CardTitle, DialogContent) is that part, not the whole item.
+const PART = /^(header|title|description|content|footer|action|actions|body|item|items|trigger|group|list|label|icon|wrapper|container|overlay|portal|close|separator|indicator|value|viewport|section|caption|cell|row|head)$/;
+
 /** The words a component's name is made of, lowercased and joined (PrimaryButton gives primarybutton, primary, button). */
 function nameWords(name: string) {
 	const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase().split(/\s+/);
@@ -333,6 +336,9 @@ function nameWords(name: string) {
 /** The best library item for a component, with its score and the signals that gave it. */
 export function identify(c: AppComponent, surface: Surface, kindsOf: (item: string) => string[] = () => []): { item?: string; kind?: string; confidence: number; signals: string[] } {
 	const { whole, words, head } = nameWords(c.name);
+	// CardHeader, DialogContent, MenuItem: a part of an item, styled with its item, never restyled as an item itself.
+	const owner = words.slice(0, -1).find((w) => SIGNATURES.some((s) => s.names.test(w)));
+	if (owner && PART.test(head)) return { confidence: 0, signals: [`part of a ${owner}`] };
 	const classWords = (c.root?.classes ?? []).filter((cl) => !UTILITY.test(cl)).flatMap((cl) => cl.toLowerCase().split(/[_-]+/));
 	let best: { item: string; score: number; signals: string[] } | undefined;
 	for (const sig of SIGNATURES) {
@@ -345,7 +351,7 @@ export function identify(c: AppComponent, surface: Surface, kindsOf: (item: stri
 		} else if (sig.names.test(head)) {
 			score += 5;
 			signals.push(`named …${head}`);
-		} else if (words.some((w) => sig.names.test(w))) {
+		} else if (!PART.test(head) && words.some((w) => sig.names.test(w))) {
 			score += 2;
 			signals.push(`name has ${words.find((w) => sig.names.test(w))}`);
 		}

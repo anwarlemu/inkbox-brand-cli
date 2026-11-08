@@ -333,6 +333,10 @@ describe('bugs found applying to real apps', () => {
 		const out = restyleRoot(text, card, 'card', 'group/card flex flex-col gap-3 rounded-dialog py-3.5 text-fg border border-line-field bg-surface')!;
 		expect(out).toContain('className="p-6 rounded-dialog text-fg border border-line-field bg-surface"');
 	});
+	it('the parts of a shadcn card are parts, not cards of their own', () => {
+		const text = ['Card', 'CardHeader', 'CardTitle', 'CardAction', 'CardFooter'].map((n) => `export function ${n}({ className, ...props }: React.ComponentProps<"div">) { return <div data-slot="x" className={cn("rounded-xl bg-card", className)} {...props} />; }`).join('\n');
+		expect(componentsIn('components/ui/card.tsx', text).map((c) => [c.name, identify(c, 'site').item])).toEqual([['Card', 'card'], ['CardHeader', undefined], ['CardTitle', undefined], ['CardAction', undefined], ['CardFooter', undefined]]);
+	});
 	it('a root restyle leaves the separators between class expressions alone', () => {
 		const text = 'export function Tag({ className }: { className?: string }) { return <span className={["rounded-full bg-green-100", className].join(" ")}>x</span>; }';
 		const [tag] = componentsIn('Tag.tsx', text);

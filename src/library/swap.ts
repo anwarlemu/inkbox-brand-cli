@@ -202,7 +202,7 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			}
 		}
 		const content = item?.files?.[0]?.content;
-		if (item && content && ROOT_STYLED.has(c.item) && c.root?.literals.length) {
+		if (item && content && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && c.root?.literals.length) {
 			const look = lookOf(c.root.classes);
 			const pick = (vs: string[]) => {
 				const v = variantsFor(surface);

@@ -91,7 +91,7 @@ export function unlayer(css: string): string {
 }
 
 /** The `--name: value` declarations of a CSS text's @theme blocks (Tailwind's own, or an app's). */
-function themeDeclarations(css: string): Map<string, string> {
+export function themeDeclarations(css: string): Map<string, string> {
 	const out = new Map<string, string>();
 	const text = css.replace(/\/\*[\s\S]*?\*\//g, '');
 	for (const m of text.matchAll(/@theme\b[^{;]*\{/g)) {
@@ -133,7 +133,7 @@ export function scopeTheme(theme: string, appTheme: Map<string, string>, default
 			return `${pad}${key}: var(${name(key)});`;
 		}),
 	);
-	const css = scoped.size ? `\n/* Theme keys the app has too: its own value on its pages, the brand's inside the library's components. */\n:root {\n${app.join('\n')}\n}\n\n:where([data-slot]) {\n${lib.join('\n')}\n}\n` : '';
+	const css = scoped.size ? `\n/* Theme keys the app has too: its own value on its pages, the brand's inside the library's components and named pages. */\n:root {\n${app.join('\n')}\n}\n\n:where([data-slot], .ds-page) {\n${lib.join('\n')}\n}\n` : '';
 	return { theme: out, css, scoped };
 }
 
@@ -174,6 +174,10 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 	// Tailwind 3 compiles each imported stylesheet on its own and rejects an @layer base without its @tailwind base:
 	// the defaults go unlayered there, imported before the app's own rules (which still win, as later rules).
 	if (project.tailwindMajor && project.tailwindMajor < 4) css = unlayer(css);
+	// A page named in a selection (apply /settings) carries .ds-page on its root element: the brand's type and ground
+	// there, in the base layer so the page's own classes still win.
+	const pageCss = `\n/* A page named in a selection: its root element carries .ds-page. */\n@layer base {\n\t.ds-page {\n\t\tfont-family: var(--ds-font-sans);\n\t\tfont-size: var(--ds-text-body);\n\t\tline-height: var(--ds-leading-body);\n\t\tcolor: var(--ds-color-text-default);\n\t\tbackground-color: var(--ds-color-bg-page);\n\t}\n}\n`;
+	if (scoped) scopeCss += project.tailwindMajor && project.tailwindMajor < 4 ? unlayer(pageCss) : pageCss;
 	if (scoped) css = `/* Tokens, theme and fonts for the library's components; no base layer, so the app's own pages keep their look. Applying the whole app (apply with no targets) adds it. */\n${tokensOnly(css)}${scopeCss}`;
 	else css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.

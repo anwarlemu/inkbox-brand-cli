@@ -7,14 +7,15 @@ import { preToolUse, stop } from '../src/hooks/handlers.js';
 import { changedFiles } from '../src/check/engine.js';
 import { scopeTheme, tokensOnly, unlayer } from '../src/install/styles.js';
 import { missingChakraPackages } from '../src/install/chakra.js';
-import { binCommand } from '../src/install/agents.js';
-import { adaptComponent, dropOrphanStyles, restyleRoot } from '../src/library/adapt.js';
+import { binCommand, installPreCommit } from '../src/install/agents.js';
+import { Writer } from '../src/install/files.js';
+import { adaptComponent, dropOrphanStyles, restyleCva, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
 import { applyComponentColors, componentColorEdits } from '../src/convert/components.js';
 import { newStats } from '../src/convert/css.js';
 import { loadItem, loadItemSync } from '../src/library/registry.js';
 import { brand } from '../src/lib/brand.js';
-import { coverage, itemFor, kindsForItems, resolveTargets } from '../src/plan/scope.js';
+import { coverage, itemFor, kindsForItems, markPageRoot, resolveTargets } from '../src/plan/scope.js';
 import { readState } from '../src/plan/state.js';
 import { detectProject, styledFiles } from '../src/project/detect.js';
 import { listScreens } from '../src/project/screens.js';
@@ -25,6 +26,8 @@ import { profile } from '../src/project/surface.js';
 const ROOT = join(import.meta.dirname, '..');
 const BIN = join(ROOT, 'bin.js');
 const bin = brand().bin;
+// The base layer that restyles every page (html, body, headings), as opposed to the .ds-page rule of a named page.
+const BASE_LAYER = /@layer base \{\s*html \{/;
 
 function project(files: Record<string, string>) {
 	const dir = mkdtempSync(join(tmpdir(), 'ds-scope-'));
@@ -203,7 +206,7 @@ describe('apply to a selection', () => {
 			// No base layer while a selection is applied, so other pages keep their type and colors.
 			const brandCss = read(dir, `app/_${bin}/brand.css`);
 			expect(brandCss).toContain('--ds-color');
-			expect(brandCss).not.toContain('@layer base');
+			expect(brandCss).not.toMatch(BASE_LAYER);
 			expect(readState(dir)?.scope?.parts.map((p) => p.items)).toEqual([['button']]);
 			// The check, the hooks and the pre-commit enforce only the selection.
 			const check = cli(dir, 'check');
@@ -277,7 +280,7 @@ describe('apply to a selection', () => {
 			cli(dir, 'apply');
 			state = readState(dir)!;
 			expect(state.scope).toBeUndefined();
-			expect(read(dir, `app/_${bin}/brand.css`)).toContain('@layer base');
+			expect(read(dir, `app/_${bin}/brand.css`)).toMatch(BASE_LAYER);
 		} finally {
 			rmSync(dir, { recursive: true });
 		}
@@ -415,7 +418,7 @@ describe('bugs found applying to real apps', () => {
 		expect(out.theme).toContain('--font-sans: var(--ds-scope-font-sans);');
 		expect(out.theme).toContain('--color-fg: var(--ds-color-text-default);');
 		expect(out.css).toMatch(/:root \{[^}]*--ds-scope-font-sans: var\(--font-geist-sans\);[^}]*--ds-scope-spacing-2--5: calc\(0\.25rem \* 2\.5\);[^}]*--ds-scope-transition-duration-150: 150ms;/);
-		expect(out.css).toMatch(/:where\(\[data-slot\]\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\);/);
+		expect(out.css).toMatch(/:where\(\[data-slot\], \.ds-page\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\);/);
 		expect(out.theme).toContain('--animate-x: x 1s;');
 	});
 	it('a Tailwind 3 app gets the base rules unlayered (it rejects @layer base in an imported file)', () => {
@@ -532,9 +535,9 @@ describe('add and init leave the pages they do not touch alone', () => {
 		try {
 			expect(cli(dir, 'add', 'button').status).toBe(0);
 			expect(brandCss(dir)).toContain('--ds-color');
-			expect(brandCss(dir)).not.toContain('@layer base');
+			expect(brandCss(dir)).not.toMatch(BASE_LAYER);
 			// Components still render the brand: its font and type inside [data-slot].
-			expect(brandCss(dir)).toMatch(/:where\(\[data-slot\]\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\)/);
+			expect(brandCss(dir)).toMatch(/:where\(\[data-slot\], \.ds-page\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\)/);
 			expect(JSON.parse(read(dir, '.ds/config.json')).baseLayer).toBe(false);
 			expect(read(dir, 'components/ui/provider.tsx')).toContain('globalCss: {}');
 		} finally {
@@ -546,10 +549,10 @@ describe('add and init leave the pages they do not touch alone', () => {
 		try {
 			cli(selected, 'apply', '/settings');
 			cli(selected, 'add', 'card');
-			expect(brandCss(selected)).not.toContain('@layer base');
+			expect(brandCss(selected)).not.toMatch(BASE_LAYER);
 			cli(whole, 'apply');
 			cli(whole, 'add', 'card');
-			expect(brandCss(whole)).toContain('@layer base');
+			expect(brandCss(whole)).toMatch(BASE_LAYER);
 		} finally {
 			rmSync(selected, { recursive: true });
 			rmSync(whole, { recursive: true });
@@ -559,10 +562,10 @@ describe('add and init leave the pages they do not touch alone', () => {
 		const dir = project({ 'package.json': APP['package.json'], 'tsconfig.json': APP['tsconfig.json'], 'app/globals.css': '@import "tailwindcss";\n', 'app/layout.tsx': APP['app/layout.tsx'].replace(/\n.*SiteNav.*\n/g, '\n') });
 		try {
 			expect(cli(dir, 'init').status).toBe(0);
-			expect(brandCss(dir)).toContain('@layer base');
+			expect(brandCss(dir)).toMatch(BASE_LAYER);
 			writeFileSync(join(dir, 'app/page.tsx'), 'export default function Page() { return <main>Acme</main>; }\n');
 			cli(dir, 'add', 'card');
-			expect(brandCss(dir)).toContain('@layer base');
+			expect(brandCss(dir)).toMatch(BASE_LAYER);
 		} finally {
 			rmSync(dir, { recursive: true });
 		}
@@ -571,7 +574,7 @@ describe('add and init leave the pages they do not touch alone', () => {
 		const dir = project(APP);
 		try {
 			expect(cli(dir, 'init').status).toBe(0);
-			expect(brandCss(dir)).not.toContain('@layer base');
+			expect(brandCss(dir)).not.toMatch(BASE_LAYER);
 		} finally {
 			rmSync(dir, { recursive: true });
 		}
@@ -586,6 +589,128 @@ describe('add and init leave the pages they do not touch alone', () => {
 			expect(read(dir, 'components/ui/provider.tsx')).toContain('globalCss: {}');
 		} finally {
 			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('pre-commit blocks for several apps in one repository', () => {
+	it('the root app and a folder app each keep their own block, and an earlier marker moves', () => {
+		const dir = project({ 'package.json': '{}', 'apps/web/package.json': '{}' });
+		try {
+			const legacy = '#!/bin/sh\n# ds:pre-commit:start apps/web\nold web check\n# ds:pre-commit:end apps/web\n';
+			writeFileSync(join(dir, '.git/hooks/pre-commit'), legacy);
+			installPreCommit(new Writer(dir));
+			installPreCommit(new Writer(join(dir, 'apps/web')));
+			installPreCommit(new Writer(dir));
+			const hook = read(dir, '.git/hooks/pre-commit');
+			expect(hook.match(/# ds:pre-commit:start\n/g)).toHaveLength(1);
+			expect(hook.match(/# ds:pre-commit\(apps\/web\):start/g)).toHaveLength(1);
+			expect(hook).toContain('(cd "apps/web" && ');
+			expect(hook).not.toContain('old web check');
+			expect(hook).not.toContain(':start apps/web');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('what a page-limited component matched', () => {
+	it('says the component is outside the named pages, not missing from the app', () => {
+		const dir = project({ ...APP, 'app/about/page.tsx': 'import { PrimaryButton } from "@/components/primary-button";\n\nexport default function About() {\n  return <main><PrimaryButton>Contact</PrimaryButton></main>;\n}\n' });
+		try {
+			const out = cli(dir, 'apply', 'button', '--pages', '/about', '--dry-run').stdout;
+			expect(out).not.toContain('nothing in the app is a button');
+			expect(out).toMatch(/button: none inside the selection; \d+ files? outside it/);
+			expect(out).toContain('components/primary-button.tsx');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('pages in an app that routes without a router', () => {
+	const files = {
+		'package.json': JSON.stringify({ dependencies: { ...DEPS, next: undefined, vite: '7.0.0' } }),
+		'tsconfig.json': JSON.stringify({ compilerOptions: { paths: { '@/*': ['./src/*'] } } }),
+		'index.html': '<!doctype html><html><head></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>',
+		'src/index.css': '@import "tailwindcss";\n',
+		'src/main.tsx': 'import "./index.css";\nimport { App } from "./App";\nexport default App;\n',
+		'src/App.tsx': 'import { useState } from "react";\nimport Home from "./pages/Home";\nimport Settings from "./pages/Settings";\nexport function App() {\n  const [page] = useState(window.location.pathname);\n  return page === "/settings" ? <Settings /> : <Home />;\n}\n',
+		'src/components/primary-button.tsx': BUTTON,
+		'src/pages/Home.tsx': 'import { PrimaryButton } from "../components/primary-button";\nexport default function Home() { return <main className="p-4 text-[#0f172a]"><PrimaryButton>Go</PrimaryButton></main>; }\n',
+		'src/pages/Settings.tsx': 'import { PrimaryButton } from "../components/primary-button";\nimport { ProfileForm } from "./settings/ProfileForm";\nexport default function Settings() { return <main className="p-4 text-[#0f172a]"><PrimaryButton>Save</PrimaryButton><ProfileForm /></main>; }\n',
+		'src/pages/settings/ProfileForm.tsx': 'export function ProfileForm() { return <form className="rounded-xl border border-[#e2e8f0]"><button type="submit" className="rounded-md bg-[#4f46e5] px-4 py-2 text-white">Save</button></form>; }\n',
+	};
+	it('takes the page component by name or route, with its own components, and --with-shared', () => {
+		const dir = project(files);
+		try {
+			for (const args of [['--pages', '/settings'], ['Settings'], ['--pages', 'Settings']]) {
+				const out = JSON.parse(cli(dir, 'apply', ...args, '--dry-run', '--json').stdout);
+				expect(out.scope.files).toEqual(['src/pages/Settings.tsx', 'src/pages/settings/ProfileForm.tsx']);
+				expect(out.scope.sharedLeftOut).toEqual(['src/components/primary-button.tsx']);
+			}
+			const shared = JSON.parse(cli(dir, 'apply', '--pages', '/settings', '--with-shared', '--dry-run', '--json').stdout);
+			expect(shared.scope.files).toContain('src/components/primary-button.tsx');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('a cva button the app already has (shadcn)', () => {
+	const shadcnButton = 'import { cva, type VariantProps } from "class-variance-authority";\nimport { cn } from "@/lib/utils";\n\nconst buttonVariants = cva("inline-flex items-center rounded-lg text-sm font-medium transition-all", {\n  variants: {\n    variant: { default: "bg-primary text-primary-foreground hover:bg-primary/80", outline: "border-border bg-background hover:bg-muted", destructive: "bg-destructive/10 text-destructive" },\n    size: { default: "h-8 gap-1.5 px-2.5", sm: "h-7 px-2" },\n  },\n  defaultVariants: { variant: "default", size: "default" },\n});\n\nfunction Button({ className, variant, size, ...props }: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {\n  return <button data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />;\n}\n\nexport { Button, buttonVariants };\n';
+	it('apply button restyles its variants and sizes in its own file, once, without the shadcn theme bridge', () => {
+		const dir = project({ ...APP, 'components/ui/button.tsx': shadcnButton, 'app/globals.css': '@import "tailwindcss";\n\n@theme inline {\n  --color-background: var(--background);\n}\n\n:root {\n  --background: #fff;\n}\n' });
+		try {
+			expect(cli(dir, 'apply', 'button').status).toBe(0);
+			const out = read(dir, 'components/ui/button.tsx');
+			expect(out).toContain('rounded-pill');
+			expect(out).toContain('bg-danger');
+			expect(out).not.toContain('rounded-lg');
+			expect(out).toContain('h-8 gap-1.5 px-2.5'.replace('h-8 gap-1.5 px-2.5', 'h-10'));
+			expect(read(dir, 'app/globals.css')).not.toContain('--color-background: var(--ds-color-bg-page)');
+			cli(dir, 'apply', 'button');
+			expect(read(dir, 'components/ui/button.tsx')).toBe(out);
+			expect(restyleCva('const x = 1;', 'button', shadcnButton, 'site')).toBeUndefined();
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('a named page renders in the brand', () => {
+	it('its root takes the page class, its uses of shared components take the library look, and the components stay', () => {
+		const dir = project(APP);
+		try {
+			expect(cli(dir, 'apply', '/settings').status).toBe(0);
+			const page = read(dir, 'app/settings/page.tsx');
+			expect(page).toContain('<main className="ds-page p-[13px]">');
+			expect(page).toMatch(/<PrimaryButton className="[^"]*rounded-pill![^"]*" variant="secondary">Export<\/PrimaryButton>/);
+			expect(read(dir, 'components/primary-button.tsx')).toBe(APP['components/primary-button.tsx']);
+			expect(read(dir, 'app/page.tsx')).toBe(APP['app/page.tsx']);
+			expect(read(dir, `app/_${bin}/brand.css`)).toMatch(/@layer base \{\s*\.ds-page \{[^}]*font-family: var\(--ds-font-sans\)/);
+			cli(dir, 'apply', '/settings');
+			expect(read(dir, 'app/settings/page.tsx')).toBe(page);
+			expect(markPageRoot('export default function P() { return <section className={`p-4 ${x}`}>a</section>; }')).toContain('`ds-page p-4 ${x}`');
+			expect(markPageRoot('export default function P() { return <><Header /><main>a</main></>; }')).toContain('<main className="ds-page">');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
+describe('converted colors in an app with its own theme', () => {
+	it('under a selection, an element takes the brand token by name where the app theme has the same color name', () => {
+		const dir = project({ ...APP, 'app/globals.css': '@import "tailwindcss";\n\n@theme inline {\n  --color-primary: var(--primary);\n}\n\n:root {\n  --primary: #111;\n}\n' });
+		const whole = project(APP);
+		try {
+			cli(dir, 'apply', 'button');
+			expect(read(dir, 'app/team/page.tsx')).toContain('bg-[var(--ds-color-action-primary)]');
+			cli(whole, 'apply', 'button');
+			expect(read(whole, 'app/team/page.tsx')).toMatch(/\bbg-primary\b/);
+		} finally {
+			rmSync(dir, { recursive: true });
+			rmSync(whole, { recursive: true });
 		}
 	});
 });

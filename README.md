@@ -144,6 +144,12 @@ npx inkbox-ds apply /settings --with-shared     # also the layout and shell file
 npx inkbox-ds apply button --dry-run --json     # each file it would change, with the reason
 ```
 
+A named page renders in the brand: its root element takes the `ds-page` class (the brand's type, text color and
+ground on that page), its values convert to tokens, and its uses of components other pages share take the library's
+look at the use site (`className` with important classes), while the shared components stay as they are. A page can
+be a route, a file, or, in an app that routes without a router, its page component by name (`Settings`). Naming a
+library component also restyles a component the app built on its own cva (shadcn's `button.tsx`), in its own file.
+
 Nothing outside the selection changes apart from the shared setup (brand tokens, theme and fonts, without the base
 layer, and the provider the library's components render in): pages outside it render as before. A name that matches
 nothing stops the run with the closest names. The selection is recorded in `.ds/state.json`: `apply --redo` repeats

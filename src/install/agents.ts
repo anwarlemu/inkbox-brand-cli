@@ -134,6 +134,10 @@ export function installPreCommit(w: Writer) {
 	const existing = w.read(rel) ?? '#!/bin/sh\n';
 	const check = `${binCommand(w.root, 'other')} check --changed`;
 	const block = `${app ? `(cd "${app}" && ${check})` : check} || { echo "${cli()} check failed${app ? ` in ${app}` : ''}. Fix the errors above before committing."; exit 1; }`;
-	const marker = app ? ` ${app}` : '';
-	if (w.write(rel, upsertBlock(existing.startsWith('#!') ? existing : `#!/bin/sh\n${existing}`, block, `# ds:pre-commit:start${marker}`, `# ds:pre-commit:end${marker}`)) && !w.dryRun) chmodSync(join(w.root, rel), 0o755);
+	// Each app's block has its own markers, none a prefix of another (# ds:pre-commit:start for the repository's own
+	// app, # ds:pre-commit(apps/web):start for one in a folder). Blocks an earlier version marked "start apps/web" move.
+	const legacy = /# ds:pre-commit:start (\S+)\n[\s\S]*?# ds:pre-commit:end \1\n?/g;
+	const migrated = existing.replace(legacy, (all, dir: string) => (dir === app ? '' : all.replace(`:start ${dir}`, `(${dir}):start`).replace(`:end ${dir}`, `(${dir}):end`)));
+	const [start, end] = app ? [`# ds:pre-commit(${app}):start`, `# ds:pre-commit(${app}):end`] : ['# ds:pre-commit:start', '# ds:pre-commit:end'];
+	if (w.write(rel, upsertBlock(migrated.startsWith('#!') ? migrated : `#!/bin/sh\n${migrated}`, block, start, end)) && !w.dryRun) chmodSync(join(w.root, rel), 0o755);
 }

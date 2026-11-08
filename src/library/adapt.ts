@@ -328,6 +328,8 @@ const base = (cls: string) => cls.split(':').pop()!.replace(/^!/, '');
 function isLook(cls: string, control: boolean) {
 	const b = base(cls);
 	if (KEEP_TEXT.test(b)) return false;
+	// The brand's shape utilities (ds-cut-frame) and their parameters ([--ds-shape-fill:...], any state) draw the look.
+	if (/^ds-[\w-]+$/.test(cls) || /(^|:)\[--ds-[\w-]+:/.test(cls)) return true;
 	return LOOK.test(b) || (control && SIZE.test(b)) || /^(hover|focus|focus-visible|active|dark|disabled|group-hover|aria-[\w-]+|data-\[[^\]]+\]):/.test(cls) && (LOOK.test(b) || SIZE.test(b));
 }
 
@@ -410,4 +412,97 @@ export function restyleRoot(text: string, c: AppComponent, item: string, library
 		changed = true;
 	}
 	return changed ? out : undefined;
+}
+
+/** A cva call's parts: its base classes and each group's values (variant, size), with the string nodes that hold them. */
+function cvaOf(content: string) {
+	let ast: any;
+	try {
+		ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });
+	} catch {
+		return undefined;
+	}
+	let found: any;
+	const visit = (n: any) => {
+		if (!n || typeof n.type !== 'string' || found) return;
+		if (n.type === 'CallExpression' && n.callee?.name === 'cva') {
+			found = n;
+			return;
+		}
+		for (const k of Object.keys(n)) {
+			if (k === 'loc') continue;
+			const v = n[k];
+			if (Array.isArray(v)) v.forEach(visit);
+			else if (v && typeof v.type === 'string') visit(v);
+		}
+	};
+	visit(ast);
+	if (!found) return undefined;
+	const strings = (n: any): any[] => (n?.type === 'StringLiteral' ? [n] : n?.type === 'ArrayExpression' ? n.elements.flatMap(strings) : n?.type === 'TemplateLiteral' && !n.expressions.length ? [{ ...n.quasis[0], value: n.quasis[0].value.cooked, template: true }] : []);
+	const [baseArg, config] = found.arguments;
+	const groups: Record<string, Record<string, any[]>> = {};
+	for (const g of config?.properties?.find((p: any) => p.key?.name === 'variants')?.value?.properties ?? []) {
+		const name = g.key?.name ?? g.key?.value;
+		groups[name] = {};
+		for (const v of g.value?.properties ?? []) groups[name][v.key?.name ?? v.key?.value] = strings(v.value);
+	}
+	return { base: strings(baseArg), groups };
+}
+
+/**
+ * A component built on its own cva (shadcn's button.tsx): its base and each variant and size take the library item's
+ * look (color, border, radius, type, motion; a control's size), keeping their layout and the variant names, so every
+ * use renders the library's look without a change at the use site. Undefined when the file has no cva to restyle.
+ */
+export function restyleCva(text: string, item: string, libraryContent: string, surface: Surface): string | undefined {
+	const app = cvaOf(text);
+	const lib = cvaOf(libraryContent);
+	if (!app || !lib || !app.groups.variant) return undefined;
+	const control = CONTROLS.has(item);
+	const classes = (nodes: any[]) => nodes.map((n) => n.value as string).join(' ').split(/\s+/).filter(Boolean);
+	const libVariants = Object.keys(lib.groups.variant ?? {});
+	const pickVariant = (name: string) => (libVariants.includes(name) ? name : DANGER.test(name) && libVariants.includes('destructive') ? 'destructive' : pick(name, BUTTON_VARIANTS(surface), variantsFor(surface).outlined));
+	const libSizes = Object.keys(lib.groups.size ?? {});
+	const pickSize = (name: string) => (libSizes.includes(name) ? name : pick(name, SIZES(), defaultSize()));
+	const edits: { start: number; end: number; value: string }[] = [];
+	const rewrite = (nodes: any[], library: string[]) => {
+		if (!nodes.length) return;
+		const look = library.filter((cls) => isLook(cls, control));
+		const first = nodes[0];
+		nodes.forEach((n) => {
+			const present = (n.value as string).split(/\s+/).filter(Boolean);
+			const kept = present.filter((cls) => !isLook(cls, control));
+			const next = n === first ? [...kept, ...look.filter((cls) => !kept.includes(cls))] : kept;
+			if (next.join(' ') === present.join(' ')) return;
+			edits.push({ start: n.start, end: n.end, value: n.template ? next.join(' ') : JSON.stringify(next.join(' ')) });
+		});
+	};
+	rewrite(app.base, classes(lib.base));
+	for (const [name, nodes] of Object.entries(app.groups.variant)) rewrite(nodes, classes(lib.groups.variant?.[pickVariant(name)] ?? []));
+	for (const [name, nodes] of Object.entries(app.groups.size ?? {})) rewrite(nodes, classes(lib.groups.size?.[pickSize(name)] ?? []));
+	if (!edits.length) return undefined;
+	let out = text;
+	for (const e of edits.sort((a, b) => b.start - a.start)) out = out.slice(0, e.start) + e.value + out.slice(e.end);
+	return out;
+}
+
+/**
+ * The library item's look for one use of an app component a page selection leaves out (other pages share it): the
+ * variant and size the use names, mapped to the library's, look classes only, each marked important so they win over
+ * the component's own classes on this page alone. Undefined when the item has no such look.
+ */
+export function useSiteLook(item: string, libraryContent: string, surface: Surface, variant?: string, size?: string): string[] | undefined {
+	const lib = cvaOf(libraryContent);
+	const control = CONTROLS.has(item);
+	const look = (s: string) => s.split(/\s+/).filter((cls) => cls && isLook(cls, control));
+	if (!lib) {
+		const classes = libraryClasses(libraryContent, item.replace(/(^|-)([a-z])/g, (_m, _d, c: string) => c.toUpperCase()), () => undefined);
+		return classes ? look(classes) : undefined;
+	}
+	const libVariants = Object.keys(lib.groups.variant ?? {});
+	const v = variant === undefined ? (libVariants.includes('default') ? 'default' : libVariants[0]) : libVariants.includes(variant) ? variant : DANGER.test(variant) && libVariants.includes('destructive') ? 'destructive' : item === 'button' ? pick(variant, BUTTON_VARIANTS(surface), variantsFor(surface).outlined) : item === 'badge' ? pick(variant, BADGE_VARIANTS(), 'default') : libVariants[0];
+	const libSizes = Object.keys(lib.groups.size ?? {});
+	const s = size === undefined || !libSizes.length ? (libSizes.includes('default') ? 'default' : undefined) : libSizes.includes(size) ? size : pick(size, SIZES(), defaultSize());
+	const text = (nodes: any[] | undefined) => (nodes ?? []).map((n) => n.value as string).join(' ');
+	return look([text(lib.base), text(lib.groups.variant?.[v ?? '']), text(s ? lib.groups.size?.[s] : [])].join(' '));
 }

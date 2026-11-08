@@ -1,3 +1,4 @@
+import { parse } from '@babel/parser';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { brand, cli, elements, isOwnFile } from '../lib/brand.js';
@@ -143,12 +144,32 @@ export function resolveTargets(root: string, screens: Screen[], files: string[],
 			for (const f of matched) if (!spec.files.includes(f)) spec.files.push(f);
 			return true;
 		}
+		// An app that routes without a router (window.location, state): its page component by name, Settings or
+		// /settings for a Settings, SettingsPage or SettingsView in a pages, views or screens folder.
+		const page = pageComponent(t);
+		if (page) {
+			if (!spec.files.includes(page)) spec.files.push(page);
+			return true;
+		}
 		return false;
+	};
+	const pageComponent = (t: string) => {
+		const n = norm(t.replace(/^\//, ''));
+		if (!n || /[*?{[.]/.test(t)) return undefined;
+		const pageLike = (c: { file: string; name: string }) => /(^|\/)(pages?|views?|screens?|routes)\//i.test(c.file) || /(Page|View|Screen)$/.test(c.name);
+		const hits = ownComponents().filter((c) => pageLike(c) && [n, `${n}page`, `${n}view`, `${n}screen`].includes(norm(c.name)));
+		return hits.length === 1 ? hits[0].file : undefined;
 	};
 	const asComponent = (t: string): boolean => {
 		const item = itemFor(t);
 		if (item) {
 			if (!spec.items.includes(item)) spec.items.push(item);
+			return true;
+		}
+		// A page component (Settings in src/pages) named on its own is its page, with its local components.
+		const page = pageComponent(t);
+		if (page) {
+			if (!spec.files.includes(page)) spec.files.push(page);
 			return true;
 		}
 		const mine = ownComponents().filter((c) => norm(c.name) === norm(t));
@@ -202,7 +223,23 @@ export function resolveScope(project: Project, screens: Screen[], files: string[
 		const reach = (entry: string) => drawnFrom(project, entry, files, 4).filter((f) => !isOwnFile(f) && !library.test(f));
 		const shell = new Set(shellFiles(project, files));
 		const others = new Set<string>();
-		for (const s of screens) if (!named.includes(s.file)) for (const f of reach(s.file)) others.add(f);
+		// What the other pages draw from, without passing through a named page (in an app with one entry, such as a
+		// Vite index.html, every page hangs off it: only what the rest of the app reaches on its own is shared).
+		const blocked = new Set(named);
+		for (const s of screens) {
+			if (blocked.has(s.file)) continue;
+			const seen = new Set<string>([s.file]);
+			let frontier = [s.file];
+			for (let level = 0; level < 6 && frontier.length; level++) {
+				const next: string[] = [];
+				for (const f of frontier) for (const g of drawnFrom(project, f, files, 1)) if (!seen.has(g) && !blocked.has(g)) {
+					seen.add(g);
+					next.push(g);
+				}
+				frontier = next;
+			}
+			for (const f of seen) if (!isOwnFile(f) && !library.test(f)) others.add(f);
+		}
 		const out = new Set<string>();
 		for (const entry of named) {
 			out.add(entry);
@@ -280,4 +317,52 @@ function describePart(part: ScopeSpec) {
 export function describeScope(scope: StoredScope | undefined) {
 	if (!scope) return 'the whole app';
 	return scope.parts.map(describePart).join('; ');
+}
+
+/** The class a named page's root element takes so the page renders in the brand (brand.css defines it). */
+export const PAGE_CLASS = 'ds-page';
+
+/**
+ * The page file with its root element (the first element its default export, or its first component, returns)
+ * carrying PAGE_CLASS: a class change on the page's own element, no new markup. Undefined when there is nothing to
+ * change (already marked, or no root element with a plain class list to add to).
+ */
+export function markPageRoot(text: string): string | undefined {
+	let ast: any;
+	try {
+		ast = parse(text, { sourceType: 'module', errorRecovery: true, plugins: ['jsx', 'typescript'] });
+	} catch {
+		return undefined;
+	}
+	const fns: any[] = [];
+	for (const s of ast.program.body) {
+		const d = s.type === 'ExportDefaultDeclaration' ? s.declaration : s.type === 'ExportNamedDeclaration' ? s.declaration : s;
+		if (d?.type === 'FunctionDeclaration') fns.push({ fn: d, main: s.type === 'ExportDefaultDeclaration' });
+		if (d?.type === 'VariableDeclaration') for (const v of d.declarations) if (/Function|Arrow/.test(v.init?.type ?? '')) fns.push({ fn: v.init, main: false });
+		if (d?.type === 'ArrowFunctionExpression' || d?.type === 'FunctionExpression') fns.push({ fn: d, main: true });
+	}
+	const first = (n: any): any => {
+		if (!n) return undefined;
+		if (n.type === 'ParenthesizedExpression') return first(n.expression);
+		if (n.type === 'JSXElement') return n.openingElement.name?.type === 'JSXIdentifier' && /^[a-z]/.test(n.openingElement.name.name) ? n : n.children.map(first).find(Boolean);
+		if (n.type === 'JSXFragment') return n.children.map(first).find(Boolean);
+		if (n.type === 'JSXExpressionContainer') return first(n.expression);
+		return undefined;
+	};
+	const returned = (fn: any) => {
+		if (fn.body?.type !== 'BlockStatement') return first(fn.body);
+		const r = fn.body.body.find((s: any) => s.type === 'ReturnStatement');
+		return first(r?.argument);
+	};
+	const pick = [...fns.filter((f) => f.main), ...fns].map((f) => returned(f.fn)).find(Boolean);
+	if (!pick) return undefined;
+	const open = pick.openingElement;
+	const cls = open.attributes.find((a: any) => a.type === 'JSXAttribute' && a.name?.name === 'className');
+	const has = (v: string) => v.split(/\s+/).includes(PAGE_CLASS);
+	if (!cls) return `${text.slice(0, open.name.end)} className="${PAGE_CLASS}"${text.slice(open.name.end)}`;
+	const lit = cls.value?.type === 'StringLiteral' ? cls.value : cls.value?.expression?.type === 'StringLiteral' ? cls.value.expression : undefined;
+	if (lit) return has(lit.value) ? undefined : `${text.slice(0, lit.start)}${JSON.stringify(`${PAGE_CLASS} ${lit.value}`.trim())}${text.slice(lit.end)}`;
+	const tpl = cls.value?.expression?.type === 'TemplateLiteral' ? cls.value.expression : undefined;
+	if (tpl) return has(tpl.quasis[0].value.raw) ? undefined : `${text.slice(0, tpl.quasis[0].start)}${PAGE_CLASS} ${text.slice(tpl.quasis[0].start)}`;
+	return undefined;
 }

@@ -6,7 +6,8 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { brand, tokens } from '../lib/brand.js';
 import { styledFiles, type Project } from '../project/detect.js';
 import type { Surface } from '../project/surface.js';
-import { adaptable, adaptComponent, libraryClasses, lookOf, restyleRoot, variantsFor } from './adapt.js';
+import { adaptable, adaptComponent, libraryClasses, lookOf, restyleCva, restyleRoot, useSiteLook, variantsFor } from './adapt.js';
+import { parse } from '@babel/parser';
 import { restyleOverlays } from './overlay-styles.js';
 import { type Identified, componentsIn, identify, usesIn } from './components.js';
 import { itemName, loadIndexSync, loadItemSync, type RegistryItem } from './registry.js';
@@ -231,6 +232,18 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			const before = earlier.find((x) => x.file === c.file && x.name === c.name && x.action === 'style');
 			if (classes && before) return before;
 		}
+		// A selection names this item: a component built on its own cva (shadcn's button.tsx) takes the library's look in
+		// its variants and sizes, in its own file. (The whole app reaches it through the shadcn theme instead.)
+		if (scope && item && content && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && /\bcva\(/.test(current.get(c.file)!)) {
+			const restyled = restyleCva(current.get(c.file)!, c.item, content, surface);
+			if (restyled) {
+				write(c.file, restyled);
+				result.styled.push(c.file);
+				return { ...d, action: 'style', reason: `its variants and sizes take the library's ${c.item} look` };
+			}
+			const before = earlier.find((x) => x.file === c.file && x.name === c.name && x.action === 'style');
+			if (before) return before;
+		}
 		return { ...d, action: 'refine', reason: `a ${c.item}, styled by the element layer and the converter` };
 	};
 	// One decision per component, most confident first; a file is changed by one decision at a time (components are
@@ -244,6 +257,26 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			const fresh = componentsIn(file, current.get(file)!).find((x) => x.name === first.name);
 			if (!fresh) continue;
 			result.decisions.push(decide({ ...first, ...fresh }));
+		}
+	}
+	// A page selection leaves out the components other pages share (PrimaryButton), yet its own uses of them should look
+	// like the brand: each use on the page takes the library item's look as important classes at the use site, so the
+	// component, and every other page, stay as they are. Tailwind 4 only (its trailing ! marks a class important).
+	const pageFiles = new Set(scope?.parts.flatMap((p) => (p.items.length || p.own.length ? [] : p.resolved.files ?? [])) ?? []);
+	if (pageFiles.size && (project.tailwindMajor ?? 0) >= 4) {
+		const shared = new Map(identified.filter((c) => c.item && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && c.exported && !componentInScope(scope, c) && (c.params.names.includes('className') || c.params.rest || c.params.identifier)).map((c) => [c.name, c]));
+		for (const file of [...pageFiles].filter((f) => current.has(f) && shared.size)) {
+			const text = current.get(file)!;
+			const edits = useSiteEdits(text, shared, (c, variant, size) => {
+				const content = loadItemSync(c.item!)?.files?.[0]?.content;
+				return content ? useSiteLook(c.item!, content, surfaceOf(file), variant, size) : undefined;
+			});
+			if (!edits.length) continue;
+			let out = text;
+			for (const e of edits.sort((a, b) => b.start - a.start)) out = out.slice(0, e.start) + e.value + out.slice(e.end);
+			write(file, out);
+			if (!result.styled.includes(file)) result.styled.push(file);
+			result.decisions.push({ file, name: [...new Set(edits.map((e) => e.name))].join(', '), item: shared.get(edits[0].name)?.item, confidence: 1, signals: ['used on a named page'], uses: edits.length, action: 'style', reason: 'its uses on this page take the library look at the use site; the shared component stays as it is' });
 		}
 	}
 	// Compound primitives have several styled parts under a portal; a root-only pass cannot reach them.
@@ -348,3 +381,44 @@ function writeInventory(root: string, decisions: Decision[]) {
 	mkdirSync(dir, { recursive: true });
 	writeFileSync(join(dir, 'components.json'), `${JSON.stringify({ tool: brand().bin, components: decisions }, null, 2)}\n`);
 }
+
+/** The className edits that give each use of a shared component on a page the library look (see applyComponents). */
+function useSiteEdits(text: string, shared: Map<string, Identified>, lookFor: (c: Identified, variant?: string, size?: string) => string[] | undefined) {
+	let ast: any;
+	try {
+		ast = parse(text, { sourceType: 'module', errorRecovery: true, plugins: ['jsx', 'typescript'] });
+	} catch {
+		return [];
+	}
+	const edits: { start: number; end: number; value: string; name: string }[] = [];
+	const literal = (a: any) => (a?.value?.type === 'StringLiteral' ? a.value.value : a?.value?.expression?.type === 'StringLiteral' ? a.value.expression.value : undefined);
+	const visit = (n: any) => {
+		if (!n || typeof n.type !== 'string') return;
+		if (n.type === 'JSXOpeningElement' && n.name?.type === 'JSXIdentifier' && shared.has(n.name.name)) {
+			const c = shared.get(n.name.name)!;
+			const attr = (k: string) => n.attributes.find((a: any) => a.type === 'JSXAttribute' && a.name?.name === k);
+			const variantAttr = ['variant', 'tone', 'intent', 'color'].map(attr).find(Boolean);
+			const dynamic = variantAttr && literal(variantAttr) === undefined;
+			const look = dynamic ? undefined : lookFor(c, variantAttr ? literal(variantAttr) : undefined, literal(attr('size')));
+			const cls = attr('className');
+			if (look?.length) {
+				const important = look.map((x) => (x.endsWith('!') ? x : `${x}!`));
+				if (!cls) edits.push({ start: n.name.end, end: n.name.end, value: ` className="${important.join(' ')}"`, name: c.name });
+				else if (cls.value?.type === 'StringLiteral') {
+					const present = cls.value.value.split(/\s+/).filter(Boolean);
+					const add = important.filter((x) => !present.includes(x));
+					if (add.length) edits.push({ start: cls.value.start, end: cls.value.end, value: JSON.stringify([...present, ...add].join(' ')), name: c.name });
+				}
+			}
+		}
+		for (const k of Object.keys(n)) {
+			if (k === 'loc') continue;
+			const v = n[k];
+			if (Array.isArray(v)) v.forEach(visit);
+			else if (v && typeof v.type === 'string') visit(v);
+		}
+	};
+	visit(ast.program);
+	return edits;
+}
+

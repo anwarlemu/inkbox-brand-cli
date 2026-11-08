@@ -70,6 +70,12 @@ function libraryRecipe(item: string, variant: string): Recipe | undefined {
 	return result;
 }
 
+/** The app's own theme color keys (--color-primary) while a selection is applied; see classEdit. */
+let appColors = new Set<string>();
+export function setAppThemeColors(keys: Iterable<string>) {
+	appColors = new Set([...keys].filter((k) => k.startsWith('--color-')));
+}
+
 /** Only these element kinds (and library items) are restyled, when a selection names some; see plan/scope.ts. */
 let only: Set<string> | undefined;
 
@@ -155,7 +161,11 @@ function classEdit(value: string, offset: number, def: Recipe, theme: boolean): 
 	if (!token) return;
 	const alpha = arbitrary ? parseColor(arbitrary)?.[3] : undefined;
 	const modifier = raw.slice(name.length) || (alpha !== undefined && alpha < 0.995 ? `/${Math.round(alpha * 100)}` : '');
-	return { start: offset, end: offset + value.length, text: `${variants}${m[1]}${prefix}-${theme ? themeClass(token) ?? `[${target}]` : `[${target}]`}${modifier}${m[4] ?? ''}` };
+	// A theme class the app's own theme also defines (a shadcn app's bg-primary) would take the app's color under a
+	// selection: the brand token is named directly there.
+	const named = theme ? themeClass(token) : undefined;
+	const usable = named && !appColors.has(`--color-${named}`) ? named : `[${target}]`;
+	return { start: offset, end: offset + value.length, text: `${variants}${m[1]}${prefix}-${usable}${modifier}${m[4] ?? ''}` };
 }
 
 /** Whether a color reads as a light ground (white, near-white): a button drawn on one is the outline key, not the filled one. */

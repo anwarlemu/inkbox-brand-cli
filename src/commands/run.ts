@@ -1,12 +1,14 @@
 import { componentConfig, configureRegistry, prepareTransforms } from '../install/config.js';
 import { chakraPackages, installChakraProvider, missingChakraPackages } from '../install/chakra.js';
+import { themeDeclarations } from '../install/styles.js';
 import { baseLayerFor } from '../install/base.js';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { formatFinding, runCheck } from '../check/engine.js';
 import { convertProject } from '../convert/project.js';
-import { componentColorEdits } from '../convert/components.js';
+import { componentColorEdits, setAppThemeColors } from '../convert/components.js';
+import { componentsIn, identify } from '../library/components.js';
 import { installAgents, runningHarness } from '../install/agents.js';
 import { Writer } from '../install/files.js';
 import { installElementLayer } from '../install/layer.js';
@@ -20,7 +22,7 @@ import { MARKUP, STYLES, detectProject, styledFiles, workspaceApps } from '../pr
 import { listScreens, shellFiles } from '../project/screens.js';
 import { type Surface, profile, surfaceOf } from '../project/surface.js';
 import { type State, readState, writeState } from '../plan/state.js';
-import { type ScopeSpec, type StoredScope, coverage, describeScope, kindsForItems, kindsIn, resolveScope, resolveTargets, scopeItems, scopeLeft, scopePages, specOf, unresolvedMessage, widen } from '../plan/scope.js';
+import { type ScopeSpec, type StoredScope, coverage, describeScope, kindsForItems, kindsIn, markPageRoot, resolveScope, resolveTargets, scopeItems, scopeLeft, scopePages, specOf, unresolvedMessage, widen } from '../plan/scope.js';
 import { mainScreens, pickMain, renderBatch, renderTask, taskStatus, touchNote } from '../plan/tasks.js';
 
 // The one command: the first run installs the brand and applies component colors and style scales; every run after that prints the
@@ -148,11 +150,29 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 	const swap = (pkgJson.dependencies?.react || pkgJson.devDependencies?.react) && (project.tailwindMajor ?? 0) >= 4 ? applyComponents(project, (rel) => (mixed ? surfaceOf(rel, found) : surface), { dryRun: opts.dryRun, scope: work }) : undefined;
 	for (const d of swap?.decisions ?? []) if (d.action !== 'refine' && !swap?.reverted.includes(d.file) && (swap?.swapped.includes(d.file) || swap?.styled.includes(d.file))) note(d.file, `${d.name}: ${d.reason}`);
 	for (const f of swap?.added ?? []) note(f, 'library component the swapped components render (shared setup)');
+	// A named page's root element carries the page class, so the page renders in the brand's type and ground (only
+	// while the app has no base layer: with it, every page already does).
+	const pageBase = baseLayerFor(project, 'apply', { whole: !recorded });
+	if (work && !pageBase.full) {
+		const entries = new Set(work.parts.filter((p) => !p.items.length).flatMap((p) => [...p.pages.map((u) => allScreens.find((x) => x.url === u)?.file), ...p.files]).filter((f): f is string => !!f && /\.(tsx|jsx)$/.test(f)));
+		for (const f of entries) {
+			const marked = markPageRoot(readFileSync(join(root, f), 'utf8'));
+			if (!marked) continue;
+			if (!opts.dryRun) writeFileSync(join(root, f), marked);
+			note(f, 'its root element takes the page class (the brand type and ground)');
+		}
+	}
+	// Under a selection the app's own theme keeps its colors, so converted classes avoid its color names.
+	setAppThemeColors(pageBase.full ? [] : themeDeclarations(files.filter((f) => STYLES.test(f)).map((f) => readFileSync(join(root, f), 'utf8')).join('\n').replace(/\/\* [\w-]+:theme:start \*\/[\s\S]*?\/\* [\w-]+:theme:end \*\//g, '')).keys());
 	// Which files hold elements of each named item, read before the colors change.
 	const itemFiles = new Map<string, string[]>();
+	// And, for an item the selection's pages do not hold, the files elsewhere that do (its components or elements).
+	const itemElsewhere = new Map<string, string[]>();
 	if (work) for (const item of scopeItems(work)) {
 		const kinds = kindsForItems([item]);
+		const holds = (f: string) => /\.(tsx|jsx)$/.test(f) && componentsIn(f, readFileSync(join(root, f), 'utf8')).some((c) => identify(c, mixed ? surfaceOf(f, found) : surface).item === item) || componentColorEdits(f, readFileSync(join(root, f), 'utf8'), mixed ? surfaceOf(f, found) : surface, true, kinds).length > 0;
 		itemFiles.set(item, files.filter((f) => scoped?.cover(f) === 'kinds' && (kindsIn(work, f) ?? []).some((k) => kinds.includes(k)) && componentColorEdits(f, readFileSync(join(root, f), 'utf8'), mixed ? surfaceOf(f, found) : surface, true, kinds).length > 0));
+		if (!itemFiles.get(item)!.length) itemElsewhere.set(item, files.filter((f) => scoped?.cover(f) !== 'kinds' && holds(f)));
 	}
 	const converted = convertProject(project, files, mixed ? 'site' : surface, { dryRun: opts.dryRun, theme, scope: scoped });
 	for (const [f, n] of Object.entries(converted.perFile)) note(f, scoped?.cover(f) === 'kinds' ? `colors of the selected elements (${scopeItems(work!).join(', ')}) to brand tokens` : 'style values to brand tokens', n);
@@ -167,7 +187,7 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 	let styles: ReturnType<typeof installStyles> = { stylesDir: '', brandCss: '', imported: undefined, linked: [], fonts: 'app fonts', notes: [`${brand().fonts.native}; sizes, radii and spacing are in \`tokens\`.`] };
 	// A selection installs the tokens, theme and fonts its components need, not the base layer that restyles every page.
 	// An app set up whole before (create, or init with no pages) keeps its base layer under a selection.
-	const base = baseLayerFor(project, 'apply', { whole: !recorded });
+	const base = pageBase;
 	if (project.framework !== 'native') step(!base.full ? 'shared setup: brand tokens, theme and fonts (no base layer while a selection is applied)' : 'shared setup: brand stylesheet, theme and fonts', () => (styles = installStyles(w, project, mixed ? 'site' : surface, styleText, { scoped: !base.full, restyle: true })));
 	// Every element the stylesheets name gets the brand's styling at once; the tasks refine from there.
 	let layer: ReturnType<typeof installElementLayer> = { count: 0, files: [], styled: [] };
@@ -216,7 +236,11 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 			...(files.length ? [`element colors in ${files.length} file${files.length > 1 ? 's' : ''}`] : []),
 		];
 		if (left.length) parts.push(color.yellow(`${left.map((c) => `${c.name} (${c.file})`).join(', ')} left for you: restyle ${left.length > 1 ? 'each' : 'it'} as the library's ${item} (\`${cli()} look ${left[0].file}\`)`));
-		return `    ${item}: ${parts.length ? parts.join('; ') : color.yellow(`nothing in the app is a ${item} yet (\`${cli()} add ${item}\` installs it)`)}.`;
+		const elsewhere = itemElsewhere.get(item) ?? [];
+		const none = elsewhere.length
+			? `none inside the selection; ${elsewhere.length} file${elsewhere.length > 1 ? 's' : ''} outside it ${elsewhere.length > 1 ? 'have' : 'has'} one (${elsewhere.slice(0, 3).join(', ')}${elsewhere.length > 3 ? ', ...' : ''}), left out because other pages share ${elsewhere.length > 1 ? 'them' : 'it'} or ${elsewhere.length > 1 ? 'they are' : 'it is'} outside the named pages: name ${elsewhere.length > 1 ? 'them' : 'it'}, or add --with-shared`
+			: `nothing in the app is a ${item} yet (\`${cli()} add ${item}\` installs it)`;
+		return `    ${item}: ${parts.length ? parts.join('; ') : color.yellow(none)}.`;
 	});
 	const scopeData = work ? { applied: describeScope(work), recorded: describeScope(recorded), items: scopeItems(work), components: work.parts.flatMap((p) => p.own), pages: scopePages(work).pages, files: [...new Set(work.parts.flatMap((p) => p.resolved.files ?? []))], kinds: [...new Set(work.parts.flatMap((p) => p.resolved.kinds ?? []))], sharedLeftOut: scopeLeft(work), matched: itemReport } : undefined;
 	emit(opts, { surface, mixed, evidence: found.reasons, scope: scopeData ?? 'the whole app', files: changes, converted: { files: converted.written.length, ...s }, fixed, left: left?.findings.length, styles, dots, layer, swap, changes: w.changes, screens: screens.map((x) => x.id) }, () =>

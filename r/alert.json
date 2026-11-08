@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "name": "alert",
+  "useFor": "Use default or info for a fact the person should know (The vault is zero-knowledge), warning for something to act on now (Copy this API key now, with the reason in AlertAction), success for something done, destructive for a failure, muted for a panel that introduces a setup step (Initialize vault). Lead with a filled Phosphor glyph. An alert is as wide as its words and centered; in a dialog, form or aside it fills the width.",
+  "constraints": [
+    "A dark or saturated alert background",
+    "More than one alert stacked for one message",
+    "Dismissable warnings for security notes",
+    "A bold title",
+    "A stretched alert in the middle of a page"
+  ],
+  "documentation": "",
+  "source": "Console Alert theme; Figma 427:2715: Vault (Initialize vault, zero-knowledge note), Modal - Created (Copy this API key now)",
+  "exports": [
+    "Alert",
+    "AlertAction",
+    "AlertDescription",
+    "AlertTitle",
+    "alertVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/alert",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/alert.md",
+  "examples": [
+    {
+      "path": "examples/alert.tsx",
+      "content": "import { CheckCircleIcon, InfoIcon, LockIcon, WarningIcon, XCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Alert, AlertAction, AlertDescription, AlertTitle } from \"@/components/ui/alert\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Preview() {\n  return (\n    <Alert variant=\"muted\" className=\"max-w-200\">\n      <LockIcon weight=\"fill\" />\n      <AlertTitle>Initialize vault</AlertTitle>\n      <AlertDescription data-alerts=\"fill\" className=\"grid gap-2\">\n        <p>Create an encrypted vault for your organization. The vault can store login credentials including MFA one-time passwords (OTP), SSH keys, API keys and other secrets for your agents.</p>\n        <Alert variant=\"info\">\n          <InfoIcon weight=\"fill\" />\n          <AlertDescription>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertDescription>\n        </Alert>\n      </AlertDescription>\n    </Alert>\n  );\n}\n\nexport function Info() {\n  return (\n    <Alert variant=\"info\" className=\"max-w-200\">\n      <InfoIcon weight=\"fill\" />\n      <AlertDescription>The vault is zero-knowledge: all encryption and decryption happens in your browser. The server never sees your secrets.</AlertDescription>\n    </Alert>\n  );\n}\n\nexport function Warning() {\n  return (\n    <Alert variant=\"warning\" className=\"max-w-180\">\n      <WarningIcon weight=\"fill\" />\n      <AlertTitle>Copy this API key now</AlertTitle>\n      <AlertAction>For security, the full key cannot be shown again.</AlertAction>\n    </Alert>\n  );\n}\n\nexport function Success() {\n  return (\n    <Alert variant=\"success\">\n      <CheckCircleIcon weight=\"fill\" />\n      <AlertTitle>Domain verified</AlertTitle>\n      <AlertDescription>Mail from you@acme.com now sends from your own domain.</AlertDescription>\n    </Alert>\n  );\n}\n\nexport function Destructive() {\n  return (\n    <Alert variant=\"destructive\" className=\"max-w-180\">\n      <XCircleIcon weight=\"fill\" />\n      <AlertTitle>Webhook delivery failed</AlertTitle>\n      <AlertDescription>https://hooks.example.com/inkbox returned 502 three times. Deliveries are paused until it responds.</AlertDescription>\n      <AlertAction>\n        <Button variant=\"outline\" size=\"sm\">Retry</Button>\n      </AlertAction>\n    </Alert>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Info",
+        "Warning",
+        "Success",
+        "Destructive"
+      ],
+      "requires": [
+        "alert",
+        "button"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Preview"
+        },
+        {
+          "name": "Info",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Info"
+        },
+        {
+          "name": "Warning",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Warning"
+        },
+        {
+          "name": "Success",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Success"
+        },
+        {
+          "name": "Destructive",
+          "url": "https://inkbox-ds.vercel.app/preview/alert/Destructive"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Alert",
+  "description": "The pale cyan info note (the default), the sand warning, the pale green success, the red-edged error, and the lilac vault box.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's notes (the Alert theme). 12px corners, 16px sides and 12px above and below, 14px text on 20px lines; a\n// 20px filled Phosphor glyph in the text's color leads, 12px before the words. The title is medium. An alert is as wide\n// as its words and centered, except inside a dialog, a form or an aside (or under data-alerts=\"fill\"), where it fills\n// the width. `default` and `info` are the pale cyan note in deep teal; `warning` the sand with its brown; `success` the\n// pale green with ink; `destructive` white with the red edge and red text. `muted` is the lilac vault box (a 16px\n// regular title, then a muted description across the full width, which can hold an info note).\nconst alertVariants = cva(\n  \"group/alert relative mx-auto grid w-fit max-w-full grid-cols-[minmax(0,auto)_auto] items-start gap-x-3 gap-y-0.5 rounded-control px-4 py-3 font-sans text-body leading-line-body has-[>svg]:grid-cols-[auto_minmax(0,auto)_auto] in-[[role=dialog]]:mx-0 in-[[role=dialog]]:w-full in-[form]:mx-0 in-[form]:w-full in-[aside]:mx-0 in-[aside]:w-full in-data-[alerts=fill]:mx-0 in-data-[alerts=fill]:w-full [&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-current\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-info-bg text-info-fg\",\n        info: \"bg-info-bg text-info-fg\",\n        warning: \"bg-warning-bg text-warning-fg [&>[data-slot=alert-action]]:text-warning-muted\",\n        success: \"bg-success-bg text-fg\",\n        destructive: \"border border-danger bg-surface text-danger\",\n        muted: \"items-center bg-subtle py-3 text-fg [&>svg]:size-6 [&>svg]:text-icon-default [&>[data-slot=alert-description]]:col-span-full [&>[data-slot=alert-description]]:col-start-1 [&>[data-slot=alert-description]]:text-fg-muted [&>[data-slot=alert-title]]:text-body-lg [&>[data-slot=alert-title]]:leading-snug [&>[data-slot=alert-title]]:font-normal\",\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\nfunction Alert({ className, variant, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof alertVariants>) {\n  return <div data-slot=\"alert\" data-variant={variant ?? \"default\"} role=\"alert\" className={cn(alertVariants({ variant }), className)} {...props} />;\n}\n\nfunction AlertTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-title\"\n      className={cn(\n        \"col-start-1 min-w-0 leading-line-body font-medium group-has-[>svg]/alert:col-start-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction AlertDescription({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-description\"\n      className={cn(\n        \"col-start-1 min-w-0 text-body leading-line-body group-has-[>svg]/alert:col-start-2 [&_p]:leading-line-body\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\n/** What sits at the right of an alert: a note (For security, the full key cannot be shown again) or a button. */\nfunction AlertAction({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-action\"\n      className={cn(\"col-start-2 row-span-2 row-start-1 self-center text-right text-body-sm group-has-[>svg]/alert:col-start-3 max-sm:col-start-1 max-sm:col-end-[-1] max-sm:row-start-3 max-sm:row-span-1 max-sm:text-left max-sm:group-has-[>svg]/alert:col-start-2\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants };\n"
+    }
+  ]
+}

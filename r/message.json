@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "message",
+  "useFor": "Build a conversation from Message rows inside a MessageGroup: MessageAvatar with an initial or a picture, MessageContent with a MessageHeader (the name, then a time element), the Bubble pieces and an optional MessageFooter (Delivered, Read). Set align end for the person's own messages; the row mirrors to the right.",
+  "constraints": [
+    "Round avatars",
+    "A bold sender name",
+    "Timestamps darker than the muted purple"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox rows (sender in ink, date muted) and the rail's initial tile",
+  "exports": [
+    "Message",
+    "MessageAvatar",
+    "MessageContent",
+    "MessageFooter",
+    "MessageGroup",
+    "MessageHeader"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/message",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/message.md",
+  "examples": [
+    {
+      "path": "examples/message.tsx",
+      "content": "import { CheckIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Bubble, BubbleContent, BubbleGroup } from \"@/components/ui/bubble\";\nimport { Message, MessageAvatar, MessageContent, MessageFooter, MessageGroup, MessageHeader } from \"@/components/ui/message\";\n\nexport function Preview() {\n  return (\n    <MessageGroup className=\"mx-auto w-full max-w-140\">\n      <Message>\n        <MessageAvatar>R</MessageAvatar>\n        <MessageContent>\n          <MessageHeader>\n            Ray Liao <time dateTime=\"2026-08-08T19:16\">7:16 PM</time>\n          </MessageHeader>\n          <BubbleGroup>\n            <Bubble variant=\"secondary\">\n              <BubbleContent>Can your agent publish its Agent Card?</BubbleContent>\n            </Bubble>\n            <Bubble variant=\"secondary\">\n              <BubbleContent>Then other organizations can find it and delegate to it.</BubbleContent>\n            </Bubble>\n          </BubbleGroup>\n        </MessageContent>\n      </Message>\n      <Message align=\"end\">\n        <MessageAvatar>A</MessageAvatar>\n        <MessageContent>\n          <MessageHeader>\n            @acme <time dateTime=\"2026-08-08T19:18\">7:18 PM</time>\n          </MessageHeader>\n          <Bubble align=\"end\">\n            <BubbleContent>Done. It is listed in the public directory now.</BubbleContent>\n          </Bubble>\n          <MessageFooter>\n            <CheckIcon weight=\"bold\" /> Delivered\n          </MessageFooter>\n        </MessageContent>\n      </Message>\n    </MessageGroup>\n  );\n}\n\nexport function AgentOutput() {\n  return (\n    <Message className=\"mx-auto max-w-140\">\n      <MessageAvatar>\n        {/* eslint-disable-next-line @next/next/no-img-element */}\n        <img src=\"/octopus.png\" alt=\"\" className=\"bg-subtle\" />\n      </MessageAvatar>\n      <MessageContent>\n        <MessageHeader>\n          test-agent <time dateTime=\"2026-08-08T19:20\">7:20 PM</time>\n        </MessageHeader>\n        <Bubble variant=\"ghost\">\n          <BubbleContent>I sent the first email from test-agent-233@inkboxmail.com and saved my identity for future sessions. The tunnel at test-agent-233.inkboxwire.com is idle until a request arrives.</BubbleContent>\n        </Bubble>\n      </MessageContent>\n    </Message>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "AgentOutput"
+      ],
+      "requires": [
+        "message",
+        "bubble"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/message/Preview"
+        },
+        {
+          "name": "AgentOutput",
+          "url": "https://inkbox-ds.vercel.app/preview/message/AgentOutput"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Message",
+  "description": "One message in a conversation: a 32px avatar tile, the sender and time in 14px, the bubbles, and a 12px muted footer.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/message.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// One message in an agent conversation (Figma 427:2715, the inbox and iMessage): a 32px avatar tile (the initial on\n// the avatar blue, circular, as the rail's \"R\"), the sender's name in 14px ink with the time in 14px muted beside\n// it, the bubbles, and a 12px muted footer (Delivered). Outgoing messages (align end) mirror to the right.\nfunction MessageGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"message-group\" className={cn(\"flex min-w-0 flex-col gap-4\", className)} {...props} />;\n}\n\nfunction Message({ className, align = \"start\", ...props }: React.ComponentProps<\"div\"> & { align?: \"start\" | \"end\" }) {\n  return <div data-slot=\"message\" data-align={align} className={cn(\"group/message relative flex w-full min-w-0 gap-2.5 font-sans text-body data-[align=end]:flex-row-reverse\", className)} {...props} />;\n}\n\nfunction MessageAvatar({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-avatar\"\n      className={cn(\n        \"flex size-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-pill bg-avatar text-body leading-tight font-medium text-white group-has-data-[slot=message-footer]/message:-translate-y-6 *:[img]:size-full *:[img]:object-cover\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction MessageContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"message-content\" className={cn(\"flex w-full min-w-0 flex-col gap-1.5 break-words group-data-[align=end]/message:items-end\", className)} {...props} />;\n}\n\n/** The sender and the time: \"Ray Liao\" in ink, \"Yesterday\" muted, as an inbox row. */\nfunction MessageHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-header\"\n      className={cn(\"flex max-w-full min-w-0 items-baseline gap-2 px-1 text-body leading-tight text-fg group-data-[align=end]/message:flex-row-reverse [&_time]:text-fg-muted group-has-data-[variant=ghost]/message:px-0\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction MessageFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-footer\"\n      className={cn(\"flex max-w-full min-w-0 items-center gap-1 px-1 text-caption leading-tight text-fg-muted group-data-[align=end]/message:justify-end group-has-data-[variant=ghost]/message:px-0 [&_svg:not([class*='size-'])]:size-3.5\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Message, MessageAvatar, MessageContent, MessageFooter, MessageGroup, MessageHeader };\n"
+    }
+  ]
+}

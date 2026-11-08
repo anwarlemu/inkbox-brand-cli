@@ -1,0 +1,34 @@
+/* Shared interaction rules for installed CSS and the component theme. */
+@layer base {
+ :where(button, [role="button"], a[href], input, select, textarea, summary) {
+  touch-action: manipulation;
+ }
+}
+
+/* Press feedback is immediate; the action still activates through the native click/keyboard path. */
+:where(button, [role="button"], a[href], summary):active {
+ transition-duration: 0s !important;
+ transition-delay: 0s !important;
+}
+
+/* Keyboard feedback and explicitly high-frequency surfaces never wait for motion. */
+:where(button, [role="button"], a[href], input, select, textarea, summary):focus-visible,
+:where(button, [role="button"], a[href], input, select, textarea, summary):focus-visible *,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]),
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *::before,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"]) *::after,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"])::before,
+:where([data-ds-motion="instant"], [data-instant="true"], [data-slot^="command"])::after {
+ animation: none !important;
+ transition: none !important;
+ scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+ *, ::before, ::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+ }
+}

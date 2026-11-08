@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "utils",
+  "useFor": "Compose every component's classes with cn so a caller's className replaces the default it conflicts with.",
+  "constraints": [],
+  "documentation": "",
+  "exports": [
+    "cn"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/r/utils.md",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/utils.md",
+  "examples": [],
+  "type": "lib",
+  "title": "cn",
+  "description": "Merges class names and resolves conflicts between the brand's own scales (text-body, rounded-control, shadow-s).",
+  "surface": "site",
+  "kinds": [],
+  "requires": [],
+  "packages": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// The brand's scales have their own names (text-body-sm, rounded-control, shadow-s). Without teaching tailwind-merge,\n// it reads text-body-sm as a text color and drops the real color beside it, and keeps a default rounded-md next to a\n// brand radius meant to replace it. Brand text sizes do not set line height: keep explicit leading in either order.\nconst twMerge = extendTailwindMerge<\"brand-font-size\">({\n  extend: {\n    theme: {\n      leading: [\"tight\", \"heading\", \"display\", \"snug\", \"body\", \"relaxed\", \"code\"],\n      tracking: [\"normal\", \"tight\", \"caps\"],\n      radius: [\"xs\", \"sm\", \"control\", \"panel\", \"dialog\", \"pill\"],\n      shadow: [\"s\", \"line\", \"card\", \"floating\", \"dialog\", \"knob\", \"focus\"],\n    },\n    classGroups: {\n      \"brand-font-size\": [{ text: [\"display\", \"h1\", \"h2\", \"h3\", \"h4\", \"body-lg\", \"body\", \"body-sm\", \"caption\", \"micro\"] }],\n    },\n    conflictingClassGroups: {\n      \"brand-font-size\": [\"font-size\"],\n      \"font-size\": [\"brand-font-size\"],\n    },\n    conflictingClassGroupModifiers: { \"brand-font-size\": [\"leading\"] },\n  },\n});\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    }
+  ]
+}

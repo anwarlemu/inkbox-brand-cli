@@ -87,6 +87,8 @@ function resolveImport(project: Project, from: string, spec: string, known: Set<
 	if (spec.startsWith('.')) base = normalize(join(dirname(from), spec));
 	else if (spec.startsWith('@/') || spec.startsWith('~/')) base = `${project.srcDir ? 'src/' : ''}${spec.slice(2)}`;
 	else if (spec.startsWith('/')) base = spec.slice(1);
+	// A page's href="styles.css" or src="app.js" is relative to the page (a script's bare import is a package).
+	else if (/\.(html?|astro|vue|svelte|erb|php|hbs|liquid|njk|twig)$/.test(from) && !/^[a-z][\w+.-]*:|^#/i.test(spec)) base = normalize(join(dirname(from), spec));
 	if (!base) return undefined;
 	const candidates = [base, ...['.tsx', '.ts', '.jsx', '.js', '.astro', '.vue', '.svelte', '.css', '.scss', '.html'].map((e) => base + e), ...['/index.tsx', '/index.ts', '/index.jsx', '/index.js'].map((e) => base + e)];
 	if (project.publicDir && spec.startsWith('/')) candidates.push(join(project.publicDir, base));

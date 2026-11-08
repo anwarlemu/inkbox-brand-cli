@@ -295,6 +295,24 @@ describe('apply to a selection', () => {
 	});
 });
 
+describe('apply to a page of a plain site', () => {
+	it('names the stylesheet the pages share, and says when the page itself has nothing to change', () => {
+		const page = (title: string) => `<!doctype html><html><head><link rel="stylesheet" href="styles.css"></head><body><h1>${title}</h1><button class="btn-primary">Go</button></body></html>`;
+		const dir = project({ 'index.html': page('Acme'), 'pricing.html': page('Pricing'), 'styles.css': '.btn-primary { background: #4f46e5; color: #fff; }\n' });
+		try {
+			const out = cli(dir, 'apply', 'pricing.html');
+			expect(out.status).toBe(0);
+			expect(out.stdout).toContain('Left out, shared with other pages: styles.css');
+			expect(out.stdout).toContain('Nothing inside the selection had a value to change');
+			expect(read(dir, 'styles.css')).toBe('.btn-primary { background: #4f46e5; color: #fff; }\n'.replace(/^/, '@import "./_' + bin + '/brand.css";\n'));
+			expect(cli(dir, 'apply', 'button').status).toBe(0);
+			expect(read(dir, 'styles.css')).toContain('ds:elements:start');
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+});
+
 describe('apply in a Vite app with react-router', () => {
 	it('reads its routes from the router, not from the pages folder', () => {
 		const dir = project({

@@ -220,6 +220,7 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 			...(work ? [
 				`  Only the selection changes${scopeItems(work).length ? ` (${scopeItems(work).join(', ')}: the app's components identified as ${scopeItems(work).length > 1 ? 'these' : 'it'}, and the colors of the elements of ${scopeItems(work).length > 1 ? 'these kinds' : 'that kind'})` : ''}; everything else keeps its own styles, apart from the shared setup (brand tokens, theme and fonts).`,
 				...(itemLines.length ? ['  What each component matched:', ...itemLines] : []),
+				...(![...plan.values()].some((e) => e.reasons.some((r) => !r.startsWith('shared setup'))) ? [color.yellow(`  Nothing inside the selection had a value to change${scopeLeft(work).length ? ': its look comes from the shared files left out below' : ''}.`)] : []),
 				...(scopeLeft(work).length ? [color.yellow(`  Left out, shared with other pages: ${scopeLeft(work).slice(0, 6).join(', ')}${scopeLeft(work).length > 6 ? ` and ${scopeLeft(work).length - 6} more` : ''}. Name them, or add --with-shared, to include them.`)] : []),
 				`  ${recorded ? `Applied so far: ${describeScope(recorded)}. \`${cli()} apply\` with no targets applies the whole app.` : 'The whole app was already applied; it stays applied.'} The checks and hooks enforce the brand only inside what is applied.`,
 				...(opts.dryRun ? ['  Files it would change (`--json` lists each with the reason):', ...changes.map((c) => `    ${c.file}: ${c.reason}`)] : []),

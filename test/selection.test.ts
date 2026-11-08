@@ -9,7 +9,7 @@ import { scopeTheme, tokensOnly, unlayer } from '../src/install/styles.js';
 import { missingChakraPackages } from '../src/install/chakra.js';
 import { binCommand, installPreCommit } from '../src/install/agents.js';
 import { Writer } from '../src/install/files.js';
-import { adaptComponent, dropOrphanStyles, restyleCva, restyleRoot } from '../src/library/adapt.js';
+import { adaptComponent, dropOrphanStyles, restyleCva, restyleRoot, useSiteLook } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
 import { applyComponentColors, componentColorEdits } from '../src/convert/components.js';
 import { newStats } from '../src/convert/css.js';
@@ -252,7 +252,8 @@ describe('apply to a selection', () => {
 		const dir = project(APP);
 		try {
 			expect(cli(dir, 'apply', 'button', '--pages', '/settings').status).toBe(0);
-			expect(changed(dir, APP).filter((f) => !SHARED_SETUP.test(f)).sort()).toEqual(['app/settings/profile-form.tsx']);
+			// The form's own button, and the shared button's use on the page (at the use site).
+			expect(changed(dir, APP).filter((f) => !SHARED_SETUP.test(f)).sort()).toEqual(['app/settings/page.tsx', 'app/settings/profile-form.tsx']);
 			const form = read(dir, 'app/settings/profile-form.tsx');
 			expect(form).toContain('bg-primary');
 			expect(form).toContain('border-[#cbd5e1]');
@@ -616,12 +617,11 @@ describe('pre-commit blocks for several apps in one repository', () => {
 
 describe('what a page-limited component matched', () => {
 	it('says the component is outside the named pages, not missing from the app', () => {
-		const dir = project({ ...APP, 'app/about/page.tsx': 'import { PrimaryButton } from "@/components/primary-button";\n\nexport default function About() {\n  return <main><PrimaryButton>Contact</PrimaryButton></main>;\n}\n' });
+		const dir = project({ ...APP, 'app/about/page.tsx': 'export default function About() {\n  return <main>Acme</main>;\n}\n' });
 		try {
 			const out = cli(dir, 'apply', 'button', '--pages', '/about', '--dry-run').stdout;
 			expect(out).not.toContain('nothing in the app is a button');
 			expect(out).toMatch(/button: none inside the selection; \d+ files? outside it/);
-			expect(out).toContain('components/primary-button.tsx');
 		} finally {
 			rmSync(dir, { recursive: true });
 		}
@@ -712,5 +712,43 @@ describe('converted colors in an app with its own theme', () => {
 			rmSync(dir, { recursive: true });
 			rmSync(whole, { recursive: true });
 		}
+	});
+});
+
+describe('combined selections, a widened base layer and use-site clearing', () => {
+	it('apply button --pages /settings restyles the uses of the shared button on that page, and nothing else there', () => {
+		const dir = project(APP);
+		try {
+			expect(cli(dir, 'apply', 'button', '--pages', '/settings').status).toBe(0);
+			const page = read(dir, 'app/settings/page.tsx');
+			expect(page).toMatch(/<PrimaryButton className="[^"]*rounded-pill![^"]*" variant="secondary">Export<\/PrimaryButton>/);
+			expect(page).not.toContain('ds-page');
+			expect(page).toContain('text-[#0f172a]');
+			expect(read(dir, 'components/primary-button.tsx')).toBe(APP['components/primary-button.tsx']);
+			expect(read(dir, 'app/page.tsx')).toBe(APP['app/page.tsx']);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('a bare apply that widens a selection records the base layer at once', () => {
+		const dir = project(APP);
+		try {
+			cli(dir, 'add', 'button');
+			cli(dir, 'apply', '/settings');
+			expect(JSON.parse(read(dir, '.ds/config.json')).baseLayer).toBe(false);
+			cli(dir, 'apply');
+			expect(JSON.parse(read(dir, '.ds/config.json')).baseLayer).toBe(true);
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('a use-site look clears the component ground only where the library draws its own cut shape', () => {
+		const button = loadItemSync('button')!.files![0].content;
+		const own = useSiteLook('button', button, 'site', 'primary')!;
+		expect(own).toContain('rounded-pill');
+		expect(own).not.toContain('bg-transparent');
+		expect(own).not.toContain('rounded-none');
+		const cut = 'const v = cva("ds-cut relative", { variants: { variant: { default: "text-fg" } } });';
+		expect(useSiteLook('button', cut, 'site')).toEqual(expect.arrayContaining(['ds-cut', 'bg-transparent', 'border-0', 'rounded-none', 'shadow-none']));
 	});
 });

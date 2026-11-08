@@ -262,12 +262,25 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	// A page selection leaves out the components other pages share (PrimaryButton), yet its own uses of them should look
 	// like the brand: each use on the page takes the library item's look as important classes at the use site, so the
 	// component, and every other page, stay as they are. Tailwind 4 only (its trailing ! marks a class important).
-	const pageFiles = new Set(scope?.parts.flatMap((p) => (p.items.length || p.own.length ? [] : p.resolved.files ?? [])) ?? []);
+	// Each page file with the items its part names (none: every item). "Buttons on /settings" restyles button uses only.
+	const pageFiles = new Map<string, Set<string> | undefined>();
+	for (const p of scope?.parts ?? []) {
+		if (p.own.length) continue;
+		const items = p.items.length ? new Set(p.items) : undefined;
+		if (p.items.length && !p.pages.length && !p.files.length) continue;
+		for (const f of p.resolved.files ?? []) {
+			const had = pageFiles.get(f);
+			// A part that names the page alone allows every item; otherwise the items named for it so far.
+			pageFiles.set(f, !items || (pageFiles.has(f) && !had) ? undefined : new Set([...(had ?? []), ...items]));
+		}
+	}
 	if (pageFiles.size && (project.tailwindMajor ?? 0) >= 4) {
 		const shared = new Map(identified.filter((c) => c.item && ROOT_STYLED.has(c.item) && c.confidence >= SWAP_FLOOR && c.exported && !componentInScope(scope, c) && (c.params.names.includes('className') || c.params.rest || c.params.identifier)).map((c) => [c.name, c]));
-		for (const file of [...pageFiles].filter((f) => current.has(f) && shared.size)) {
+		for (const [file, items] of [...pageFiles].filter(([f]) => current.has(f) && shared.size)) {
 			const text = current.get(file)!;
-			const edits = useSiteEdits(text, shared, (c, variant, size) => {
+			const allowed = new Map([...shared].filter(([, c]) => !items || items.has(c.item!)));
+			if (!allowed.size) continue;
+			const edits = useSiteEdits(text, allowed, (c, variant, size) => {
 				const content = loadItemSync(c.item!)?.files?.[0]?.content;
 				return content ? useSiteLook(c.item!, content, surfaceOf(file), variant, size) : undefined;
 			});

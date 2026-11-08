@@ -494,7 +494,12 @@ export function restyleCva(text: string, item: string, libraryContent: string, s
 export function useSiteLook(item: string, libraryContent: string, surface: Surface, variant?: string, size?: string): string[] | undefined {
 	const lib = cvaOf(libraryContent);
 	const control = CONTROLS.has(item);
-	const look = (s: string) => s.split(/\s+/).filter((cls) => cls && isLook(cls, control));
+	// A look the brand's cut shape draws (a pseudo-element under the content) also clears the element's own ground,
+	// line, corners and shadow, or the component's background shows through the cut corner.
+	const look = (s: string) => {
+		const out = s.split(/\s+/).filter((cls) => cls && isLook(cls, control));
+		return out.some((cls) => /^ds-cut(-frame)?$/.test(cls)) ? [...out, 'bg-transparent', 'border-0', 'rounded-none', 'shadow-none'] : out;
+	};
 	if (!lib) {
 		const classes = libraryClasses(libraryContent, item.replace(/(^|-)([a-z])/g, (_m, _d, c: string) => c.toUpperCase()), () => undefined);
 		return classes ? look(classes) : undefined;

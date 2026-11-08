@@ -219,7 +219,18 @@ async function setUp(root: string, opts: RunOptions, previous?: State, selection
 	// Running again with nothing to change leaves the state as it was (the same apply twice is a no-op).
 	const appliedAt = plan.size || !previous?.appliedAt ? new Date().toISOString() : previous.appliedAt;
 	const state: State = { version: 2, colors: project.framework === 'native' ? undefined : 'components', surface, mixed, theme, appliedAt, baseUrl: previous?.baseUrl, screens, main, marked: previous?.marked ?? [], skipped: previous?.skipped ?? {}, reviews: previous?.reviews ?? {}, ...(recorded ? { scope: recorded } : {}) };
-	if (!opts.dryRun) writeState(root, state);
+	if (!opts.dryRun) {
+		writeState(root, state);
+		// The whole app now has the base layer: record it at once, so add and later selections keep it.
+		if (!recorded) {
+			const cfgPath = join(root, '.ds', 'config.json');
+			let cfg: Record<string, unknown> = {};
+			try {
+				cfg = JSON.parse(readFileSync(cfgPath, 'utf8'));
+			} catch {}
+			if (cfg.baseLayer !== true) writeFileSync(cfgPath, `${JSON.stringify({ ...cfg, baseLayer: true }, null, 2)}\n`);
+		}
+	}
 	const left = opts.dryRun ? undefined : runCheck(root);
 	const changes = [...plan.values()].map((e) => ({ file: e.file, reason: e.reasons.join('; '), changes: e.changes }));
 	const s = converted.stats;

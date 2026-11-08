@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { preToolUse } from '../src/hooks/handlers.js';
 import { changedFiles } from '../src/check/engine.js';
-import { scopeTheme, tokensOnly } from '../src/install/styles.js';
+import { scopeTheme, tokensOnly, unlayer } from '../src/install/styles.js';
 import { missingChakraPackages } from '../src/install/chakra.js';
 import { binCommand } from '../src/install/agents.js';
 import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
@@ -398,6 +398,12 @@ describe('bugs found applying to real apps', () => {
 		expect(out.css).toMatch(/:root \{[^}]*--ds-scope-font-sans: var\(--font-geist-sans\);[^}]*--ds-scope-spacing-2--5: calc\(0\.25rem \* 2\.5\);[^}]*--ds-scope-transition-duration-150: 150ms;/);
 		expect(out.css).toMatch(/:where\(\[data-slot\]\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\);/);
 		expect(out.theme).toContain('--animate-x: x 1s;');
+	});
+	it('a Tailwind 3 app gets the base rules unlayered (it rejects @layer base in an imported file)', () => {
+		const out = unlayer(':root {\n\t--a: 1;\n}\n@layer base {\n\tbody {\n\t\tcolor: red;\n\t}\n}\n.x { color: blue; }\n');
+		expect(out).not.toContain('@layer');
+		expect(out).toContain('body {\n\tcolor: red;\n}');
+		expect(out).toContain('.x { color: blue; }');
 	});
 	it('the selection stylesheet keeps tokens and drops the base layer', () => {
 		const css = ':root {\n\t--ds-color-x: #fff;\n}\n@layer base {\n\tbody { color: red; }\n}\n:where(button) { touch-action: manipulation; }\n.ds-label { color: var(--ds-color-x); }\n@media (prefers-reduced-motion: reduce) {\n\t* { transition: none; }\n}\n@media (prefers-color-scheme: dark) {\n\t:root { --ds-color-x: #000; }\n}\n';

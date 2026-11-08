@@ -13,7 +13,8 @@ import { cli } from '../src/lib/brand.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const REG = join(ROOT, 'registry');
-const brand = JSON.parse(readFileSync(join(ROOT, 'brand', 'brand.json'), 'utf8')) as { name: string; registryUrl: string };
+const brand = JSON.parse(readFileSync(join(ROOT, 'brand', 'brand.json'), 'utf8')) as { name: string; registryUrl: string; registryHost?: string };
+const host = (brand.registryHost ?? brand.registryUrl).replace(/\/$/, '');
 const problems: string[] = [];
 
 const TYPES = ['ui', 'site', 'product', 'visual', 'block', 'hook', 'lib'] as const;
@@ -148,8 +149,8 @@ const items = [
 			documentation: d.body,
 			source: d.source,
 			exports, client,
-			docsUrl: `${brand.registryUrl}/${d.type === "lib" || d.type === "hook" ? `r/${d.name}.md` : `components/${d.name}`}`,
-			markdownUrl: `${brand.registryUrl}/r/${d.name}.md`,
+			docsUrl: d.type === "lib" || d.type === "hook" ? `${host}/r/${d.name}.md` : `${brand.registryUrl}/components/${d.name}`,
+			markdownUrl: `${host}/r/${d.name}.md`,
 			examples: exampleText ? [{ path: `examples/${d.name}.tsx`, content: exampleText, exports: exampleExports, requires: [d.name, ...exampleDeps.internal], packages: exampleDeps.npm, previews: exampleExports.map(name => ({ name, url: `${brand.registryUrl}/preview/${d.name}/${name}` })) }] : [],
 			type: d.type,
 			title: d.title,
@@ -196,7 +197,7 @@ const references = items.map(item => {
 	writeFileSync(join(out, `${item.name}.md`), `${text}\n`);
 	return text;
 });
-const catalog = `# ${brand.name} design system\n\n> Components, tokens and instructions for building ${brand.name} interfaces.\n\n## Start here\n\n- [Agent instructions](${brand.registryUrl}/agents.md): setup, choosing components, composing pages and verification.\n- [Registry JSON](${brand.registryUrl}/r/index.json): complete inventory including dependencies.\n- [Complete reference](${brand.registryUrl}/llms-full.txt): guide, examples and source for every item. Prefer individual references when possible.\n\n## Components and tokens\n\n${items.map(i => `- [${i.title}](${brand.registryUrl}/r/${i.name}.md): ${i.description}`).join('\n')}\n`;
+const catalog = `# ${brand.name} design system\n\n> Components, tokens and instructions for building ${brand.name} interfaces.\n\n## Start here\n\n- [Agent instructions](${brand.registryUrl}/agents.md): setup, choosing components, composing pages and verification.\n- [Registry JSON](${host}/r/index.json): complete inventory including dependencies.\n- [Complete reference](${brand.registryUrl}/llms-full.txt): guide, examples and source for every item. Prefer individual references when possible.\n\n## Components and tokens\n\n${items.map(i => `- [${i.title}](${host}/r/${i.name}.md): ${i.description}`).join('\n')}\n`;
 writeFileSync(join(publicDir, 'llms.txt'), catalog);
 writeFileSync(join(publicDir, 'llms-full.txt'), `${guide}\n\n${references.join('\n\n')}\n`);
 writeFileSync(join(publicDir, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /preview/\nSitemap: ${brand.registryUrl}/sitemap.xml\n`);

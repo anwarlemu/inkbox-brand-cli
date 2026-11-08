@@ -13,6 +13,8 @@ export type BrandConfig = {
 	reviewModel: string;
 	reviewThreshold: number;
 	registryUrl?: string;
+	/** Where the registry files (/r/) are served when the docs site is private; defaults to registryUrl. */
+	registryHost?: string;
 	/** The surfaces the brand has: a site (pages people read), a product (an app people work in), or both. */
 	surfaces?: ('site' | 'product')[];
 	/** How the brand's fonts load: a stylesheet URL, next/font families, and what a native app adds. */
@@ -34,6 +36,9 @@ export function brand(): BrandConfig {
 	config ??= JSON.parse(readFileSync(pkgPath('brand', 'brand.json'), 'utf8'));
 	return config!;
 }
+
+/** The public address of the registry files (/r/...): registryHost when the docs site is private, else registryUrl. */
+export const registryHost = () => (brand().registryHost ?? brand().registryUrl ?? '').replace(/\/$/, '');
 
 /** Whether the brand has a product surface; a site-only brand styles every project as a site. */
 export const hasProduct = () => (brand().surfaces ?? ['site', 'product']).includes('product');

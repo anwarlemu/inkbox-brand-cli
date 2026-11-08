@@ -1,18 +1,18 @@
-import { brand, cli } from '../lib/brand.js';
+import { brand, cli, registryHost } from '../lib/brand.js';
 import { agentGuide } from '../lib/guide.js';
 import { emit, type OutputOptions } from '../lib/output.js';
 import { itemName, loadItem } from '../library/registry.js';
 
 export function guide(opts: OutputOptions) {
 	const b = brand();
-	emit(opts, { schemaVersion: 1, name: b.name, instructions: agentGuide(), registry: `${b.registryUrl}/r/index.json` }, agentGuide);
+	emit(opts, { schemaVersion: 1, name: b.name, instructions: agentGuide(), registry: `${registryHost()}/r/index.json` }, agentGuide);
 }
 
 export async function show(ref: string, opts: OutputOptions) {
 	const item = await loadItem(itemName(ref));
 	emit(opts, { schemaVersion: 1, ...item, command: `${cli()} add ${item.name}` }, () => [
 		`# ${item.title ?? item.name}`, item.description, '',
-		`Install: ${cli()} add ${item.name}`, `Reference: ${brand().registryUrl}/r/${item.name}.md`,
+		`Install: ${cli()} add ${item.name}`, `Reference: ${registryHost()}/r/${item.name}.md`,
 		`Exports: ${item.exports?.join(', ') || 'See source'}`,
 		`Client boundary: ${item.client ? 'yes' : 'not required by this entry file'}`,
 		`Requires: ${item.requires?.join(', ') || 'none'}`,

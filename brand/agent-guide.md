@@ -44,9 +44,9 @@ The add command above is an example, not the list required for every page. Choos
 
 `add` copies source files and their transitive dependencies, installs missing npm packages, and wires the theme. Existing files are kept. Use `--overwrite` only when intentionally replacing local component changes. Read the returned file list and warnings. Generated imports and target files follow components.json and the project alias configuration. Existing utility files are preserved; brand helpers use their own names.
 
-For HTTP-only agents, fetch `{{registry}}/r/index.json`, then `{{registry}}/r/<name>.json` or `{{registry}}/r/<name>.md`. Follow `requires` recursively. Each `files[].path` is relative to the source root; `files[].content` is the exact source. Each example lists its own `requires` and `packages`; install these too when using that example. Do not copy the example file as the component implementation. The CLI handles dependency ordering and theme installation for you.
+For HTTP-only agents, fetch `{{registryHost}}/r/index.json`, then `{{registryHost}}/r/<name>.json` or `{{registryHost}}/r/<name>.md`. Follow `requires` recursively. Each `files[].path` is relative to the source root; `files[].content` is the exact source. Each example lists its own `requires` and `packages`; install these too when using that example. Do not copy the example file as the component implementation. The CLI handles dependency ordering and theme installation for you.
 
-The component reference states its source. `{{registry}}/r/audit.json` records the reference basis for all components. Many components come straight from the console's design (Figma 427:2715); the rest extend its patterns because the design has no standalone equivalent (menus, calendars, charts). Each reference says which. Do not describe extensions as exact copies of the design.
+The component reference states its source. `{{registryHost}}/r/audit.json` records the reference basis for all components. Many components come straight from the console's design (Figma 427:2715); the rest extend its patterns because the design has no standalone equivalent (menus, calendars, charts). Each reference says which. Do not describe extensions as exact copies of the design.
 
 ## Compose the interface
 

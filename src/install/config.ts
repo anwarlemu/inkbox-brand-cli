@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { getTsconfig } from 'get-tsconfig';
 import { parse } from '@babel/parser';
-import { brand, hasProduct } from '../lib/brand.js';
+import { brand, hasProduct, registryHost } from '../lib/brand.js';
 import type { Project } from '../project/detect.js';
 import type { Writer } from './files.js';
 
@@ -14,7 +14,7 @@ export type ComponentConfig = {
 };
 
 export const namespace = () => `@${brand().bin}`;
-export const registryAddress = (surface = 'site') => `${brand().registryUrl}/r/${surface === 'product' && hasProduct() ? 'shadcn-product' : 'shadcn'}/{name}.json`;
+export const registryAddress = (surface = 'site') => `${registryHost()}/r/${surface === 'product' && hasProduct() ? 'shadcn-product' : 'shadcn'}/{name}.json`;
 
 export function readComponentConfig(root: string): ComponentConfig | undefined {
 	const file = join(root, 'components.json');

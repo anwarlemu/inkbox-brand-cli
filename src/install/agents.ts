@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { chmodSync, existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative } from 'node:path';
-import { brand, cli } from '../lib/brand.js';
+import { brand, cli, registryHost } from '../lib/brand.js';
 import { agentGuide } from '../lib/guide.js';
 import { PKG_ROOT, pkgPath } from '../lib/paths.js';
 import { type Writer, upsertBlock } from './files.js';
@@ -90,7 +90,7 @@ function mergeHooks(existing: any, cmd: string, harness: 'claude-code' | 'codex'
 
 export function installAgents(w: Writer) {
 	const text = contract();
-	const skill = readFileSync(pkgPath('brand', 'skill.md'), 'utf8').replaceAll('{{brand}}', brand().name).replaceAll('{{bin}}', brand().bin).replaceAll('{{source}}', brand().source).replaceAll('{{registry}}', brand().registryUrl ?? '');
+	const skill = readFileSync(pkgPath('brand', 'skill.md'), 'utf8').replaceAll('{{brand}}', brand().name).replaceAll('{{bin}}', brand().bin).replaceAll('{{source}}', brand().source).replaceAll('{{registryHost}}', registryHost()).replaceAll('{{registry}}', brand().registryUrl ?? '');
 	for (const directory of ['.agents/skills', '.claude/skills']) w.write(`${directory}/${brand().bin}/SKILL.md`, skill);
 	w.write('.ds/agent-guide.md', `${agentGuide()}\n`);
 	for (const rel of ['GEMINI.md', '.github/copilot-instructions.md']) w.write(rel, upsertBlock(w.read(rel) ?? '', text, START, END));

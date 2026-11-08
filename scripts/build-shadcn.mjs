@@ -7,7 +7,8 @@ const read = file => readFileSync(join(root, file), 'utf8');
 const brand = JSON.parse(read('brand/brand.json'));
 const dir = join(root, 'apps/www/public/r/shadcn');
 mkdirSync(dir, { recursive: true });
-const address = name => `${brand.registryUrl}/r/shadcn/${name}.json`;
+const host = (brand.registryHost ?? brand.registryUrl).replace(/\/$/, '');
+const address = name => `${host}/r/shadcn/${name}.json`;
 const entries = JSON.parse(read('apps/www/public/r/index.json')).items;
 const objects = nodes => {
 	const value = {};
@@ -25,7 +26,7 @@ const merge = (a, b) => {
 	for (const [key, value] of Object.entries(b)) a[key] = typeof value === 'object' && value && typeof a[key] === 'object' ? merge(a[key], value) : value;
 	return a;
 };
-const skill = read('brand/skill.md').replaceAll('{{brand}}', brand.name).replaceAll('{{bin}}', brand.bin).replaceAll('{{source}}', brand.source).replaceAll('{{registry}}', brand.registryUrl);
+const skill = read('brand/skill.md').replaceAll('{{brand}}', brand.name).replaceAll('{{bin}}', brand.bin).replaceAll('{{source}}', brand.source).replaceAll('{{registryHost}}', host).replaceAll('{{registry}}', brand.registryUrl);
 const themeStyles = surface => {
 	const parsed = postcss.parse(`${read('build/fonts.css')}\n${read(`build/${surface}.css`)}\n${read('build/theme.css')}`);
 	const theme = {};
@@ -38,7 +39,7 @@ const themeStyles = surface => {
 const items = entries.map(entry => {
 	const item = JSON.parse(read(`apps/www/public/r/${entry.name}.json`));
 	const type = item.type === 'theme' ? 'registry:style' : item.type === 'lib' ? 'registry:lib' : item.type === 'hook' ? 'registry:hook' : ['block', 'site', 'product', 'visual'].includes(item.type) ? 'registry:block' : 'registry:ui';
-	const common = { $schema: 'https://ui.shadcn.com/schema/registry-item.json', name: item.name, type, title: item.title, description: item.description, dependencies: item.packages ?? [], registryDependencies: (item.requires ?? []).map(address), docs: `Reference: ${brand.registryUrl}/components/${item.name}. Read ${brand.bin} view ${item.name} --json for APIs and working examples.`, meta: { brand: brand.bin, surface: item.surface, reference: `${brand.registryUrl}/r/${item.name}.json` } };
+	const common = { $schema: 'https://ui.shadcn.com/schema/registry-item.json', name: item.name, type, title: item.title, description: item.description, dependencies: item.packages ?? [], registryDependencies: (item.requires ?? []).map(address), docs: `Reference: ${brand.registryUrl}/components/${item.name}. Read ${brand.bin} view ${item.name} --json for APIs and working examples.`, meta: { brand: brand.bin, surface: item.surface, reference: `${host}/r/${item.name}.json` } };
 	if (item.type === 'theme') {
 		const styles = themeStyles('site');
 		return { ...common, ...styles, files: [{ path: `skills/${brand.bin}/SKILL.md`, type: 'registry:file', target: `~/.agents/skills/${brand.bin}/SKILL.md`, content: skill }] };

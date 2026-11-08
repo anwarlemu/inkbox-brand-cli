@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
-import { brand } from '../lib/brand.js';
+import { brand, registryHost } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 import { matchName, suggest } from '../lib/names.js';
 
@@ -36,7 +36,7 @@ export type IndexEntry = Omit<RegistryItem, 'files' | 'examples' | 'documentatio
 function sources() {
 	const env = process.env.DS_REGISTRY;
 	const dirs = [env && !/^https?:/.test(env) ? (isAbsolute(env) ? env : join(process.cwd(), env)) : undefined, pkgPath('r'), pkgPath('apps', 'www', 'public', 'r')].filter((d): d is string => !!d && existsSync(d));
-	const url = env && /^https?:/.test(env) ? env.replace(/\/$/, '') : `${(brand() as { registryUrl?: string }).registryUrl ?? ''}/r`;
+	const url = env && /^https?:/.test(env) ? env.replace(/\/$/, '') : `${registryHost()}/r`;
 	return { dirs, url };
 }
 

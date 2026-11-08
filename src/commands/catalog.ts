@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { brand, cli } from '../lib/brand.js';
+import { brand, cli, registryHost } from '../lib/brand.js';
 import { findProjectRoot, pkgPath } from '../lib/paths.js';
 import { loadIndex, loadItem } from '../library/registry.js';
 import { detectProject } from '../project/detect.js';
@@ -34,7 +34,7 @@ export async function view(names: string[], opts: Options) {
 
 export async function docs(names: string[], opts: Options) {
 	const items = await Promise.all(names.map(loadItem));
-	const entries = items.map((item: any) => ({ name: item.name, docs: `${brand().registryUrl}/components/${item.name}`, reference: `${brand().registryUrl}${existsSync(pkgPath('apps', 'www', 'public', 'components', `${item.name}.md`)) || item.documentation?.includes('/components/') ? '/components' : '/r'}/${item.name}.md`, source: `${brand().registryUrl}/r/${item.name}.json`, inspect: `${cli()} view ${item.name} --json`, examples: (item.examples ?? []).filter((e: any) => e.url).map((e: any) => e.url) }));
+	const entries = items.map((item: any) => ({ name: item.name, docs: `${brand().registryUrl}/components/${item.name}`, reference: existsSync(pkgPath('apps', 'www', 'public', 'components', `${item.name}.md`)) || item.documentation?.includes('/components/') ? `${brand().registryUrl}/components/${item.name}.md` : `${registryHost()}/r/${item.name}.md`, source: `${registryHost()}/r/${item.name}.json`, inspect: `${cli()} view ${item.name} --json`, examples: (item.examples ?? []).filter((e: any) => e.url).map((e: any) => e.url) }));
 	output(entries, opts, () => entries.map(e => `${e.name}\n  docs ${e.docs}\n  reference ${e.reference}\n  source ${e.source}\n  offline ${e.inspect}`).join('\n\n'));
 }
 

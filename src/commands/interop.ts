@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { brand, hasProduct } from '../lib/brand.js';
+import { brand, hasProduct, registryHost } from '../lib/brand.js';
 import { findProjectRoot } from '../lib/paths.js';
 import { selfInstall } from './run.js';
 import { init } from './init.js';
@@ -35,7 +35,7 @@ export async function create(opts: { template?: string; name?: string; surface?:
 		selfInstall(process.cwd(), { install: true }, false);
 		if (opts.monorepo) {
 			// The upstream installer owns shared workspace routing and package-manager selection.
-			const registry = `${brand().registryUrl}/r/${opts.surface === 'product' && hasProduct() ? 'shadcn-product' : 'shadcn'}`;
+			const registry = `${registryHost()}/r/${opts.surface === 'product' && hasProduct() ? 'shadcn-product' : 'shadcn'}`;
 			shadcn(['add', `${registry}/theme.json`, ...components.map(name => `${registry}/${name}.json`), '--yes', '--overwrite'], process.cwd(), opts.json);
 			init({ surface: opts.surface, install: false, json: opts.json, fresh: true });
 		} else await add(components, { surface: opts.surface, install: false, overwrite: true, json: opts.json, fresh: true });

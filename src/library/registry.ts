@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { brand } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
+import { matchName, suggest } from '../lib/names.js';
 
 // The component library's items: from a folder (the copy bundled with the CLI, the docs build in this repo, or
 // DS_REGISTRY) or fetched from the hosted library. Each item is one JSON file: its files with their content, the
@@ -59,14 +60,19 @@ export async function loadItem(ref: string): Promise<RegistryItem> {
 		item.requires = (item.requires ?? []).map(dep => /^https?:/.test(dep) ? dep : remote ? new URL(`${itemName(dep)}.json`, ref).href : resolve(dirname(ref), `${itemName(dep)}.json`));
 		return item;
 	}
-	const name = itemName(ref);
-	if (name !== ref) throw new Error(`Unsupported item address: ${ref}. Use a name, a JSON file, or an HTTP(S) URL.`);
+	if (itemName(ref) !== ref) throw new Error(`Unsupported item address: ${ref}. Use a name, a JSON file, or an HTTP(S) URL.`);
+	// Button, AlertDialog and buttons name button and alert-dialog.
+	const known = loadIndexSync().map((i) => i.name);
+	const name = matchName(ref, known) ?? ref;
 	const { dirs, url } = sources();
 	for (const dir of dirs) {
 		const file = join(dir, `${name}.json`);
 		if (existsSync(file)) return validateItem(JSON.parse(readFileSync(file, 'utf8')), file);
 	}
-	if (dirs.length) throw new Error(`No library item "${name}". Use search to find an item.`);
+	if (dirs.length) {
+		const close = suggest(name, known);
+		throw new Error(`No library item "${name}".${close.length ? ` Did you mean ${close.join(', ')}?` : ''} Use search to find an item.`);
+	}
 	const response = await fetch(`${url}/${name}.json`, { signal: AbortSignal.timeout(15000) });
 	if (!response.ok) throw new Error(`No library item "${name}" (${response.status}). Use search to find an item.`);
 	return validateItem(await response.json(), name);
@@ -100,7 +106,8 @@ export async function closure(names: string[]): Promise<RegistryItem[]> {
 }
 
 /** The same, synchronously, from a local copy only (the one bundled with the CLI or this repo's docs build). */
-export function loadItemSync(name: string): RegistryItem | undefined {
+export function loadItemSync(typed: string): RegistryItem | undefined {
+	const name = matchName(typed, loadIndexSync().map((i) => i.name)) ?? typed;
 	for (const dir of sources().dirs) {
 		const file = join(dir, `${name}.json`);
 		if (existsSync(file)) return JSON.parse(readFileSync(file, 'utf8'));

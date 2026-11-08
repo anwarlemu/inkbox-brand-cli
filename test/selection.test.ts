@@ -11,6 +11,7 @@ import { binCommand } from '../src/install/agents.js';
 import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
 import { componentColorEdits } from '../src/convert/components.js';
+import { loadItem, loadItemSync } from '../src/library/registry.js';
 import { brand } from '../src/lib/brand.js';
 import { coverage, itemFor, kindsForItems, resolveTargets } from '../src/plan/scope.js';
 import { readState } from '../src/plan/state.js';
@@ -89,6 +90,15 @@ describe('resolving what a person names', () => {
 	it('fails with the closest names when a target matches nothing', () => {
 		const r = resolveTargets(dir, screens, files, { targets: ['buton', '/setings'], pages: ['button'] });
 		expect(r.unresolved.map((u) => [u.target, u.suggestions[0]])).toEqual([['buton', 'button'], ['/setings', '/settings'], ['button', undefined]]);
+	});
+	it('add, view and show take the same names, and suggest the closest for a near miss', async () => {
+		expect((await loadItem('AlertDialog')).name).toBe('alert-dialog');
+		expect((await loadItem('Buttons')).name).toBe('button');
+		expect(loadItemSync('DropdownMenu')?.name).toBe('dropdown-menu');
+		await expect(loadItem('buton')).rejects.toThrow('Did you mean button?');
+		const out = cli(dir, 'show', 'AlertDialog');
+		expect(out.status).toBe(0);
+		expect(out.stdout).toContain('add alert-dialog');
 	});
 	it('maps a library item to the element kinds that stand for it', () => {
 		expect(kindsForItems(['button'])).toEqual(expect.arrayContaining(['button', 'button-primary', 'button-secondary']));

@@ -360,7 +360,9 @@ export function restyleRoot(text: string, c: AppComponent, item: string, library
 		// A separator (" ") or an empty string between expressions is not a class list.
 		if (!lit.value.trim()) continue;
 		const kept = lit.value.split(/\s+/).filter((cls) => cls && !isLook(cls, control));
-		const next = lit === first ? [...kept, ...libraryClassList.split(/\s+/).filter((cls) => !kept.includes(cls))] : kept;
+		// Only the library's look (and a control's size) is taken: its layout classes (flex, gap, padding on a card) would
+		// change how the component lays out its children.
+		const next = lit === first ? [...kept, ...libraryClassList.split(/\s+/).filter((cls) => cls && !kept.includes(cls) && isLook(cls, control))] : kept;
 		const value = next.join(' ');
 		if (value === lit.value) continue;
 		const quote = out[lit.start];

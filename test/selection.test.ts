@@ -4,7 +4,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { preToolUse } from '../src/hooks/handlers.js';
-import { tokensOnly } from '../src/install/styles.js';
+import { scopeTheme, tokensOnly } from '../src/install/styles.js';
+import { missingChakraPackages } from '../src/install/chakra.js';
 import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
 import { componentColorEdits } from '../src/convert/components.js';
@@ -34,7 +35,7 @@ const cli = (dir: string, ...args: string[]) => spawnSync(process.execPath, [BIN
 const read = (dir: string, rel: string) => readFileSync(join(dir, rel), 'utf8');
 
 // Everything the library's components import is already a dependency, so applying never reaches the network.
-const DEPS = { next: '16.0.0', react: '19.0.0', 'react-dom': '19.0.0', tailwindcss: '4.1.0', '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0', 'radix-ui': '*', '@phosphor-icons/react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' };
+const DEPS = { next: '16.0.0', react: '19.0.0', 'react-dom': '19.0.0', tailwindcss: '4.1.0', '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0', '@emotion/cache': '^11.14.0', 'radix-ui': '*', '@phosphor-icons/react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' };
 const BUTTON = `import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type PrimaryButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "danger"; size?: "sm" | "md"; children: ReactNode };
@@ -270,11 +271,44 @@ describe('bugs found applying to real apps', () => {
 		const [s] = componentsIn('components/primary-button.tsx', stateful);
 		expect(adaptComponent(stateful, s, 'button', 'site', '@/components/ds/button', s.values)).toBeUndefined();
 	});
+	it('a stat card is a card, and its restyle takes the look but keeps its own layout', () => {
+		const text = 'export function StatCard({ label }: { label: string }) { return <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 shadow-sm">{label}</div>; }';
+		const [card] = componentsIn('stat-card.tsx', text);
+		expect(identify(card, 'site').item).toBe('card');
+		const out = restyleRoot(text, card, 'card', 'group/card flex flex-col gap-3 rounded-dialog py-3.5 text-fg border border-line-field bg-surface')!;
+		expect(out).toContain('className="p-6 rounded-dialog text-fg border border-line-field bg-surface"');
+	});
 	it('a root restyle leaves the separators between class expressions alone', () => {
 		const text = 'export function Tag({ className }: { className?: string }) { return <span className={["rounded-full bg-green-100", className].join(" ")}>x</span>; }';
 		const [tag] = componentsIn('Tag.tsx', text);
 		const out = restyleRoot(text, tag, 'badge', 'rounded-control border');
 		expect(out).toContain('.join(" ")');
+	});
+	it('a swap sets up the provider its library components render in, with server-rendered styles in Next', () => {
+		const dir = project(APP);
+		try {
+			expect(cli(dir, 'apply', 'button').status).toBe(0);
+			const layout = read(dir, 'app/layout.tsx');
+			expect(layout).toMatch(/<\w+ChakraProvider>/);
+			const provider = read(dir, 'components/ui/provider.tsx');
+			expect(provider).toContain('useServerInsertedHTML');
+			expect(provider).toContain('@emotion/cache');
+			const bare = project({ 'package.json': JSON.stringify({ dependencies: { '@chakra-ui/react': '^3.37.0', '@emotion/react': '^11.14.0' } }) });
+			expect(missingChakraPackages(bare, true)).toEqual(['@emotion/cache@^11.14.0']);
+			expect(missingChakraPackages(bare, false)).toEqual([]);
+			rmSync(bare, { recursive: true });
+		} finally {
+			rmSync(dir, { recursive: true });
+		}
+	});
+	it('a selection theme keeps the app value for keys it shares with Tailwind, and the brand value inside library components', () => {
+		const theme = '@theme inline {\n\t--font-sans: var(--ds-font-sans);\n\t--spacing-2\\.5: var(--ds-space-2-5);\n\t--transition-duration-150: var(--ds-duration-fast);\n\t--color-fg: var(--ds-color-text-default);\n}\n@theme {\n\t--animate-x: x 1s;\n}\n';
+		const out = scopeTheme(theme, new Map([['--font-sans', 'var(--font-geist-sans)']]), new Map([['--font-sans', 'ui-sans-serif'], ['--spacing', '0.25rem']]));
+		expect(out.theme).toContain('--font-sans: var(--ds-scope-font-sans);');
+		expect(out.theme).toContain('--color-fg: var(--ds-color-text-default);');
+		expect(out.css).toMatch(/:root \{[^}]*--ds-scope-font-sans: var\(--font-geist-sans\);[^}]*--ds-scope-spacing-2--5: calc\(0\.25rem \* 2\.5\);[^}]*--ds-scope-transition-duration-150: 150ms;/);
+		expect(out.css).toMatch(/:where\(\[data-slot\]\) \{[^}]*--ds-scope-font-sans: var\(--ds-font-sans\);/);
+		expect(out.theme).toContain('--animate-x: x 1s;');
 	});
 	it('the selection stylesheet keeps tokens and drops the base layer', () => {
 		const css = ':root {\n\t--ds-color-x: #fff;\n}\n@layer base {\n\tbody { color: red; }\n}\n:where(button) { touch-action: manipulation; }\n.ds-label { color: var(--ds-color-x); }\n@media (prefers-reduced-motion: reduce) {\n\t* { transition: none; }\n}\n@media (prefers-color-scheme: dark) {\n\t:root { --ds-color-x: #000; }\n}\n';

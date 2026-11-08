@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { dirname, posix, relative } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, join, posix, relative } from 'node:path';
 import { type NextFont, brand, tokens } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 import type { Project } from '../project/detect.js';
@@ -54,6 +55,62 @@ export function tokensOnly(css: string): string {
 	return `${blocks.filter(keep).map((b) => b.trim()).join('\n\n')}\n`;
 }
 
+/** The `--name: value` declarations of a CSS text's @theme blocks (Tailwind's own, or an app's). */
+function themeDeclarations(css: string): Map<string, string> {
+	const out = new Map<string, string>();
+	const text = css.replace(/\/\*[\s\S]*?\*\//g, '');
+	for (const m of text.matchAll(/@theme\b[^{;]*\{/g)) {
+		// The block's own declarations, without nested ones (@keyframes inside Tailwind's theme).
+		let depth = 1;
+		let body = '';
+		for (let i = m.index! + m[0].length; i < text.length && depth; i++) {
+			if (text[i] === '{') depth++;
+			else if (text[i] === '}') depth--;
+			else if (depth === 1) body += text[i];
+		}
+		for (const d of body.matchAll(/(--[\w.\\-]+)\s*:\s*([^;]+);/g)) out.set(d[1], d[2].replace(/\s+/g, ' ').trim());
+	}
+	return out;
+}
+
+/**
+ * The theme for a selection. Where the brand's theme renames a key Tailwind or the app already has (font-sans,
+ * font-bold, leading-tight, rounded-sm), the key points at a scoped variable: the app's own value on its pages, the
+ * brand's inside the library's components (every one carries data-slot). So a swapped button is the brand's, and the
+ * pages around it keep their type, weights and corners.
+ */
+export function scopeTheme(theme: string, appTheme: Map<string, string>, defaults: Map<string, string>): { theme: string; css: string; scoped: Map<string, string> } {
+	const scoped = new Map<string, string>();
+	const app: string[] = [];
+	const lib: string[] = [];
+	const name = (key: string) => `--ds-scope-${key.slice(2).replace(/[^\w-]/g, '-')}`;
+	const out = theme.replace(/@theme inline\s*\{([^{}]*)\}/, (block) =>
+		block.replace(/^(\s*)(--[\w.\\-]+)\s*:\s*([^;]+);/gm, (line, pad: string, key: string, value: string) => {
+			// Without the key Tailwind computes the value (p-2.5 is 2.5 steps of --spacing, duration-150 is 150ms).
+			const step = key.match(/^--spacing-(\d+(?:\\?\.\d+)?)$/)?.[1]?.replace('\\', '');
+			const ms = key.match(/^--transition-duration-(\d+)$/)?.[1];
+			const computed = step ? `calc(${appTheme.get('--spacing') ?? defaults.get('--spacing') ?? '0.25rem'} * ${step})` : ms ? `${ms}ms` : undefined;
+			const own = appTheme.get(key) ?? defaults.get(key) ?? (defaults.size ? computed : undefined);
+			if (own === undefined || own.trim() === value.trim()) return line;
+			scoped.set(key, `var(${name(key)})`);
+			app.push(`\t${name(key)}: ${own};`);
+			lib.push(`\t${name(key)}: ${value.trim()};`);
+			return `${pad}${key}: var(${name(key)});`;
+		}),
+	);
+	const css = scoped.size ? `\n/* Theme keys the app has too: its own value on its pages, the brand's inside the library's components. */\n:root {\n${app.join('\n')}\n}\n\n:where([data-slot]) {\n${lib.join('\n')}\n}\n` : '';
+	return { theme: out, css, scoped };
+}
+
+/** Tailwind's default theme, from the app's own copy of tailwindcss. */
+function tailwindDefaults(root: string): Map<string, string> {
+	try {
+		return themeDeclarations(readFileSync(createRequire(join(root, 'package.json')).resolve('tailwindcss/theme.css'), 'utf8'));
+	} catch {
+		return new Map();
+	}
+}
+
 export function installStyles(w: Writer, project: Project, surface: Surface, styleText: string, { scoped = false } = {}): StyleInstall {
 	const bin = brand().bin;
 	const notes: string[] = [];
@@ -68,12 +125,23 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 		const dark = Object.entries(tokens().dark).map(([k, v]) => `\t\t${k}: ${v};`).join('\n');
 		css += `\n@media (prefers-color-scheme: dark) {\n\t:root {\n${dark}\n\t}\n}\n`;
 	}
-	if (scoped) css = `/* A selection was applied (.ds/state.json): tokens, theme and fonts only, no base layer. Applying the whole app adds it. */\n${tokensOnly(css)}`;
+	// A selection: the theme's renamed keys follow the app outside the library's components (see scopeTheme).
+	const appTheme = themeDeclarations(styleText.replace(/\/\* [\w-]+:theme:start \*\/[\s\S]*?\/\* [\w-]+:theme:end \*\//g, ''));
+	let themeCss = readFileSync(pkgPath('build', 'theme.css'), 'utf8');
+	let scopedKeys = new Map<string, string>();
+	let scopeCss = '';
+	if (scoped && tailwind4) {
+		const s = scopeTheme(themeCss, appTheme, tailwindDefaults(project.root));
+		themeCss = s.theme;
+		scopedKeys = s.scoped;
+		scopeCss = s.css;
+	}
+	if (scoped) css = `/* A selection was applied (.ds/state.json): tokens, theme and fonts only, no base layer. Applying the whole app adds it. */\n${tokensOnly(css)}${scopeCss}`;
 	else css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.
 	if (!next && (!main || !tailwind4)) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;
 	w.write(`${dir}/brand.css`, css);
-	if (tailwind4) w.write(`${dir}/theme.css`, readFileSync(pkgPath('build', 'theme.css'), 'utf8'));
+	if (tailwind4) w.write(`${dir}/theme.css`, themeCss);
 
 	let imported: string | undefined;
 	const linked: string[] = [];
@@ -100,7 +168,7 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 			const previous = after.indexOf(start), finish = after.indexOf(end);
 			if (previous >= 0 && finish >= previous) after = after.slice(0, previous).trimEnd() + after.slice(finish + end.length);
 			const aliases = readFileSync(pkgPath('build', 'theme.css'), 'utf8').match(/@theme inline\s*\{([^}]+)\}/)?.[1] ?? '';
-			const overrides = aliases.split('\n').filter(line => { const key = line.match(/(--[\w.-]+):/)?.[1]; return key && after.includes(`${key}:`); });
+			const overrides = aliases.split('\n').filter(line => { const key = line.match(/(--[\w.-]+):/)?.[1]; return key && after.includes(`${key}:`); }).map(line => { const key = line.match(/(--[\w.-]+):/)![1]; return scopedKeys.has(key) ? line.replace(/:.*$/, `: ${scopedKeys.get(key)};`) : line; });
 			if (overrides.length) after = upsertBlock(after, `@theme inline {\n${overrides.join('\n')}\n}`, start, end);
 		}
 		if (w.write(main, after)) imported = main;

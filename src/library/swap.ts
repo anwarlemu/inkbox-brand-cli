@@ -23,7 +23,7 @@ import { type StoredScope, componentInScope, coverage, kindsIn, scopeItems } fro
 
 type Aliases = { components: string; ui: string; utils: string; lib: string; hooks: string };
 export type Decision = { file: string; name: string; item?: string; confidence: number; signals: string[]; uses: number; action: 'swap' | 'style' | 'refine'; reason: string };
-export type SwapResult = { swapped: string[]; styled: string[]; reverted: string[]; added: string[]; packages: string[]; utils?: string; checked: boolean; decisions: Decision[] };
+export type SwapResult = { swapped: string[]; styled: string[]; reverted: string[]; added: string[]; packages: string[]; utils?: string; checked: boolean; decisions: Decision[]; /** Every package the installed library items import (a provider they need is set up from this). */ uses: string[] };
 
 function readJson(path: string) {
 	try {
@@ -143,7 +143,7 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 		return { ...c, ...identify(c, surfaceOf(c.file), kindsOf), uses: u.count, useValues: u.values };
 	});
 
-	const result: SwapResult = { swapped: [], styled: [], reverted: [], added: [], packages: [], checked: false, decisions: [] };
+	const result: SwapResult = { swapped: [], styled: [], reverted: [], added: [], packages: [], checked: false, decisions: [], uses: [] };
 	const canAdapt = !!layout && project.typescript;
 	const backups = new Map<string, string | undefined>();
 	const current = new Map(texts);
@@ -163,7 +163,10 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	const install = (item: RegistryItem) => {
 		if (!layout || seen.has(item.name)) return;
 		seen.add(item.name);
-		for (const d of item.packages ?? []) if (!installed[d]) packages.add(d);
+		for (const d of item.packages ?? []) {
+			if (!installed[d]) packages.add(d);
+			if (!result.uses.includes(d)) result.uses.push(d);
+		}
 		for (const dep of item.requires ?? []) {
 			const d = loadItemSync(itemName(dep));
 			if (d && d.type !== 'theme') install(d);

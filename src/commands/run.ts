@@ -1,9 +1,11 @@
 import { configureRegistry } from '../install/config.js';
+import { chakraPackages, installChakraProvider, missingChakraPackages } from '../install/chakra.js';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { formatFinding, runCheck } from '../check/engine.js';
 import { convertProject } from '../convert/project.js';
+import { componentColorEdits } from '../convert/components.js';
 import { installAgents, runningHarness } from '../install/agents.js';
 import { Writer } from '../install/files.js';
 import { installElementLayer } from '../install/layer.js';
@@ -17,7 +19,7 @@ import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js
 import { listScreens, shellFiles } from '../project/screens.js';
 import { type Surface, profile, surfaceOf } from '../project/surface.js';
 import { type State, readState, writeState } from '../plan/state.js';
-import { type ScopeSpec, type StoredScope, coverage, describeScope, kindsIn, resolveScope, resolveTargets, scopeItems, scopeLeft, scopePages, specOf, unresolvedMessage, widen } from '../plan/scope.js';
+import { type ScopeSpec, type StoredScope, coverage, describeScope, kindsForItems, kindsIn, resolveScope, resolveTargets, scopeItems, scopeLeft, scopePages, specOf, unresolvedMessage, widen } from '../plan/scope.js';
 import { mainScreens, pickMain, renderBatch, renderTask, taskStatus, touchNote } from '../plan/tasks.js';
 
 // The one command: the first run installs the brand and applies component colors and style scales; every run after that prints the
@@ -132,6 +134,12 @@ function setUp(root: string, opts: RunOptions, previous?: State, selection?: Sel
 	const swap = (pkgJson.dependencies?.react || pkgJson.devDependencies?.react) && (project.tailwindMajor ?? 0) >= 4 ? applyComponents(project, (rel) => (mixed ? surfaceOf(rel, found) : surface), { dryRun: opts.dryRun, scope: work }) : undefined;
 	for (const d of swap?.decisions ?? []) if (d.action !== 'refine' && !swap?.reverted.includes(d.file) && (swap?.swapped.includes(d.file) || swap?.styled.includes(d.file))) note(d.file, `${d.name}: ${d.reason}`);
 	for (const f of swap?.added ?? []) note(f, 'library component the swapped components render (shared setup)');
+	// Which files hold elements of each named item, read before the colors change.
+	const itemFiles = new Map<string, string[]>();
+	if (work) for (const item of scopeItems(work)) {
+		const kinds = kindsForItems([item]);
+		itemFiles.set(item, files.filter((f) => scoped?.cover(f) === 'kinds' && (kindsIn(work, f) ?? []).some((k) => kinds.includes(k)) && componentColorEdits(f, readFileSync(join(root, f), 'utf8'), mixed ? surfaceOf(f, found) : surface, true, kinds).length > 0));
+	}
 	const converted = convertProject(project, files, mixed ? 'site' : surface, { dryRun: opts.dryRun, theme, scope: scoped });
 	for (const [f, n] of Object.entries(converted.perFile)) note(f, scoped?.cover(f) === 'kinds' ? `colors of the selected elements (${scopeItems(work!).join(', ')}) to brand tokens` : 'style values to brand tokens', n);
 	const w = new Writer(root, opts.dryRun);
@@ -152,6 +160,16 @@ function setUp(root: string, opts: RunOptions, previous?: State, selection?: Sel
 	let dots: string[] = [];
 	if (!recorded && project.framework !== 'native' && (surface === 'site' || mixed) && brand().touches.hero?.script) step('shared setup: the hero script', () => (dots = installDots(w, project)));
 	step('shared setup: component registry configuration', () => configureRegistry(w, project, surface));
+	// Library components built on Chakra render only inside its provider: swapped components need it at the root.
+	let provider: ReturnType<typeof installChakraProvider> | undefined;
+	if (swap?.uses.some((p) => chakraPackages().includes(p))) {
+		step('shared setup: the provider the library components render in', () => (provider = installChakraProvider(w, project)));
+		const missing = missingChakraPackages(root, project.framework === 'next');
+		if (missing.length && !opts.dryRun) {
+			const pm = project.packageManager;
+			spawnSync(pm, pm === 'npm' ? ['install', ...missing] : ['add', ...missing], { cwd: root, stdio: 'ignore' });
+		}
+	}
 	step('shared setup: agent rules, hooks and the pre-commit check', () => installAgents(w));
 	const fixed = opts.dryRun ? 0 : runCheck(root, { fix: true, colorSurface: project.framework === 'native' ? undefined : surface, scope: work, all: !work }).fixed;
 	const screens = listScreens(detectProject(root), styledFiles(root), { ...found, surface, mixed });
@@ -171,12 +189,26 @@ function setUp(root: string, opts: RunOptions, previous?: State, selection?: Sel
 	const s = converted.stats;
 	const values = s.colors + s.fonts + s.type + s.radius + s.spacing + s.motion + s.shadows;
 	const harness = runningHarness();
-	const scopeData = work ? { applied: describeScope(work), recorded: describeScope(recorded), items: scopeItems(work), components: work.parts.flatMap((p) => p.own), pages: scopePages(work).pages, files: [...new Set(work.parts.flatMap((p) => p.resolved.files ?? []))], kinds: [...new Set(work.parts.flatMap((p) => p.resolved.kinds ?? []))], sharedLeftOut: scopeLeft(work) } : undefined;
+	// What each named library item matched: the app's components identified as it, and the files whose elements of
+	// that kind changed. An item that matched nothing, or only components the CLI cannot restyle alone, is said so.
+	const itemReport = work ? scopeItems(work).map((item) => ({ item, components: (swap?.decisions ?? []).filter((d) => d.item === item).map((d) => ({ name: d.name, file: d.file, action: d.action })), files: itemFiles.get(item) ?? [] })) : [];
+	const itemLines = itemReport.map(({ item, components, files }) => {
+		const done = components.filter((c) => c.action !== 'refine');
+		const left = components.filter((c) => c.action === 'refine');
+		const parts = [
+			...(done.length ? [`${done.map((c) => `${c.name} ${c.action === 'swap' ? 'renders the library\'s' : 'takes the library\'s look'}`).join(', ')}`] : []),
+			...(files.length ? [`element colors in ${files.length} file${files.length > 1 ? 's' : ''}`] : []),
+		];
+		if (left.length) parts.push(color.yellow(`${left.map((c) => `${c.name} (${c.file})`).join(', ')} left for you: restyle ${left.length > 1 ? 'each' : 'it'} as the library's ${item} (\`${cli()} look ${left[0].file}\`)`));
+		return `    ${item}: ${parts.length ? parts.join('; ') : color.yellow(`nothing in the app is a ${item} yet (\`${cli()} add ${item}\` installs it)`)}.`;
+	});
+	const scopeData = work ? { applied: describeScope(work), recorded: describeScope(recorded), items: scopeItems(work), components: work.parts.flatMap((p) => p.own), pages: scopePages(work).pages, files: [...new Set(work.parts.flatMap((p) => p.resolved.files ?? []))], kinds: [...new Set(work.parts.flatMap((p) => p.resolved.kinds ?? []))], sharedLeftOut: scopeLeft(work), matched: itemReport } : undefined;
 	emit(opts, { surface, mixed, evidence: found.reasons, scope: scopeData ?? 'the whole app', files: changes, converted: { files: converted.written.length, ...s }, fixed, left: left?.findings.length, styles, dots, layer, swap, changes: w.changes, screens: screens.map((x) => x.id) }, () =>
 		[
 			color.bold(`${brand().name} design system ${opts.dryRun ? 'dry run (nothing written)' : previous ? 'applied again' : 'installed and applied'}${work ? ` to ${describeScope(work)}` : ''}.`),
 			...(work ? [
 				`  Only the selection changes${scopeItems(work).length ? ` (${scopeItems(work).join(', ')}: the app's components identified as ${scopeItems(work).length > 1 ? 'these' : 'it'}, and the colors of the elements of ${scopeItems(work).length > 1 ? 'these kinds' : 'that kind'})` : ''}; everything else keeps its own styles, apart from the shared setup (brand tokens, theme and fonts).`,
+				...(itemLines.length ? ['  What each component matched:', ...itemLines] : []),
 				...(scopeLeft(work).length ? [color.yellow(`  Left out, shared with other pages: ${scopeLeft(work).slice(0, 6).join(', ')}${scopeLeft(work).length > 6 ? ` and ${scopeLeft(work).length - 6} more` : ''}. Name them, or add --with-shared, to include them.`)] : []),
 				`  ${recorded ? `Applied so far: ${describeScope(recorded)}. \`${cli()} apply\` with no targets applies the whole app.` : 'The whole app was already applied; it stays applied.'} The checks and hooks enforce the brand only inside what is applied.`,
 				...(opts.dryRun ? ['  Files it would change (`--json` lists each with the reason):', ...changes.map((c) => `    ${c.file}: ${c.reason}`)] : []),
@@ -192,6 +224,7 @@ function setUp(root: string, opts: RunOptions, previous?: State, selection?: Sel
 			...(converted.marks.length ? [`  Redrew ${converted.marks.length} light one-color marks (logos, icons) for the white page: ${converted.marks.slice(0, 3).join(', ')}${converted.marks.length > 3 ? ', ...' : ''}`] : []),
 			...(converted.rasterLogos.length ? [`  Logo images drawn for the dark site (not recolored): ${converted.rasterLogos.join(', ')}. Check each on white; a white one-color mark needs filter: brightness(0).`] : []),
 			...styles.notes.map((n) => color.yellow(`  Note: ${n}`)),
+			...(provider?.warning ? [color.yellow(`  Note: ${provider.warning}`)] : []),
 			`  Agents are kept on it: the rules are in AGENTS.md and CLAUDE.md, and hooks check every write in Claude Code, Codex and Cursor, plus a git pre-commit check.${harness === 'codex' ? ' Tell the user: Codex runs the hooks once they trust them with /hooks.' : ''}`,
 			recorded
 				? `  ${main.length ? `Screens to review: ${main.join(', ')}.` : 'No screen to review: the named components are covered by the check.'}`

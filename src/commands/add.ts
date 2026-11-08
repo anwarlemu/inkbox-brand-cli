@@ -59,6 +59,7 @@ export async function add(names: string[], opts: AddOptions) {
 	if (chakraNeeded) {
 		if (!deps['@chakra-ui/react']) npm.add('@chakra-ui/react@3.37.0');
 		if (!deps['@emotion/react']) npm.add('@emotion/react@^11.14.0');
+		if (project.framework === 'next' && !deps['@emotion/cache']) npm.add('@emotion/cache@^11.14.0');
 	}
 	if (!readonly) selfInstall(root, opts);
 	let packagesInstalled = npm.size === 0;

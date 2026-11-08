@@ -288,7 +288,7 @@ type Signature = { item: string; surface?: Surface; names: RegExp; not?: RegExp;
 const SIGNATURES: Signature[] = [
 	{ item: 'button', names: /^(button|btn|cta|action|submit)$/, not: /group|bar|list|toolbar/, tags: ['button'], props: ['variant', 'size', 'asChild', 'loading', 'onClick', 'disabled', 'leftIcon', 'rightIcon'] },
 	{ item: 'badge', names: /^(badge|tag|pill|chip|status|label)$/, not: /input|filter|list/, tags: ['span'], props: ['variant', 'tone', 'color'] },
-	{ item: 'card', names: /^(card|panel|tile|box)$/, not: /stat|metric|pricing|plan|price/, tags: ['div', 'article', 'section'], props: ['title', 'description', 'footer', 'header'] },
+	{ item: 'card', names: /^(card|panel|tile|box)$/, not: /pricing|plan|price/, tags: ['div', 'article', 'section'], props: ['title', 'description', 'footer', 'header'] },
 	{ item: 'input', names: /^(input|textfield|textbox|field)$/, not: /area|select|tag|search|group/, tags: ['input'], inputs: ['text', 'email', 'password', 'url', 'number', 'search', 'tel'] },
 	{ item: 'textarea', names: /^(textarea|multiline)$/, tags: ['textarea'] },
 	{ item: 'label', names: /^(label|fieldlabel|formlabel)$/, tags: ['label'], props: ['htmlFor', 'required'] },

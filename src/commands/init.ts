@@ -19,7 +19,7 @@ export function init(opts: RunOptions) {
 	selfInstall(root, opts);
 	const project = detectProject(root);
 	const componentsSupported = ['next', 'react', 'vite', 'astro'].includes(project.framework) && (project.tailwindMajor ?? 0) >= 4;
-	const chakra = componentsSupported ? missingChakraPackages(root) : [];
+	const chakra = componentsSupported ? missingChakraPackages(root, project.framework === 'next') : [];
 	if (chakra.length && !opts.dryRun) {
 		const pm = project.packageManager, args = [pm === 'npm' ? 'install' : 'add', ...chakra];
 		const result = spawnSync(pm, args, { cwd: root, stdio: ['ignore', 'ignore', 'pipe'], encoding: 'utf8' });

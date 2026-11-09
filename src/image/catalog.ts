@@ -43,7 +43,7 @@ export type TemplateSpec = {
 export const TEMPLATES: TemplateSpec[] = [
 	{ id: 'headline', description: 'A headline, with an optional eyebrow.', requires: ['headline'], optional: ['eyebrow'] },
 	{ id: 'statement', description: 'A headline and a line of subtext, with an optional eyebrow.', requires: ['headline', 'subtext'], optional: ['eyebrow'] },
-	{ id: 'frame', description: 'A headline, optional subtext, and a product shot in a card. Without --image, a table stand-in is drawn.', requires: ['headline'], optional: ['subtext', 'image'] },
+	{ id: 'frame', description: 'A headline, optional subtext, and a product shot in a card. The shot fills the card from the top left. Without --image, a table stand-in is drawn.', requires: ['headline'], optional: ['subtext', 'image'] },
 	{ id: 'quote', description: 'A quote and an optional attribution.', requires: ['quote'], optional: ['attribution'] },
 	{ id: 'announcement', description: 'A pink eyebrow pill, a headline and optional subtext.', requires: ['headline', 'eyebrow'], optional: ['subtext'] },
 ];
@@ -66,17 +66,20 @@ export function imageCatalog() {
 }
 
 export function templateById(id: string): TemplateSpec {
-	const found = TEMPLATES.find((item) => item.id === id);
+	const key = id.trim().toLowerCase();
+	const found = TEMPLATES.find((item) => item.id === key);
 	if (!found) throw new Error(`Unknown template "${id}". Use ${TEMPLATE_IDS.join(', ')}.`);
 	return found;
 }
 
 export function sizeById(id: string): SizeSpec {
-	if (!SIZE_IDS.includes(id as SizeId)) throw new Error(`Unknown size "${id}". Use ${SIZE_IDS.join(', ')}.`);
-	return SIZES[id as SizeId];
+	const key = id.trim().toLowerCase();
+	if (!SIZE_IDS.includes(key as SizeId)) throw new Error(`Unknown size "${id}". Use ${SIZE_IDS.join(', ')}.`);
+	return SIZES[key as SizeId];
 }
 
 export function groundById(id: string): GroundId {
-	if (!GROUND_IDS.includes(id as GroundId)) throw new Error(`Unknown ground "${id}". Use white or lilac.`);
-	return id as GroundId;
+	const key = id.trim().toLowerCase();
+	if (!GROUND_IDS.includes(key as GroundId)) throw new Error(`Unknown ground "${id}". Use white or lilac.`);
+	return key as GroundId;
 }

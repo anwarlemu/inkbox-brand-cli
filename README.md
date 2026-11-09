@@ -134,7 +134,7 @@ npx inkbox-ds social --size square --template statement --headline "Every agent 
 npx inkbox-ds image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images
 ```
 
-Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image`, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). `--json` lists the files, their formats and their pixel sizes.
+Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image` with a PNG or JPEG, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). A frame image fills the card from the top left. Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). Rendering the same template and size again overwrites those files. `--json` lists the files, their formats and their pixel sizes.
 
 ## Update an existing interface
 

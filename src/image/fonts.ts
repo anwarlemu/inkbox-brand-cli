@@ -91,18 +91,19 @@ function wrap(text: string, role: Role, size: number, maxWidth: number): string[
 
 function ellipsize(lines: string[], role: Role, size: number, maxWidth: number, maxLines: number): string[] {
 	const cut = lines.slice(0, Math.max(1, maxLines));
-	const overflow = lines.length > maxLines || cut.some((line) => measure(role, line, size) > maxWidth);
-	if (!overflow) return cut;
-	let last = cut[cut.length - 1] ?? '';
 	const mark = '…';
-	while (last && measure(role, `${last}${mark}`, size) > maxWidth) last = last.slice(0, -1).trimEnd();
-	cut[cut.length - 1] = last ? `${last}${mark}` : mark;
-	return cut;
+	return cut.map((line, index) => {
+		const more = index === cut.length - 1 && lines.length > cut.length;
+		if (!more && measure(role, line, size) <= maxWidth) return line;
+		let next = line;
+		while (next && measure(role, `${next}${mark}`, size) > maxWidth) next = next.slice(0, -1).trimEnd();
+		return next ? `${next}${mark}` : mark;
+	});
 }
 
 /**
- * Shrink the type until the words fit the box. Prefers the design size. At the floor, the last line
- * takes an ellipsis rather than painting past the edge.
+ * Shrink the type until the words fit the box. Prefers the design size. At the floor, any line that
+ * still does not fit takes an ellipsis rather than painting past the edge.
  */
 export function fitText(
 	text: string,
@@ -110,20 +111,23 @@ export function fitText(
 	box: { maxWidth: number; maxHeight: number; maxSize: number; minSize: number; maxLines: number; leading: number },
 ): Fitted {
 	const clean = text.replace(/\r\n/g, '\n').trim();
-	if (!clean) return { lines: [], size: box.maxSize, lineHeight: 0, width: 0, height: 0 };
+	if (!clean || box.maxWidth <= 0 || box.maxHeight <= 0) return { lines: [], size: box.maxSize, lineHeight: 0, width: 0, height: 0 };
 	const floor = Math.min(box.minSize, 12);
 	for (let size = Math.round(box.maxSize); size >= floor; size -= 1) {
 		const lineHeight = Math.max(size, Math.round(size * box.leading));
+		if (lineHeight > box.maxHeight) continue;
 		const raw = wrap(clean, role, size, box.maxWidth);
 		const tooWide = raw.some((line) => measure(role, line, size) > box.maxWidth + 0.5);
 		const height = raw.length * lineHeight;
-		if (!tooWide && raw.length <= box.maxLines && height <= box.maxHeight) {
+		if (!tooWide && raw.length > 0 && raw.length <= box.maxLines && height <= box.maxHeight) {
 			const width = Math.max(0, ...raw.map((line) => measure(role, line, size)));
 			return { lines: raw, size, lineHeight, width, height };
 		}
 	}
 	const size = floor;
 	const lineHeight = Math.max(size, Math.round(size * box.leading));
+	// A line that cannot fit the box is omitted. Painting it would run into the next block.
+	if (lineHeight > box.maxHeight) return { lines: [], size, lineHeight: 0, width: 0, height: 0 };
 	const maxLines = Math.max(1, Math.min(box.maxLines, Math.floor(box.maxHeight / lineHeight)));
 	const lines = ellipsize(wrap(clean, role, size, box.maxWidth), role, size, box.maxWidth, maxLines);
 	const width = Math.max(0, ...lines.map((line) => measure(role, line, size)));

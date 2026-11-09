@@ -167,12 +167,21 @@ function bodyBlock(text: string | undefined, role: Role, x: number, maxWidth: nu
 	return { height: line.height, draw: (y) => textLines(line, role, x, y, fill) };
 }
 
+function clipLabel(label: string, size: number, inner: number): string {
+	if (measure('medium', label, size) <= inner) return label;
+	const mark = '…';
+	let next = label;
+	while (next && measure('medium', `${next}${mark}`, size) > inner) next = next.slice(0, -1).trimEnd();
+	return next ? `${next}${mark}` : mark;
+}
+
 function pillBlock(text: string, x: number, maxWidth: number, maxSize: number): Block {
-	const label = text.replace(/\s+/g, ' ').trim();
+	const raw = text.replace(/\s+/g, ' ').trim();
 	let size = maxSize;
 	const padX = () => Math.round(size * 0.9);
 	const heightOf = () => Math.round(size * 2.25);
-	while (size > 13 && measure('medium', label, size) + padX() * 2 > maxWidth) size -= 1;
+	while (size > 13 && measure('medium', raw, size) + padX() * 2 > maxWidth) size -= 1;
+	const label = clipLabel(raw, size, Math.max(8, maxWidth - padX() * 2));
 	const height = heightOf();
 	const width = Math.min(maxWidth, Math.ceil(measure('medium', label, size) + padX() * 2));
 	return {
@@ -189,13 +198,21 @@ function pillBlock(text: string, x: number, maxWidth: number, maxSize: number): 
 	};
 }
 
+/** Distance from the baseline up to the middle of the glyph's ink. */
+function inkAboveBaseline(role: Role, text: string, size: number): number {
+	const item = loadFace(role);
+	const box = item.font.layout(text).glyphs[0]?.bbox;
+	if (!box || box.maxY <= box.minY) return size * 0.35;
+	return ((box.minY + box.maxY) / 2 / item.font.unitsPerEm) * size;
+}
+
 function quoteTile(x: number, y: number, size: number): string {
 	const radius = Math.min(lengthPx('--ds-radius-panel'), Math.round(size * 0.28));
 	const glyph = Math.round(size * 0.62);
 	used.add('medium');
 	const { family, weight } = cssOf('medium');
-	// The opening quote sits a little high in the em box. Nudge it down so it reads as centered.
-	const yText = baseline('medium', glyph, y, size) + size * 0.06;
+	// Center the quote's ink in the tile. The glyph sits high in the em box, so the em box's middle is not the visual middle.
+	const yText = y + size / 2 + inkAboveBaseline('medium', '“', glyph);
 	return [
 		`<rect x="${n(x)}" y="${n(y)}" width="${n(size)}" height="${n(size)}" rx="${n(radius)}" fill="${paint('pink')}"/>`,
 		`<text x="${n(x + size / 2)}" y="${n(yText)}" text-anchor="middle" font-family="${esc(family)}" font-size="${glyph}" font-weight="${weight}" fill="${paint('rose')}" letter-spacing="0">“</text>`,
@@ -209,10 +226,10 @@ function skeleton(x: number, y: number, w: number, h: number, radius: number): s
 	const tileX = x + inset;
 	const tileY = y + (band - tile) / 2;
 	const tileMark = Math.round(tile * 0.7);
-	const pillH = Math.round(Math.min(32, band * 0.46));
-	const pillW = Math.round(pillH * 2.7);
-	const pillX = x + w - inset - pillW;
-	const pillY = y + (band - pillH) / 2;
+	const actionH = 12;
+	const actionW = Math.round(Math.min(84, Math.max(48, w * 0.1)));
+	const actionX = x + w - inset - actionW;
+	const actionY = y + (band - actionH) / 2;
 	const rows = h > 560 ? 5 : 4;
 	const rowH = (h - band) / rows;
 	const barH = 10;
@@ -223,7 +240,7 @@ function skeleton(x: number, y: number, w: number, h: number, radius: number): s
 		`<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(band)}" fill="${paint('bg-subtle')}"/>`,
 		`<rect x="${n(tileX)}" y="${n(tileY)}" width="${n(tile)}" height="${n(tile)}" rx="${n(Math.min(12, tile * 0.28))}" fill="${paint('pink')}"/>`,
 		`<image href="${mark()}" x="${n(tileX + (tile - tileMark) / 2)}" y="${n(tileY + (tile - tileMark) / 2)}" width="${n(tileMark)}" height="${n(tileMark)}"/>`,
-		`<rect x="${n(pillX)}" y="${n(pillY)}" width="${n(pillW)}" height="${n(pillH)}" rx="${n(pillH / 2)}" fill="${paint('action-primary')}"/>`,
+		`<rect x="${n(actionX)}" y="${n(actionY)}" width="${n(actionW)}" height="${actionH}" rx="${n(actionH / 2)}" fill="${paint('bg-subtle-hover')}"/>`,
 	];
 	for (let i = 0; i < rows; i++) {
 		const rowY = y + band + rowH * i;
@@ -249,7 +266,7 @@ function frameCard(x: number, y: number, w: number, h: number, imageHref: string
 	const body = imageHref
 		? [
 				`<clipPath id="card"><rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" rx="${n(radius)}"/></clipPath>`,
-				`<image href="${imageHref}" x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#card)"/>`,
+				`<image href="${imageHref}" x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" preserveAspectRatio="xMinYMin slice" clip-path="url(#card)"/>`,
 			].join('\n')
 		: skeleton(x, y, w, h, radius);
 	const stroke = `<rect x="${n(x + 0.5)}" y="${n(y + 0.5)}" width="${n(w - 1)}" height="${n(h - 1)}" rx="${n(Math.max(0, radius - 0.5))}" fill="none" stroke="${ring}" stroke-width="1"/>`;
@@ -268,18 +285,24 @@ function poster(art: Artwork, ink: string, secondary: string, meta: string, host
 	const bottomMax = host ? footerY(size.height, size.pad, footerSize) - footerSize * 1.15 : size.height - size.pad;
 	const bias = tall ? 0.14 : 0.2;
 	const gap = Math.round(Math.min(size.pad * 0.32, 22));
-	const budget = Math.max(80, bottomMax - topMin);
+	const budget = Math.max(0, bottomMax - topMin);
 	const blocks: Block[] = [];
 	if (art.template === 'announcement' && art.eyebrow) blocks.push(pillBlock(art.eyebrow, x, maxWidth, size.kicker));
 	else if (art.eyebrow && (art.template === 'headline' || art.template === 'statement')) blocks.push(kickerBlock(art.eyebrow, x, maxWidth, size.kicker, paint('text-brand')));
-	const usedHeight = () => blocks.reduce((sum, block) => sum + block.height, 0) + Math.max(0, blocks.length - 1) * gap;
+	const spent = () => blocks.reduce((sum, block, index) => sum + block.height + (index > 0 ? gap : 0), 0);
+	const remain = () => budget - spent() - (blocks.length ? gap : 0);
+	const wantsSub = (art.template === 'statement' || art.template === 'announcement') && Boolean(art.subtext);
 	if (art.template === 'headline' || art.template === 'statement' || art.template === 'announcement') {
-		const room = Math.max(size.headline, budget - usedHeight() - gap);
-		blocks.push(bodyBlock(art.headline, 'sans', x, maxWidth, room, size.headline, 28, tall ? 5 : 4, 1.2, ink));
+		const subLine = Math.round(18 * 1.4);
+		const reserve = wantsSub ? subLine + gap : 0;
+		const open = remain();
+		// Keep a line for the subtext when the headline would otherwise take the whole field and spill into the footer.
+		const headlineRoom = open - reserve >= Math.round(size.headline * 0.9) ? open - reserve : open;
+		blocks.push(bodyBlock(art.headline, 'sans', x, maxWidth, Math.max(0, headlineRoom), size.headline, 28, tall ? 5 : 4, 1.2, ink));
 	}
-	if ((art.template === 'statement' || art.template === 'announcement') && art.subtext) {
-		const room = Math.max(size.sub, budget - usedHeight() - gap);
-		blocks.push(bodyBlock(art.subtext, 'sans', x, maxWidth, room, size.sub, 18, 3, 1.4, secondary));
+	if (wantsSub) {
+		const room = remain();
+		if (room >= 16) blocks.push(bodyBlock(art.subtext, 'sans', x, maxWidth, room, size.sub, 18, 3, 1.4, secondary));
 	}
 	const group = stack(blocks, gap);
 	const y = place(group.height, topMin, bottomMax, bias);
@@ -303,7 +326,9 @@ function quoteArt(art: Artwork, ink: string, meta: string, host: string | undefi
 	const topMin = size.pad + size.mark + Math.round(size.pad * 0.55);
 	const tileGap = Math.round(tile * 0.5);
 	const attrReserve = art.attribution ? Math.round(size.kicker * 2.6) : 0;
-	const quote = fitted(art.quote, 'sans', maxWidth, Math.max(72, textBottom - topMin - tile - tileGap - attrReserve), size.quote, 26, tall ? 7 : 5, 1.25);
+	const attrGapEstimate = art.attribution ? Math.round(size.quote * 0.55) : 0;
+	const quoteMax = Math.max(0, textBottom - topMin - tile - tileGap - attrReserve - attrGapEstimate);
+	const quote = fitted(art.quote, 'sans', maxWidth, quoteMax, size.quote, 26, tall ? 7 : 5, 1.25);
 	const attribution = fitted(art.attribution, 'medium', maxWidth, size.kicker * 2, Math.round(size.kicker * 1.15), 14, 1, 1.2);
 	const attrGap = attribution.height ? Math.round(quote.size * 0.55) : 0;
 	const blockH = tile + tileGap + quote.height + attrGap + attribution.height;
@@ -314,7 +339,11 @@ function quoteArt(art: Artwork, ink: string, meta: string, host: string | undefi
 	if (mascotW) {
 		parts.push(`<image href="${octopus()}" x="${n(size.width - size.pad - mascotW)}" y="${n(size.height - size.pad - mascotH)}" width="${n(mascotW)}" height="${n(mascotH)}"/>`);
 	}
-	if (host) parts.push(hostText(host, x, footerY(size.height, size.pad, footerSize), footerSize, meta));
+	if (host) {
+		const hostW = measure('mono', host, footerSize);
+		const clearOfMascot = mascotW === 0 || x + hostW + 24 <= size.width - size.pad - mascotW;
+		if (clearOfMascot) parts.push(hostText(host, x, footerY(size.height, size.pad, footerSize), footerSize, meta));
+	}
 	return parts;
 }
 
@@ -340,7 +369,7 @@ function frameArt(art: Artwork, ink: string, secondary: string, meta: string, ho
 	const title = fitted(art.headline, 'sans', maxWidth, textBudget, size.frameTitle, 22, 2, 1.2);
 	const subGap = art.subtext ? Math.round(size.pad * 0.22) : 0;
 	const subBudget = Math.max(0, textBudget - title.height - subGap);
-	const sub = fitted(art.subtext, 'sans', maxWidth, subBudget || 1, size.sub, 16, 2, 1.35);
+	const sub = fitted(art.subtext, 'sans', maxWidth, subBudget, size.sub, 16, 2, 1.35);
 	let y = regionTop;
 	parts.push(textLines(title, 'sans', x, y, ink));
 	y += title.height;

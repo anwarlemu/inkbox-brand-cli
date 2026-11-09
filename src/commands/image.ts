@@ -80,7 +80,7 @@ function imageOptions(command: Command, mode: 'any' | 'social' | 'og') {
 		.option('--eyebrow <text>', 'short label above the headline; a pink pill on the announcement template')
 		.option('--quote <text>', 'the words of a quote')
 		.option('--attribution <text>', 'who said the quote')
-		.option('--image <path>', 'PNG or JPEG placed in the frame template')
+		.option('--image <path>', 'PNG or JPEG for the frame template. It fills the card from the top left')
 		.option('--content <file>', 'JSON file with the same fields; flags override it')
 		.option('--ground <ground>', 'white (default) or lilac')
 		.option('--out <dir>', 'directory to write (default: images)')

@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
@@ -81,7 +81,7 @@ function displayPath(path: string): string {
 }
 
 export function parseExports(value: string | undefined): ExportFormat[] {
-	const items = (value ?? 'png,svg').split(',').map((item) => item.trim()).filter(Boolean);
+	const items = (value ?? 'png,svg').split(',').map((item) => item.trim().toLowerCase()).filter(Boolean);
 	if (!items.length) throw new Error('--export needs png, svg, or png,svg.');
 	const formats: ExportFormat[] = [];
 	for (const item of items) {
@@ -106,10 +106,11 @@ export async function renderImage(request: ImageRequest): Promise<RenderResult> 
 		if (!content[key as keyof typeof content]) throw new Error(`The ${template.id} template needs --${key}.`);
 	}
 	if (/\.(png|svg)$/i.test(request.outDir)) throw new Error('--out is a directory. The file name follows the template and size.');
+	const outDir = resolve(request.outDir);
+	if (existsSync(outDir) && !statSync(outDir).isDirectory()) throw new Error('--out is a directory. The file name follows the template and size.');
 	const art: Artwork = { template: template.id, size, ground, ...content, imageHref: imageHref(request.image) };
 	const drawn = compose(art);
 	await ensureWasm();
-	const outDir = resolve(request.outDir);
 	mkdirSync(outDir, { recursive: true });
 	const stem = `${template.id}-${size.id}`;
 	const files: WrittenImage[] = [];

@@ -102,7 +102,7 @@ Sizes:
 - `portrait` is 1080x1350.
 - `landscape` is 1200x675, for X and LinkedIn.
 
-`--ground lilac` uses the lilac field. The default is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). The file name is the template, a hyphen, the size, and the extension. `--json` lists each file with its format and pixel size. `--content <file.json>` reads the same fields, and flags override it. A newline in a flag can be a real newline, or a backslash followed by n.
+`--ground lilac` uses the lilac field. The default is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). The file name is the template, a hyphen, the size, and the extension. Rendering the same template and size again overwrites those files. `--json` lists each file with its format and pixel size. `--content <file.json>` reads the same fields, and flags override it. A newline in a flag can be a real newline, or a backslash followed by n. A frame image is a PNG or JPEG and fills the card from the top left, so the top of a product shot stays visible. Template, size and ground names are matched without regard to case.
 
 Write the words yourself. The picture does not invent copy. Use the brand voice: sentence case, short and concrete.
 

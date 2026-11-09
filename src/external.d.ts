@@ -9,7 +9,10 @@ declare module 'fontkit' {
 		unitsPerEm: number;
 		ascent: number;
 		descent: number;
-		layout: (text: string) => { advanceWidth: number };
+		layout: (text: string) => {
+			advanceWidth: number;
+			glyphs: { bbox: { minX: number; minY: number; maxX: number; maxY: number } }[];
+		};
 	};
 	export function create(buffer: Buffer | Uint8Array): FontkitFont;
 }

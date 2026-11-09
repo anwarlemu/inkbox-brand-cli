@@ -10,6 +10,11 @@
 		"site"
 	],
 	"fonts": {
+		"files": [
+			{ "file": "fonts/Inter-Regular.ttf", "role": "sans", "weight": 400 },
+			{ "file": "fonts/Inter-Medium.ttf", "role": "medium", "weight": 500 },
+			{ "file": "fonts/IBMPlexMono-Regular.ttf", "role": "mono", "weight": 400 }
+		],
 		"css": "https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap",
 		"next": [
 			{

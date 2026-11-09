@@ -28,6 +28,10 @@ await build({
 	banner: { js: "import { createRequire as __ds_require } from 'node:module'; const require = __ds_require(import.meta.url);" },
 	logLevel: 'warning',
 });
+// The image renderer initializes this wasm at runtime. The bundle has no node_modules, so the file sits beside it.
+const { createRequire } = await import('node:module');
+const require = createRequire(join(root, 'package.json'));
+cpSync(require.resolve('@resvg/resvg-wasm/index_bg.wasm'), join(out, 'dist', 'resvg.wasm'));
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 delete pkg.devDependencies;
 delete pkg.dependencies;

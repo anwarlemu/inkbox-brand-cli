@@ -17,8 +17,10 @@ export type BrandConfig = {
 	registryHost?: string;
 	/** The surfaces the brand has: a site (pages people read), a product (an app people work in), or both. */
 	surfaces?: ('site' | 'product')[];
-	/** How the brand's fonts load: a stylesheet URL, next/font families, and what a native app adds. */
-	fonts: { css: string; next: NextFont[]; native: string };
+	/** How the brand's fonts load: files for raster images, a stylesheet URL, next/font families, and what a native app adds. */
+	fonts: { files?: { file: string; role: 'sans' | 'medium' | 'mono'; weight: number }[]; css: string; next: NextFont[]; native: string };
+	/** Public site, used as the host line on rendered images. */
+	site?: string;
 	/** The library's variant names for what the engine picks: a filled, outlined and on-brand button, and a card. */
 	/** The markup the CLI adds to a site's home: an attribute on the hero (with an optional script, a file in brand/) and
 	 *  the closing words of headings wrapped in ds-accent. `does` says what each one gives, for the tasks. */

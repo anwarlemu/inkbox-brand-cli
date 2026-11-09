@@ -83,6 +83,7 @@ Run npx inkbox-ds show <name> --json for exact exports, usage rules, examples an
 Add existing components with the CLI. Use design tokens for custom layout and styling.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
+For an Open Graph or social image, run npx inkbox-ds image templates, then og or social, and pass the words as flags.
 ```
 
 ## Check the implementation
@@ -117,6 +118,23 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 | `approve` | Approve a `ds-override` comment in a human-operated terminal. |
 | `done <screen>` | Mark a native screen task complete. Web screen tasks use `review`. |
 | `skip <screen> --reason "..."` | Record why a tracked screen was left unchanged. |
+| `image templates` | List image templates, sizes, grounds and export formats. |
+| `image render` | Render one Open Graph or social image from the content you pass in. |
+| `og` | Render a 1200x630 Open Graph image. |
+| `social` | Render a social post at square, portrait or landscape size. |
+
+## Render images
+
+`og` and `social` render brand images from the words you pass in. They use the brand tokens, fonts and logo. No browser is required, and the same content writes the same files.
+
+```sh
+npx inkbox-ds image templates --json
+npx inkbox-ds og --template headline --headline "A mailbox for your agents" --json
+npx inkbox-ds social --size square --template statement --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
+npx inkbox-ds image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images
+```
+
+Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image` with a PNG or JPEG, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). A frame image fills the card from the top left. Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). Rendering the same template and size again overwrites those files. `--json` lists the files, their formats and their pixel sizes.
 
 ## Update an existing interface
 
@@ -169,8 +187,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
+the complete file. `guide`, `list`, `show`, `look`, `tokens`, `image templates` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; add `--json` for structured results. `image render`, `og` and `social` write picture files and nothing else. JSON goes to stdout; progress goes to stderr.
 
 ## Source
 

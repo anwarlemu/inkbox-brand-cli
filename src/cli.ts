@@ -8,6 +8,7 @@ import { workflow } from './commands/workflow.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
+import { registerImage } from './commands/image.js';
 import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
 
@@ -68,6 +69,7 @@ program
 	});
 
 workflow(program);
+registerImage(program);
 
 program.parseAsync().catch((error: Error) => {
 	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);

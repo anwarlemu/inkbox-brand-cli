@@ -4,7 +4,7 @@
 - Use `{{cli}} list --json` to discover components, then `{{cli}} show <name> --json` for exact exports, usage, examples and source. Do not guess props.
 - Use `{{cli}} init` to prepare new work, then `{{cli}} add <names...>` for the components it needs. Inspect planned writes with `--dry-run`. In an app with pages, these style only the components; the app's pages change only through `{{cli}} apply`.
 - Use `{{cli}} apply --dry-run` to preview a requested restyle, then `{{cli}} apply` and follow its review tasks. When the user names components or pages, pass exactly those (`{{cli}} apply button card /settings`); nothing else changes and checks cover only that selection.
-- Use component variants and brand tokens at their usage sites; preserve shared palettes, artwork, chart data and unrelated colors. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values.
+- Use component variants and brand tokens at their usage sites; preserve shared palettes, artwork, chart data and unrelated colors. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values. Render Open Graph and social images with `{{cli}} image` (the guide lists templates and sizes).
 - Apply the interaction and motion rules in `.ds/agent-guide.md`: rare events may be expressive, frequent events subtle, shortcuts instant; press feedback starts on pointer-down with stable sizing and shared padding. Audit all input latency.
 - Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
 - Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.

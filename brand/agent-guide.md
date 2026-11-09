@@ -76,6 +76,38 @@ The component reference states its source. `{{registryHost}}/r/audit.json` recor
 - `check` reports UI timers for review. Remove artificial waits. For an essential nonblocking timer, put `// ds-latency: <specific reason>` immediately above the call, explaining what it delays and why typing/actions remain immediate. This documents an audit, not a general exemption for delayed input.
 - Verify in a browser with motion enabled and reduced motion: hold a pointer down before release, type rapidly, toggle the command palette and shortcuts repeatedly, compare bounds and font weight before/after hover and press, and check consistent section/component padding. Static checks cannot establish actual usage frequency or timing by themselves.
 
+## Render images
+
+The CLI renders brand images for Open Graph and social posts from the words you pass in. It uses the brand tokens, fonts and logo, so the pictures match the components. Rendering is headless and deterministic: no browser and no account, and the same content writes the same files.
+
+```sh
+{{cli}} image templates --json
+{{cli}} og --template headline --headline "A mailbox for your agents" --json
+{{cli}} social --size square --template statement --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
+{{cli}} image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images --json
+```
+
+Templates:
+
+- `headline`: a headline, with an optional eyebrow.
+- `statement`: a headline and subtext, with an optional eyebrow.
+- `frame`: a headline, optional subtext, and a product shot in a card. Pass `--image` with a PNG or JPEG. Without it, the card is a quiet table stand-in.
+- `quote`: a quote and an optional `--attribution`.
+- `announcement`: a pink eyebrow pill, a headline and optional subtext.
+
+Sizes:
+
+- `og` is 1200x630 (Open Graph). The `og` command always uses it.
+- `square` is 1080x1080. `social` uses it unless you pass `--size`.
+- `portrait` is 1080x1350.
+- `landscape` is 1200x675, for X and LinkedIn.
+
+`--ground lilac` uses the lilac field. The default is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). The file name is the template, a hyphen, the size, and the extension. `--json` lists each file with its format and pixel size. `--content <file.json>` reads the same fields, and flags override it. A newline in a flag can be a real newline, or a backslash followed by n.
+
+Write the words yourself. The picture does not invent copy. Use the brand voice: sentence case, short and concrete.
+
+The SVG embeds the brand fonts, so it renders without a font install. Publish the PNG.
+
 ## Verify before finishing
 
 1. Run the consuming project's type checks, tests and production build.
@@ -88,8 +120,8 @@ The component reference states its source. `{{registryHost}}/r/audit.json` recor
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
+Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image templates`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image render`, `og`, `social`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code. Image commands write only the picture files you name with `--out`.
 
 ## Project configuration and agent handoff
 

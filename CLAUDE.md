@@ -41,6 +41,7 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - `src/plan/`: the task queue (`state.json` in the app), element detection and `look` output.
 - `src/check/`: the value check (rules.ts), used by hooks, pre-commit and `check`.
 - `src/review/`, `src/hooks/`, `src/commands/`.
+- `src/brand/`, `src/principles/`, `src/video/`, `src/library/describe.ts` and `src/manifest/` are the agent-facing brand, rules, video, component emit and `manifest` commands. They read `brand/` and `registry/` and reject unknown names. Video frames use the image rasterizer and are packed as APNG.
 
 ## Rules
 

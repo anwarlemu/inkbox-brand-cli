@@ -8,12 +8,16 @@ import { workflow } from './commands/workflow.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
+import { registerDiscover } from './commands/discover.js';
 import { registerImage } from './commands/image.js';
 import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
 
 const program = new Command();
 const b = brand();
+// Subcommands copy these at creation, so they have to be set before any command is registered.
+if (process.argv.includes('--json')) program.configureOutput({ outputError: () => {} });
+program.exitOverride();
 
 program.name(b.bin).description(`Build ${b.name} pages and interfaces with the component library and design tokens. Use add, look, check and review during implementation.`);
 // A brand with a site only styles every project as a site: no surface or theme to choose.
@@ -70,10 +74,13 @@ program
 
 workflow(program);
 registerImage(program);
+registerDiscover(program);
 
-program.parseAsync().catch((error: Error) => {
-	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);
-	else process.stderr.write(`${error.message}\n`);
-	process.exit(1);
+program.parseAsync().catch((error: Error & { exitCode?: number; code?: string }) => {
+	if (error.exitCode === 0 || error.code === 'commander.helpDisplayed' || error.code === 'commander.version') process.exit(error.exitCode ?? 0);
+	const message = error.message.replace(/^error:\s*/i, '');
+	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: message })}\n`);
+	else process.stderr.write(`${message}\n`);
+	process.exit(error.exitCode && error.exitCode !== 0 ? error.exitCode : 1);
 });
 void cli;

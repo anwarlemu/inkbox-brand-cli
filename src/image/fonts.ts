@@ -8,6 +8,9 @@ export type Role = 'sans' | 'medium' | 'mono';
 type Face = {
 	role: Role;
 	weight: number;
+	file: string;
+	/** Family name stored in the font file, before the medium face is aliased onto the sans family. */
+	fileFamily: string;
 	/** Family name to request. Medium is selected with font-weight on the sans family. */
 	cssFamily: string;
 	buffer: Buffer;
@@ -26,7 +29,7 @@ function load(): Face[] {
 		const buffer = readFileSync(pkgPath('brand', spec.file));
 		const font = create(buffer);
 		if (typeof font.layout !== 'function' || !font.familyName) throw new Error(`Could not read ${spec.file}.`);
-		faces.push({ role: spec.role, weight: spec.weight, cssFamily: font.familyName, buffer, font });
+		faces.push({ role: spec.role, weight: spec.weight, file: spec.file, fileFamily: font.familyName, cssFamily: font.familyName, buffer, font });
 	}
 	const sans = faces.find((face) => face.role === 'sans');
 	const medium = faces.find((face) => face.role === 'medium');
@@ -36,6 +39,18 @@ function load(): Face[] {
 	medium.cssFamily = sans.font.familyName;
 	loaded = faces;
 	return faces;
+}
+
+/** The font files the brand actually ships, after the medium face is aliased onto the sans family. */
+export function fontFacts() {
+	return load().map((item) => ({
+		role: item.role,
+		weight: item.weight,
+		file: item.file,
+		family: item.cssFamily,
+		fileFamily: item.fileFamily,
+		bytes: item.buffer.length,
+	}));
 }
 
 export function face(role: Role): Face {

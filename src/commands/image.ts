@@ -1,8 +1,8 @@
-import { readFileSync } from 'node:fs';
 import type { Command } from 'commander';
 import { imageCatalog } from '../image/catalog.js';
 import { parseExports, renderImage, type ExportFormat } from '../image/render.js';
 import { cli } from '../lib/brand.js';
+import { readImageContent } from '../lib/content.js';
 import { emit } from '../lib/output.js';
 
 const TEXT = ['headline', 'subtext', 'eyebrow', 'quote', 'attribution', 'image', 'template', 'size', 'ground', 'out', 'export'] as const;
@@ -24,20 +24,7 @@ type Flags = {
 };
 
 function fromFile(path: string | undefined): Partial<Record<(typeof TEXT)[number], string>> {
-	if (!path) return {};
-	let raw: unknown;
-	try {
-		raw = JSON.parse(readFileSync(path, 'utf8'));
-	} catch (error) {
-		throw new Error(`Could not read --content ${path}: ${(error as Error).message}`);
-	}
-	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('--content must be a JSON object.');
-	const out: Partial<Record<(typeof TEXT)[number], string>> = {};
-	for (const key of TEXT) {
-		const value = (raw as Record<string, unknown>)[key];
-		if (typeof value === 'string') out[key] = value;
-	}
-	return out;
+	return readImageContent(path);
 }
 
 function pick(flag: string | undefined, file: string | undefined): string | undefined {

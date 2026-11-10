@@ -80,6 +80,30 @@ function displayPath(path: string): string {
 	return rel.split('\\').join('/');
 }
 
+/** Rasterize one SVG with the brand fonts. The same SVG and background always yield the same PNG. */
+export async function rasterizeSvg(svg: string, background: string): Promise<Buffer> {
+	await ensureWasm();
+	const sans = cssOf('sans');
+	const mono = cssOf('mono');
+	const resvg = new Resvg(svg, {
+		font: { fontBuffers: fontBuffers(), defaultFontFamily: sans.family, sansSerifFamily: sans.family, monospaceFamily: mono.family },
+		textRendering: 2,
+		shapeRendering: 2,
+		imageRendering: 0,
+		background,
+	});
+	try {
+		const rendered = resvg.render();
+		try {
+			return Buffer.from(rendered.asPng());
+		} finally {
+			rendered.free();
+		}
+	} finally {
+		resvg.free();
+	}
+}
+
 export function parseExports(value: string | undefined): ExportFormat[] {
 	const items = (value ?? 'png,svg').split(',').map((item) => item.trim().toLowerCase()).filter(Boolean);
 	if (!items.length) throw new Error('--export needs png, svg, or png,svg.');
@@ -102,6 +126,13 @@ export async function renderImage(request: ImageRequest): Promise<RenderResult> 
 		quote: field(request.quote),
 		attribution: field(request.attribution),
 	};
+	const supplied: Record<string, string | undefined> = { ...content, image: request.image?.trim() || undefined };
+	const allowed = new Set<string>([...template.requires, ...template.optional]);
+	for (const [key, value] of Object.entries(supplied)) {
+		if (!value || allowed.has(key)) continue;
+		const flags = [...allowed].map((name) => `--${name}`).join(', ');
+		throw new Error(`The ${template.id} template does not take --${key}. It takes ${flags}.`);
+	}
 	for (const key of template.requires) {
 		if (!content[key as keyof typeof content]) throw new Error(`The ${template.id} template needs --${key}.`);
 	}
@@ -123,29 +154,11 @@ export async function renderImage(request: ImageRequest): Promise<RenderResult> 
 			files.push({ path: displayPath(abs), format, width: size.width, height: size.height, bytes: Buffer.byteLength(withFonts) });
 			continue;
 		}
-		const sans = cssOf('sans');
-		const mono = cssOf('mono');
-		const resvg = new Resvg(drawn.svg, {
-			font: { fontBuffers: fontBuffers(), defaultFontFamily: sans.family, sansSerifFamily: sans.family, monospaceFamily: mono.family },
-			textRendering: 2,
-			shapeRendering: 2,
-			imageRendering: 0,
-			background: drawn.background,
-		});
-		try {
-			const rendered = resvg.render();
-			try {
-				const png = Buffer.from(rendered.asPng());
-				const actual = pngSize(png);
-				if (actual.width !== size.width || actual.height !== size.height) throw new Error(`Rendered ${actual.width}x${actual.height}, expected ${size.width}x${size.height}.`);
-				writeFileSync(abs, png);
-				files.push({ path: displayPath(abs), format, width: actual.width, height: actual.height, bytes: png.length });
-			} finally {
-				rendered.free();
-			}
-		} finally {
-			resvg.free();
-		}
+		const png = await rasterizeSvg(drawn.svg, drawn.background);
+		const actual = pngSize(png);
+		if (actual.width !== size.width || actual.height !== size.height) throw new Error(`Rendered ${actual.width}x${actual.height}, expected ${size.width}x${size.height}.`);
+		writeFileSync(abs, png);
+		files.push({ path: displayPath(abs), format, width: actual.width, height: actual.height, bytes: png.length });
 	}
 	return { ok: true, template: template.id, size: size.id, width: size.width, height: size.height, ground, files };
 }

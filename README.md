@@ -84,6 +84,8 @@ Add existing components with the CLI. Use design tokens for custom layout and st
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
 For an Open Graph or social image, run npx inkbox-ds image templates, then og or social, and pass the words as flags.
+For a short video, run npx inkbox-ds video templates, then video render.
+Start from npx inkbox-ds manifest --json. It lists every template, size, component and rule.
 ```
 
 ## Check the implementation
@@ -118,10 +120,16 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 | `approve` | Approve a `ds-override` comment in a human-operated terminal. |
 | `done <screen>` | Mark a native screen task complete. Web screen tasks use `review`. |
 | `skip <screen> --reason "..."` | Record why a tracked screen was left unchanged. |
+| `manifest` | List every capability, template, size, component and rule. `describe` is the same command. |
+| `brand` | Read tokens, fonts, logos and voice. `brand tokens <group-or-token>` reads one group or one exact token. |
+| `principles [topic]` | Read product and website rules, voice, or one section. `product` and `website` use the one console look. |
+| `components` | List components. `components inspect <name>` reads props and states. `components emit <name>` copies real markup. |
 | `image templates` | List image templates, sizes, grounds and export formats. |
 | `image render` | Render one Open Graph or social image from the content you pass in. |
 | `og` | Render a 1200x630 Open Graph image. |
 | `social` | Render a social post at square, portrait or landscape size. |
+| `video templates` | List video templates, sizes and the renderer. |
+| `video render` | Render a 1 second APNG from the brand tokens, fonts and logos. |
 
 ## Render images
 
@@ -134,7 +142,33 @@ npx inkbox-ds social --size square --template statement --headline "Every agent 
 npx inkbox-ds image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images
 ```
 
-Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image` with a PNG or JPEG, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). A frame image fills the card from the top left. Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). Rendering the same template and size again overwrites those files. `--json` lists the files, their formats and their pixel sizes.
+Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image` with a PNG or JPEG, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). A frame image fills the card from the top left. Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). Rendering the same template and size again overwrites those files. `--json` lists the files, their formats and their pixel sizes. A template, size, ground, export or content field that is not in the catalog is an error. A field the chosen template does not take is an error too.
+
+## Render a short video
+
+`video render` makes a 1 second clip (10 frames at 10 fps) as an APNG. Frames are SVG, rasterized by the same headless renderer as the stills, so the same words write the same file. Templates are `social`, `announce` and `product`. Sizes are `square` (1080x1080), `vertical` (1080x1920, 9:16) and `landscape` (1920x1080, 16:9). The product template draws a headline and subtext on a panel. It does not invent a screenshot.
+
+```sh
+npx inkbox-ds video templates --json
+npx inkbox-ds video render --template social --size square --headline "A mailbox for your agents" --json
+npx inkbox-ds video render --template announce --size vertical --eyebrow "New" --headline "Phone lines for agents" --json
+```
+
+## Read the brand, the components and the rules
+
+```sh
+npx inkbox-ds manifest --json
+npx inkbox-ds brand tokens color --json
+npx inkbox-ds brand fonts --json
+npx inkbox-ds brand logos --json
+npx inkbox-ds brand voice --json
+npx inkbox-ds principles product --json
+npx inkbox-ds principles website --json
+npx inkbox-ds components inspect button --json
+npx inkbox-ds components emit button --state States --set variant=soft --json
+```
+
+`manifest` is the list an agent should read first. `brand` only returns tokens, font files, logo files and voice that are in the repo. Weight tokens 600 and 700 have no Inter file, and IBM Plex Mono 500 is requested by the stylesheet but not shipped. Those faces are reported, not filled in. Logo files do not define a numeric clear-space. `principles product` and `principles website` return the same rules, because this brand has one look. `components emit` copies an example and rejects props the component does not declare.
 
 ## Update an existing interface
 
@@ -187,8 +221,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `list`, `show`, `look`, `tokens`, `image templates` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; add `--json` for structured results. `image render`, `og` and `social` write picture files and nothing else. JSON goes to stdout; progress goes to stderr.
+the complete file. `guide`, `manifest`, `describe`, `brand`, `principles`, `components`, `list`, `show`, `look`, `tokens`, `image templates`, `video templates` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; add `--json` for structured results. `image render`, `og`, `social` and `video render` write media files and nothing else. JSON goes to stdout; progress goes to stderr. With `--json`, an unknown name exits 1 and prints `{ "ok": false, "error": "..." }`.
 
 ## Source
 

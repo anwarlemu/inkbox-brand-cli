@@ -4,9 +4,10 @@ Use this system to build {{brand}} pages and interfaces from the user's brief. T
 
 ## Start here
 
-1. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
-2. Read this guide, then the relevant component references. The library is at {{registry}}/components. Plain text is at {{registry}}/llms.txt; a complete copy is at {{registry}}/llms-full.txt.
-3. Reuse the library's components and variants. Do not recreate them from screenshots or guess their props. Each reference contains the actual exports, dependencies, working examples and source code.
+1. Run `{{cli}} manifest --json` (the same command is `describe`). It lists every capability, template, size, component and rule. If a name is not in that list, it does not exist. Do not invent one.
+2. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
+3. Read this guide, then the relevant component references. The library is at {{registry}}/components. Plain text is at {{registry}}/llms.txt; a complete copy is at {{registry}}/llms-full.txt.
+4. Reuse the library's components and variants. Do not recreate them from screenshots or guess their props. Each reference contains the actual exports, dependencies, working examples and source code. Use `{{cli}} components inspect <name> --json` for props and states, and `{{cli}} components emit <name> --json` for markup.
 
 ## Install and prepare a project
 
@@ -33,14 +34,15 @@ The apply command can adapt matching components, convert style values, and insta
 ## Find, inspect and add components
 
 ```sh
-{{cli}} list --json
-{{cli}} show select
+{{cli}} components list --json
+{{cli}} components inspect select --json
+{{cli}} components emit select --state Preview --json
 {{cli}} show select --json
 {{cli}} add field select button --dry-run --json
 {{cli}} add field select button --json
 ```
 
-The add command above is an example, not the list required for every page. Choose items from `list`. `show` is read-only and works offline using the registry bundled with the CLI. `show --json` returns source, examples, usage rules, exports, dependencies and links. Hooks and helper libraries are included in the JSON index.
+The add command above is an example, not the list required for every page. Choose items from `components list`. `components inspect` returns the props and states declared in that component's source. `components emit` copies one example function and, when you pass `--set prop=value`, a JSX line that uses only those props. An unknown component, state, prop or value is an error. `show` is read-only and works offline using the registry bundled with the CLI. `show --json` returns source, examples, usage rules, exports, dependencies and links. Hooks and helper libraries are included in the JSON index.
 
 `add` copies source files and their transitive dependencies, installs missing npm packages, and wires the theme. Existing files are kept. Use `--overwrite` only when intentionally replacing local component changes. Read the returned file list and warnings. Generated imports and target files follow components.json and the project alias configuration. Existing utility files are preserved; brand helpers use their own names.
 
@@ -104,9 +106,66 @@ Sizes:
 
 `--ground lilac` uses the lilac field. The default is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). The file name is the template, a hyphen, the size, and the extension. Rendering the same template and size again overwrites those files. `--json` lists each file with its format and pixel size. `--content <file.json>` reads the same fields, and flags override it. A newline in a flag can be a real newline, or a backslash followed by n. A frame image is a PNG or JPEG and fills the card from the top left, so the top of a product shot stays visible. Template, size and ground names are matched without regard to case.
 
-Write the words yourself. The picture does not invent copy. Use the brand voice: sentence case, short and concrete.
+Write the words yourself. The picture does not invent copy. Use the brand voice: sentence case, short and concrete. `{{cli}} brand voice --json` returns that voice, including the words to avoid.
 
 The SVG embeds the brand fonts, so it renders without a font install. Publish the PNG.
+
+Unknown templates, sizes, grounds, export formats and content fields are errors. A field the template does not list is an error too. The command does not drop it or pick a different template.
+
+## Render a short video
+
+`video` renders a 1 second clip from the same tokens, fonts and logos. Frames are drawn as SVG and rasterized with the same headless renderer as the still images (`@resvg/resvg-wasm`), then stored in an APNG. There is no browser and no video codec. The same words write the same file. Play the APNG in a browser. It is not an MP4.
+
+```sh
+{{cli}} video templates --json
+{{cli}} video render --template social --size square --headline "A mailbox for your agents" --json
+{{cli}} video render --template announce --size vertical --eyebrow "New" --headline "Phone lines for agents" --json
+{{cli}} video render --template product --size landscape --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
+```
+
+Templates:
+
+- `social`: the lockup, a headline, and an optional eyebrow and subtext.
+- `announce`: a pink eyebrow pill, a headline, and optional subtext. Needs `--eyebrow`.
+- `product`: the lockup, then a headline and subtext on a raised panel. It does not invent a product screenshot.
+
+Sizes:
+
+- `square` is 1080x1080 (1:1). This is the default.
+- `vertical` is 1080x1920 (9:16). The octopus mascot is drawn from `brand/logo/octopus.png`.
+- `landscape` is 1920x1080 (16:9).
+
+The clip is 10 frames at 10 fps. The motion is a fade and a 12px rise on `--ds-easing-out`. Those numbers are fixed. `--ground lilac` uses the lilac field. The default is white. `--out` is a directory (default `videos`). The file name is the template, a hyphen, the size, and `.apng`.
+
+## Read the brand system
+
+`brand` reads the tokens, font files, logo files and voice from the brand files. It does not search or guess.
+
+```sh
+{{cli}} brand --json
+{{cli}} brand tokens --json
+{{cli}} brand tokens color --json
+{{cli}} brand tokens ds-color-ink --json
+{{cli}} brand fonts --json
+{{cli}} brand logos --json
+{{cli}} brand voice --json
+```
+
+Groups are `color` (also `colour`), `type`, `spacing`, `layout`, `radii`, `shadow` and `motion`. A token name is exact, such as `ds-color-ink`. `brand fonts` lists the font files on disk and any weight token that has no file. `brand logos` lists the files in `brand/logo`, where they are referenced, and the usage lines the principles actually contain. There is no numeric clear-space rule. `brand voice` is the Voice section of the principles.
+
+## Read the design rules
+
+Product interfaces and website pages use the one look in the brand files. `brand.json` lists a single surface, `site`, and there is no separate product theme.
+
+```sh
+{{cli}} principles --json
+{{cli}} principles product --json
+{{cli}} principles website --json
+{{cli}} principles voice --json
+{{cli}} principles elements --json
+```
+
+`product` and `website` return the same do and don't lists, taken from the principles and the review rubric. `elements` returns each element rule from `brand/elements.json`. An unknown topic is an error.
 
 ## Verify before finishing
 
@@ -120,8 +179,8 @@ The SVG embeds the brand fonts, so it renders without a font install. Publish th
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image templates`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image render`, `og`, `social`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code. Image commands write only the picture files you name with `--out`.
+Read-only commands: `guide`, `manifest`, `describe`, `brand`, `principles`, `components` (list, inspect and emit), `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image templates`, `video templates`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image render`, `og`, `social`, `video render`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Pass `--json` and a bad name returns `{ "ok": false, "error": "..." }` with exit code 1. Installation/build failures return a nonzero exit code. Image and video commands write only the files you name with `--out`.
 
 ## Project configuration and agent handoff
 

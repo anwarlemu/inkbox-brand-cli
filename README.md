@@ -83,8 +83,7 @@ Run npx inkbox-ds show <name> --json for exact exports, usage rules, examples an
 Add existing components with the CLI. Use design tokens for custom layout and styling.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
-For an Open Graph or social image, run npx inkbox-ds image templates, then og or social, and pass the words as flags.
-For a short video, run npx inkbox-ds video templates, then video render.
+For images, posts, banners, slides, video, merch, illustrations and Figma, run npx inkbox-ds manifest --json, then the asset command with --list.
 Start from npx inkbox-ds manifest --json. It lists every template, size, component and rule.
 ```
 
@@ -124,35 +123,62 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 | `brand` | Read tokens, fonts, logos and voice. `brand tokens <group-or-token>` reads one group or one exact token. |
 | `principles [topic]` | Read product and website rules, voice, or one section. `product` and `website` use the one console look. |
 | `components` | List components. `components inspect <name>` reads props and states. `components emit <name>` copies real markup. |
-| `image templates` | List image templates, sizes, grounds and export formats. |
-| `image render` | Render one Open Graph or social image from the content you pass in. |
-| `og` | Render a 1200x630 Open Graph image. |
-| `social` | Render a social post at square, portrait or landscape size. |
-| `video templates` | List video templates, sizes and the renderer. |
-| `video render` | Render a 1 second APNG from the brand tokens, fonts and logos. |
+| `image` | Share images, posts and banners: ten templates, eight occasions, six themes, every size. PNG and SVG. |
+| `og`, `social` | `image` at the link-preview size, or a post size. |
+| `deck` | Slides at 1920 by 1080: a PNG per slide and one PDF. |
+| `video` | Motion pieces as MP4 and WebM (ffmpeg), PNG frames, or one still. |
+| `merch` | Print files at real size with bleed: SVG in inches and PNG at a dpi. |
+| `illustrate` | The octopus, the reef, the console window and the wordmark patterns as scenes. SVG and PNG. |
+| `figma` | Tokens as Figma variables, pushes, pulls and checks through the Figma MCP tools. |
 
-## Render images
+## Make images, posts, slides, video, merch and illustrations
 
-`og` and `social` render brand images from the words you pass in. They use the brand tokens, fonts and logo. No browser is required, and the same content writes the same files.
-
-```sh
-npx inkbox-ds image templates --json
-npx inkbox-ds og --template headline --headline "A mailbox for your agents" --json
-npx inkbox-ds social --size square --template statement --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
-npx inkbox-ds image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images
-```
-
-Templates are `headline`, `statement` (headline and subtext), `frame` (a product shot in a card; pass `--image` with a PNG or JPEG, or leave it out for a quiet stand-in), `quote` and `announcement` (a pink eyebrow pill). A frame image fills the card from the top left. Sizes are `og` (1200x630), `square` (1080x1080), `portrait` (1080x1350) and `landscape` (1200x675, for X and LinkedIn). `--ground lilac` uses the lilac field. The default ground is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). Rendering the same template and size again overwrites those files. `--json` lists the files, their formats and their pixel sizes. A template, size, ground, export or content field that is not in the catalog is an error. A field the chosen template does not take is an error too.
-
-## Render a short video
-
-`video render` makes a 1 second clip (10 frames at 10 fps) as an APNG. Frames are SVG, rasterized by the same headless renderer as the stills, so the same words write the same file. Templates are `social`, `announce` and `product`. Sizes are `square` (1080x1080), `vertical` (1080x1920, 9:16) and `landscape` (1920x1080, 16:9). The product template draws a headline and subtext on a panel. It does not invent a screenshot.
+The CLI draws every brand asset headlessly (a Skia canvas, no browser, no account) from the tokens, the fonts, the
+logo and the octopus art, the way the share-image editor draws them. The same inputs write the same bytes. Every
+command takes `--list` (what exists) and `--json` (the files it wrote); an unknown name exits 1 with the closest one.
 
 ```sh
-npx inkbox-ds video templates --json
-npx inkbox-ds video render --template social --size square --headline "A mailbox for your agents" --json
-npx inkbox-ds video render --template announce --size vertical --eyebrow "New" --headline "Phone lines for agents" --json
+npx inkbox-ds image --list --json
+npx inkbox-ds image tile --headline "Give every *AI agent* a way to be reached"
+npx inkbox-ds image launch --size square                      # an occasion picks its words and first look
+npx inkbox-ds image --occasion hiring --all --size post       # its four looks at every post size
+npx inkbox-ds image feature --image capture.png --image-url acme.com
+npx inkbox-ds image card --seed 42                             # a new layout for the same words
+npx inkbox-ds deck --input deck.json --out deck                # a PNG per slide and deck.pdf
+npx inkbox-ds video inbox --size landscape                     # MP4 and WebM (ffmpeg); --still for one PNG
+npx inkbox-ds merch poster --headline "Give every *AI agent* a way to be reached"
+npx inkbox-ds illustrate reef --size og
+npx inkbox-ds figma tokens
 ```
+
+- `image` (shortcuts `og` and `social`): templates `tile`, `app`, `outline`, `hatch`, `reef`, `feature`, `partner`,
+  `funding`, `announce` and `card`; occasions `launch`, `feature`, `partnership`, `funding`, `hiring`, `changelog`,
+  `milestone` and `event`; themes `paper`, `mist`, `mono`, `lavender`, `purple` and `deep`. Sizes: `og`, `card`,
+  `linkedin`, `square`, `portrait`, `story`, `landscape`, `li-square`, `x-banner`, `linkedin-banner`, `li-page`,
+  `youtube`, `email`, or `custom` with `--width` and `--height`; `--size share|post|banner|all` writes a group.
+  Copy: `--headline` (`*stars*` set a phrase in pink), `--body`, `--credit` (an `@handle` under a post),
+  `--badge pill|solid|dot|none`, `--badge-text`, `--partner` (a name beside the lockup, never another logo), or the
+  same fields in `--content file.json`. `--image` puts your capture in the window of `app` and `feature` only.
+  PNG and SVG (text as paths); `--out` is a directory or one `.png`/`.svg` file.
+- `deck`: `cover`, `section`, `statement`, `bullets` (up to six points), `stat`, `quote` (attribute to a role, never a
+  made-up person), `image` and `end`, at 1920 by 1080, from `--input deck.json` (`{ "slides": [{ "type": "cover",
+  "title": "..." }] }`) or one slide from flags.
+- `video`: `reveal` (any template with `--layout`), `inbox`, `band`, `announce` and `card` at `square`, `portrait`,
+  `vertical` and `landscape`. Layers come in on `--ds-easing-out` (420 ms, 80 ms apart; never ease-in, nothing from
+  nothing) and the piece ends on the finished image. `--reduced-motion` keeps the fades only. Without ffmpeg, `--format
+  frames` writes PNG frames.
+- `merch`: `cap-front`, `tee-front`, `tee-back`, `hoodie-front`, `tote`, `mug-wrap`, `sticker` (die line in the SVG)
+  and `poster`, at real size with bleed (SVG in inches, PNG at `--dpi`). Sizes are common vendor print areas: confirm
+  them with the vendor. One-color variants carry the wordmark alone; the octopus is full-color art.
+- `illustrate`: `octopus` (`--pose sit|hang`), `reef`, `window`, `tile`, `pattern`, `outline` and `hatch`, at any image
+  size. SVG keeps real vector shapes (the reef is the Figma file's own vectors); the octopus is never redrawn. The
+  rules, each with its source, are in `brand/illustration.md`.
+- `figma`: `tokens` (variables and effect styles plus `use_figma` scripts), `push image|slide|illustration|asset|
+  component|page`, `pull <url>` and `check <files>`. The CLI never calls Figma: it writes files and prints the Figma MCP
+  steps in order.
+
+Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
+person's own `--image`.
 
 ## Read the brand, the components and the rules
 
@@ -168,7 +194,7 @@ npx inkbox-ds components inspect button --json
 npx inkbox-ds components emit button --state States --set variant=soft --json
 ```
 
-`manifest` is the list an agent should read first. `brand` only returns tokens, font files, logo files and voice that are in the repo. Weight tokens 600 and 700 have no Inter file, and IBM Plex Mono 500 is requested by the stylesheet but not shipped. Those faces are reported, not filled in. Logo files do not define a numeric clear-space. `principles product` and `principles website` return the same rules, because this brand has one look. `components emit` copies an example and rejects props the component does not declare.
+`manifest` is the list an agent should read first. `brand` only returns tokens, font files, logo files and voice that are in the repo. Inter 700 is requested by the stylesheet but not shipped; it is reported, not filled in. Logo files do not define a numeric clear-space. `principles product` and `principles website` return the same rules, because this brand has one look. `components emit` copies an example and rejects props the component does not declare.
 
 ## Update an existing interface
 
@@ -221,8 +247,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `manifest`, `describe`, `brand`, `principles`, `components`, `list`, `show`, `look`, `tokens`, `image templates`, `video templates` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; add `--json` for structured results. `image render`, `og`, `social` and `video render` write media files and nothing else. JSON goes to stdout; progress goes to stderr. With `--json`, an unknown name exits 1 and prints `{ "ok": false, "error": "..." }`.
+the complete file. `guide`, `manifest`, `describe`, `brand`, `principles`, `components`, `list`, `show`, `look`, `tokens`, every asset command with `--list`, and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; add `--json` for structured results. `image`, `og`, `social`, `deck`, `video`, `merch`, `illustrate` and `figma` write files under `--out` and nothing else. JSON goes to stdout; progress goes to stderr. With `--json`, an unknown name exits 1 and prints `{ "ok": false, "error": "..." }`.
 
 ## Source
 

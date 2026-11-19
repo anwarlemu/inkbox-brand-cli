@@ -78,64 +78,54 @@ The component reference states its source. `{{registryHost}}/r/audit.json` recor
 - `check` reports UI timers for review. Remove artificial waits. For an essential nonblocking timer, put `// ds-latency: <specific reason>` immediately above the call, explaining what it delays and why typing/actions remain immediate. This documents an audit, not a general exemption for delayed input.
 - Verify in a browser with motion enabled and reduced motion: hold a pointer down before release, type rapidly, toggle the command palette and shortcuts repeatedly, compare bounds and font weight before/after hover and press, and check consistent section/component padding. Static checks cannot establish actual usage frequency or timing by themselves.
 
-## Render images
+## Make images, posts, slides, video, merch and illustrations
 
-The CLI renders brand images for Open Graph and social posts from the words you pass in. It uses the brand tokens, fonts and logo, so the pictures match the components. Rendering is headless and deterministic: no browser and no account, and the same content writes the same files.
-
-```sh
-{{cli}} image templates --json
-{{cli}} og --template headline --headline "A mailbox for your agents" --json
-{{cli}} social --size square --template statement --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
-{{cli}} image render --size landscape --template frame --headline "The console" --image ./screen.png --out ./images --json
-```
-
-Templates:
-
-- `headline`: a headline, with an optional eyebrow.
-- `statement`: a headline and subtext, with an optional eyebrow.
-- `frame`: a headline, optional subtext, and a product shot in a card. Pass `--image` with a PNG or JPEG. Without it, the card is a quiet table stand-in.
-- `quote`: a quote and an optional `--attribution`.
-- `announcement`: a pink eyebrow pill, a headline and optional subtext.
-
-Sizes:
-
-- `og` is 1200x630 (Open Graph). The `og` command always uses it.
-- `square` is 1080x1080. `social` uses it unless you pass `--size`.
-- `portrait` is 1080x1350.
-- `landscape` is 1200x675, for X and LinkedIn.
-
-`--ground lilac` uses the lilac field. The default is white. `--export png,svg` writes both, which is the default. `--out` is a directory (default `images`). The file name is the template, a hyphen, the size, and the extension. Rendering the same template and size again overwrites those files. `--json` lists each file with its format and pixel size. `--content <file.json>` reads the same fields, and flags override it. A newline in a flag can be a real newline, or a backslash followed by n. A frame image is a PNG or JPEG and fills the card from the top left, so the top of a product shot stays visible. Template, size and ground names are matched without regard to case.
-
-Write the words yourself. The picture does not invent copy. Use the brand voice: sentence case, short and concrete. `{{cli}} brand voice --json` returns that voice, including the words to avoid.
-
-The SVG embeds the brand fonts, so it renders without a font install. Publish the PNG.
-
-Unknown templates, sizes, grounds, export formats and content fields are errors. A field the template does not list is an error too. The command does not drop it or pick a different template.
-
-## Render a short video
-
-`video` renders a 1 second clip from the same tokens, fonts and logos. Frames are drawn as SVG and rasterized with the same headless renderer as the still images (`@resvg/resvg-wasm`), then stored in an APNG. There is no browser and no video codec. The same words write the same file. Play the APNG in a browser. It is not an MP4.
+The CLI draws every brand asset headlessly (a Skia canvas, no browser, no account) from the tokens, the fonts, the
+logo and the octopus art, the way the share-image editor draws them. The same inputs write the same bytes. Every
+command takes `--list` (what exists) and `--json` (the files it wrote); an unknown name exits 1 with the closest one.
 
 ```sh
-{{cli}} video templates --json
-{{cli}} video render --template social --size square --headline "A mailbox for your agents" --json
-{{cli}} video render --template announce --size vertical --eyebrow "New" --headline "Phone lines for agents" --json
-{{cli}} video render --template product --size landscape --headline "Every agent gets an inbox" --subtext "Email, phone and iMessage." --json
+{{cli}} image --list --json
+{{cli}} image tile --headline "Give every *AI agent* a way to be reached"
+{{cli}} image launch --size square                      # an occasion picks its words and first look
+{{cli}} image --occasion hiring --all --size post       # its four looks at every post size
+{{cli}} image feature --image capture.png --image-url acme.com
+{{cli}} image card --seed 42                             # a new layout for the same words
+{{cli}} deck --input deck.json --out deck                # a PNG per slide and deck.pdf
+{{cli}} video inbox --size landscape                     # MP4 and WebM (ffmpeg); --still for one PNG
+{{cli}} merch poster --headline "Give every *AI agent* a way to be reached"
+{{cli}} illustrate reef --size og
+{{cli}} figma tokens
 ```
 
-Templates:
+- `image` (shortcuts `og` and `social`): templates `tile`, `app`, `outline`, `hatch`, `reef`, `feature`, `partner`,
+  `funding`, `announce` and `card`; occasions `launch`, `feature`, `partnership`, `funding`, `hiring`, `changelog`,
+  `milestone` and `event`; themes `paper`, `mist`, `mono`, `lavender`, `purple` and `deep`. Sizes: `og`, `card`,
+  `linkedin`, `square`, `portrait`, `story`, `landscape`, `li-square`, `x-banner`, `linkedin-banner`, `li-page`,
+  `youtube`, `email`, or `custom` with `--width` and `--height`; `--size share|post|banner|all` writes a group.
+  Copy: `--headline` (`*stars*` set a phrase in pink), `--body`, `--credit` (an `@handle` under a post),
+  `--badge pill|solid|dot|none`, `--badge-text`, `--partner` (a name beside the lockup, never another logo), or the
+  same fields in `--content file.json`. `--image` puts your capture in the window of `app` and `feature` only.
+  PNG and SVG (text as paths); `--out` is a directory or one `.png`/`.svg` file.
+- `deck`: `cover`, `section`, `statement`, `bullets` (up to six points), `stat`, `quote` (attribute to a role, never a
+  made-up person), `image` and `end`, at 1920 by 1080, from `--input deck.json` (`{ "slides": [{ "type": "cover",
+  "title": "..." }] }`) or one slide from flags.
+- `video`: `reveal` (any template with `--layout`), `inbox`, `band`, `announce` and `card` at `square`, `portrait`,
+  `vertical` and `landscape`. Layers come in on `--ds-easing-out` (420 ms, 80 ms apart; never ease-in, nothing from
+  nothing) and the piece ends on the finished image. `--reduced-motion` keeps the fades only. Without ffmpeg, `--format
+  frames` writes PNG frames.
+- `merch`: `cap-front`, `tee-front`, `tee-back`, `hoodie-front`, `tote`, `mug-wrap`, `sticker` (die line in the SVG)
+  and `poster`, at real size with bleed (SVG in inches, PNG at `--dpi`). Sizes are common vendor print areas: confirm
+  them with the vendor. One-color variants carry the wordmark alone; the octopus is full-color art.
+- `illustrate`: `octopus` (`--pose sit|hang`), `reef`, `window`, `tile`, `pattern`, `outline` and `hatch`, at any image
+  size. SVG keeps real vector shapes (the reef is the Figma file's own vectors); the octopus is never redrawn. The
+  rules, each with its source, are in `brand/illustration.md`.
+- `figma`: `tokens` (variables and effect styles plus `use_figma` scripts), `push image|slide|illustration|asset|
+  component|page`, `pull <url>` and `check <files>`. The CLI never calls Figma: it writes files and prints the Figma MCP
+  steps in order.
 
-- `social`: the lockup, a headline, and an optional eyebrow and subtext.
-- `announce`: a pink eyebrow pill, a headline, and optional subtext. Needs `--eyebrow`.
-- `product`: the lockup, then a headline and subtext on a raised panel. It does not invent a product screenshot.
-
-Sizes:
-
-- `square` is 1080x1080 (1:1). This is the default.
-- `vertical` is 1080x1920 (9:16). The octopus mascot is drawn from `brand/logo/octopus.png`.
-- `landscape` is 1920x1080 (16:9).
-
-The clip is 10 frames at 10 fps. The motion is a fade and a 12px rise on `--ds-easing-out`. Those numbers are fixed. `--ground lilac` uses the lilac field. The default is white. `--out` is a directory (default `videos`). The file name is the template, a hyphen, the size, and `.apng`.
+Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
+person's own `--image`.
 
 ## Read the brand system
 
@@ -179,8 +169,8 @@ Product interfaces and website pages use the one look in the brand files. `brand
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `manifest`, `describe`, `brand`, `principles`, `components` (list, inspect and emit), `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image templates`, `video templates`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image render`, `og`, `social`, `video render`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Pass `--json` and a bad name returns `{ "ok": false, "error": "..." }` with exit code 1. Installation/build failures return a nonzero exit code. Image and video commands write only the files you name with `--out`.
+Read-only commands: `guide`, `manifest`, `describe`, `brand`, `principles`, `components` (list, inspect and emit), `list`, `show`, `look`, `tokens`, `check` without `--fix`, and every asset command with `--list`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image`, `og`, `social`, `deck`, `video`, `merch`, `illustrate`, `figma`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Pass `--json` and a bad name returns `{ "ok": false, "error": "..." }` with exit code 1. Installation/build failures return a nonzero exit code. Asset commands write only under `--out`.
 
 ## Project configuration and agent handoff
 

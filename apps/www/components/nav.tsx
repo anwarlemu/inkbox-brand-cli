@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenTextIcon, ListIcon, MagnifyingGlassIcon, PaletteIcon, SquaresFourIcon, XIcon } from "@phosphor-icons/react/ssr";
+import { BookOpenTextIcon, PenNibIcon, ImagesIcon, ListIcon, MagnifyingGlassIcon, PaintBrushIcon, PaletteIcon, SquaresFourIcon, XIcon } from "@phosphor-icons/react/ssr";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,9 @@ const PAGES = [
   { href: "/", label: "Introduction", icon: BookOpenTextIcon },
   { href: "/components", label: "All components", icon: SquaresFourIcon },
   { href: "/theme", label: "Theme", icon: PaletteIcon },
+  { href: "/assets", label: "Assets", icon: ImagesIcon },
+  { href: "/illustrations", label: "Illustrations", icon: PaintBrushIcon },
+  { href: "/figma", label: "Figma", icon: PenNibIcon },
 ];
 
 function Groups({ entries, query, onNavigate }: { entries: Entry[]; query: string; onNavigate: () => void }) {

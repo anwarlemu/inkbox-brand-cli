@@ -41,7 +41,14 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - `src/plan/`: the task queue (`state.json` in the app), element detection and `look` output.
 - `src/check/`: the value check (rules.ts), used by hooks, pre-commit and `check`.
 - `src/review/`, `src/hooks/`, `src/commands/`.
-- `src/brand/`, `src/principles/`, `src/video/`, `src/library/describe.ts` and `src/manifest/` are the agent-facing brand, rules, video, component emit and `manifest` commands. They read `brand/` and `registry/` and reject unknown names. Video frames use the image rasterizer and are packed as APNG.
+- `src/brand/`, `src/principles/`, `src/library/describe.ts` and `src/manifest/` are the agent-facing brand, rules,
+  component emit and `manifest` commands. They read `brand/` and `registry/` and reject unknown names.
+- `src/assets/` is the asset renderer (Skia canvas through `@napi-rs/canvas`, deterministic PNG, SVG and PDF writers):
+  `share.ts` is the agd-playground share-image editor's drawing (`src/components/inkbox-og/draw.ts`) kept in its terms,
+  `window.ts` its console window, and `image`, `deck`, `video`, `merch`, `illustrate` build on it; `src/figma/` writes
+  Figma MCP inputs. The brand's part is `brand/assets/*.json` (colors as tokens, with every playground-to-token change
+  in the notes), `brand/assets/art` (the octopus and reef), `brand/assets/icons` (Phosphor) and `brand/illustration.md`.
+  `node scripts/assets-docs-examples.mjs` (after a build) regenerates the docs gallery.
 
 ## Rules
 

@@ -1,0 +1,326 @@
+{
+	"image": [
+		{
+			"id": "image-tile",
+			"command": "image tile --occasion launch",
+			"src": "/assets-examples/image-tile.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-app",
+			"command": "image app --occasion launch",
+			"src": "/assets-examples/image-app.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-outline",
+			"command": "image outline --occasion launch",
+			"src": "/assets-examples/image-outline.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-hatch",
+			"command": "image hatch --occasion changelog",
+			"src": "/assets-examples/image-hatch.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-reef",
+			"command": "image reef --occasion launch",
+			"src": "/assets-examples/image-reef.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-feature",
+			"command": "image feature --occasion feature",
+			"src": "/assets-examples/image-feature.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-partner",
+			"command": "image partner --occasion partnership",
+			"src": "/assets-examples/image-partner.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-funding",
+			"command": "image funding --occasion funding",
+			"src": "/assets-examples/image-funding.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-announce",
+			"command": "image announce --occasion hiring",
+			"src": "/assets-examples/image-announce.webp",
+			"width": 600,
+			"height": 315
+		},
+		{
+			"id": "image-card",
+			"command": "image card --occasion feature",
+			"src": "/assets-examples/image-card.webp",
+			"width": 600,
+			"height": 315
+		}
+	],
+	"social": [
+		{
+			"id": "social-launch-square",
+			"command": "image --occasion launch --size square",
+			"src": "/assets-examples/social-launch-square.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "social-hiring-portrait",
+			"command": "image --occasion hiring --size portrait",
+			"src": "/assets-examples/social-hiring-portrait.webp",
+			"width": 540,
+			"height": 675
+		},
+		{
+			"id": "social-feature-story",
+			"command": "image --occasion feature --size story --template feature",
+			"src": "/assets-examples/social-feature-story.webp",
+			"width": 540,
+			"height": 960
+		},
+		{
+			"id": "social-launch-x-banner",
+			"command": "image --occasion launch --size x-banner --template reef --theme lavender",
+			"src": "/assets-examples/social-launch-x-banner.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "social-launch-linkedin-banner",
+			"command": "image --occasion launch --size linkedin-banner --template tile",
+			"src": "/assets-examples/social-launch-linkedin-banner.webp",
+			"width": 792,
+			"height": 198
+		},
+		{
+			"id": "social-changelog-landscape",
+			"command": "image --occasion changelog --size landscape --template card --theme mist",
+			"src": "/assets-examples/social-changelog-landscape.webp",
+			"width": 600,
+			"height": 338
+		}
+	],
+	"deck": [
+		{
+			"id": "cover",
+			"command": "deck cover",
+			"src": "/assets-examples/deck-cover.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "section",
+			"command": "deck section",
+			"src": "/assets-examples/deck-section.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "statement",
+			"command": "deck statement",
+			"src": "/assets-examples/deck-statement.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "bullets",
+			"command": "deck bullets",
+			"src": "/assets-examples/deck-bullets.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "stat",
+			"command": "deck stat",
+			"src": "/assets-examples/deck-stat.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "quote",
+			"command": "deck quote",
+			"src": "/assets-examples/deck-quote.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "image",
+			"command": "deck image",
+			"src": "/assets-examples/deck-image.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "end",
+			"command": "deck end",
+			"src": "/assets-examples/deck-end.webp",
+			"width": 480,
+			"height": 270
+		}
+	],
+	"video": [
+		{
+			"id": "reveal",
+			"command": "video reveal --size square",
+			"video": "/assets-examples/video-reveal.mp4",
+			"src": "/assets-examples/video-reveal.webp",
+			"width": 432,
+			"height": 432
+		},
+		{
+			"id": "inbox",
+			"command": "video inbox --size landscape",
+			"video": "/assets-examples/video-inbox.mp4",
+			"src": "/assets-examples/video-inbox.webp",
+			"width": 768,
+			"height": 432
+		},
+		{
+			"id": "band",
+			"command": "video band --size square",
+			"video": "/assets-examples/video-band.mp4",
+			"src": "/assets-examples/video-band.webp",
+			"width": 432,
+			"height": 432
+		},
+		{
+			"id": "card",
+			"command": "video card --size square",
+			"video": "/assets-examples/video-card.mp4",
+			"src": "/assets-examples/video-card.webp",
+			"width": 432,
+			"height": 432
+		}
+	],
+	"merch": [
+		{
+			"id": "merch-tee-front",
+			"command": "merch tee-front --variant color --dpi 72",
+			"src": "/assets-examples/merch-tee-front.webp",
+			"width": 864,
+			"height": 1152
+		},
+		{
+			"id": "merch-tee-back",
+			"command": "merch tee-back --variant color --dpi 72",
+			"src": "/assets-examples/merch-tee-back.webp",
+			"width": 864,
+			"height": 1152
+		},
+		{
+			"id": "merch-hoodie-front",
+			"command": "merch hoodie-front --variant one-ink --dpi 72",
+			"src": "/assets-examples/merch-hoodie-front.webp",
+			"width": 864,
+			"height": 720
+		},
+		{
+			"id": "merch-cap-front",
+			"command": "merch cap-front --variant one-purple --dpi 72",
+			"src": "/assets-examples/merch-cap-front.webp",
+			"width": 288,
+			"height": 126
+		},
+		{
+			"id": "merch-tote",
+			"command": "merch tote --variant color --dpi 72",
+			"src": "/assets-examples/merch-tote.webp",
+			"width": 864,
+			"height": 1008
+		},
+		{
+			"id": "merch-mug-wrap",
+			"command": "merch mug-wrap --variant lavender --dpi 72",
+			"src": "/assets-examples/merch-mug-wrap.webp",
+			"width": 666,
+			"height": 270
+		},
+		{
+			"id": "merch-sticker",
+			"command": "merch sticker --variant paper --dpi 72",
+			"src": "/assets-examples/merch-sticker.webp",
+			"width": 234,
+			"height": 234
+		},
+		{
+			"id": "merch-poster",
+			"command": "merch poster --variant paper --dpi 72",
+			"src": "/assets-examples/merch-poster.webp",
+			"width": 1314,
+			"height": 1746
+		}
+	],
+	"illustrations": [
+		{
+			"id": "illustration-octopus",
+			"command": "illustrate octopus",
+			"src": "/assets-examples/illustration-octopus.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-octopus-hang",
+			"command": "illustrate octopus --pose hang --theme purple",
+			"src": "/assets-examples/illustration-octopus-hang.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-reef",
+			"command": "illustrate reef",
+			"src": "/assets-examples/illustration-reef.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-window",
+			"command": "illustrate window",
+			"src": "/assets-examples/illustration-window.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-tile",
+			"command": "illustrate tile",
+			"src": "/assets-examples/illustration-tile.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-pattern",
+			"command": "illustrate pattern",
+			"src": "/assets-examples/illustration-pattern.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-outline",
+			"command": "illustrate outline",
+			"src": "/assets-examples/illustration-outline.webp",
+			"width": 540,
+			"height": 540
+		},
+		{
+			"id": "illustration-hatch",
+			"command": "illustrate hatch",
+			"src": "/assets-examples/illustration-hatch.webp",
+			"width": 540,
+			"height": 540
+		}
+	]
+}

@@ -4,9 +4,10 @@ Use this system to build {{brand}} pages and interfaces from the user's brief. T
 
 ## Start here
 
-1. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
-2. Read this guide, then the relevant component references. The library is at {{registry}}/components. Plain text is at {{registry}}/llms.txt; a complete copy is at {{registry}}/llms-full.txt.
-3. Reuse the library's components and variants. Do not recreate them from screenshots or guess their props. Each reference contains the actual exports, dependencies, working examples and source code.
+1. Run `{{cli}} manifest --json` (the same command is `describe`). It lists every capability, template, size, component and rule. If a name is not in that list, it does not exist. Do not invent one.
+2. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
+3. Read this guide, then the relevant component references. The library is at {{registry}}/components. Plain text is at {{registry}}/llms.txt; a complete copy is at {{registry}}/llms-full.txt.
+4. Reuse the library's components and variants. Do not recreate them from screenshots or guess their props. Each reference contains the actual exports, dependencies, working examples and source code. Use `{{cli}} components inspect <name> --json` for props and states, and `{{cli}} components emit <name> --json` for markup.
 
 ## Install and prepare a project
 
@@ -33,14 +34,15 @@ The apply command can adapt matching components, convert style values, and insta
 ## Find, inspect and add components
 
 ```sh
-{{cli}} list --json
-{{cli}} show select
+{{cli}} components list --json
+{{cli}} components inspect select --json
+{{cli}} components emit select --state Preview --json
 {{cli}} show select --json
 {{cli}} add field select button --dry-run --json
 {{cli}} add field select button --json
 ```
 
-The add command above is an example, not the list required for every page. Choose items from `list`. `show` is read-only and works offline using the registry bundled with the CLI. `show --json` returns source, examples, usage rules, exports, dependencies and links. Hooks and helper libraries are included in the JSON index.
+The add command above is an example, not the list required for every page. Choose items from `components list`. `components inspect` returns the props and states declared in that component's source. `components emit` copies one example function and, when you pass `--set prop=value`, a JSX line that uses only those props. An unknown component, state, prop or value is an error. `show` is read-only and works offline using the registry bundled with the CLI. `show --json` returns source, examples, usage rules, exports, dependencies and links. Hooks and helper libraries are included in the JSON index.
 
 `add` copies source files and their transitive dependencies, installs missing npm packages, and wires the theme. Existing files are kept. Use `--overwrite` only when intentionally replacing local component changes. Read the returned file list and warnings. Generated imports and target files follow components.json and the project alias configuration. Existing utility files are preserved; brand helpers use their own names.
 
@@ -76,6 +78,85 @@ The component reference states its source. `{{registryHost}}/r/audit.json` recor
 - `check` reports UI timers for review. Remove artificial waits. For an essential nonblocking timer, put `// ds-latency: <specific reason>` immediately above the call, explaining what it delays and why typing/actions remain immediate. This documents an audit, not a general exemption for delayed input.
 - Verify in a browser with motion enabled and reduced motion: hold a pointer down before release, type rapidly, toggle the command palette and shortcuts repeatedly, compare bounds and font weight before/after hover and press, and check consistent section/component padding. Static checks cannot establish actual usage frequency or timing by themselves.
 
+## Make images, posts, slides, video, merch and illustrations
+
+The CLI draws every brand asset headlessly (a Skia canvas, no browser, no account) from the tokens, the fonts, the
+logo and the octopus art, the way the share-image editor draws them. The same inputs write the same bytes. Every
+command takes `--list` (what exists) and `--json` (the files it wrote); an unknown name exits 1 with the closest one.
+
+```sh
+{{cli}} image --list --json
+{{cli}} image tile --headline "Give every *AI agent* a way to be reached"
+{{cli}} image launch --size square                      # an occasion picks its words and first look
+{{cli}} image --occasion hiring --all --size post       # its four looks at every post size
+{{cli}} image feature --image capture.png --image-url acme.com
+{{cli}} image card --seed 42                             # a new layout for the same words
+{{cli}} deck --input deck.json --out deck                # a PNG per slide and deck.pdf
+{{cli}} video inbox --size landscape                     # MP4 and WebM (ffmpeg); --still for one PNG
+{{cli}} merch poster --headline "Give every *AI agent* a way to be reached"
+{{cli}} illustrate reef --size og
+{{cli}} figma tokens
+```
+
+- `image` (shortcuts `og` and `social`): templates `tile`, `app`, `outline`, `hatch`, `reef`, `feature`, `partner`,
+  `funding`, `announce` and `card`; occasions `launch`, `feature`, `partnership`, `funding`, `hiring`, `changelog`,
+  `milestone` and `event`; themes `paper`, `mist`, `mono`, `lavender`, `purple` and `deep`. Sizes: `og`, `card`,
+  `linkedin`, `square`, `portrait`, `story`, `landscape`, `li-square`, `x-banner`, `linkedin-banner`, `li-page`,
+  `youtube`, `email`, or `custom` with `--width` and `--height`; `--size share|post|banner|all` writes a group.
+  Copy: `--headline` (`*stars*` set a phrase in pink), `--body`, `--credit` (an `@handle` under a post),
+  `--badge pill|solid|dot|none`, `--badge-text`, `--partner` (a name beside the lockup, never another logo), or the
+  same fields in `--content file.json`. `--image` puts your capture in the window of `app` and `feature` only.
+  PNG and SVG (text as paths); `--out` is a directory or one `.png`/`.svg` file.
+- `deck`: `cover`, `section`, `statement`, `bullets` (up to six points), `stat`, `quote` (attribute to a role, never a
+  made-up person), `image` and `end`, at 1920 by 1080, from `--input deck.json` (`{ "slides": [{ "type": "cover",
+  "title": "..." }] }`) or one slide from flags.
+- `video`: `reveal` (any template with `--layout`), `inbox`, `band`, `announce` and `card` at `square`, `portrait`,
+  `vertical` and `landscape`. Layers come in on `--ds-easing-out` (420 ms, 80 ms apart; never ease-in, nothing from
+  nothing) and the piece ends on the finished image. `--reduced-motion` keeps the fades only. Without ffmpeg, `--format
+  frames` writes PNG frames.
+- `merch`: `cap-front`, `tee-front`, `tee-back`, `hoodie-front`, `tote`, `mug-wrap`, `sticker` (die line in the SVG)
+  and `poster`, at real size with bleed (SVG in inches, PNG at `--dpi`). Sizes are common vendor print areas: confirm
+  them with the vendor. One-color variants carry the wordmark alone; the octopus is full-color art.
+- `illustrate`: `octopus` (`--pose sit|hang`), `reef`, `window`, `tile`, `pattern`, `outline` and `hatch`, at any image
+  size. SVG keeps real vector shapes (the reef is the Figma file's own vectors); the octopus is never redrawn. The
+  rules, each with its source, are in `brand/illustration.md`.
+- `figma`: `tokens` (variables and effect styles plus `use_figma` scripts), `push image|slide|illustration|asset|
+  component|page`, `pull <url>` and `check <files>`. The CLI never calls Figma: it writes files and prints the Figma MCP
+  steps in order.
+
+Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
+person's own `--image`.
+
+## Read the brand system
+
+`brand` reads the tokens, font files, logo files and voice from the brand files. It does not search or guess.
+
+```sh
+{{cli}} brand --json
+{{cli}} brand tokens --json
+{{cli}} brand tokens color --json
+{{cli}} brand tokens ds-color-ink --json
+{{cli}} brand fonts --json
+{{cli}} brand logos --json
+{{cli}} brand voice --json
+```
+
+Groups are `color` (also `colour`), `type`, `spacing`, `layout`, `radii`, `shadow` and `motion`. A token name is exact, such as `ds-color-ink`. `brand fonts` lists the font files on disk and any weight token that has no file. `brand logos` lists the files in `brand/logo`, where they are referenced, and the usage lines the principles actually contain. There is no numeric clear-space rule. `brand voice` is the Voice section of the principles.
+
+## Read the design rules
+
+Product interfaces and website pages use the one look in the brand files. `brand.json` lists a single surface, `site`, and there is no separate product theme.
+
+```sh
+{{cli}} principles --json
+{{cli}} principles product --json
+{{cli}} principles website --json
+{{cli}} principles voice --json
+{{cli}} principles elements --json
+```
+
+`product` and `website` return the same do and don't lists, taken from the principles and the review rubric. `elements` returns each element rule from `brand/elements.json`. An unknown topic is an error.
+
 ## Verify before finishing
 
 1. Run the consuming project's type checks, tests and production build.
@@ -88,8 +169,8 @@ The component reference states its source. `{{registryHost}}/r/audit.json` recor
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
+Read-only commands: `guide`, `manifest`, `describe`, `brand`, `principles`, `components` (list, inspect and emit), `list`, `show`, `look`, `tokens`, `check` without `--fix`, and every asset command with `--list`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, `image`, `og`, `social`, `deck`, `video`, `merch`, `illustrate`, `figma`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Pass `--json` and a bad name returns `{ "ok": false, "error": "..." }` with exit code 1. Installation/build failures return a nonzero exit code. Asset commands write only under `--out`.
 
 ## Project configuration and agent handoff
 

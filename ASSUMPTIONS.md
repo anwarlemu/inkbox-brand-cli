@@ -26,3 +26,14 @@ Each is in force today; each names where it lives, so a change is one edit.
 9. The logo is the octopus mark and the wordmark from inkbox.ai (`brand/logo/`), recolored to the ink.
 10. Review passes at 7 on every score. `brand/brand.json`.
 11. The repo is public, so installs need no token. Make it private if the brand's files should not be public.
+12. Assets follow the agd-playground share-image editor (`/inkbox`), with tokens winning where they disagree: headlines
+    are Inter SemiBold, not the editor's Funnel Display; the card's IBM Plex Sans is Inter; every editor color is its
+    nearest token (the hatching lilac #beaeda became text-faint #BCB3C5, a little grayer). Each change is listed in
+    `brand/assets/image.json` notes. Add the editor's marketing colors as tokens to bring them back.
+13. The Y Combinator badge (the orange Y square) is left out as a third-party mark; its words stay, in the pill badge.
+14. The window's sample mailbox is Acme placeholder copy; the editor's named a real person. The editor's console
+    screens are labelled placeholders, so none ship: pass `--image` with a real capture.
+15. Motion pieces use the console's ease-out (`--ds-easing-out`) at 420 ms per entrance, 80 ms apart. Neither the
+    editor nor the site has motion of its own to copy. `brand/assets/video.json`.
+16. Merch sizes are common vendor print areas, not a vendor's template. The octopus is 3D-rendered art, so it prints
+    only on full-color files and is embedded (not traced) in SVGs. `brand/assets/merch.json`.

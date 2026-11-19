@@ -13,7 +13,11 @@ Install with `add <names...> --dry-run --json`, then `add <names...> --json`. Ex
 
 For new applications, `create --template vite --name <directory>` scaffolds the framework and installs the brand. Existing applications use `init`. Use `apply --dry-run` only when the user requests conversion of existing styles; package installation and restyling are different operations.
 
-Read `guide` for brand rules and `tokens <term> --json` for custom styling. Keep colors scoped to component roles; preserve artwork, chart data and unrelated palettes. Use `check --json` and the application's build and interaction tests to verify the result.
+Read `manifest --json` first. Make images, posts and banners with `image`, slides with `deck`, motion with `video`, print files with `merch`, scenes with `illustrate` and Figma files with `figma`; each takes `--list --json`, and `brand/illustration.md` holds the illustration rules. It lists every capability, template, size, component and rule. Read `guide` for brand rules, `principles product` or `principles website` for do and don't rules, and `brand tokens <name> --json` for an exact token. `brand fonts`, `brand logos` and `brand voice` read the files and the voice section. Keep colors scoped to component roles; preserve artwork, chart data and unrelated palettes. Use `check --json` and the application's build and interaction tests to verify the result.
+
+Inspect a component with `components inspect <name> --json` and copy a real example with `components emit <name> --state Preview --json`. `--set variant=soft` is accepted only when that prop and value exist. Unknown names are errors.
+
+
 
 The standard shadcn registry is `{{registryHost}}/r/shadcn/{name}.json`, under `@{{bin}}` in components.json. Use `npx shadcn@4.22.1 add @{{bin}}/theme @{{bin}}/<name>` for shadcn's workspace routing and ecosystem integrations. The same registry works with its MCP server. Component references are at `{{registry}}/components`.
 

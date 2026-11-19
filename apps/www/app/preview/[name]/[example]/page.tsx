@@ -17,8 +17,11 @@ export default async function ExamplePage({ params }: { params: Promise<{ name: 
   const item = findItem(name);
   const Example = examples[name]?.[example];
   if (!item || !Example) notFound();
+  // Pages and blocks run edge to edge; app shells fill a fixed 800px window so their rail and scrolling page show.
+  const layout = item.type === "site" || item.type === "block";
+  const shell = item.type === "product";
   return (
-    <Surface data-preview-root="" className="min-h-120 bg-surface p-6 sm:p-10">
+    <Surface data-preview-root="" className={shell ? "h-200 bg-surface" : layout ? "min-h-40 bg-surface" : "min-h-120 bg-surface p-6 sm:p-10"}>
       <Example />
       <PreviewHeight />
     </Surface>

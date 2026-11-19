@@ -6,7 +6,7 @@ import { items } from "@www/lib/registry";
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="lg:flex">
-      <DocsRail entries={items.map((i) => ({ name: i.name, title: i.title }))} />
+      <DocsRail entries={items.map((i) => ({ name: i.name, title: i.title, type: i.type }))} />
       <main className="min-w-0 flex-1">{children}</main>
     </div>
   );

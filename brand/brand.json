@@ -11,9 +11,36 @@
 	],
 	"fonts": {
 		"files": [
-			{ "file": "fonts/Inter-Regular.ttf", "role": "sans", "weight": 400 },
-			{ "file": "fonts/Inter-Medium.ttf", "role": "medium", "weight": 500 },
-			{ "file": "fonts/IBMPlexMono-Regular.ttf", "role": "mono", "weight": 400 }
+			{
+				"file": "fonts/Inter-Regular.ttf",
+				"role": "sans",
+				"weight": 400
+			},
+			{
+				"file": "fonts/Inter-Medium.ttf",
+				"role": "medium",
+				"weight": 500
+			},
+			{
+				"file": "fonts/Inter-SemiBold.ttf",
+				"role": "semibold",
+				"weight": 600
+			},
+			{
+				"file": "fonts/IBMPlexMono-Regular.ttf",
+				"role": "mono",
+				"weight": 400
+			},
+			{
+				"file": "fonts/IBMPlexMono-Medium.ttf",
+				"role": "mono",
+				"weight": 500
+			},
+			{
+				"file": "fonts/IBMPlexMono-SemiBold.ttf",
+				"role": "mono",
+				"weight": 600
+			}
 		],
 		"css": "https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap",
 		"next": [

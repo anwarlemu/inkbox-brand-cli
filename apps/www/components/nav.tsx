@@ -9,7 +9,15 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Lockup } from "@www/components/logo";
 
-type Entry = { name: string; title: string };
+type Entry = { name: string; title: string; type?: string };
+
+// The rail groups items by what they are: components, then website pages, section blocks and app shells.
+const GROUPS: { label: string; test: (type?: string) => boolean }[] = [
+  { label: "Components", test: (t) => !t || t === "ui" || t === "visual" },
+  { label: "Pages", test: (t) => t === "site" },
+  { label: "Blocks", test: (t) => t === "block" },
+  { label: "App shells", test: (t) => t === "product" },
+];
 
 // A rail row, as the console draws one (Agent Workspace, Email, Vault): 38px tall with 8px corners, a 22px glyph 10px
 // from a 14px regular ink label; the current page sits on the lilac. Hover washes the row; there is no motion.
@@ -40,25 +48,28 @@ function Groups({ entries, query, onNavigate }: { entries: Entry[]; query: strin
           ))}
         </ul>
       )}
-      <div>
-        <p className="ds-label mb-2 px-1 text-body-sm leading-tight text-fg-label">Components</p>
-        {shown.length ? (
-          <ul className="grid gap-1">
-            {shown.map((e) => {
-              const href = `/components/${e.name}`;
-              return (
-                <li key={e.name}>
-                  <Link href={href} scroll={false} onNavigate={onNavigate} data-item={e.name} aria-current={pathname === href ? "page" : undefined} className={ROW}>
-                    {e.title}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="px-3 text-body text-fg-muted">Nothing matches.</p>
-        )}
-      </div>
+      {GROUPS.map((g) => {
+        const list = shown.filter((e) => g.test(e.type));
+        if (!list.length) return null;
+        return (
+          <div key={g.label}>
+            <p className="ds-label mb-2 px-1 text-body-sm leading-tight text-fg-label">{g.label}</p>
+            <ul className="grid gap-1">
+              {list.map((e) => {
+                const href = `/components/${e.name}`;
+                return (
+                  <li key={e.name}>
+                    <Link href={href} scroll={false} onNavigate={onNavigate} data-item={e.name} aria-current={pathname === href ? "page" : undefined} className={ROW}>
+                      {e.title}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
+      {!shown.length && <p className="px-3 text-body text-fg-muted">Nothing matches.</p>}
     </>
   );
 }

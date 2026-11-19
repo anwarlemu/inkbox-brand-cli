@@ -1,13 +1,9 @@
 import type { Command } from 'commander';
 import { brandFonts, brandLogos, brandSummary, brandTokens, brandVoice } from '../brand/system.js';
-import { readImageContent, readVideoContent } from '../lib/content.js';
 import { cli } from '../lib/brand.js';
 import { emit } from '../lib/output.js';
 import { emitComponent, inspectComponent, listComponents } from '../library/describe.js';
-import { manifest } from '../manifest/build.js';
 import { principles } from '../principles/read.js';
-import { videoCatalog } from '../video/catalog.js';
-import { renderVideo } from '../video/render.js';
 
 const SECTIONS = ['tokens', 'fonts', 'logos', 'voice'] as const;
 
@@ -106,72 +102,8 @@ function parseSet(values: string[] | undefined) {
 	return set;
 }
 
-type VideoFlags = {
-	template?: string;
-	size?: string;
-	ground?: string;
-	headline?: string;
-	subtext?: string;
-	eyebrow?: string;
-	content?: string;
-	out?: string;
-	json?: boolean;
-};
-
-async function runVideo(flags: VideoFlags) {
-	const file = readVideoContent(flags.content);
-	const template = flags.template ?? file.template;
-	if (!template) throw new Error(`Pass --template. \`${cli()} video templates\` lists them.`);
-	const result = await renderVideo({
-		template,
-		size: flags.size ?? file.size ?? 'square',
-		ground: flags.ground ?? file.ground,
-		outDir: flags.out ?? file.out ?? 'videos',
-		headline: flags.headline ?? file.headline,
-		subtext: flags.subtext ?? file.subtext,
-		eyebrow: flags.eyebrow ?? file.eyebrow,
-	});
-	emit(flags, result, () => [`Wrote ${result.files[0].path} (${result.template}, ${result.size}, ${result.width}x${result.height}, ${result.frames} frames).`].join('\n'));
-}
-
-function videoOptions(command: Command) {
-	command
-		.option('--template <name>', 'social, announce or product')
-		.option('--size <size>', 'square (1080x1080, the default), vertical (1080x1920) or landscape (1920x1080)')
-		.option('--headline <text>', 'main line')
-		.option('--subtext <text>', 'second line')
-		.option('--eyebrow <text>', 'short label; a pink pill on the announce template')
-		.option('--ground <ground>', 'white (default) or lilac')
-		.option('--content <file>', 'JSON file with the same fields; flags override it')
-		.option('--out <dir>', 'directory to write (default: videos)')
-		.option('--json', 'JSON output');
-}
-
-/** manifest, brand, principles, components and video. */
+/** brand, principles and components (manifest is in manifest.ts). */
 export function registerDiscover(program: Command) {
-	const bin = cli();
-	program
-		.command('manifest')
-		.alias('describe')
-		.description('List every capability, template, size, component and rule')
-		.option('--json', 'JSON output')
-		.action((_opts, command: Command) => {
-			const data = manifest();
-			emit(command.optsWithGlobals(), data, () =>
-				[
-					`${data.name} ${data.version}. Start with \`${bin} manifest --json\`.`,
-					'Capabilities: brand, images, video, components, principles.',
-					`Images: ${data.images.templates.map((item) => item.id).join(', ')}`,
-					`Image sizes: ${data.images.sizes.map((item) => item.id).join(', ')}`,
-					`Video: ${data.video.templates.map((item) => item.id).join(', ')} (${data.video.renderer.id})`,
-					`Video sizes: ${data.video.sizes.map((item) => item.id).join(', ')}`,
-					`Components: ${data.components.count}`,
-					`Principle topics: ${data.principles.topics.join(', ')}`,
-					data.determinism,
-				].join('\n'),
-			);
-		});
-
 	program
 		.command('brand [section] [name]')
 		.description('Read tokens, fonts, logos and voice. Sections: tokens, fonts, logos, voice')
@@ -235,26 +167,4 @@ export function registerDiscover(program: Command) {
 			emit(opts, data, () => [data.imports, data.usage ? data.usage.jsx : '', data.code ?? '', data.note].filter(Boolean).join('\n\n'));
 		});
 
-	const video = program.command('video').description('Render a short on-brand video from tokens, fonts and logos').option('--json', 'JSON output');
-	video
-		.command('templates')
-		.description('List video templates, sizes and the renderer')
-		.option('--json', 'JSON output')
-		.action((_opts, command: Command) => {
-			const catalog = videoCatalog();
-			emit(command.optsWithGlobals(), catalog, () =>
-				[
-					`Renderer: ${catalog.renderer.id} (${catalog.renderer.rasterizer}, ${catalog.renderer.container}, ${catalog.renderer.frames} frames at ${catalog.renderer.fps} fps)`,
-					'Templates',
-					...catalog.templates.map((item) => `  ${item.id.padEnd(12)} ${item.description}`),
-					'Sizes',
-					...catalog.sizes.map((item) => `  ${item.id.padEnd(12)} ${item.width}x${item.height}  ${item.use}`),
-					`Grounds: ${catalog.grounds.join(', ')}`,
-					'Export: apng',
-				].join('\n'),
-			);
-		});
-	const render = video.command('render').description('Render one video from the content you pass in');
-	videoOptions(render);
-	render.action((_opts, command: Command) => runVideo(command.optsWithGlobals()));
 }

@@ -1,0 +1,87 @@
+{
+	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. Opening copy is the editor's (occasions) or an Acme placeholder.",
+	"width": 1920,
+	"height": 1080,
+	"slides": {
+		"cover": {
+			"name": "Cover",
+			"description": "The title and a line under it, top left, beside the wordmark tile with the sitting octopus, and the lockup (the tile template).",
+			"template": "tile",
+			"theme": "paper",
+			"slots": {
+				"title": "Give every *AI agent*\na way to be reached",
+				"body": "Email, phone numbers and Agent Cards for every agent."
+			}
+		},
+		"section": {
+			"name": "Section",
+			"description": "A section number in a dot badge and its title, set right over a hatched floor with the octopus hanging over its edge (the hatched template).",
+			"template": "hatch",
+			"theme": "paper",
+			"slots": {
+				"number": "01",
+				"title": "Agent-to-Agent"
+			}
+		},
+		"statement": {
+			"name": "Statement",
+			"description": "One sentence inside the solid purple border, with the lockup and the sitting octopus (the announcement template).",
+			"template": "announce",
+			"theme": "paper",
+			"slots": {
+				"title": "Every agent gets *an inbox of its own*"
+			}
+		},
+		"bullets": {
+			"name": "Bullets",
+			"description": "A title and up to six points, each led by a filled check circle, between hatched strips, with the lockup.",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "What every agent gets",
+				"items": "Its own email address | A phone number for calls and texts | An Agent Card other agents can find | A vault for its keys"
+			}
+		},
+		"stat": {
+			"name": "Stat",
+			"description": "A very large number and a line under it over the outline band, the octopus hanging over the rule (the big number template).",
+			"template": "funding",
+			"theme": "paper",
+			"slots": {
+				"stat": "1,000,000",
+				"title": "emails sent by agents"
+			}
+		},
+		"quote": {
+			"name": "Quote",
+			"description": "A quote in the headline face with the attribution as a credit, over the reef with the sitting octopus (the reef template). Attribute to a role, never a made-up person.",
+			"template": "reef",
+			"theme": "lavender",
+			"slots": {
+				"quote": "Our support agent answers its own email now.",
+				"attribution": "Head of operations, Acme"
+			}
+		},
+		"image": {
+			"name": "Image",
+			"description": "A title and a line over a browser window inside a hatched border: your capture with image, else the console's inbox (the feature template).",
+			"template": "feature",
+			"theme": "paper",
+			"slots": {
+				"title": "The inbox *built for agents*",
+				"body": "Every message, call and Agent Card in one console.",
+				"url": "inkbox.ai"
+			}
+		},
+		"end": {
+			"name": "End card",
+			"description": "The lockup centered over the staggered wordmark tile inside a line border, a line under it and the address (the lockup template).",
+			"template": "partner",
+			"theme": "paper",
+			"slots": {
+				"title": "Give every *AI agent*\na way to be reached",
+				"url": "inkbox.ai"
+			}
+		}
+	}
+}

@@ -38,4 +38,5 @@ export const exampleSource = (name: string) => sourceOf(`examples/${name}.tsx`);
 
 // These demos open overlays, lock scrolling or take the whole viewport. Keep those effects inside a frame.
 const FRAMED = new Set(["alert-dialog", "combobox", "command", "context-menu", "date-picker", "dialog", "drawer", "dropdown-menu", "hover-card", "menubar", "navigation-menu", "popover", "select", "sheet", "sidebar", "sonner", "toast", "tooltip"]);
-export const needsPreviewFrame = (item: Pick<Item, "name">) => FRAMED.has(item.name);
+// Pages, blocks and app shells are full-width layouts with their own breakpoints: they render in a frame too.
+export const needsPreviewFrame = (item: Pick<Item, "name" | "type">) => FRAMED.has(item.name) || item.type === "site" || item.type === "block" || item.type === "product";

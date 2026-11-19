@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { fontFacts } from '../image/fonts.js';
+import { fontFacts } from './fonts.js';
 import { brand, tokens } from '../lib/brand.js';
 import { suggest } from '../lib/names.js';
 import { pkgPath } from '../lib/paths.js';

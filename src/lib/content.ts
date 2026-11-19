@@ -1,65 +1,33 @@
 import { readFileSync } from 'node:fs';
-import { z } from 'zod';
+import { isAbsolute, resolve } from 'node:path';
+import { suggest } from '../assets/io.js';
 
-const imageContentSchema = z.strictObject({
-	template: z.string().optional(),
-	size: z.string().optional(),
-	ground: z.string().optional(),
-	headline: z.string().optional(),
-	subtext: z.string().optional(),
-	eyebrow: z.string().optional(),
-	quote: z.string().optional(),
-	attribution: z.string().optional(),
-	image: z.string().optional(),
-	out: z.string().optional(),
-	export: z.string().optional(),
-});
+// The `--content` file the asset commands read: a JSON object whose keys are the command's own flags (camelCase or
+// kebab-case). Flags win over the file. Unknown keys and values that are not text, numbers or true/false fail instead
+// of being ignored, with the closest key named.
 
-const videoContentSchema = z.strictObject({
-	template: z.string().optional(),
-	size: z.string().optional(),
-	ground: z.string().optional(),
-	headline: z.string().optional(),
-	subtext: z.string().optional(),
-	eyebrow: z.string().optional(),
-	out: z.string().optional(),
-});
+const camel = (k: string) => k.replace(/-([a-z])/g, (_m, c: string) => c.toUpperCase());
 
-export type ImageContent = z.infer<typeof imageContentSchema>;
-export type VideoContent = z.infer<typeof videoContentSchema>;
-
-function issueText(issue: { path: PropertyKey[]; message: string; code: string; keys?: string[] }): string {
-	if (issue.code === 'unrecognized_keys') {
-		const keys = issue.keys?.length ? issue.keys.map((key) => `"${key}"`).join(', ') : 'an unknown field';
-		return `unknown field ${keys}`;
-	}
-	const path = issue.path.map(String).filter(Boolean).join('.');
-	return path ? `${path} ${issue.message}` : issue.message;
-}
-
-function parseFile<T>(path: string | undefined, schema: z.ZodType<T>, label: string): T {
-	if (!path) return {} as T;
+export function readContent(path: string | undefined, keys: string[], cwd = process.cwd()): Record<string, string | number | boolean> {
+	if (!path) return {};
+	const file = isAbsolute(path) ? path : resolve(cwd, path);
 	let raw: unknown;
 	try {
-		raw = JSON.parse(readFileSync(path, 'utf8'));
+		raw = JSON.parse(readFileSync(file, 'utf8'));
 	} catch (error) {
-		throw new Error(`Could not read ${label} ${path}: ${(error as Error).message}`);
+		throw new Error(`Could not read --content ${path}: ${(error as Error).message}`);
 	}
-	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error(`${label} must be a JSON object.`);
-	const parsed = schema.safeParse(raw);
-	if (!parsed.success) {
-		const detail = parsed.error.issues.map((issue) => issueText(issue as { path: PropertyKey[]; message: string; code: string; keys?: string[] })).join('; ');
-		throw new Error(`${label} ${detail}.`);
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('--content must be a JSON object.');
+	const allowed = new Set(keys.map(camel));
+	const out: Record<string, string | number | boolean> = {};
+	for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+		const key = camel(k);
+		if (!allowed.has(key)) {
+			const near = suggest(k, [...allowed]);
+			throw new Error(`--content has an unknown field "${k}".${near.length ? ` Did you mean ${near.map((n) => `"${n}"`).join(' or ')}?` : ''} Fields: ${[...allowed].join(', ')}.`);
+		}
+		if (typeof v !== 'string' && typeof v !== 'number' && typeof v !== 'boolean') throw new Error(`--content "${k}" must be text, a number or true/false.`);
+		out[key] = v;
 	}
-	return parsed.data;
-}
-
-/** Image `--content` file. Unknown keys and non-strings fail instead of being ignored. */
-export function readImageContent(path: string | undefined): ImageContent {
-	return parseFile(path, imageContentSchema, '--content');
-}
-
-/** Video `--content` file. Unknown keys and non-strings fail instead of being ignored. */
-export function readVideoContent(path: string | undefined): VideoContent {
-	return parseFile(path, videoContentSchema, '--content');
+	return out;
 }

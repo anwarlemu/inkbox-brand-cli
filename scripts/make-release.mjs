@@ -15,26 +15,23 @@ for (const p of ['bin.js', 'build', 'brand', 'README.md']) cpSync(join(root, p),
 // The hosted shadcn manifests duplicate source; native installs need only the bundled registry.
 cpSync(join(root, 'apps', 'www', 'public', 'r'), join(out, 'r'), { recursive: true, filter: source => !/[\\/]shadcn(?:-product)?(?:[\\/]|$)/.test(source) });
 // The code and its dependencies in one file, so installing the release fetches almost nothing. playwright-core
-// (screenshots for review) stays a package: it is large and loads its own files.
+// (screenshots for review) stays a package: it is large and loads its own files. @napi-rs/canvas (the asset commands'
+// Skia canvas) is native, so it stays a package too. dist/assets/index.js is the renderer as a module for scripts.
 await build({
-	entryPoints: [join(root, 'dist', 'cli.js')],
-	outfile: join(out, 'dist', 'cli.js'),
+	entryPoints: { cli: join(root, 'dist', 'cli.js'), 'assets/index': join(root, 'dist', 'assets', 'index.js') },
+	outdir: join(out, 'dist'),
 	bundle: true,
 	platform: 'node',
 	format: 'esm',
 	target: 'node20',
 	// Babel's optional external config loader is disabled by configFile:false and babelrc:false.
-	external: ['playwright-core', '@babel/preset-typescript'],
+	external: ['playwright-core', '@babel/preset-typescript', '@napi-rs/canvas'],
 	banner: { js: "import { createRequire as __ds_require } from 'node:module'; const require = __ds_require(import.meta.url);" },
 	logLevel: 'warning',
 });
-// The image renderer initializes this wasm at runtime. The bundle has no node_modules, so the file sits beside it.
-const { createRequire } = await import('node:module');
-const require = createRequire(join(root, 'package.json'));
-cpSync(require.resolve('@resvg/resvg-wasm/index_bg.wasm'), join(out, 'dist', 'resvg.wasm'));
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 delete pkg.devDependencies;
-delete pkg.dependencies;
+pkg.dependencies = { '@napi-rs/canvas': pkg.dependencies['@napi-rs/canvas'] };
 delete pkg.workspaces;
 pkg.scripts = {};
 writeFileSync(join(out, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);

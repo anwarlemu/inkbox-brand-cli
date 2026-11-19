@@ -33,7 +33,7 @@
     "@babel/core": "7.29.7",
     "@babel/parser": "^7.29.9",
     "@babel/plugin-transform-typescript": "7.29.9",
-    "@resvg/resvg-wasm": "^2.6.2",
+    "@napi-rs/canvas": "^1.1.0",
     "commander": "^15.0.0",
     "diff": "^8.0.2",
     "fontkit": "^2.0.4",

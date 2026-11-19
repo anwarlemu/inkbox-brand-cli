@@ -31,7 +31,7 @@ function cachedChromium(): string | undefined {
 	return undefined;
 }
 
-async function launch() {
+export async function launch() {
 	const { chromium } = await import('playwright-core').catch(() => {
 		throw new Error('playwright-core is not installed. Run: npm i -D playwright-core && npx playwright install chromium');
 	});

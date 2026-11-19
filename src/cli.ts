@@ -9,7 +9,7 @@ import { approve, check, done, look, skip, tokensCommand } from './commands/smal
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
 import { registerDiscover } from './commands/discover.js';
-import { registerImage } from './commands/image.js';
+import { assets, rejectUnknownCommand } from './commands/assets.js';
 import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
 
@@ -73,8 +73,9 @@ program
 	});
 
 workflow(program);
-registerImage(program);
+assets(program);
 registerDiscover(program);
+rejectUnknownCommand(program, process.argv.slice(2));
 
 program.parseAsync().catch((error: Error & { exitCode?: number; code?: string }) => {
 	if (error.exitCode === 0 || error.code === 'commander.helpDisplayed' || error.code === 'commander.version') process.exit(error.exitCode ?? 0);

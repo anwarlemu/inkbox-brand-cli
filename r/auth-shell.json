@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "name": "auth-shell",
+  "useFor": "Use for sign in and sign up. Wire onSubmit to your auth; pass providers you support (label and icon, no third-party logo files from this library) and the reef as art if you have it.",
+  "constraints": [
+    "Card or shadow around the form",
+    "A dark page",
+    "Social buttons in brand colors"
+  ],
+  "documentation": "",
+  "source": "Console components/auth (AuthLayout.tsx, auth-screen.tsx, LoginForm.tsx, AuthFooter.tsx); brand/reference/site-login-desktop.jpg",
+  "exports": [
+    "AuthProvider",
+    "AuthShell"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/auth-shell",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/auth-shell.md",
+  "examples": [
+    {
+      "path": "examples/auth-shell.tsx",
+      "content": "import { KeyIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { AuthShell } from \"@/components/product/auth-shell\";\n\nexport function Preview() {\n  return <AuthShell providers={[{ label: \"Continue with single sign-on\", icon: <KeyIcon weight=\"fill\" />, href: \"/sso\" }]} />;\n}\n\nexport function WithArt() {\n  return (\n    <AuthShell\n      providers={[{ label: \"Continue with single sign-on\", icon: <KeyIcon weight=\"fill\" />, href: \"/sso\" }]}\n      // eslint-disable-next-line @next/next/no-img-element\n      art={<img src=\"/octopus.png\" alt=\"\" width={160} height={142} className=\"mx-auto mb-6 h-auto w-32 opacity-80\" />}\n    />\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "WithArt"
+      ],
+      "requires": [
+        "auth-shell"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/auth-shell/Preview"
+        },
+        {
+          "name": "WithArt",
+          "url": "https://inkbox-ds.vercel.app/preview/auth-shell/WithArt"
+        }
+      ]
+    }
+  ],
+  "type": "product",
+  "title": "Auth shell",
+  "description": "The console's sign-in screen: the lockup, Login and Sign up tabs, email and password, the purple pill, other ways in and the legal links.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "lockup",
+    "button",
+    "field",
+    "input",
+    "tabs"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/product/auth-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { EyeIcon, EyeSlashIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Lockup } from \"@/components/site/lockup\";\nimport { Button } from \"@/components/ui/button\";\nimport { Field, FieldGroup, FieldLabel, FieldSeparator } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\nimport { Tabs, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\n\nexport type AuthProvider = { label: string; icon?: React.ReactNode; href: string };\n\n/**\n * The console's sign-in screen: the lockup centered over a 420px column on the white page, Login and Sign up tabs\n * sharing the track, the email and password fields (Forgot password? at the right of the label, a show-password\n * button in the field), the purple pill, \"or\", the other ways in as lilac pills, then the legal links. `art` draws\n * under the column (the reef). The form only calls `onSubmit`: wire it to your auth.\n */\nfunction AuthShell({ markSrc, providers = [], art, legal = [{ label: \"Privacy Policy\", href: \"/legal/privacy\" }, { label: \"Terms of Service\", href: \"/legal/terms\" }], onSubmit }: { markSrc?: string; providers?: AuthProvider[]; art?: React.ReactNode; legal?: { label: string; href: string }[]; onSubmit?: (values: { mode: \"login\" | \"signup\"; email: string; password: string }) => void }) {\n  const [mode, setMode] = React.useState<\"login\" | \"signup\">(\"login\");\n  const [show, setShow] = React.useState(false);\n  return (\n    <div data-slot=\"auth-shell\" className=\"relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-page px-2 py-4 font-sans text-fg\">\n      <div className=\"relative z-1 w-full max-w-105 px-4\">\n        <div className=\"mb-4 flex justify-center\">\n          <a href=\"/\" className=\"rounded-sm px-4 py-2 outline-none transition-colors duration-150 ease-out hover:bg-wash-hover focus-visible:shadow-focus motion-reduce:transition-none\">\n            <Lockup markSrc={markSrc} size=\"lg\" />\n          </a>\n        </div>\n        <Tabs value={mode} onValueChange={(v) => setMode(v as \"login\" | \"signup\")} className=\"mb-4\">\n          <TabsList full>\n            <TabsTrigger value=\"login\">Login</TabsTrigger>\n            <TabsTrigger value=\"signup\">Sign up</TabsTrigger>\n          </TabsList>\n        </Tabs>\n        <form\n          className=\"grid gap-5\"\n          onSubmit={(e) => {\n            e.preventDefault();\n            const data = new FormData(e.currentTarget);\n            onSubmit?.({ mode, email: String(data.get(\"email\") ?? \"\"), password: String(data.get(\"password\") ?? \"\") });\n          }}\n        >\n          <FieldGroup className=\"gap-4\">\n            <Field>\n              <FieldLabel htmlFor=\"auth-email\">Email address</FieldLabel>\n              <Input id=\"auth-email\" name=\"email\" type=\"email\" autoComplete=\"email\" placeholder=\"your@email.com\" required />\n            </Field>\n            <Field>\n              <div className=\"flex items-center justify-between gap-3\">\n                <FieldLabel htmlFor=\"auth-password\">Password</FieldLabel>\n                {mode === \"login\" && (\n                  <a href=\"/forgot-password\" className=\"text-body text-fg-brand underline-offset-4 outline-none hover:underline focus-visible:underline\">\n                    Forgot password?\n                  </a>\n                )}\n              </div>\n              <div className=\"relative\">\n                <Input id=\"auth-password\" name=\"password\" type={show ? \"text\" : \"password\"} autoComplete={mode === \"login\" ? \"current-password\" : \"new-password\"} placeholder=\"••••••••\" required className=\"pr-10\" />\n                <Button type=\"button\" variant=\"ghost\" size=\"icon\" aria-label={show ? \"Hide password\" : \"Show password\"} onClick={() => setShow((s) => !s)} className=\"absolute top-1/2 right-1 -translate-y-1/2\">\n                  {show ? <EyeSlashIcon weight=\"fill\" /> : <EyeIcon weight=\"fill\" />}\n                </Button>\n              </div>\n            </Field>\n          </FieldGroup>\n          <Button type=\"submit\" className=\"w-full\">\n            {mode === \"login\" ? \"Log in\" : \"Create account\"}\n          </Button>\n          {providers.length > 0 && (\n            <>\n              <FieldSeparator>or</FieldSeparator>\n              <div className=\"grid gap-2.5\">\n                {providers.map((p) => (\n                  <Button key={p.label} asChild variant=\"secondary\" className=\"w-full\">\n                    <a href={p.href}>\n                      {p.icon}\n                      {p.label}\n                    </a>\n                  </Button>\n                ))}\n              </div>\n            </>\n          )}\n          <div className=\"grid gap-3 border-t border-line-subtle pt-4 text-center text-caption leading-relaxed text-fg-secondary\">\n            <p>\n              {mode === \"signup\" ? \"By signing up, you agree to our \" : \"\"}\n              {legal.map((l, i) => (\n                <React.Fragment key={l.href}>\n                  {i > 0 && (mode === \"signup\" ? \" and \" : \" • \")}\n                  <a href={l.href} className=\"text-fg-brand underline underline-offset-2 outline-none focus-visible:shadow-focus\">\n                    {l.label}\n                  </a>\n                </React.Fragment>\n              ))}\n            </p>\n          </div>\n        </form>\n      </div>\n      {art && <div aria-hidden className=\"pointer-events-none absolute inset-x-0 bottom-0\">{art}</div>}\n    </div>\n  );\n}\n\nexport { AuthShell };\n"
+    }
+  ]
+}

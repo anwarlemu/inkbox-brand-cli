@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "tabs",
+  "useFor": "Use to switch between views of the same thing on a page (Mailboxes, Contact rules, Custom domains). The track is as wide as its tabs and wraps when it runs out of room. Pass full to TabsList for two equal choices that fill a form's width (Login, Sign up).",
+  "constraints": [
+    "Underlined tabs",
+    "A purple selected tab",
+    "Bold or medium tab labels",
+    "A key that animates on first paint or on resize"
+  ],
+  "documentation": "",
+  "source": "Console src/components/ui/tabs.tsx and the Tabs theme (segmented, the sliding key)",
+  "exports": [
+    "Tabs",
+    "TabsList",
+    "TabsTrigger",
+    "TabsContent"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/tabs",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/tabs.md",
+  "examples": [
+    {
+      "path": "examples/tabs.tsx",
+      "content": "\"use client\";\n\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\n\nexport function Preview() {\n  return (\n    <Tabs defaultValue=\"mailboxes\" className=\"w-full\">\n      <TabsList>\n        <TabsTrigger value=\"mailboxes\">Mailboxes</TabsTrigger>\n        <TabsTrigger value=\"rules\">Contact rules</TabsTrigger>\n        <TabsTrigger value=\"domains\">Custom domains</TabsTrigger>\n      </TabsList>\n      <TabsContent value=\"mailboxes\" className=\"text-body text-fg-muted\">Manage mailboxes for your organization.</TabsContent>\n      <TabsContent value=\"rules\" className=\"text-body text-fg-muted\">Allow or block who can reach each agent.</TabsContent>\n      <TabsContent value=\"domains\" className=\"text-body text-fg-muted\">Send and receive from your own domain.</TabsContent>\n    </Tabs>\n  );\n}\n\nexport function Full() {\n  return (\n    <Tabs defaultValue=\"login\" className=\"w-full max-w-86\">\n      <TabsList full>\n        <TabsTrigger value=\"login\">Login</TabsTrigger>\n        <TabsTrigger value=\"signup\">Sign up</TabsTrigger>\n      </TabsList>\n    </Tabs>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Full"
+      ],
+      "requires": [
+        "tabs"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/tabs/Preview"
+        },
+        {
+          "name": "Full",
+          "url": "https://inkbox-ds.vercel.app/preview/tabs/Full"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tabs",
+  "description": "A lilac track of 13px regular labels; a white key with Shadow/S slides under the selected tab.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tabs.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Tabs as ChakraTabs, useTabsContext } from \"@chakra-ui/react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's segmented tabs (src/components/ui/tabs.tsx and the Tabs theme): a lilac track with 4px of inset and\n// 4px between tabs, corners concentric with the tabs (20px), wrapping when it runs out of room. Each tab is 32px tall\n// with 12px sides and a 13px regular label in the secondary purple; hover turns the label brand purple, the selected\n// tab is ink. A white key with Shadow/S sits under the selected tab and slides to the next one (transform, width and\n// height over 160ms, ease-out). It is placed without motion the first time and whenever the track resizes, and never\n// moves under reduced motion. `full` stretches the tabs to share the track (Login, Sign up).\ntype TabsProps = Omit<React.ComponentProps<typeof ChakraTabs.Root>, \"onValueChange\"> & { onValueChange?: (value: string) => void };\nfunction Tabs({ className, onValueChange, ...props }: TabsProps) {\n  return <ChakraTabs.Root unstyled data-slot=\"tabs\" className={cn(\"flex flex-col gap-4\", className)} onValueChange={(details) => onValueChange?.(details.value)} {...props} />;\n}\n\nconst KEY_MOVE = [\"transform\", \"width\", \"height\"].map((property) => `${property} var(--ds-duration-slow) var(--ds-easing-out)`).join(\", \");\n\n/** Puts the key under the selected tab. It slides only once it has been placed, and never under reduced motion. */\nfunction placeKey(box: HTMLElement | null, key: HTMLElement | null, animate: boolean) {\n  if (!box || !key) return;\n  const tab = box.querySelector<HTMLElement>('[role=\"tab\"][aria-selected=\"true\"]');\n  if (!tab?.offsetWidth) {\n    key.style.visibility = \"hidden\";\n    delete box.dataset.sliding;\n    return;\n  }\n  const still = typeof window !== \"undefined\" && window.matchMedia?.(\"(prefers-reduced-motion: reduce)\").matches;\n  key.style.transition = animate && !still && \"sliding\" in box.dataset ? KEY_MOVE : \"none\";\n  key.style.width = `${tab.offsetWidth}px`;\n  key.style.height = `${tab.offsetHeight}px`;\n  key.style.transform = `translate(${tab.offsetLeft}px, ${tab.offsetTop}px)`;\n  key.style.visibility = \"visible\";\n  box.dataset.sliding = \"\";\n}\n\nfunction TabsList({ className, full = false, children, ref, ...props }: React.ComponentProps<typeof ChakraTabs.List> & { full?: boolean }) {\n  const { value } = useTabsContext();\n  const list = React.useRef<HTMLDivElement | null>(null);\n  const key = React.useRef<HTMLSpanElement>(null);\n  const setRef = React.useCallback(\n    (node: HTMLDivElement | null) => {\n      list.current = node;\n      if (typeof ref === \"function\") ref(node);\n      else if (ref) ref.current = node;\n    },\n    [ref],\n  );\n\n  React.useLayoutEffect(() => placeKey(list.current, key.current, true), [value]);\n  React.useLayoutEffect(() => {\n    const box = list.current;\n    if (!box || typeof ResizeObserver === \"undefined\") return;\n    const observer = new ResizeObserver(() => placeKey(box, key.current, false));\n    observer.observe(box);\n    return () => observer.disconnect();\n  }, []);\n\n  return (\n    <ChakraTabs.List\n      ref={setRef}\n      data-slot=\"tabs-list\"\n      data-full={full ? \"true\" : undefined}\n      className={cn(\n        \"relative inline-flex w-fit max-w-full flex-wrap items-center gap-1 rounded-[calc(var(--ds-radius-panel)+var(--ds-space-1))] bg-subtle p-1 in-[[role=dialog]]:-ms-1\",\n        full && \"flex w-full\",\n        className,\n      )}\n      {...props}\n    >\n      <span ref={key} aria-hidden data-slot=\"tabs-key\" className=\"pointer-events-none invisible absolute top-0 left-0 rounded-pill bg-surface shadow-s\" />\n      {children}\n    </ChakraTabs.List>\n  );\n}\n\nfunction TabsTrigger({ className, ...props }: React.ComponentProps<typeof ChakraTabs.Trigger>) {\n  return (\n    <ChakraTabs.Trigger\n      data-slot=\"tabs-trigger\"\n      className={cn(\n        \"relative z-1 inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-pill bg-transparent px-3 font-sans text-body-sm leading-none font-normal whitespace-nowrap text-fg-secondary outline-none transition-[background-color,box-shadow,color] duration-fast ease-out hover:text-fg-brand active:text-fg focus-visible:shadow-focus disabled:pointer-events-none disabled:text-fg-muted data-[selected]:bg-surface data-[selected]:text-fg data-[selected]:shadow-s data-[selected]:hover:text-fg data-[selected]:focus-visible:shadow-focus in-data-[sliding]:data-[selected]:bg-transparent in-data-[sliding]:data-[selected]:shadow-none in-data-[sliding]:data-[selected]:focus-visible:shadow-focus motion-reduce:transition-none in-data-[full=true]:flex-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TabsContent({ className, ...props }: React.ComponentProps<typeof ChakraTabs.Content>) {\n  return <ChakraTabs.Content data-slot=\"tabs-content\" className={cn(\"min-w-0 rounded-xs outline-none focus-visible:shadow-focus\", className)} {...props} />;\n}\n\nexport { Tabs, TabsList, TabsTrigger, TabsContent };\n"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "feature-grid",
+  "useFor": "Use for a product's channels or capabilities. One filled Phosphor glyph per card (regular for line-only glyphs such as Webhooks); pass href to make the whole card a link.",
+  "constraints": [
+    "Colored icon tiles",
+    "More than one glyph per card",
+    "Paragraphs longer than two lines"
+  ],
+  "documentation": "",
+  "source": "Console webhooks event catalog fact cards (Trigger, Delivery, Response contract)",
+  "exports": [
+    "Feature",
+    "FeatureGrid"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/feature-grid",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/feature-grid.md",
+  "examples": [
+    {
+      "path": "examples/feature-grid.tsx",
+      "content": "import { ArrowsLeftRightIcon, EnvelopeSimpleIcon, PhoneIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { FeatureGrid } from \"@/components/blocks/feature-grid\";\n\nexport function Preview() {\n  return (\n    <FeatureGrid\n      label=\"Channels\"\n      title=\"One identity, every way to reach it\"\n      features={[\n        { icon: <EnvelopeSimpleIcon weight=\"fill\" />, title: \"Email\", description: \"Every agent gets an inbox of its own.\" },\n        { icon: <PhoneIcon weight=\"fill\" />, title: \"Phone\", description: \"A dedicated number for calls and texts.\" },\n        { icon: <ArrowsLeftRightIcon weight=\"regular\" />, title: \"Agent2Agent\", description: \"Delegate work to any agent over A2A.\", href: \"#a2a\" },\n      ]}\n    />\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "feature-grid"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/feature-grid/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Feature grid",
+  "description": "Features as the console's fact cards: a filled glyph-led title and a muted line, two to four across.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "card",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/feature-grid.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { Card, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { cn } from \"@/lib/utils\";\n\nexport type Feature = { icon?: React.ReactNode; title: string; description: string; href?: string };\n\n/**\n * Features as the console's fact cards (Trigger, Delivery, Response contract): a filled glyph-led 14px title and a\n * muted line on a white card with the field edge, two to four across.\n */\nfunction FeatureGrid({ label, title, description, features, columns = 3, className }: { label?: string; title?: React.ReactNode; description?: React.ReactNode; features: Feature[]; columns?: 2 | 3 | 4; className?: string }) {\n  return (\n    <section data-slot=\"feature-grid\" className={cn(\"mx-auto grid max-w-(--ds-layout-column) gap-8 px-6 py-16\", className)}>\n      {title && <SectionHead label={label} title={title} description={description} />}\n      <ul className={cn(\"grid gap-4 sm:grid-cols-2\", columns === 3 && \"lg:grid-cols-3\", columns === 4 && \"lg:grid-cols-4\")}>\n        {features.map((f) => (\n          <li key={f.title} className=\"grid\">\n            <Card className={cn(\"relative\", f.href && \"transition-colors duration-150 ease-out hover:bg-subtle motion-reduce:transition-none\")}>\n              <CardHeader>\n                <CardTitle>\n                  {f.icon}\n                  {f.href ? (\n                    <a href={f.href} className=\"outline-none after:absolute after:inset-0 focus-visible:underline\">\n                      {f.title}\n                    </a>\n                  ) : (\n                    f.title\n                  )}\n                </CardTitle>\n                <CardDescription>{f.description}</CardDescription>\n              </CardHeader>\n            </Card>\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n\nexport { FeatureGrid };\n"
+    }
+  ]
+}

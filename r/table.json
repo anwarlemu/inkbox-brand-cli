@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "name": "table",
+  "useFor": "Use for rows of records people scan and act on (mailboxes, agents and lines, webhooks). Put labels in TableHeader, rows in TableBody, totals in a TableFooter and Pagination with bar under the table; row actions are ghost icon buttons in the last cell. Pass variant open for a list that sits on its own (a clear head and rows that wash on hover). Keep cells to one line; truncate long values.",
+  "constraints": [
+    "Zebra striping",
+    "Vertical rules between cells",
+    "A dark or purple head row",
+    "Bold cell text"
+  ],
+  "documentation": "",
+  "source": "Console src/components/table/PaginatedTable.tsx (TABLE_SX and the open table)",
+  "exports": [
+    "Table",
+    "TableBody",
+    "TableCaption",
+    "TableCell",
+    "TableFooter",
+    "TableHead",
+    "TableHeader",
+    "TableRow"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/table",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/table.md",
+  "examples": [
+    {
+      "path": "examples/table.tsx",
+      "content": "import { ArrowsClockwiseIcon, PencilSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from \"@/components/ui/pagination\";\nimport { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";\n\nconst MAILBOXES = [\n  { address: \"acme@inkboxmail.com\", agent: \"@acme\", webhooks: \"None\", storage: \"0%\", created: \"Jul 27, 2026\" },\n  { address: \"support@inkboxmail.com\", agent: \"@support-desk\", webhooks: \"2\", storage: \"4%\", created: \"Jul 29, 2026\" },\n  { address: \"ops@inkboxmail.com\", agent: \"@ops-runner\", webhooks: \"1\", storage: \"12%\", created: \"Aug 2, 2026\" },\n];\n\nexport function Preview() {\n  return (\n    <div className=\"grid gap-0\">\n      <Table>\n        <TableHeader>\n          <TableRow>\n            <TableHead>Email address</TableHead>\n            <TableHead>Agent</TableHead>\n            <TableHead>Webhooks</TableHead>\n            <TableHead>Storage</TableHead>\n            <TableHead>Created</TableHead>\n            <TableHead className=\"w-12 text-right\">\n              <Button variant=\"ghost\" size=\"icon\" aria-label=\"Refresh mailboxes\">\n                <ArrowsClockwiseIcon />\n              </Button>\n            </TableHead>\n          </TableRow>\n        </TableHeader>\n        <TableBody>\n          {MAILBOXES.map((m) => (\n            <TableRow key={m.address}>\n              <TableCell>{m.address}</TableCell>\n              <TableCell className=\"text-rose\">{m.agent}</TableCell>\n              <TableCell>{m.webhooks}</TableCell>\n              <TableCell>{m.storage}</TableCell>\n              <TableCell>{m.created}</TableCell>\n              <TableCell className=\"text-right\">\n                <Button variant=\"ghost\" size=\"icon\" aria-label={`Edit ${m.address}`}>\n                  <PencilSimpleIcon weight=\"fill\" />\n                </Button>\n              </TableCell>\n            </TableRow>\n          ))}\n        </TableBody>\n      </Table>\n      <Pagination bar className=\"mt-1\">\n        <PaginationContent>\n          <PaginationItem>\n            <PaginationPrevious href=\"#\" aria-disabled />\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationLink href=\"#\" isActive>\n              1\n            </PaginationLink>\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationLink href=\"#\">2</PaginationLink>\n          </PaginationItem>\n          <PaginationItem>\n            <PaginationNext href=\"#\" />\n          </PaginationItem>\n        </PaginationContent>\n      </Pagination>\n    </div>\n  );\n}\n\nexport function WithFooter() {\n  return (\n    <Table>\n      <TableCaption>Usage this billing period.</TableCaption>\n      <TableHeader>\n        <TableRow>\n          <TableHead>Channel</TableHead>\n          <TableHead>Messages</TableHead>\n          <TableHead className=\"text-right\">Cost</TableHead>\n        </TableRow>\n      </TableHeader>\n      <TableBody>\n        <TableRow>\n          <TableCell>Email</TableCell>\n          <TableCell>1,204</TableCell>\n          <TableCell className=\"text-right\">$12.04</TableCell>\n        </TableRow>\n        <TableRow data-state=\"selected\">\n          <TableCell>Phone</TableCell>\n          <TableCell>86</TableCell>\n          <TableCell className=\"text-right\">$4.30</TableCell>\n        </TableRow>\n        <TableRow>\n          <TableCell>iMessage</TableCell>\n          <TableCell>412</TableCell>\n          <TableCell className=\"text-right\">$8.24</TableCell>\n        </TableRow>\n      </TableBody>\n      <TableFooter>\n        <TableRow>\n          <TableCell colSpan={2}>Total</TableCell>\n          <TableCell className=\"text-right\">$24.58</TableCell>\n        </TableRow>\n      </TableFooter>\n    </Table>\n  );\n}\n\n/** The console's borderless list table: a clear head over the row line, rows that wash on hover. */\nexport function Open() {\n  return (\n    <Table variant=\"open\">\n      <TableHeader>\n        <TableRow>\n          <TableHead>Email address</TableHead>\n          <TableHead>Agent</TableHead>\n          <TableHead className=\"text-right\">Created</TableHead>\n        </TableRow>\n      </TableHeader>\n      <TableBody>\n        {MAILBOXES.map((m, i) => (\n          <TableRow key={m.address} data-state={i === 1 ? \"selected\" : undefined}>\n            <TableCell>{m.address}</TableCell>\n            <TableCell className=\"text-rose\">{m.agent}</TableCell>\n            <TableCell className=\"text-right\">{m.created}</TableCell>\n          </TableRow>\n        ))}\n      </TableBody>\n    </Table>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "WithFooter",
+        "Open"
+      ],
+      "requires": [
+        "table",
+        "button",
+        "pagination"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/table/Preview"
+        },
+        {
+          "name": "WithFooter",
+          "url": "https://inkbox-ds.vercel.app/preview/table/WithFooter"
+        },
+        {
+          "name": "Open",
+          "url": "https://inkbox-ds.vercel.app/preview/table/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Table",
+  "description": "The console's table: a lilac head with muted labels, then a white body outlined by the ring line with 12px corners and 64px rows; or the borderless open list table.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/table.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The console's table (PaginatedTable's TABLE_SX). A 48px lilac head with 14px regular muted labels and pill-round\n// ends (16px), an 8px gap, then the white body: 64px rows of 14px ink ruled by the row line, outlined by the 1px ring\n// line with 12px outer corners and a soft drop under the last row. A row under the pointer or selected fills the lilac\n// (the fill eases over 100ms). Cells keep 16px sides; the table scrolls sideways inside its frame on a narrow screen.\n// `open` is the console's borderless list table: a 40px clear head over the row line, rows 2px apart with 12px\n// corners, filled with 70% of the lilac under the pointer or when selected.\nconst OPEN =\n  \"data-[variant=open]:border-spacing-y-0.5 data-[variant=open]:[&>thead]:after:hidden data-[variant=open]:[&>thead>tr>th]:h-10 data-[variant=open]:[&>thead>tr>th]:rounded-none data-[variant=open]:[&>thead>tr>th]:border-b data-[variant=open]:[&>thead>tr>th]:border-line-row data-[variant=open]:[&>thead>tr>th]:bg-transparent data-[variant=open]:[&>tbody>tr>td]:rounded-none data-[variant=open]:[&>tbody>tr>td]:border-0 data-[variant=open]:[&>tbody>tr>td]:bg-transparent data-[variant=open]:[&>tbody>tr>td:first-child]:rounded-l-control data-[variant=open]:[&>tbody>tr>td:last-child]:rounded-r-control data-[variant=open]:[&>tbody>tr:last-child]:shadow-none data-[variant=open]:[&>tbody>tr:last-child]:[clip-path:none] data-[variant=open]:[&>tbody>tr:not([data-empty]):hover>td]:bg-subtle/70 data-[variant=open]:[&>tbody>tr[data-state=selected]>td]:bg-subtle/70\";\n\nfunction Table({ className, variant = \"default\", ...props }: React.ComponentProps<\"table\"> & { variant?: \"default\" | \"open\" }) {\n  return (\n    <div data-slot=\"table-container\" className=\"relative w-full overflow-x-auto px-px pt-px pb-1\">\n      <table data-slot=\"table\" data-variant={variant} className={cn(\"w-full caption-bottom border-separate border-spacing-0 font-sans text-body leading-tight text-fg\", OPEN, className)} {...props} />\n    </div>\n  );\n}\n\nfunction TableHeader({ className, ...props }: React.ComponentProps<\"thead\">) {\n  return (\n    <thead\n      data-slot=\"table-header\"\n      className={cn(\n        \"after:table-row after:h-2 after:content-[''] [&>tr>th]:bg-subtle [&>tr>th:first-child]:rounded-l-panel [&>tr>th:last-child]:rounded-r-panel\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableBody({ className, ...props }: React.ComponentProps<\"tbody\">) {\n  return (\n    <tbody\n      data-slot=\"table-body\"\n      className={cn(\n        \"[&>tr>td]:bg-surface [&>tr:not(:last-child)>td]:border-b [&>tr:not(:last-child)>td]:border-b-line-row [&>tr>td:first-child]:border-l [&>tr>td:first-child]:border-l-line-ring [&>tr>td:last-child]:border-r [&>tr>td:last-child]:border-r-line-ring [&>tr:first-child>td]:border-t [&>tr:first-child>td]:border-t-line-ring [&>tr:first-child>td:first-child]:rounded-tl-control [&>tr:first-child>td:last-child]:rounded-tr-control [&>tr:last-child>td]:border-b [&>tr:last-child>td]:border-b-line-ring [&>tr:last-child]:shadow-[0_2px_4px_-1px_var(--ds-color-shadow-drop)] [&>tr:last-child]:[clip-path:inset(0_calc(var(--ds-space-2)*-1)_calc(var(--ds-space-2)*-1)_calc(var(--ds-space-2)*-1)_round_0_0_var(--ds-radius-control)_var(--ds-radius-control))] [&>tr:last-child>td:first-child]:rounded-bl-control [&>tr:last-child>td:last-child]:rounded-br-control\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableFooter({ className, ...props }: React.ComponentProps<\"tfoot\">) {\n  return (\n    <tfoot\n      data-slot=\"table-footer\"\n      className={cn(\n        \"before:table-row before:h-2 before:content-[''] [&>tr>td]:h-10.5 [&>tr>td]:bg-subtle [&>tr>td]:font-medium [&>tr>td:first-child]:rounded-l-panel [&>tr>td:last-child]:rounded-r-panel [&>tr>th]:bg-subtle\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableRow({ className, ...props }: React.ComponentProps<\"tr\">) {\n  return (\n    <tr\n      data-slot=\"table-row\"\n      className={cn(\"[&:not([data-empty]):hover>td]:bg-subtle data-[state=selected]:[&>td]:bg-subtle\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableHead({ className, ...props }: React.ComponentProps<\"th\">) {\n  return (\n    <th\n      data-slot=\"table-head\"\n      className={cn(\"h-12 px-4 text-left align-middle text-body leading-tight font-normal whitespace-nowrap text-fg-muted [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pr-0\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableCell({ className, ...props }: React.ComponentProps<\"td\">) {\n  return (\n    <td\n      data-slot=\"table-cell\"\n      className={cn(\"h-16 px-4 align-middle whitespace-nowrap transition-[background-color] duration-fast ease-out motion-reduce:transition-none [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pr-0\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableCaption({ className, ...props }: React.ComponentProps<\"caption\">) {\n  return <caption data-slot=\"table-caption\" className={cn(\"mt-3 text-body-sm leading-body text-fg-muted\", className)} {...props} />;\n}\n\nexport { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };\n"
+    }
+  ]
+}

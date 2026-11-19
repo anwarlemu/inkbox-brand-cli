@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "blog-index-page",
+  "useFor": "Start a blog index from it; pass posts with their dates and tags.",
+  "constraints": [
+    "Cover images on some posts but not others"
+  ],
+  "documentation": "",
+  "source": "Post copy from the brand share images' feature and changelog occasions",
+  "exports": [
+    "Post",
+    "POSTS",
+    "BlogIndexPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/blog-index-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/blog-index-page.md",
+  "examples": [
+    {
+      "path": "examples/blog-index-page.tsx",
+      "content": "import { BlogIndexPage } from \"@/components/site/blog-index-page\";\n\nexport function Preview() {\n  return <BlogIndexPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "blog-index-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/blog-index-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Blog index page",
+  "description": "The blog index template: a heading, the newest post wide, the rest as cards.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "site-layout",
+    "badge",
+    "card"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/blog-index-page.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Card, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";\n\nexport type Post = { title: string; excerpt: string; href: string; date: string; tag?: string; author?: string };\n\nexport const POSTS: Post[] = [\n  { title: \"Agents can now talk to each other\", excerpt: \"Agent-to-Agent ships today: delegate work to any agent over the open A2A protocol.\", href: \"/blog/agent-to-agent\", date: \"Jul 24, 2026\", tag: \"Feature\" },\n  { title: \"Publish your Agent Card\", excerpt: \"Other agents can now find yours in the public directory, and one invitation connects a whole bundle of agents.\", href: \"/blog/agent-cards\", date: \"Jul 31, 2026\", tag: \"Feature\" },\n  { title: \"Build an agent that answers its own email\", excerpt: \"A walkthrough: create an identity, read the inbox with the SDK and reply from the agent.\", href: \"/blog/answer-email\", date: \"Aug 7, 2026\", tag: \"Guide\" },\n];\n\n/** The blog index: a heading, the newest post wide, then the rest as cards. Dates and tags come with each post. */\nfunction BlogIndexPage({ markSrc, posts = POSTS, title = \"Blog\", description = \"Product news, guides and notes from the team.\" }: { markSrc?: string; posts?: Post[]; title?: string; description?: string }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/blog\">\n      <section className=\"mx-auto grid max-w-(--ds-layout-column) gap-8 px-6 py-16 md:py-24\">\n        <SectionHead title={title} description={description} />\n        <ul className=\"grid gap-4 md:grid-cols-2 lg:grid-cols-3\">\n          {posts.map((p, i) => (\n            <li key={p.href} className={i === 0 ? \"grid md:col-span-2 lg:col-span-3\" : \"grid\"}>\n              <Card className=\"relative h-full transition-colors duration-150 ease-out hover:bg-subtle motion-reduce:transition-none\">\n                <CardHeader>\n                  {p.tag && (\n                    <Badge variant=\"purple\" size=\"sm\" className=\"w-fit\">\n                      {p.tag}\n                    </Badge>\n                  )}\n                  <CardTitle className={i === 0 ? \"text-h3 leading-heading\" : \"text-body-lg leading-heading font-medium\"}>\n                    <a href={p.href} className=\"outline-none after:absolute after:inset-0 focus-visible:underline\">\n                      {p.title}\n                    </a>\n                  </CardTitle>\n                  <CardDescription>{p.excerpt}</CardDescription>\n                </CardHeader>\n                <CardFooter className=\"mt-auto text-body-sm text-fg-muted\">\n                  <time>{p.date}</time>\n                  {p.author && <span className=\"before:mx-2 before:content-['·']\">{p.author}</span>}\n                </CardFooter>\n              </Card>\n            </li>\n          ))}\n        </ul>\n      </section>\n    </SiteLayout>\n  );\n}\n\nexport { BlogIndexPage };\n"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "name": "app-shell",
+  "useFor": "Wrap every product screen in AppShell; start each with AppPageHead (title, description, actions) and put the content in AppPageBody. Pass nav and current; rows with href are links.",
+  "constraints": [
+    "A dark rail",
+    "Pages without the head",
+    "Nesting two shells"
+  ],
+  "documentation": "",
+  "source": "Console components/layout (authenticated-app-shell.tsx: lilac ground, main panel 8px in with 16px corners and Shadow/S; page-head.tsx; sidebar-metrics.ts); rail rows as the Figma console screens and the registry sidebar",
+  "exports": [
+    "AppNavItem",
+    "AppNavGroup",
+    "CONSOLE_NAV",
+    "CONSOLE_FOOT",
+    "AppPageBody",
+    "AppPageHead",
+    "AppShell"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/app-shell",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/app-shell.md",
+  "examples": [
+    {
+      "path": "examples/app-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { AppPageBody, AppPageHead, AppShell } from \"@/components/product/app-shell\";\nimport { Button } from \"@/components/ui/button\";\nimport { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from \"@/components/ui/empty\";\n\nexport function Preview() {\n  const [current, setCurrent] = React.useState(\"Vault\");\n  return (\n    <AppShell current={current} onSelect={setCurrent}>\n      <AppPageHead title={current} description=\"Zero-knowledge encrypted secret store for your agents.\" actions={<Button size=\"sm\">Add secret</Button>} />\n      <AppPageBody>\n        <Empty className=\"min-h-80\">\n          <EmptyHeader>\n            <EmptyTitle>Nothing here yet</EmptyTitle>\n            <EmptyDescription>Pick a row in the rail: the page head follows it.</EmptyDescription>\n          </EmptyHeader>\n        </Empty>\n      </AppPageBody>\n    </AppShell>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "app-shell",
+        "button",
+        "empty"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/app-shell/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "product",
+  "title": "App shell",
+  "description": "The console's frame: the rail on the lilac and the page as a raised white panel, with the page head and body.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "lockup",
+    "avatar",
+    "badge",
+    "sidebar",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/product/app-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { AppleLogoIcon, ArrowsLeftRightIcon, BuildingOfficeIcon, CirclesThreeIcon, EnvelopeSimpleIcon, KeyIcon, NotepadIcon, PhoneIcon, QuestionIcon, RobotIcon, UsersIcon, VaultIcon, WebhooksLogoIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Lockup } from \"@/components/site/lockup\";\nimport { Avatar, AvatarFallback } from \"@/components/ui/avatar\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from \"@/components/ui/sidebar\";\nimport { cn } from \"@/lib/utils\";\n\nexport type AppNavItem = { title: string; icon?: React.ReactNode; href?: string; beta?: boolean; count?: number; mark?: string };\nexport type AppNavGroup = { label?: string; items: AppNavItem[] };\n\nexport const CONSOLE_NAV: AppNavGroup[] = [\n  { items: [{ title: \"Agent Workspace\", icon: <RobotIcon weight=\"fill\" /> }, { title: \"Manage Agents\", icon: <CirclesThreeIcon weight=\"fill\" /> }, { title: \"API Keys\", icon: <KeyIcon weight=\"fill\" /> }] },\n  { label: \"Channels\", items: [{ title: \"Email\", icon: <EnvelopeSimpleIcon weight=\"fill\" /> }, { title: \"Phone\", icon: <PhoneIcon weight=\"fill\" /> }, { title: \"iMessage\", icon: <AppleLogoIcon weight=\"fill\" /> }, { title: \"Agent2Agent\", icon: <ArrowsLeftRightIcon weight=\"regular\" />, beta: true }] },\n  { label: \"Shared\", items: [{ title: \"Contacts\", icon: <UsersIcon weight=\"fill\" /> }, { title: \"Notes\", icon: <NotepadIcon weight=\"fill\" /> }, { title: \"Vault\", icon: <VaultIcon weight=\"fill\" /> }, { title: \"Webhooks\", icon: <WebhooksLogoIcon weight=\"regular\" /> }] },\n];\n\nexport const CONSOLE_FOOT: AppNavItem[] = [\n  { title: \"Help\", icon: <QuestionIcon weight=\"fill\" /> },\n  { title: \"My Organisation\", icon: <BuildingOfficeIcon weight=\"fill\" />, mark: \"ADMIN\" },\n];\n\nfunction NavRow({ item, current, onSelect }: { item: AppNavItem; current?: string; onSelect?: (title: string) => void }) {\n  const inner = (\n    <>\n      {item.icon}\n      <span>{item.title}</span>\n      {item.beta && (\n        <Badge variant=\"pink\" className=\"ml-px\">\n          BETA\n        </Badge>\n      )}\n    </>\n  );\n  return (\n    <SidebarMenuItem>\n      <SidebarMenuButton asChild={!!item.href} isActive={current === item.title} tooltip={item.title} onClick={onSelect ? () => onSelect(item.title) : undefined}>\n        {item.href ? (\n          <a href={item.href} aria-current={current === item.title ? \"page\" : undefined}>\n            {inner}\n          </a>\n        ) : (\n          inner\n        )}\n      </SidebarMenuButton>\n      {item.count ? <SidebarMenuBadge variant=\"count\">{item.count}</SidebarMenuBadge> : item.mark ? <SidebarMenuBadge>{item.mark}</SidebarMenuBadge> : null}\n    </SidebarMenuItem>\n  );\n}\n\n/**\n * The console's frame: the rail on the lilac (the lockup, the nav groups, Help, the organization and the account at the\n * foot) and the page as a raised white panel beside it, 8px from the edges with 16px corners. On phones the rail opens\n * in a sheet from the page head's menu button. `current` names the active row; rows with an `href` are links.\n */\nfunction AppShell({ children, nav = CONSOLE_NAV, foot = CONSOLE_FOOT, account = \"Jordan at Acme\", current, onSelect, logo, className }: { children: React.ReactNode; nav?: AppNavGroup[]; foot?: AppNavItem[]; account?: string; current?: string; onSelect?: (title: string) => void; logo?: React.ReactNode; className?: string }) {\n  return (\n    <SidebarProvider className={cn(\"h-svh min-h-0 overflow-hidden\", className)}>\n      <Sidebar variant=\"inset\" collapsible=\"offcanvas\">\n        <SidebarHeader className=\"px-4 py-5\">{logo ?? <Lockup />}</SidebarHeader>\n        <SidebarContent>\n          {nav.map((group, i) => (\n            <SidebarGroup key={group.label ?? i}>\n              {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}\n              <SidebarGroupContent>\n                <SidebarMenu>\n                  {group.items.map((item) => (\n                    <NavRow key={item.title} item={item} current={current} onSelect={onSelect} />\n                  ))}\n                </SidebarMenu>\n              </SidebarGroupContent>\n            </SidebarGroup>\n          ))}\n        </SidebarContent>\n        <SidebarFooter>\n          <SidebarMenu>\n            {foot.map((item) => (\n              <NavRow key={item.title} item={item} current={current} onSelect={onSelect} />\n            ))}\n            <SidebarMenuItem>\n              <SidebarMenuButton tooltip={account}>\n                <Avatar size=\"sm\" className=\"data-[size=sm]:size-4.5\">\n                  <AvatarFallback className=\"text-micro\">{account.charAt(0)}</AvatarFallback>\n                </Avatar>\n                <span>{account}</span>\n              </SidebarMenuButton>\n            </SidebarMenuItem>\n          </SidebarMenu>\n        </SidebarFooter>\n      </Sidebar>\n      <SidebarInset className=\"min-h-0 overflow-y-auto\">{children}</SidebarInset>\n    </SidebarProvider>\n  );\n}\n\n/**\n * The console's page head: a 20px regular title on a 28px line, the muted description 4px under it, actions at the\n * right, and the row hairline under it all (16px below the words). The menu button opens the rail on phones.\n */\nfunction AppPageHead({ title, description, actions, className }: { title: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode; className?: string }) {\n  return (\n    <header data-slot=\"app-page-head\" className={cn(\"mx-4 mt-4 mb-4 flex flex-wrap items-start gap-3 border-b border-line-row pb-4 md:mx-6 md:mt-5\", className)}>\n      <SidebarTrigger className=\"-ml-2 md:hidden\" />\n      <div className=\"min-w-0 flex-1\">\n        <h1 className=\"text-h3 leading-7 font-normal text-fg\">{title}</h1>\n        {description && <p className=\"mt-1 text-body text-fg-muted\">{description}</p>}\n      </div>\n      {actions && <div className=\"ml-auto flex min-h-7 shrink-0 flex-wrap items-center gap-3\">{actions}</div>}\n    </header>\n  );\n}\n\n/** The page's body under the head: the console's 16px (24px on wide screens) gutters. */\nfunction AppPageBody({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"app-page-body\" className={cn(\"grid gap-4 px-4 pb-6 md:px-6\", className)} {...props} />;\n}\n\nexport { AppPageBody, AppPageHead, AppShell };\n"
+    }
+  ]
+}

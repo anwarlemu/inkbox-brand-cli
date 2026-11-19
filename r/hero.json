@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "hero",
+  "useFor": "Use once, first on a page. Keep the title to one sentence; one default button and at most one outline button; media is a product shot or the octopus.",
+  "constraints": [
+    "Titles bigger than the display token",
+    "Gradient or colored text",
+    "Two default buttons"
+  ],
+  "documentation": "",
+  "source": "Brand share images' copy (agd-playground inkbox-og content.ts) set in the console's type scale",
+  "exports": [
+    "Hero"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/hero",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/hero.md",
+  "examples": [
+    {
+      "path": "examples/hero.tsx",
+      "content": "import { Hero } from \"@/components/blocks/hero\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Preview() {\n  return (\n    <Hero\n      eyebrow=\"Agent2Agent ships today\"\n      title=\"Give every AI agent a way to be reached\"\n      description=\"Email, phone, iMessage and Agent2Agent for your agents, with contacts, notes and a vault they share.\"\n      actions={\n        <>\n          <Button>Get started free</Button>\n          <Button variant=\"outline\">Read the docs</Button>\n        </>\n      }\n      // eslint-disable-next-line @next/next/no-img-element\n      media={<img src=\"/octopus.png\" alt=\"\" width={320} height={283} className=\"mx-auto h-auto w-full max-w-80\" />}\n    />\n  );\n}\n\nexport function Centered() {\n  return <Hero align=\"center\" eyebrow=\"Product\" title=\"Everything an agent needs to be reached\" description=\"Turn on the channels each agent uses.\" actions={<Button>Get started free</Button>} />;\n}\n",
+      "exports": [
+        "Preview",
+        "Centered"
+      ],
+      "requires": [
+        "hero",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/hero/Preview"
+        },
+        {
+          "name": "Centered",
+          "url": "https://inkbox-ds.vercel.app/preview/hero/Centered"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Hero",
+  "description": "The opening section: a pill eyebrow, the 32px regular display title, a secondary line, the actions and an optional picture.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "badge",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/hero.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Badge } from \"@/components/ui/badge\";\nimport { cn } from \"@/lib/utils\";\n\n/**\n * The opening section: an optional pill eyebrow, the 32px regular display title in ink, a secondary line, the\n * actions, and an optional picture (a product shot or the octopus) beside the words on wide screens or under them.\n */\nfunction Hero({ eyebrow, title, description, actions, media, align = \"left\", className }: { eyebrow?: string; title: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode; media?: React.ReactNode; align?: \"left\" | \"center\"; className?: string }) {\n  const center = align === \"center\";\n  return (\n    <section data-slot=\"hero\" className={cn(\"mx-auto max-w-(--ds-layout-column) px-6 py-16 md:py-24\", className)}>\n      <div className={cn(\"grid items-center gap-10\", media && !center && \"lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16\")}>\n        <div className={cn(\"grid gap-5\", center && \"mx-auto max-w-(--ds-layout-heading) justify-items-center text-center\")}>\n          {eyebrow && (\n            <Badge variant=\"purple\" className=\"w-fit\">\n              {eyebrow}\n            </Badge>\n          )}\n          <h1 className=\"text-display leading-display font-normal text-balance text-fg\">{title}</h1>\n          {description && <p className=\"max-w-(--ds-layout-text) text-body-lg leading-body text-pretty text-fg-secondary\">{description}</p>}\n          {actions && <div className={cn(\"mt-1 flex flex-wrap items-center gap-3\", center && \"justify-center\")}>{actions}</div>}\n        </div>\n        {media && <div className={cn(\"min-w-0\", center && \"mx-auto w-full max-w-(--ds-layout-column)\")}>{media}</div>}\n      </div>\n    </section>\n  );\n}\n\nexport { Hero };\n"
+    }
+  ]
+}

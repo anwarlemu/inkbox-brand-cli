@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "contact-page",
+  "useFor": "Start a contact page from it; set action to your endpoint.",
+  "constraints": [
+    "Collecting more than you need"
+  ],
+  "documentation": "",
+  "exports": [
+    "ContactOption",
+    "OPTIONS",
+    "ContactPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/contact-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/contact-page.md",
+  "examples": [
+    {
+      "path": "examples/contact-page.tsx",
+      "content": "import { ContactPage } from \"@/components/site/contact-page\";\n\nexport function Preview() {\n  return <ContactPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "contact-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/contact-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Contact page",
+  "description": "The contact page template: ways to reach the team as cards and a form.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "site-layout",
+    "button",
+    "card",
+    "field",
+    "input",
+    "textarea"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/contact-page.tsx",
+      "content": "import * as React from \"react\";\nimport { BookOpenTextIcon, ChatCircleIcon, EnvelopeSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { Field, FieldGroup, FieldLabel } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\nimport { Textarea } from \"@/components/ui/textarea\";\n\nexport type ContactOption = { icon?: React.ReactNode; title: string; description: string; href: string; action: string };\n\nexport const OPTIONS: ContactOption[] = [\n  { icon: <EnvelopeSimpleIcon weight=\"fill\" />, title: \"Sales\", description: \"Volume pricing, dedicated lines and onboarding.\", href: \"mailto:sales@acme.com\", action: \"Email sales\" },\n  { icon: <ChatCircleIcon weight=\"fill\" />, title: \"Support\", description: \"Questions about your account or an agent.\", href: \"mailto:support@acme.com\", action: \"Email support\" },\n  { icon: <BookOpenTextIcon weight=\"fill\" />, title: \"Docs\", description: \"Guides, the API reference and the SDKs.\", href: \"/docs\", action: \"Read the docs\" },\n];\n\n/**\n * The contact page: the heading and the ways to reach the team as cards at the left, the form at the right. The form\n * posts to `action`; wire it to your own endpoint.\n */\nfunction ContactPage({ markSrc, options = OPTIONS, action = \"/api/contact\" }: { markSrc?: string; options?: ContactOption[]; action?: string }) {\n  return (\n    <SiteLayout markSrc={markSrc}>\n      <section className=\"mx-auto grid max-w-(--ds-layout-column) gap-10 px-6 py-16 md:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16\">\n        <div className=\"grid content-start gap-8\">\n          <SectionHead title=\"Contact us\" description=\"Tell us what you are building. We usually reply within a day.\" />\n          <ul className=\"grid gap-3\">\n            {options.map((o) => (\n              <li key={o.title}>\n                <Card size=\"sm\">\n                  <CardHeader>\n                    <CardTitle>\n                      {o.icon}\n                      {o.title}\n                    </CardTitle>\n                    <CardDescription>\n                      {o.description}{\" \"}\n                      <a href={o.href} className=\"text-fg-brand underline-offset-4 outline-none hover:underline focus-visible:underline\">\n                        {o.action}\n                      </a>\n                    </CardDescription>\n                  </CardHeader>\n                </Card>\n              </li>\n            ))}\n          </ul>\n        </div>\n        <form action={action} method=\"post\" className=\"grid content-start gap-5 rounded-dialog border border-line-field bg-surface p-6\">\n          <FieldGroup>\n            <div className=\"grid gap-5 sm:grid-cols-2\">\n              <Field>\n                <FieldLabel htmlFor=\"contact-name\">Name</FieldLabel>\n                <Input id=\"contact-name\" name=\"name\" autoComplete=\"name\" placeholder=\"Your name\" required />\n              </Field>\n              <Field>\n                <FieldLabel htmlFor=\"contact-email\">Work email</FieldLabel>\n                <Input id=\"contact-email\" name=\"email\" type=\"email\" autoComplete=\"email\" placeholder=\"you@acme.com\" required />\n              </Field>\n            </div>\n            <Field>\n              <FieldLabel htmlFor=\"contact-company\">Company</FieldLabel>\n              <Input id=\"contact-company\" name=\"company\" autoComplete=\"organization\" placeholder=\"Acme\" />\n            </Field>\n            <Field>\n              <FieldLabel htmlFor=\"contact-message\">How can we help?</FieldLabel>\n              <Textarea id=\"contact-message\" name=\"message\" rows={5} placeholder=\"Tell us about your agents\" required />\n            </Field>\n          </FieldGroup>\n          <Button type=\"submit\" className=\"w-full sm:w-fit\">\n            Send message\n          </Button>\n        </form>\n      </section>\n    </SiteLayout>\n  );\n}\n\nexport { ContactPage };\n"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "aspect-ratio",
+  "useFor": "Wrap a screenshot, an attachment preview or a video in AspectRatio with ratio={16 / 9} (or 4 / 3, 1) so it keeps its shape at every width. Round and clip it with rounded-control and overflow-hidden.",
+  "constraints": [
+    "Stretching an image to fill without object-cover",
+    "Corners other than the card's 8px on media inside cards"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the 8px corners of its cards and wells",
+  "exports": [
+    "AspectRatio"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/aspect-ratio",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/aspect-ratio.md",
+  "examples": [
+    {
+      "path": "examples/aspect-ratio.tsx",
+      "content": "import { AspectRatio } from \"@/components/ui/aspect-ratio\";\n\nexport function Preview() {\n  return (\n    <div className=\"w-full max-w-120\">\n      <AspectRatio ratio={16 / 9} className=\"overflow-hidden rounded-control bg-subtle\">\n        {/* eslint-disable-next-line @next/next/no-img-element */}\n        <img src=\"/octopus.png\" alt=\"The Inkbox octopus\" className=\"size-full object-contain p-6\" />\n      </AspectRatio>\n    </div>\n  );\n}\n\nexport function Square() {\n  return (\n    <div className=\"w-40\">\n      <AspectRatio ratio={1} className=\"flex items-center justify-center rounded-control border border-line-field bg-surface text-body text-fg-muted\">1:1</AspectRatio>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Square"
+      ],
+      "requires": [
+        "aspect-ratio"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/aspect-ratio/Preview"
+        },
+        {
+          "name": "Square",
+          "url": "https://inkbox-ds.vercel.app/preview/aspect-ratio/Square"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Aspect Ratio",
+  "description": "A frame that holds media at a fixed shape.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme"
+  ],
+  "packages": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/ui/aspect-ratio.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { AspectRatio as AspectRatioPrimitive } from \"radix-ui\";\n\n// Holds media at a fixed shape (a screenshot, an attachment preview). The frame takes no style of its own; round and\n// clip the media inside it with the card's 8px corners.\nfunction AspectRatio(props: React.ComponentProps<typeof AspectRatioPrimitive.Root>) {\n  return <AspectRatioPrimitive.Root data-slot=\"aspect-ratio\" {...props} />;\n}\n\nexport { AspectRatio };\n"
+    }
+  ]
+}

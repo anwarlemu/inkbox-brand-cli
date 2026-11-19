@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "changelog-page",
+  "useFor": "Start a changelog from it; pass releases newest first.",
+  "constraints": [
+    "Marketing copy in change lines"
+  ],
+  "documentation": "",
+  "source": "Changelog copy from the brand share images (SDK 0.5.14, Agent Cards)",
+  "exports": [
+    "Release",
+    "RELEASES",
+    "ChangelogPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/changelog-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/changelog-page.md",
+  "examples": [
+    {
+      "path": "examples/changelog-page.tsx",
+      "content": "import { ChangelogPage } from \"@/components/site/changelog-page\";\n\nexport function Preview() {\n  return <ChangelogPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "changelog-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/changelog-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Changelog page",
+  "description": "The changelog template: each release on a timeline with its date, version, tags and changes.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "site-layout",
+    "badge"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/changelog-page.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Badge } from \"@/components/ui/badge\";\n\nexport type Release = { version?: string; date: string; title: string; tags?: string[]; changes: string[] };\n\nexport const RELEASES: Release[] = [\n  { version: \"SDK 0.5.14\", date: \"Jul 31, 2026\", title: \"Agent Cards, public directory and invitations\", tags: [\"A2A\", \"SDK\"], changes: [\"Publish an agent's card to the public directory.\", \"Find workers with a directory search.\", \"Connect a bundle of agents with one invitation.\"] },\n  { date: \"Jul 24, 2026\", title: \"Agent2Agent\", tags: [\"A2A\"], changes: [\"Delegate tasks to other agents over A2A 1.0.\", \"Every identity can serve an Agent Card.\"] },\n  { date: \"Jul 17, 2026\", title: \"Custom email signatures\", tags: [\"Email\"], changes: [\"Set a signature per mailbox.\", \"Signatures apply to replies sent through the API.\"] },\n];\n\n/** The changelog: a heading, then each release on a timeline: the date at the left, the title, tags and changes. */\nfunction ChangelogPage({ markSrc, releases = RELEASES }: { markSrc?: string; releases?: Release[] }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/changelog\">\n      <section className=\"mx-auto grid max-w-(--ds-layout-column) gap-10 px-6 py-16 md:py-24\">\n        <SectionHead title=\"Changelog\" description=\"New features, improvements and fixes.\" />\n        <ol className=\"grid gap-0\">\n          {releases.map((r) => (\n            <li key={`${r.date}-${r.title}`} className=\"grid gap-3 border-t border-line-subtle py-8 md:grid-cols-[12rem_minmax(0,1fr)] md:gap-10\">\n              <div className=\"grid content-start gap-1\">\n                <time className=\"text-body leading-body text-fg-muted\">{r.date}</time>\n                {r.version && <span className=\"font-mono text-body-sm text-fg-label\">{r.version}</span>}\n              </div>\n              <div className=\"grid content-start gap-3\">\n                <h2 className=\"text-h3 leading-heading font-normal text-fg\">{r.title}</h2>\n                {r.tags && (\n                  <div className=\"flex flex-wrap gap-1.5\">\n                    {r.tags.map((t) => (\n                      <Badge key={t} variant=\"blue\" size=\"sm\">\n                        {t}\n                      </Badge>\n                    ))}\n                  </div>\n                )}\n                <ul className=\"grid list-disc gap-1.5 pl-5 text-body leading-body text-fg-secondary\">\n                  {r.changes.map((c) => (\n                    <li key={c}>{c}</li>\n                  ))}\n                </ul>\n              </div>\n            </li>\n          ))}\n        </ol>\n      </section>\n    </SiteLayout>\n  );\n}\n\nexport { ChangelogPage };\n"
+    }
+  ]
+}

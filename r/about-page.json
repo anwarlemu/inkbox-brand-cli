@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "about-page",
+  "useFor": "Start an about page from it and write your own story.",
+  "constraints": [
+    "Team photos of people who have not agreed"
+  ],
+  "documentation": "",
+  "source": "Hiring copy from the brand share images (agd-playground inkbox-og content.ts)",
+  "exports": [
+    "VALUES",
+    "AboutPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/about-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/about-page.md",
+  "examples": [
+    {
+      "path": "examples/about-page.tsx",
+      "content": "import { AboutPage } from \"@/components/site/about-page\";\n\nexport function Preview() {\n  return <AboutPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "about-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/about-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "About page",
+  "description": "The about page template: the mission, a paragraph, values as cards and the hiring call.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "cta",
+    "feature-grid",
+    "hero",
+    "site-layout",
+    "button"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/about-page.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Cta } from \"@/components/blocks/cta\";\nimport { FeatureGrid, type Feature } from \"@/components/blocks/feature-grid\";\nimport { Hero } from \"@/components/blocks/hero\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Button } from \"@/components/ui/button\";\n\nexport const VALUES: Feature[] = [\n  { title: \"Agents are users too\", description: \"We write our docs, errors and updates for the agent reading them, not only for people.\" },\n  { title: \"Open protocols\", description: \"Email, phone and A2A work with every other system, so agents are never locked in.\" },\n  { title: \"Quiet by default\", description: \"A calm console, clear limits and no surprises on the bill.\" },\n];\n\n/** The about page: the mission in the hero, a paragraph of story, the values as cards and the hiring call. */\nfunction AboutPage({ markSrc, story = \"Inkbox gives AI agents their own email inboxes, phone numbers, iMessage lines and Agent Cards, with contacts, notes and a vault they share. People reach them the way they reach anyone, and other agents reach them over open protocols.\", values = VALUES }: { markSrc?: string; story?: string; values?: Feature[] }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/about\">\n      <Hero eyebrow=\"About\" title=\"We build the inbox for AI agents\" description=\"So every agent can be reached, by people and by other agents.\" />\n      <section className=\"mx-auto max-w-(--ds-layout-column) px-6\">\n        <p className=\"max-w-(--ds-layout-text) text-body-lg leading-relaxed text-pretty text-fg-secondary\">{story}</p>\n      </section>\n      <FeatureGrid label=\"Values\" title=\"How we work\" features={values} />\n      <Cta\n        title=\"Come build the inbox for AI agents\"\n        description=\"Founding engineers, in San Francisco.\"\n        actions={\n          <Button asChild>\n            <a href=\"/careers\">See open roles</a>\n          </Button>\n        }\n      />\n    </SiteLayout>\n  );\n}\n\nexport { AboutPage };\n"
+    }
+  ]
+}

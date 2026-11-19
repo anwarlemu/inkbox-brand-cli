@@ -1,0 +1,672 @@
+{
+	"$comment": "Share images, social posts and banners, from the agd-playground image editor at /inkbox (src/components/inkbox-og: draw.ts, app.ts, brand.ts, content.ts, layouts.ts; the routes inkbox-og-image, inkbox-social-posts, inbox-social-posts and inkbox-banner all redirect there). The layout rules are the engine's (src/assets/share.ts, the editor's drawDesign kept in its own terms); this file holds the brand's part: colors as token names, themes, sizes, templates, occasions and their copy, and the window's placeholder content. Every hex the editor drew is a token here (see notes); where it had none, the nearest token by color difference is used.",
+	"colors": {
+		"paper": "white",
+		"ink": "ink",
+		"purple": "brand",
+		"violet": "brand",
+		"line": "text-faint",
+		"pink": "pink",
+		"lavender": "tag-purple",
+		"white": "white",
+		"black": "black",
+		"shadow": "ink",
+		"pillFill": {
+			"token": "brand",
+			"alpha": 0.12
+		},
+		"pillStroke": {
+			"token": "brand",
+			"alpha": 0.32
+		},
+		"pillFillDark": {
+			"token": "white",
+			"alpha": 0.14
+		},
+		"pillStrokeDark": {
+			"token": "white",
+			"alpha": 0.28
+		},
+		"boxDark": "ink",
+		"boxLight": "white",
+		"gradientEnd": "tag-purple",
+		"window": "white",
+		"windowEmpty": "lilac",
+		"chrome": "lilac",
+		"chromeRule": "border-subtle",
+		"chromeDots": [
+			"pink",
+			"status-warning-bg",
+			"status-success-bg"
+		],
+		"chromeUrl": "white",
+		"chromeUrlInk": "text-muted"
+	},
+	"themes": {
+		"paper": {
+			"label": "Paper",
+			"bg": "white",
+			"ink": "ink",
+			"line": "text-faint",
+			"tile": "brand",
+			"tileAlpha": 0.09,
+			"border": {
+				"token": "brand",
+				"alpha": 0.22
+			},
+			"reefFade": 0.62,
+			"dark": false
+		},
+		"mist": {
+			"label": "Mist",
+			"bg": "tag-gray",
+			"ink": "ink",
+			"line": "border-default",
+			"tile": "brand",
+			"tileAlpha": 0.08,
+			"border": {
+				"token": "ink",
+				"alpha": 0.18
+			},
+			"reefFade": 0.62,
+			"dark": false
+		},
+		"mono": {
+			"label": "Paper, black ink",
+			"bg": "white",
+			"ink": "black",
+			"line": "text-faint",
+			"tile": "brand",
+			"tileAlpha": 0.09,
+			"border": {
+				"token": "brand",
+				"alpha": 0.22
+			},
+			"reefFade": 0.62,
+			"dark": false
+		},
+		"lavender": {
+			"label": "Lavender",
+			"bg": "tag-purple",
+			"ink": "ink",
+			"line": "text-faint",
+			"tile": "brand",
+			"tileAlpha": 0.12,
+			"border": {
+				"token": "brand",
+				"alpha": 0.3
+			},
+			"reefFade": 0.5,
+			"dark": false
+		},
+		"purple": {
+			"label": "Purple",
+			"bg": "brand",
+			"ink": "white",
+			"line": {
+				"token": "text-faint",
+				"alpha": 0.6
+			},
+			"tile": "brand",
+			"tileAlpha": 1,
+			"border": {
+				"token": "text-faint",
+				"alpha": 0.6
+			},
+			"reefFade": 0,
+			"dark": true
+		},
+		"deep": {
+			"label": "Deep",
+			"bg": "ink",
+			"ink": "white",
+			"line": {
+				"token": "text-faint",
+				"alpha": 0.38
+			},
+			"tile": "brand",
+			"tileAlpha": 0.22,
+			"border": {
+				"token": "text-faint",
+				"alpha": 0.3
+			},
+			"reefFade": 0,
+			"dark": true
+		}
+	},
+	"highlights": {
+		"pink": {
+			"label": "Pink",
+			"color": "pink"
+		},
+		"lilac": {
+			"label": "Lilac",
+			"color": "text-faint"
+		},
+		"violet": {
+			"label": "Violet",
+			"color": "brand"
+		},
+		"ink": {
+			"label": "No highlight",
+			"color": ""
+		}
+	},
+	"tones": {
+		"lilac": "text-faint",
+		"violet": "brand",
+		"purple": "brand",
+		"ink": "ink",
+		"pink": "pink"
+	},
+	"notes": [
+		"Tokens win where the editor and tokens.css disagree. Headlines: the editor set Funnel Display SemiBold; --ds-font-display is Inter, so headlines are Inter SemiBold (600, --ds-font-weight-semibold). The new-feature card's IBM Plex Sans is Inter too; its mono pill and footer stay IBM Plex Mono (--ds-font-mono).",
+		"Ink #3c2c52 and the mist ink #3f2a53 are ink (#3E2A53); purple #74629d is brand; the violet #816daa (tiles, pills) is brand (#74629D); pink #f9b1b4 is pink (#F9B1B5).",
+		"Paper #f8fbff is white. Mist #e7eff9 is tag-gray (#EDF2F7) and its line #c4cfe4 is border-default (#D2C9DB). Lavender #f2e2ff is tag-purple (#E9D8FD). Deep #2f2438 is ink (no darker purple token).",
+		"The lilac line #beaeda (hatching, outlines, guides, frames) and the lavender line #c9b4e6 are text-faint (#BCB3C5), the nearest token; it is a little grayer than the editor's lilac.",
+		"The window is the console, so its colors are the console's tokens: strong #2f2438 is ink, nav #5d4d67 is icon-secondary (#5B4C6A), muted #8679a3 is text-muted (#998EA5), accent #7f69b0 is brand, tint #f4f2f7 and the second rail #f8f7fb are lilac (#F4F2F6), hairlines #ece8f2 are border-subtle (#F3F1F5), the avatar #4f6bed is avatar (#5063B1), the unread tag #dbe8fe and #3b6fd8 are tag-blue and tag-blue-fg, the BETA tag's #fff7f7 is white.",
+		"Browser chrome: #f6f4f9 is lilac; the three dots #f2b8b5, #f5d99a, #bfe3b4 are pink, status-warning-bg and status-success-bg; the address ink #8679a3 is text-muted.",
+		"Shadows: the editor's rgba(47,36,56,a) uses the ink token at the same alpha.",
+		"Left out: the Y Combinator badge (the orange Y square is a third-party mark) and the orange highlight that matched it (#f97316 has no token). The launch and funding occasions keep their words in the pill badge.",
+		"The window's placeholder mailbox is Acme: the editor's sample messages named a real person and handle, so none of them ship.",
+		"The editor's console screens (public/inkbox-og/screens) are labelled placeholders, so they are not shipped; pass --image for a real capture in the window.",
+		"A pasted X post becomes a headline with the author as a small credit in the editor; here pass --headline and --credit (an Acme placeholder in examples, never a real post, name or avatar)."
+	],
+	"groups": {
+		"share": {
+			"label": "Link previews",
+			"sizes": [
+				"og",
+				"card",
+				"linkedin"
+			]
+		},
+		"post": {
+			"label": "Posts",
+			"sizes": [
+				"square",
+				"portrait",
+				"story",
+				"landscape",
+				"li-square"
+			]
+		},
+		"banner": {
+			"label": "Banners",
+			"sizes": [
+				"x-banner",
+				"linkedin-banner",
+				"li-page",
+				"youtube",
+				"email"
+			]
+		}
+	},
+	"sizes": {
+		"og": {
+			"label": "Link preview",
+			"w": 1200,
+			"h": 630,
+			"aliases": [
+				"link",
+				"preview",
+				"link-preview"
+			]
+		},
+		"card": {
+			"label": "X card",
+			"w": 1200,
+			"h": 675,
+			"aliases": [
+				"x",
+				"twitter",
+				"x-card"
+			]
+		},
+		"linkedin": {
+			"label": "LinkedIn link",
+			"w": 1200,
+			"h": 627,
+			"aliases": [
+				"li",
+				"li-link",
+				"li-post"
+			]
+		},
+		"square": {
+			"label": "Square",
+			"w": 1080,
+			"h": 1080,
+			"aliases": [
+				"1:1"
+			]
+		},
+		"portrait": {
+			"label": "Portrait 4:5",
+			"w": 1080,
+			"h": 1350,
+			"aliases": [
+				"4:5",
+				"4x5"
+			]
+		},
+		"story": {
+			"label": "Story 9:16",
+			"w": 1080,
+			"h": 1920,
+			"aliases": [
+				"9:16",
+				"9x16"
+			]
+		},
+		"landscape": {
+			"label": "Landscape 16:9",
+			"w": 1200,
+			"h": 675,
+			"aliases": [
+				"wide",
+				"16:9",
+				"16x9"
+			]
+		},
+		"li-square": {
+			"label": "LinkedIn square",
+			"w": 1200,
+			"h": 1200,
+			"aliases": []
+		},
+		"x-banner": {
+			"label": "X header",
+			"w": 1500,
+			"h": 500,
+			"aliases": [
+				"x-header",
+				"banner-x"
+			]
+		},
+		"linkedin-banner": {
+			"label": "LinkedIn profile banner",
+			"w": 1584,
+			"h": 396,
+			"aliases": [
+				"li-profile",
+				"li-banner"
+			]
+		},
+		"li-page": {
+			"label": "LinkedIn page banner",
+			"w": 1128,
+			"h": 191,
+			"aliases": []
+		},
+		"youtube": {
+			"label": "YouTube channel",
+			"w": 2560,
+			"h": 1440,
+			"aliases": [
+				"yt"
+			]
+		},
+		"email": {
+			"label": "Email header",
+			"w": 1200,
+			"h": 300,
+			"aliases": []
+		}
+	},
+	"templates": {
+		"tile": {
+			"label": "Tile",
+			"description": "The words top left, a panel of the wordmark tiled beside or under them, the sitting octopus on it, and the lockup."
+		},
+		"app": {
+			"label": "Product",
+			"description": "The words over the console's inbox in a window between two guides, the octopus hanging over its edge, the reef behind."
+		},
+		"outline": {
+			"label": "Outline",
+			"description": "Centered words over a band of huge outlined wordmarks on a rule, hatched strips down the sides, the octopus hanging over the rule."
+		},
+		"hatch": {
+			"label": "Hatched",
+			"description": "Words set right over a hatched floor, the octopus hanging over its edge."
+		},
+		"reef": {
+			"label": "Reef",
+			"description": "Centered words, the sitting octopus and the reef along the bottom, and the lockup."
+		},
+		"feature": {
+			"label": "Feature",
+			"description": "Centered words with a pill badge over the console in a browser window, inside a hatched border."
+		},
+		"partner": {
+			"label": "Lockup",
+			"description": "The lockup beside a partner's name (Acme by default) over centered words, on a staggered wordmark tile inside a line border."
+		},
+		"funding": {
+			"label": "Big number",
+			"description": "A very large headline (a number) over the outline band and hatched sides, the octopus hanging over the rule."
+		},
+		"announce": {
+			"label": "Announcement",
+			"description": "Words with a dot badge inside a solid purple border, the lockup and the sitting octopus."
+		},
+		"card": {
+			"label": "Card",
+			"description": "The new-feature card: the lockup top left, a solid pill top right, the words centered between, and a mono footer with the handle and address."
+		}
+	},
+	"start": {
+		"badge": "pill",
+		"badgeText": "Backed by Y Combinator",
+		"headline": "Give every *AI agent*\na way to be reached",
+		"footLeft": "@inkbox_ai",
+		"footIcon": "x",
+		"footRight": "inkbox.ai",
+		"winUrl": "inkbox.ai"
+	},
+	"occasions": {
+		"launch": {
+			"label": "Launch",
+			"words": {
+				"badge": "pill",
+				"badgeText": "Backed by Y Combinator",
+				"headline": "Give every *AI agent*\na way to be reached",
+				"body": ""
+			},
+			"looks": [
+				{
+					"template": "tile",
+					"theme": "paper",
+					"label": "Paper tile"
+				},
+				{
+					"template": "outline",
+					"theme": "mono",
+					"label": "Outline band"
+				},
+				{
+					"template": "reef",
+					"theme": "lavender",
+					"label": "Reef"
+				},
+				{
+					"template": "app",
+					"theme": "paper",
+					"label": "The product"
+				}
+			]
+		},
+		"feature": {
+			"label": "Feature",
+			"words": {
+				"badge": "pill",
+				"badgeText": "New feature",
+				"headline": "Agents can now\n*talk to each other*",
+				"body": "Agent-to-Agent ships today: delegate work to any agent over the open A2A protocol."
+			},
+			"looks": [
+				{
+					"template": "card",
+					"theme": "mist",
+					"label": "New feature card",
+					"words": {
+						"badge": "solid",
+						"badgeText": "NEW",
+						"highlight": "ink"
+					}
+				},
+				{
+					"template": "feature",
+					"theme": "paper",
+					"label": "App in a border"
+				},
+				{
+					"template": "announce",
+					"theme": "lavender",
+					"label": "Announcement"
+				},
+				{
+					"template": "app",
+					"theme": "paper",
+					"label": "Workspace"
+				}
+			]
+		},
+		"partnership": {
+			"label": "Partnership",
+			"words": {
+				"badge": "pill",
+				"badgeText": "Partnership",
+				"headline": "Inkbox is partnering\nwith *Acme*",
+				"body": "Every Acme agent now gets its own email, phone number and Agent Card.",
+				"logo": true,
+				"partnerName": "Acme"
+			},
+			"looks": [
+				{
+					"template": "partner",
+					"theme": "paper",
+					"label": "Lockup"
+				},
+				{
+					"template": "partner",
+					"theme": "lavender",
+					"label": "Lavender lockup"
+				},
+				{
+					"template": "announce",
+					"theme": "paper",
+					"label": "Announcement"
+				},
+				{
+					"template": "tile",
+					"theme": "mono",
+					"label": "Tile"
+				}
+			]
+		},
+		"funding": {
+			"label": "Funding",
+			"words": {
+				"badge": "pill",
+				"badgeText": "Backed by Y Combinator",
+				"headline": "We raised *$4M*",
+				"body": "to give every AI agent a way to be reached."
+			},
+			"looks": [
+				{
+					"template": "funding",
+					"theme": "paper",
+					"label": "Big number"
+				},
+				{
+					"template": "funding",
+					"theme": "lavender",
+					"label": "Lavender"
+				},
+				{
+					"template": "outline",
+					"theme": "mono",
+					"label": "Outline"
+				},
+				{
+					"template": "reef",
+					"theme": "paper",
+					"label": "Reef"
+				}
+			]
+		},
+		"hiring": {
+			"label": "Hiring",
+			"words": {
+				"badge": "dot",
+				"badgeText": "We’re hiring",
+				"headline": "Come build the inbox\nfor *AI agents*",
+				"body": "Founding engineers, in San Francisco."
+			},
+			"looks": [
+				{
+					"template": "announce",
+					"theme": "purple",
+					"label": "Purple border"
+				},
+				{
+					"template": "announce",
+					"theme": "paper",
+					"label": "Paper"
+				},
+				{
+					"template": "tile",
+					"theme": "lavender",
+					"label": "Tile"
+				},
+				{
+					"template": "reef",
+					"theme": "paper",
+					"label": "Reef"
+				}
+			]
+		},
+		"changelog": {
+			"label": "Changelog",
+			"words": {
+				"badge": "pill",
+				"badgeText": "Changelog",
+				"headline": "What’s new in *Inkbox*",
+				"body": "Agent Cards, public directory, invitations and SDK 0.5.14."
+			},
+			"looks": [
+				{
+					"template": "feature",
+					"theme": "paper",
+					"label": "Product window"
+				},
+				{
+					"template": "card",
+					"theme": "mist",
+					"label": "Card",
+					"words": {
+						"badge": "solid",
+						"badgeText": "CHANGELOG",
+						"highlight": "ink"
+					}
+				},
+				{
+					"template": "app",
+					"theme": "paper",
+					"label": "Inbox"
+				},
+				{
+					"template": "hatch",
+					"theme": "mono",
+					"label": "Hatched"
+				}
+			]
+		},
+		"milestone": {
+			"label": "Milestone",
+			"words": {
+				"badge": "dot",
+				"badgeText": "Milestone",
+				"headline": "*1,000,000* emails\nsent by agents",
+				"body": ""
+			},
+			"looks": [
+				{
+					"template": "funding",
+					"theme": "paper",
+					"label": "Big number"
+				},
+				{
+					"template": "outline",
+					"theme": "mono",
+					"label": "Outline"
+				},
+				{
+					"template": "reef",
+					"theme": "lavender",
+					"label": "Reef"
+				},
+				{
+					"template": "tile",
+					"theme": "paper",
+					"label": "Tile"
+				}
+			]
+		},
+		"event": {
+			"label": "Event",
+			"words": {
+				"badge": "pill",
+				"badgeText": "Live · Thursday 6pm",
+				"headline": "Build an agent that\n*answers its own email*",
+				"body": "A live session with the Inkbox team."
+			},
+			"looks": [
+				{
+					"template": "announce",
+					"theme": "lavender",
+					"label": "Announcement"
+				},
+				{
+					"template": "outline",
+					"theme": "paper",
+					"label": "Outline"
+				},
+				{
+					"template": "reef",
+					"theme": "paper",
+					"label": "Reef"
+				},
+				{
+					"template": "tile",
+					"theme": "mono",
+					"label": "Tile"
+				}
+			]
+		}
+	},
+	"templateOccasion": {
+		"feature": "feature",
+		"card": "feature",
+		"partner": "partnership",
+		"funding": "funding"
+	},
+	"app": {
+		"handle": "acme",
+		"domain": "inkboxmail.com",
+		"mails": [
+			"Acme support | Yesterday | Your mailbox is ready for agents | Hello @acme, this mailbox can send, receive and reply on its own…",
+			"Acme billing | Jul 31 | Invoice 2041 is ready | Hello @acme, the invoice for July is attached. Reply with any questions…",
+			"Acme team | Jul 31 | Weekly report from the ops agent | Hello @acme, here is this week’s summary of handled requests…",
+			"Acme support | Jul 30 | A new contact asked for a callback | Hello @acme, a caller left a number and asked for a reply today…",
+			"Acme team | Jul 29 | Agent Card published | Hello @acme, your Agent Card is now listed in the public directory…",
+			"Acme billing | Jul 28 | Payment received, thank you | Hello @acme, we received your payment for June…",
+			"Acme team | Jul 27 | Welcome to the shared vault | Hello @acme, the team vault now holds three keys for this agent…"
+		],
+		"subject": "Your mailbox is ready for agents",
+		"body": "Hello @{handle},\n\nThis is a placeholder message from the Acme team to the agent reading this mailbox. It shows how a message reads in the console: the sender, the address it was sent to, and the body below.\n\n1. Reply to this message to test the mailbox.\n2. Forward it to another agent to try a handoff.\n\nQuestions? Reply to this email.",
+		"unread": "Unread",
+		"workspaceNav": "Robot | Agent Workspace *\nUsersThree | Manage Agents\nKey | API Keys\n# Channels\nEnvelopeSimple | Email\nPhone | Phone\nAppleLogo | iMessage\nArrowsLeftRight | Agent2Agent | BETA\n# Shared\nUsersThree | Contacts\nNote | Notes\nVault | Vault\nWebhooksLogo | Webhooks\n---\nQuestion | Help\nBuildings | My Organisation | ADMIN\nSidebarSimple | Collapse",
+		"mailboxNav": "Lightning | Quickstart\n# Email +\nTray | Inbox *\nPaperPlaneTilt | Sent\nWarning | Spam\nProhibit | Blocked\n# Phone\nPhone | Calls\nChatText | Texts\nAppleLogo | iMessage\nProhibit | Blocked\n# Agent2Agent +\nArrowsLeftRight | Sessions\n# Tunnel\nArrowsLeftRight | Tunnel\n# Other\nUsersThree | Contacts\nNote | Notes\nVault | Vault",
+		"colors": {
+			"strong": "ink",
+			"ink": "icon-secondary",
+			"muted": "text-muted",
+			"accent": "brand",
+			"tint": "lilac",
+			"side": "lilac",
+			"bg": "white",
+			"line": "border-subtle",
+			"pink": "pink",
+			"pinkFill": "white",
+			"avatar": "avatar",
+			"avatarInk": "white",
+			"unreadBg": "tag-blue",
+			"unread": "tag-blue-fg",
+			"shadow": "ink"
+		},
+		"source": "The console as the Figma share image draws it (739:75698, Agent Workspace, Inbox): the workspace nav, the mailbox nav, the message list and the open message on a 1040 by 585 grid."
+	}
+}

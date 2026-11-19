@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "pricing-table",
+  "useFor": "Use for plans. Mark one plan featured; pass the console's own plans or yours.",
+  "constraints": [
+    "Square checks (checks are always circles)",
+    "Strikethrough prices",
+    "More than one featured plan"
+  ],
+  "documentation": "",
+  "source": "Console billing tab plans (components/billing/BillingTab.tsx, lib/plan-upgrade.ts)",
+  "exports": [
+    "Plan",
+    "PricingTable"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/pricing-table",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/pricing-table.md",
+  "examples": [
+    {
+      "path": "examples/pricing-table.tsx",
+      "content": "import { PricingTable } from \"@/components/blocks/pricing-table\";\nimport { PLANS } from \"@/components/site/pricing-page\";\n\nexport function Preview() {\n  return <PricingTable label=\"Pricing\" title=\"Start free, grow with your agents\" plans={PLANS.slice(0, 3)} />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "pricing-table",
+        "pricing-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/pricing-table/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Pricing table",
+  "description": "Plans as the console's billing cards: price, line, summary, green check-circle features and an action; the featured plan is raised.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "badge",
+    "button",
+    "card",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/blocks/pricing-table.tsx",
+      "content": "import * as React from \"react\";\nimport { CheckCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { cn } from \"@/lib/utils\";\n\nexport type Plan = { name: string; price: string; cadence?: string; description: string; summary?: string; features: string[]; action: { label: string; href: string }; featured?: boolean; badge?: string };\n\n/**\n * Plans as the console's billing cards: the name, the price at 24px with its cadence, a muted line, the summary in\n * medium ink, the features with green filled check circles, and the action at the foot. The featured plan is raised\n * and takes the purple action.\n */\nfunction PricingTable({ label, title, description, plans, note, className }: { label?: string; title?: React.ReactNode; description?: React.ReactNode; plans: Plan[]; note?: React.ReactNode; className?: string }) {\n  return (\n    <section data-slot=\"pricing-table\" className={cn(\"mx-auto grid max-w-(--ds-layout-column) gap-8 px-6 py-16\", className)}>\n      {title && <SectionHead label={label} title={title} description={description} align=\"center\" />}\n      <ul className={cn(\"grid gap-4 md:grid-cols-2\", plans.length >= 3 && \"lg:grid-cols-3\", plans.length >= 4 && \"xl:grid-cols-4\")}>\n        {plans.map((p) => (\n          <li key={p.name} className=\"grid\">\n            <Card variant={p.featured ? \"raised\" : \"default\"} className=\"h-full\">\n              <CardHeader>\n                <CardTitle className=\"justify-between\">\n                  {p.name}\n                  {p.badge && <Badge variant=\"pink\">{p.badge}</Badge>}\n                </CardTitle>\n                <p className=\"flex items-baseline gap-1\">\n                  <span className=\"text-h1 leading-tight font-medium text-fg\">{p.price}</span>\n                  {p.cadence && <span className=\"text-body text-fg-muted\">{p.cadence}</span>}\n                </p>\n                <CardDescription>{p.description}</CardDescription>\n              </CardHeader>\n              <CardContent className=\"grid flex-1 content-start gap-3\">\n                {p.summary && <p className=\"text-body leading-body font-medium text-fg\">{p.summary}</p>}\n                <ul className=\"grid gap-2\">\n                  {p.features.map((f) => (\n                    <li key={f} className=\"flex gap-2 text-body leading-body text-fg-secondary\">\n                      <CheckCircleIcon weight=\"fill\" aria-hidden className=\"mt-0.5 size-4 shrink-0 text-success\" />\n                      {f}\n                    </li>\n                  ))}\n                </ul>\n              </CardContent>\n              <CardFooter>\n                <Button asChild variant={p.featured ? \"default\" : \"secondary\"} className=\"w-full\">\n                  <a href={p.action.href}>{p.action.label}</a>\n                </Button>\n              </CardFooter>\n            </Card>\n          </li>\n        ))}\n      </ul>\n      {note && <p className=\"text-center text-body-sm leading-body text-fg-muted\">{note}</p>}\n    </section>\n  );\n}\n\nexport { PricingTable };\n"
+    }
+  ]
+}

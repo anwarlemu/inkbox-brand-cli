@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "surface",
+  "useFor": "Wrap an embedded panel or a preview in Surface so its overlays render inside it. Pick lilac for the second rail or a channel card's ground.",
+  "constraints": [],
+  "documentation": "",
+  "exports": [
+    "Surface",
+    "usePortalContainer"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/r/surface.md",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/surface.md",
+  "examples": [],
+  "type": "lib",
+  "title": "Surface",
+  "description": "A white or lilac ground that also keeps the dialogs, menus and tooltips opened inside it.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "lib/surface.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A ground: white (the page and dialogs) or lilac (the second rail, a channel card, a table's head). Dialogs, menus\n// and tooltips opened inside a Surface render inside it, so a preview or an embedded panel keeps its overlays.\nconst PortalContainer = React.createContext<HTMLElement | null>(null);\n\nconst GROUNDS = {\n  white: \"bg-surface text-fg\",\n  lilac: \"bg-subtle text-fg\",\n} as const;\n\nexport function Surface({ ground = \"white\", className, children, ...props }: React.ComponentProps<\"div\"> & { ground?: keyof typeof GROUNDS }) {\n  const [element, setElement] = React.useState<HTMLDivElement | null>(null);\n  return (\n    <div ref={setElement} data-ground={ground} className={cn(GROUNDS[ground], className)} {...props}>\n      <PortalContainer.Provider value={element}>{children}</PortalContainer.Provider>\n    </div>\n  );\n}\n\n/** Where overlays render: the nearest Surface, else the page body. */\nexport function usePortalContainer() {\n  return React.useContext(PortalContainer) ?? undefined;\n}\n"
+    }
+  ]
+}

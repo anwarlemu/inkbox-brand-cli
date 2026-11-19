@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "name": "blog-post-page",
+  "useFor": "Pass the article as children: paragraphs, h2s, lists, links and CodeBlock are styled.",
+  "constraints": [
+    "Article text wider than the reading width",
+    "Headings bolder than regular"
+  ],
+  "documentation": "",
+  "source": "Article copy from the console app's A2A update (agd-playground inkbox-og app.ts), with Acme for the handle",
+  "exports": [
+    "BlogPostPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/blog-post-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/blog-post-page.md",
+  "examples": [
+    {
+      "path": "examples/blog-post-page.tsx",
+      "content": "import { BlogPostPage } from \"@/components/site/blog-post-page\";\n\nexport function Preview() {\n  return <BlogPostPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "blog-post-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/blog-post-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Blog post page",
+  "description": "The blog post template: back link, tag, title and date, the article at reading width, and a closing call.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "cta",
+    "site-layout",
+    "badge",
+    "button",
+    "code-block",
+    "separator"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/blog-post-page.tsx",
+      "content": "import * as React from \"react\";\nimport { ArrowLeftIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Cta } from \"@/components/blocks/cta\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { CodeBlock, CodeBlockContent, CodeBlockHeader, CodeBlockTitle } from \"@/components/ui/code-block\";\nimport { Separator } from \"@/components/ui/separator\";\n\n/**\n * A blog post: back to the blog, the tag, the 32px title, the date, then the article at reading width (pass any\n * markup as children: paragraphs, h2s, lists and code blocks are styled), and a closing call.\n */\nfunction BlogPostPage({ markSrc, title = \"Agents can now talk to each other\", tag = \"Feature\", date = \"Jul 24, 2026\", byline = \"The team\", children }: { markSrc?: string; title?: string; tag?: string; date?: string; byline?: string; children?: React.ReactNode }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/blog\">\n      <article className=\"mx-auto grid max-w-(--ds-layout-text) gap-6 px-6 py-16 md:py-20\">\n        <a href=\"/blog\" className=\"inline-flex w-fit items-center gap-1.5 rounded-xs text-body text-fg-brand outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:shadow-focus motion-reduce:transition-none\">\n          <ArrowLeftIcon className=\"size-4\" aria-hidden />\n          Blog\n        </a>\n        <header className=\"grid gap-3\">\n          {tag && (\n            <Badge variant=\"purple\" className=\"w-fit\">\n              {tag}\n            </Badge>\n          )}\n          <h1 className=\"text-display leading-display font-normal text-balance text-fg\">{title}</h1>\n          <p className=\"text-body text-fg-muted\">\n            <time>{date}</time> · {byline}\n          </p>\n        </header>\n        <Separator />\n        <div className=\"grid gap-5 text-body-lg leading-relaxed text-fg-secondary [&_h2]:mt-4 [&_h2]:text-h3 [&_h2]:leading-heading [&_h2]:font-normal [&_h2]:text-fg [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-5 [&_a]:text-fg-brand [&_a]:underline [&_a]:underline-offset-4\">\n          {children ?? <DefaultArticle />}\n        </div>\n      </article>\n      <Cta\n        title=\"Try Agent2Agent\"\n        description=\"Enable A2A on an identity and publish its Agent Card.\"\n        actions={\n          <Button asChild>\n            <a href=\"/signup\">Get started free</a>\n          </Button>\n        }\n      />\n    </SiteLayout>\n  );\n}\n\nfunction DefaultArticle() {\n  return (\n    <>\n      <p>Last week Agent-to-Agent shipped, so your agents can delegate tasks to other agents over the open A2A 1.0 protocol. This week A2A works across organizations.</p>\n      <h2>Publish your Agent Card</h2>\n      <p>Enabling A2A serves your agent's public Agent Card. It stays out of the public directory until you opt in.</p>\n      <CodeBlock>\n        <CodeBlockHeader>\n          <CodeBlockTitle>Terminal</CodeBlockTitle>\n        </CodeBlockHeader>\n        <CodeBlockContent code=\"inkbox a2a publicly-discoverable true -i acme\" language=\"bash\" />\n      </CodeBlock>\n      <h2>Connect with one invitation</h2>\n      <ul>\n        <li>An invitation links a fixed bundle of agents in one step.</li>\n        <li>When it is accepted, the access rules for the whole bundle are set at once.</li>\n      </ul>\n    </>\n  );\n}\n\nexport { BlogPostPage };\n"
+    }
+  ]
+}

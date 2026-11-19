@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "site-footer",
+  "useFor": "Use at the bottom of every website page (SiteLayout already does).",
+  "constraints": [
+    "A dark footer",
+    "Social icons in color"
+  ],
+  "documentation": "",
+  "exports": [
+    "FooterGroup",
+    "SiteFooter"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/site-footer",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/site-footer.md",
+  "examples": [
+    {
+      "path": "examples/site-footer.tsx",
+      "content": "import { SiteFooter } from \"@/components/blocks/site-footer\";\nimport { Lockup } from \"@/components/site/lockup\";\nimport { FOOTER_GROUPS } from \"@/components/site/site-layout\";\n\nexport function Preview() {\n  return <SiteFooter logo={<Lockup />} tagline=\"Give every AI agent a way to be reached.\" groups={FOOTER_GROUPS} legal=\"© 2026 Inkbox\" legalLinks={[{ label: \"Privacy policy\", href: \"#privacy\" }]} />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "site-footer",
+        "lockup",
+        "site-layout"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/site-footer/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Site footer",
+  "description": "The website's foot: the lockup and a line, link groups with purple labels, a hairline and the legal line.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "separator",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/site-footer.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Separator } from \"@/components/ui/separator\";\nimport { cn } from \"@/lib/utils\";\n\nexport type FooterGroup = { title: string; links: { label: string; href: string }[] };\n\n/**\n * The site's foot: the lockup and a line at the left, link groups with purple labels, then a hairline over the legal\n * line and its links.\n */\nfunction SiteFooter({ logo, tagline, groups, legal, legalLinks = [], className }: { logo: React.ReactNode; tagline?: string; groups: FooterGroup[]; legal: string; legalLinks?: { label: string; href: string }[]; className?: string }) {\n  return (\n    <footer data-slot=\"site-footer\" className={cn(\"border-t border-line-subtle bg-surface\", className)}>\n      <div className=\"mx-auto grid max-w-(--ds-layout-column) gap-10 px-6 py-12\">\n        <div className=\"grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,2fr)]\">\n          <div className=\"grid content-start gap-3\">\n            {logo}\n            {tagline && <p className=\"max-w-72 text-body leading-body text-fg-secondary\">{tagline}</p>}\n          </div>\n          <div className=\"grid grid-cols-2 gap-8 sm:grid-cols-3\">\n            {groups.map((g) => (\n              <div key={g.title} className=\"grid content-start gap-3\">\n                <p className=\"text-body-sm leading-tight font-medium text-fg-label\">{g.title}</p>\n                <ul className=\"grid gap-2\">\n                  {g.links.map((l) => (\n                    <li key={l.href}>\n                      <a href={l.href} className=\"rounded-xs text-body leading-body text-fg-secondary outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:shadow-focus motion-reduce:transition-none\">\n                        {l.label}\n                      </a>\n                    </li>\n                  ))}\n                </ul>\n              </div>\n            ))}\n          </div>\n        </div>\n        <Separator />\n        <div className=\"flex flex-wrap items-center justify-between gap-4 text-body-sm leading-tight text-fg-muted\">\n          <p>{legal}</p>\n          {legalLinks.length > 0 && (\n            <ul className=\"flex flex-wrap gap-4\">\n              {legalLinks.map((l) => (\n                <li key={l.href}>\n                  <a href={l.href} className=\"rounded-xs outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:shadow-focus motion-reduce:transition-none\">\n                    {l.label}\n                  </a>\n                </li>\n              ))}\n            </ul>\n          )}\n        </div>\n      </div>\n    </footer>\n  );\n}\n\nexport { SiteFooter };\n"
+    }
+  ]
+}

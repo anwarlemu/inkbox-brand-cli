@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "name": "trace",
+  "useFor": "Use to show what an agent did or is doing: each TraceLine has a TraceIcon (a filled Phosphor glyph for the tool), a TraceTitle and an optional TraceDescription (a duration or a count). Set status running, pending or error. Put a step with detail in TraceCollapsible with a TraceCollapsibleTrigger around its line and the detail in TraceCollapsibleContent. Wrap a line in a link or button to make it open something.",
+  "constraints": [
+    "Bold or ink step titles",
+    "A spinner on every running step",
+    "Colors other than the muted purple and red",
+    "Detail that opens without its hairline"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the Inkbox console (Figma 427:2715): the inbox list's muted text and the Advanced settings disclosure",
+  "exports": [
+    "Trace",
+    "TraceCollapsible",
+    "TraceCollapsibleContent",
+    "TraceCollapsibleTrigger",
+    "TraceDescription",
+    "TraceIcon",
+    "TraceLine",
+    "TraceTitle"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/trace",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/trace.md",
+  "examples": [
+    {
+      "path": "examples/trace.tsx",
+      "content": "import { EnvelopeSimpleIcon, LightningIcon, MagnifyingGlassIcon, PaperPlaneTiltIcon, PhoneIcon, VaultIcon, WarningCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Trace, TraceCollapsible, TraceCollapsibleContent, TraceCollapsibleTrigger, TraceDescription, TraceIcon, TraceLine, TraceTitle } from \"@/components/ui/trace\";\n\nexport function Preview() {\n  return (\n    <Trace className=\"mx-auto max-w-120\">\n      <TraceLine>\n        <TraceIcon>\n          <EnvelopeSimpleIcon weight=\"fill\" />\n        </TraceIcon>\n        <TraceTitle>Read 3 new emails in acme@inkboxmail.com</TraceTitle>\n        <TraceDescription>0.8s</TraceDescription>\n      </TraceLine>\n      <TraceCollapsible defaultOpen>\n        <TraceCollapsibleTrigger>\n          <TraceLine>\n            <TraceIcon>\n              <MagnifyingGlassIcon weight=\"bold\" />\n            </TraceIcon>\n            <TraceTitle>Searched the Agent2Agent directory</TraceTitle>\n            <TraceDescription>2 results</TraceDescription>\n          </TraceLine>\n        </TraceCollapsibleTrigger>\n        <TraceCollapsibleContent>\n          Found <span className=\"font-mono text-fg\">@summarize</span> and <span className=\"font-mono text-fg\">@translate</span>, both public and accepting delegated tasks.\n        </TraceCollapsibleContent>\n      </TraceCollapsible>\n      <TraceLine status=\"running\">\n        <TraceIcon>\n          <PaperPlaneTiltIcon weight=\"fill\" />\n        </TraceIcon>\n        <TraceTitle>Sending the summary to ray@inkbox.ai</TraceTitle>\n      </TraceLine>\n      <TraceLine status=\"pending\">\n        <TraceIcon>\n          <PhoneIcon weight=\"fill\" />\n        </TraceIcon>\n        <TraceTitle>Call +1 650 474 9720 with the result</TraceTitle>\n      </TraceLine>\n    </Trace>\n  );\n}\n\nexport function Failed() {\n  return (\n    <Trace className=\"mx-auto max-w-120\">\n      <TraceLine>\n        <TraceIcon>\n          <VaultIcon weight=\"fill\" />\n        </TraceIcon>\n        <TraceTitle>Unlocked the vault</TraceTitle>\n        <TraceDescription>0.2s</TraceDescription>\n      </TraceLine>\n      <TraceCollapsible>\n        <TraceCollapsibleTrigger>\n          <TraceLine status=\"error\">\n            <TraceIcon>\n              <WarningCircleIcon weight=\"fill\" />\n            </TraceIcon>\n            <TraceTitle>Webhook delivery to https://example.com/inkbox failed</TraceTitle>\n          </TraceLine>\n        </TraceCollapsibleTrigger>\n        <TraceCollapsibleContent>\n          The endpoint answered <span className=\"font-mono text-fg\">503 Service Unavailable</span>. Inkbox logs the failure and keeps processing mail.\n        </TraceCollapsibleContent>\n      </TraceCollapsible>\n      <TraceLine>\n        <TraceIcon>\n          <LightningIcon weight=\"fill\" />\n        </TraceIcon>\n        <TraceTitle>Retry scheduled</TraceTitle>\n        <TraceDescription>in 30s</TraceDescription>\n      </TraceLine>\n    </Trace>\n  );\n}\n\nexport function Linked() {\n  return (\n    <Trace className=\"mx-auto max-w-120\">\n      <a href=\"#message\">\n        <TraceLine>\n          <TraceIcon>\n            <EnvelopeSimpleIcon weight=\"fill\" />\n          </TraceIcon>\n          <TraceTitle>Opened Inkbox A2A: publish your Agent Card</TraceTitle>\n        </TraceLine>\n      </a>\n      <button type=\"button\">\n        <TraceLine>\n          <TraceIcon>\n            <PaperPlaneTiltIcon weight=\"fill\" />\n          </TraceIcon>\n          <TraceTitle>Drafted a reply</TraceTitle>\n        </TraceLine>\n      </button>\n    </Trace>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Failed",
+        "Linked"
+      ],
+      "requires": [
+        "trace"
+      ],
+      "packages": [
+        "@phosphor-icons/react"
+      ],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/trace/Preview"
+        },
+        {
+          "name": "Failed",
+          "url": "https://inkbox-ds.vercel.app/preview/trace/Failed"
+        },
+        {
+          "name": "Linked",
+          "url": "https://inkbox-ds.vercel.app/preview/trace/Linked"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Trace",
+  "description": "An agent's steps as quiet 14px lines with a glyph, a running step that breathes and steps that open to their detail on a hairline.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "collapsible",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/trace.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CaretRightIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Collapsible, CollapsibleContent, CollapsibleTrigger } from \"@/components/ui/collapsible\";\nimport { cn } from \"@/lib/utils\";\n\n// An agent's steps as it works (extrapolated from the console, Figma 427:2715: the inbox's muted dates and the\n// \"Advanced settings\" disclosure). Each line is 14px muted purple with an 18px glyph 8px before it; a line that is a\n// link or button turns ink under the pointer. A running step breathes (1.6s, held still with reduced motion), a pending\n// one is faded, a failed one is red. A step that can open shows a caret after its title that turns a quarter when open;\n// its detail hangs from a hairline 16px in, in 14px secondary ink, and opens with its height (200ms, the strong ease-out).\nfunction Trace({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"trace\"\n      className={cn(\n        \"flex w-full min-w-0 flex-col gap-2 *:has-[>[data-slot=trace-line]]:flex *:has-[>[data-slot=trace-line]]:w-fit *:has-[>[data-slot=trace-line]]:max-w-full *:has-[>[data-slot=trace-line]]:min-w-0 *:has-[>[data-slot=trace-line]]:rounded-pill *:has-[>[data-slot=trace-line]]:text-left *:has-[>[data-slot=trace-line]]:outline-none *:has-[>[data-slot=trace-line]]:focus-visible:outline-2 *:has-[>[data-slot=trace-line]]:focus-visible:outline-offset-2 *:has-[>[data-slot=trace-line]]:focus-visible:outline-focus-ring\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TraceLine({ className, status, ...props }: React.ComponentProps<\"span\"> & { status?: \"running\" | \"error\" | \"pending\" }) {\n  return (\n    <span\n      data-slot=\"trace-line\"\n      data-status={status}\n      className={cn(\n        \"flex w-fit max-w-full min-w-0 items-center gap-2 font-sans text-body leading-body text-fg-muted transition-colors duration-150 ease-out in-[a,button]:cursor-pointer in-[a:hover,button:hover]:text-fg data-[status=error]:text-danger data-[status=error]:in-[a:hover,button:hover]:text-danger-strong data-[status=pending]:opacity-60 data-[status=running]:*:data-[slot=trace-title]:animate-pulse-soft motion-reduce:transition-none motion-reduce:data-[status=running]:*:data-[slot=trace-title]:animate-none\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TraceIcon({ className, ...props }: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"trace-icon\"\n      aria-hidden=\"true\"\n      className={cn(\"flex size-4.5 shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4.5 [[data-slot=trace-title]~&]:-ml-1\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TraceTitle({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"trace-title\" className={cn(\"min-w-0 truncate\", className)} {...props} />;\n}\n\n/** A step's quiet detail at its end: a duration or a count, in the faint purple with even figures. */\nfunction TraceDescription({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"trace-description\" className={cn(\"shrink-0 text-fg-subtle tabular-nums\", className)} {...props} />;\n}\n\nfunction TraceCollapsible({\n  className,\n  ...props\n}: Omit<React.ComponentProps<typeof Collapsible>, \"asChild\" | \"open\"> & ({ open?: undefined } | { open: boolean; onOpenChange: NonNullable<React.ComponentProps<typeof Collapsible>[\"onOpenChange\"]> })) {\n  return <Collapsible data-slot=\"trace-collapsible\" className={cn(\"flex w-full min-w-0 flex-col\", className)} {...props} />;\n}\n\nfunction TraceCollapsibleTrigger({ className, children, ...props }: Omit<React.ComponentProps<typeof CollapsibleTrigger>, \"asChild\">) {\n  return (\n    <CollapsibleTrigger\n      data-slot=\"trace-collapsible-trigger\"\n      className={cn(\n        \"group/trace-collapsible-trigger flex w-fit max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-pill text-left text-fg-muted outline-none active:brightness-95 active:transition-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring has-[[data-status=error]]:text-danger motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      <TraceIcon className=\"transition-transform duration-200 ease-out group-aria-expanded/trace-collapsible-trigger:rotate-90 motion-reduce:transition-none\">\n        <CaretRightIcon weight=\"bold\" className=\"size-3.5\" />\n      </TraceIcon>\n    </CollapsibleTrigger>\n  );\n}\n\nfunction TraceCollapsibleContent({ className, children, ...props }: Omit<React.ComponentProps<typeof CollapsibleContent>, \"asChild\">) {\n  return (\n    <CollapsibleContent data-slot=\"trace-collapsible-content\" className=\"min-w-0\" {...props}>\n      <div data-slot=\"trace-collapsible-content-inner\" className={cn(\"mt-2 mb-1 ml-2 min-w-0 border-l border-line-field pr-1 pl-4 font-sans text-body leading-body [overflow-wrap:anywhere] text-fg-secondary\", className)}>\n        {children}\n      </div>\n    </CollapsibleContent>\n  );\n}\n\nexport { Trace, TraceCollapsible, TraceCollapsibleContent, TraceCollapsibleTrigger, TraceDescription, TraceIcon, TraceLine, TraceTitle };\n"
+    }
+  ]
+}

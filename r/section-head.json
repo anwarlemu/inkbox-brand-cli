@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "name": "section-head",
+  "useFor": "Use above a section's content. The blocks that take a title use it already.",
+  "constraints": [
+    "Bold titles",
+    "Labels in caps"
+  ],
+  "documentation": "",
+  "source": "Console page head type (page-head.tsx), one step up",
+  "exports": [
+    "SectionHead"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/section-head",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/section-head.md",
+  "examples": [
+    {
+      "path": "examples/section-head.tsx",
+      "content": "import { SectionHead } from \"@/components/blocks/section-head\";\n\nexport function Preview() {\n  return <SectionHead label=\"Channels\" title=\"One identity, every way to reach it\" description=\"Turn on the channels each agent needs.\" />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "section-head"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/section-head/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Section head",
+  "description": "A section's heading: a purple label, the 24px regular title and a secondary line.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/section-head.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n/** A section's heading: an optional purple label, the 24px regular title and a secondary line, left or centered. */\nfunction SectionHead({ label, title, description, align = \"left\", className }: { label?: string; title: React.ReactNode; description?: React.ReactNode; align?: \"left\" | \"center\"; className?: string }) {\n  return (\n    <div data-slot=\"section-head\" className={cn(\"grid max-w-(--ds-layout-heading) gap-2\", align === \"center\" && \"mx-auto justify-items-center text-center\", className)}>\n      {label && <p className=\"text-body-sm leading-tight font-medium text-fg-label\">{label}</p>}\n      <h2 className=\"text-h2 leading-heading font-normal text-balance text-fg\">{title}</h2>\n      {description && <p className=\"text-body leading-body text-pretty text-fg-secondary\">{description}</p>}\n    </div>\n  );\n}\n\nexport { SectionHead };\n"
+    }
+  ]
+}

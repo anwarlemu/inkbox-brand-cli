@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "name": "testimonial",
+  "useFor": "Use one per page, between features and the call to action. Attribute to a role at a company (Acme in templates); name a real person only with their permission.",
+  "constraints": [
+    "Invented names or photos",
+    "Star ratings",
+    "More than one quote side by side"
+  ],
+  "documentation": "",
+  "exports": [
+    "Testimonial"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/testimonial",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/testimonial.md",
+  "examples": [
+    {
+      "path": "examples/testimonial.tsx",
+      "content": "import { Testimonial } from \"@/components/blocks/testimonial\";\n\nexport function Preview() {\n  return <Testimonial quote=\"Our agents answer their own email now. Setup took an afternoon.\" role=\"Head of operations\" company=\"Acme\" />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "testimonial"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/testimonial/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Testimonial",
+  "description": "A quote on the lilac panel with the speaker as a role at a company.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils",
+    "avatar"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/testimonial.tsx",
+      "content": "import { cn } from \"@/lib/utils\";\nimport { Avatar, AvatarFallback } from \"@/components/ui/avatar\";\n\n/**\n * A quote on the lilac panel: 20px regular ink words, then who said it as a role at a company with an initial avatar.\n * Quote real people only with their permission; otherwise a role at Acme.\n */\nfunction Testimonial({ quote, role, company, className }: { quote: string; role: string; company: string; className?: string }) {\n  return (\n    <section data-slot=\"testimonial\" className={cn(\"mx-auto max-w-(--ds-layout-column) px-6 py-16\", className)}>\n      <figure className=\"mx-auto grid max-w-(--ds-layout-text) gap-6 rounded-dialog bg-subtle p-8 md:p-10\">\n        <blockquote className=\"text-h3 leading-heading font-normal text-pretty text-fg\">“{quote}”</blockquote>\n        <figcaption className=\"flex items-center gap-3\">\n          <Avatar>\n            <AvatarFallback>{company.charAt(0)}</AvatarFallback>\n          </Avatar>\n          <span className=\"grid\">\n            <span className=\"text-body leading-body font-medium text-fg\">{role}</span>\n            <span className=\"text-body-sm leading-tight text-fg-muted\">{company}</span>\n          </span>\n        </figcaption>\n      </figure>\n    </section>\n  );\n}\n\nexport { Testimonial };\n"
+    }
+  ]
+}

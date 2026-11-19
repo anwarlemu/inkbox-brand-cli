@@ -299,7 +299,8 @@ function fromRegistry(item: RegistryItem): LibraryItem {
 		constraints: item.constraints ?? [],
 		reference: item.source,
 		exports: item.exports ?? [],
-		source: (item.files ?? []).map((file) => file.content).join('\n'),
+		// Only script files are parsed: the theme item ships CSS, which has no props to read.
+		source: (item.files ?? []).filter((file) => /\.(tsx?|jsx?)$/.test(file.path)).map((file) => file.content).join('\n'),
 		example: item.examples?.[0]?.content ?? '',
 	};
 }

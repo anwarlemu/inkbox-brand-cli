@@ -135,7 +135,8 @@ function withGuides(line: { kind: Kind; text: string }[]): { kind: Kind | "guide
 
 /**
  * The code itself. Pass the text as `code` and its `language` (json, tsx, ts, css, bash); line numbers show by default.
- * `wrap` breaks long lines instead of scrolling; `maxHeight` scrolls a long file inside the block.
+ * `wrap` breaks long lines instead of scrolling; a max height (max-h-96) scrolls a long file inside the block. Edges with
+ * more code past them fade on both axes (fade-xy), so no line is cut off.
  */
 function CodeBlockContent({ code, language = "tsx", lineNumbers = true, wrap = false, className, ...props }: Omit<React.ComponentProps<"pre">, "children"> & { code: string; language?: string; lineNumbers?: boolean; wrap?: boolean }) {
   const lines = React.useMemo(() => {
@@ -153,7 +154,7 @@ function CodeBlockContent({ code, language = "tsx", lineNumbers = true, wrap = f
     <pre
       data-slot="code-block-content"
       tabIndex={0}
-      className={cn("fade-x m-0 overflow-auto bg-code py-3 font-code text-body leading-5 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", className)}
+      className={cn("fade-xy m-0 overflow-auto bg-code py-3 font-code text-body leading-5 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", className)}
       {...props}
     >
       <code className={cn("grid", wrap ? "grid-cols-[minmax(0,1fr)]" : "min-w-max")}>

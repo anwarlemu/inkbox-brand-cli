@@ -55,3 +55,25 @@
 @supports not (animation-timeline: scroll()) {
  .fade-y, .fade-x { --fade-start: 8px; --fade-end: 8px; }
 }
+
+/* Both axes (a code block that scrolls down and sideways): the two fades intersect. */
+@property --fade-x-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fade-x-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@keyframes fade-x-start { from { --fade-x-start: 0px; } to { --fade-x-start: 24px; } }
+@keyframes fade-x-end { from { --fade-x-end: 24px; } to { --fade-x-end: 0px; } }
+.fade-xy {
+ mask-image:
+  linear-gradient(to bottom, transparent, black var(--fade-start), black calc(100% - var(--fade-end)), transparent),
+  linear-gradient(to right, transparent, black var(--fade-x-start), black calc(100% - var(--fade-x-end)), transparent);
+ mask-composite: intersect;
+}
+@supports (animation-timeline: scroll()) {
+ .fade-xy {
+  animation: fade-start linear both, fade-end linear both, fade-x-start linear both, fade-x-end linear both !important;
+  animation-timeline: scroll(self block), scroll(self block), scroll(self inline), scroll(self inline) !important;
+  animation-range: 0px 24px, calc(100% - 24px) 100%, 0px 24px, calc(100% - 24px) 100% !important;
+ }
+}
+@supports not (animation-timeline: scroll()) {
+ .fade-xy { --fade-start: 8px; --fade-end: 8px; --fade-x-start: 8px; --fade-x-end: 8px; }
+}

@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 
 // A region that scrolls inside the page (the email list, a long event catalog) with the console's thin bar: a 6px
 // thumb in the field's lilac-gray on a clear track, darkening under the pointer. The edges with more content past them
-// fade (fade-y, or fade-x for a region that scrolls sideways) instead of cutting a row in half.
-function ScrollArea({ className, children, fade = "y", ...props }: React.ComponentProps<typeof ChakraScrollArea.Root> & { fade?: "y" | "x" }) {
+// fade on both axes (fade-xy; fade="y" or "x" for one) instead of cutting a row in half.
+function ScrollArea({ className, children, fade = "xy", ...props }: React.ComponentProps<typeof ChakraScrollArea.Root> & { fade?: "xy" | "y" | "x" }) {
   return (
     <ChakraScrollArea.Root unstyled data-slot="scroll-area" className={cn("relative overflow-hidden", className)} {...props}>
-      <ChakraScrollArea.Viewport data-slot="scroll-area-viewport" className={cn("size-full rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", fade === "x" ? "fade-x" : "fade-y")}>
+      <ChakraScrollArea.Viewport data-slot="scroll-area-viewport" className={cn("size-full rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", { xy: "fade-xy", y: "fade-y", x: "fade-x" }[fade])}>
         {children}
       </ChakraScrollArea.Viewport>
       <ScrollBar />

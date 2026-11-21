@@ -83,7 +83,19 @@ try {
   await page.goto(`${base}/preview/command/Preview`);
   await page.locator('[data-preview-ready]').waitFor();
   await checkFade(page.locator('[data-slot="command-list"]').first(), 'command list');
-  console.log('PASS: the rail and a library list fade at the edges that have more past them.');
+  // A code block that scrolls down and sideways fades on both axes: whole at rest, 24px on every edge part way in.
+  await page.goto(`${base}/components/sidebar`);
+  await page.locator('#source [data-slot="code-block-content"]').first().waitFor();
+  const both = (await page.evaluateHandle(() => [...document.querySelectorAll('[data-slot="code-block-content"]')].find(el => el.scrollHeight > el.clientHeight + 48 && el.scrollWidth > el.clientWidth + 48))).asElement();
+  assert.ok(both, 'a code block scrolls both ways on the sidebar page');
+  const axes = el => { const style = getComputedStyle(el); return ['--fade-start', '--fade-x-start', '--fade-end', '--fade-x-end'].map(name => style.getPropertyValue(name)); };
+  await both.scrollIntoViewIfNeeded();
+  await settle();
+  assert.deepEqual((await both.evaluate(axes)).slice(0, 2), ['0px', '0px'], 'code block: at rest the top and left edges are whole');
+  await both.evaluate(el => { el.scrollTop = 100; el.scrollLeft = 40; });
+  await settle();
+  assert.deepEqual(await both.evaluate(axes), ['24px', '24px', '24px', '24px'], 'code block: part way in every edge fades 24px');
+  console.log('PASS: the rail, a library list and a code block fade at the edges that have more past them.');
 
   await page.goto(`${base}/components/dialog`);
   const iframe = page.locator('iframe').first();

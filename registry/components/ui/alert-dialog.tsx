@@ -37,7 +37,7 @@ function AlertDialogOverlay({ className, ...props }: React.ComponentProps<typeof
   );
 }
 
-function AlertDialogContent({ className, size = "default", ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & { size?: "default" | "sm" }) {
+function AlertDialogContent({ className, children, size = "default", ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & { size?: "default" | "sm" }) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -45,11 +45,16 @@ function AlertDialogContent({ className, size = "default", ...props }: React.Com
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          "group/alert-dialog fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 overflow-y-auto rounded-panel bg-surface p-6 text-fg outline-none data-[size=default]:max-w-112 data-[size=sm]:max-w-80 data-[state=closed]:animate-dialog-out data-[state=open]:animate-dialog-in max-md:data-[size=default]:top-0 max-md:data-[size=default]:left-0 max-md:data-[size=default]:translate-x-0 max-md:data-[size=default]:translate-y-0 max-md:data-[size=default]:h-dvh max-md:data-[size=default]:max-h-dvh max-md:data-[size=default]:w-full max-md:data-[size=default]:max-w-none max-md:data-[size=default]:content-start max-md:data-[size=default]:rounded-none max-md:data-[size=default]:px-[calc(env(safe-area-inset-left,0px)+16px)] max-md:data-[size=default]:pt-[calc(env(safe-area-inset-top,0px)+20px)] max-md:data-[size=default]:pb-[calc(env(safe-area-inset-bottom,0px)+24px)]",
+          "group/alert-dialog fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-panel bg-surface text-fg outline-none data-[size=default]:max-w-112 data-[size=sm]:max-w-80 data-[state=closed]:animate-dialog-out data-[state=open]:animate-dialog-in max-md:data-[size=default]:top-0 max-md:data-[size=default]:left-0 max-md:data-[size=default]:translate-x-0 max-md:data-[size=default]:translate-y-0 max-md:data-[size=default]:h-dvh max-md:data-[size=default]:max-h-dvh max-md:data-[size=default]:w-full max-md:data-[size=default]:max-w-none max-md:data-[size=default]:rounded-none",
           className,
         )}
         {...props}
-      />
+      >
+        {/* The panel keeps its edge; this box scrolls a long message, and its edges fade when there is more past them. */}
+        <div data-slot="alert-dialog-scroll" className="fade-y grid min-h-0 flex-1 content-start gap-6 overflow-y-auto overscroll-contain p-6 max-md:group-data-[size=default]/alert-dialog:px-[calc(env(safe-area-inset-left,0px)+16px)] max-md:group-data-[size=default]/alert-dialog:pt-[calc(env(safe-area-inset-top,0px)+20px)] max-md:group-data-[size=default]/alert-dialog:pb-[calc(env(safe-area-inset-bottom,0px)+24px)]">
+          {children}
+        </div>
+      </AlertDialogPrimitive.Content>
     </AlertDialogPortal>
   );
 }

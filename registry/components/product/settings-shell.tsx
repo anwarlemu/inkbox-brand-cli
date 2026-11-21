@@ -82,7 +82,7 @@ function SettingsShell({ organization = "Acme", organizationId = "org_2f8d6b7f37
                   Invite member
                 </Button>
               </div>
-              <div className="overflow-x-auto">
+              <div className="fade-x overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>

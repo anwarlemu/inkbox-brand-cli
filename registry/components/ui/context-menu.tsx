@@ -15,7 +15,9 @@ import { cn } from "@/lib/utils";
 // labels are 12px regular in the brand purple, separators the subtle hairline, shortcuts 12px muted, destructive items
 // red. The panel grows out of its trigger from 98 percent with a fade (160ms) and leaves in 100ms.
 const CONTENT =
-  "z-50 max-h-(--radix-context-menu-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
+  "z-50 max-h-(--radix-context-menu-content-available-height) min-w-48 flex flex-col overflow-hidden rounded-panel bg-surface text-fg shadow-floating outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
+// The panel holds its shadow; the box inside it scrolls, and its edges fade when there is more past them.
+const SCROLL = "fade-y min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-1";
 const ITEM =
   "relative flex min-h-9 cursor-default items-center gap-3 rounded-control px-3 py-2 font-sans text-body leading-line-body font-normal text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle-hover data-[inset]:pl-10 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
@@ -32,10 +34,12 @@ function ContextMenuTrigger({ className, ...props }: React.ComponentProps<typeof
   return <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" className={cn("select-none", className)} {...props} />;
 }
 
-function ContextMenuContent({ className, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
+function ContextMenuContent({ className, children, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
   return (
     <ContextMenuPortal>
-      <ContextMenuPrimitive.Content data-slot="context-menu-content" className={cn(CONTENT, "origin-(--radix-context-menu-content-transform-origin)", className)} {...props} />
+      <ContextMenuPrimitive.Content data-slot="context-menu-content" className={cn(CONTENT, "origin-(--radix-context-menu-content-transform-origin)", className)} {...props}>
+        <div data-slot="context-menu-scroll" className={SCROLL}>{children}</div>
+      </ContextMenuPrimitive.Content>
     </ContextMenuPortal>
   );
 }
@@ -112,10 +116,12 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: React.C
   );
 }
 
-function ContextMenuSubContent({ className, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) {
+function ContextMenuSubContent({ className, children, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) {
   return (
     <ContextMenuPortal>
-      <ContextMenuPrimitive.SubContent data-slot="context-menu-sub-content" className={cn(CONTENT, "max-h-(--radix-context-menu-content-available-height) origin-(--radix-context-menu-content-transform-origin)", className)} {...props} />
+      <ContextMenuPrimitive.SubContent data-slot="context-menu-sub-content" className={cn(CONTENT, "max-h-(--radix-context-menu-content-available-height) origin-(--radix-context-menu-content-transform-origin)", className)} {...props}>
+        <div data-slot="context-menu-scroll" className={SCROLL}>{children}</div>
+      </ContextMenuPrimitive.SubContent>
     </ContextMenuPortal>
   );
 }

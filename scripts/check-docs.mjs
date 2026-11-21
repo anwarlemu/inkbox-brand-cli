@@ -59,6 +59,32 @@ try {
   await nav.getByText('Nothing matches.').waitFor();
   console.log('PASS: rail filter narrows the list and is kept after navigation.');
 
+  // Scroll edges fade, never cut a row off: the rail at rest shows its first row in full and fades its bottom edge; part
+  // way down both edges fade 24px; at the end the bottom edge is clear. The same holds for a library list (command).
+  const fade = el => { const style = getComputedStyle(el); return { mask: style.maskImage, start: style.getPropertyValue('--fade-start'), end: style.getPropertyValue('--fade-end') }; };
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const checkFade = async (scroller, name) => {
+    await scroller.evaluate(el => { el.scrollTop = 0; });
+    await settle();
+    let state = await scroller.evaluate(fade);
+    assert.match(state.mask, /linear-gradient/, `${name}: the scroll edge is masked`);
+    assert.deepEqual([state.start, state.end], ['0px', '24px'], `${name}: at rest the first row is whole and the bottom edge fades`);
+    await scroller.evaluate(el => { el.scrollTop = Math.min(200, (el.scrollHeight - el.clientHeight) / 2); });
+    await settle();
+    state = await scroller.evaluate(fade);
+    assert.deepEqual([state.start, state.end], ['24px', '24px'], `${name}: part way down both edges fade 24px`);
+    await scroller.evaluate(el => { el.scrollTop = el.scrollHeight; });
+    await settle();
+    state = await scroller.evaluate(fade);
+    assert.equal(state.end, '0px', `${name}: at the end the bottom edge is clear`);
+  };
+  await nav.getByRole('textbox', { name: 'Filter components' }).fill('');
+  await checkFade(nav.locator(':scope > div.fade-y'), 'rail');
+  await page.goto(`${base}/preview/command/Preview`);
+  await page.locator('[data-preview-ready]').waitFor();
+  await checkFade(page.locator('[data-slot="command-list"]').first(), 'command list');
+  console.log('PASS: the rail and a library list fade at the edges that have more past them.');
+
   await page.goto(`${base}/components/dialog`);
   const iframe = page.locator('iframe').first();
   assert.equal(await iframe.getAttribute('sandbox'), 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox');

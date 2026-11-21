@@ -13,7 +13,7 @@ const OPEN =
 
 function Table({ className, variant = "default", ...props }: React.ComponentProps<"table"> & { variant?: "default" | "open" }) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto px-px pt-px pb-1">
+    <div data-slot="table-container" className="fade-x relative w-full overflow-x-auto px-px pt-px pb-1">
       <table data-slot="table" data-variant={variant} className={cn("w-full caption-bottom border-separate border-spacing-0 font-sans text-body leading-tight text-fg", OPEN, className)} {...props} />
     </div>
   );

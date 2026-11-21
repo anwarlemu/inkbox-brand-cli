@@ -4,7 +4,7 @@ title: Menubar
 type: ui
 surface: site
 description: "A lilac tab track of medium triggers whose menus are the dropdown menu's raised panels."
-use_for: "Use for an app-style menu of commands in a dense tool, such as an editor for an agent's notes. In the console's pages prefer buttons and row menus."
+use_for: "Use for an app-style menu of commands in a dense tool, such as an editor for an agent's notes. In the console's pages prefer buttons and row menus. Its scroll edges fade (fade-y) when there is more past them, so no row is cut off."
 never: [A menubar for site navigation (use Navigation Menu), More than six triggers, Triggers without menus]
 source: "Extrapolated from the Inkbox console (Figma 427:2715): the tab track (Mailboxes, Contact rules, Custom domains); its menus follow the console's Chakra menu theme"
 ---

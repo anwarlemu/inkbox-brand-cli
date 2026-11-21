@@ -60,7 +60,7 @@ function TypographyInlineCode({ className, ...props }: React.ComponentProps<"cod
 /** A plain table in running text: the lilac head row and faint rules. For data, use Table. */
 function TypographyTable({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div data-slot="typography-table" className="my-4 w-full overflow-x-auto">
+    <div data-slot="typography-table" className="fade-x my-4 w-full overflow-x-auto">
       <table
         className={cn(
           "w-full border-collapse font-sans text-body leading-body text-fg [&_td]:border-b [&_td]:border-line-subtle [&_td]:px-4 [&_td]:py-2.5 [&_th]:bg-subtle [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-normal [&_th]:text-fg-muted [&_th:first-child]:rounded-l-panel [&_th:last-child]:rounded-r-panel",

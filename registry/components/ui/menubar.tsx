@@ -18,7 +18,9 @@ import { cn } from "@/lib/utils";
 // labels are 12px regular in the brand purple, separators the subtle hairline, shortcuts 12px muted, destructive items
 // red. The panel grows out of its trigger from 98 percent with a fade (160ms) and leaves at once.
 const CONTENT =
-  "z-50 max-h-(--radix-menubar-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-panel bg-surface p-1 text-fg shadow-floating outline-none data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
+  "z-50 max-h-(--radix-menubar-content-available-height) min-w-48 flex flex-col overflow-hidden rounded-panel bg-surface text-fg shadow-floating outline-none data-[state=open]:animate-pop-in [&_[role^=menuitem]+[role^=menuitem]]:mt-1";
+// The panel holds its shadow; the box inside it scrolls, and its edges fade when there is more past them.
+const SCROLL = "fade-y min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-1";
 const ITEM =
   "relative flex min-h-9 cursor-default items-center gap-3 rounded-control px-3 py-2 font-sans text-body leading-line-body font-normal text-fg outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-subtle-hover data-[inset]:pl-10 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
@@ -48,10 +50,12 @@ function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof Men
   );
 }
 
-function MenubarContent({ className, align = "start", alignOffset = -2, sideOffset = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.Content>) {
+function MenubarContent({ className, children, align = "start", alignOffset = -2, sideOffset = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.Content>) {
   return (
     <MenubarPortal>
-      <MenubarPrimitive.Content data-slot="menubar-content" align={align} alignOffset={alignOffset} sideOffset={sideOffset} className={cn(CONTENT, "origin-(--radix-menubar-content-transform-origin)", className)} {...props} />
+      <MenubarPrimitive.Content data-slot="menubar-content" align={align} alignOffset={alignOffset} sideOffset={sideOffset} className={cn(CONTENT, "origin-(--radix-menubar-content-transform-origin)", className)} {...props}>
+        <div data-slot="menubar-scroll" className={SCROLL}>{children}</div>
+      </MenubarPrimitive.Content>
     </MenubarPortal>
   );
 }
@@ -128,10 +132,12 @@ function MenubarSubTrigger({ className, inset, children, ...props }: React.Compo
   );
 }
 
-function MenubarSubContent({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {
+function MenubarSubContent({ className, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {
   return (
     <MenubarPortal>
-      <MenubarPrimitive.SubContent data-slot="menubar-sub-content" className={cn(CONTENT, "max-h-(--radix-menubar-content-available-height) origin-(--radix-menubar-content-transform-origin)", className)} {...props} />
+      <MenubarPrimitive.SubContent data-slot="menubar-sub-content" className={cn(CONTENT, "max-h-(--radix-menubar-content-available-height) origin-(--radix-menubar-content-transform-origin)", className)} {...props}>
+        <div data-slot="menubar-scroll" className={SCROLL}>{children}</div>
+      </MenubarPrimitive.SubContent>
     </MenubarPortal>
   );
 }

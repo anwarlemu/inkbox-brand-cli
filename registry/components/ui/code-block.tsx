@@ -153,7 +153,7 @@ function CodeBlockContent({ code, language = "tsx", lineNumbers = true, wrap = f
     <pre
       data-slot="code-block-content"
       tabIndex={0}
-      className={cn("m-0 overflow-auto bg-code py-3 font-code text-body leading-5 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", className)}
+      className={cn("fade-x m-0 overflow-auto bg-code py-3 font-code text-body leading-5 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring", className)}
       {...props}
     >
       <code className={cn("grid", wrap ? "grid-cols-[minmax(0,1fr)]" : "min-w-max")}>

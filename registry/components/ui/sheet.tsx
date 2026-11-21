@@ -54,10 +54,13 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         data-slot="sheet-content"
         data-ds-motion={instant ? "instant" : undefined}
         data-side={side}
-        className={cn("fixed z-50 flex flex-col overflow-y-auto bg-surface text-fg shadow-dialog outline-none", SIDES[side], className)}
+        className={cn("fixed z-50 flex flex-col overflow-hidden bg-surface text-fg shadow-dialog outline-none", SIDES[side], className)}
         {...props}
       >
-        {children}
+        {/* The panel keeps its shadow; this box scrolls, and its edges fade when there is more past them. */}
+        <div data-slot="sheet-scroll" className="fade-y flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
+          {children}
+        </div>
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"

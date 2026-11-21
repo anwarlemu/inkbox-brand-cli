@@ -111,7 +111,7 @@ export function DocsRail({ entries }: { entries: Entry[] }) {
           <MagnifyingGlassIcon aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-fg-subtle" />
           <Input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" className="h-9 pl-9" />
         </div>
-        <div className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain px-3 pb-6 [scrollbar-width:thin]">
+        <div className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain fade-y px-3 pb-6 [scrollbar-width:thin]">
           <Groups entries={entries} query={query} onNavigate={close} />
         </div>
       </nav>

@@ -32,3 +32,26 @@
   scroll-behavior: auto !important;
  }
 }
+
+/* Scroll edges fade, never cut content off: an edge with more content past it fades over 24px. The fade grows with
+   the first and last 24px of scroll (tied to the scroll, not to time), so a list at rest shows its first row in full
+   and a list that does not scroll has no fade. Browsers without scroll timelines get a short fixed fade. Put fade-y on
+   an element that scrolls vertically and fade-x on one that scrolls sideways. Nothing moves: the mask follows the
+   reader's own scroll, so the instant and reduced-motion rules above keep it (hence !important). */
+@property --fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@keyframes fade-start { from { --fade-start: 0px; } to { --fade-start: 24px; } }
+@keyframes fade-end { from { --fade-end: 24px; } to { --fade-end: 0px; } }
+.fade-y { mask-image: linear-gradient(to bottom, transparent, black var(--fade-start), black calc(100% - var(--fade-end)), transparent); }
+.fade-x { mask-image: linear-gradient(to right, transparent, black var(--fade-start), black calc(100% - var(--fade-end)), transparent); }
+@supports (animation-timeline: scroll()) {
+ .fade-y, .fade-x {
+  animation: fade-start linear both, fade-end linear both !important;
+  animation-range: 0px 24px, calc(100% - 24px) 100% !important;
+ }
+ .fade-y { animation-timeline: scroll(self block), scroll(self block) !important; }
+ .fade-x { animation-timeline: scroll(self inline), scroll(self inline) !important; }
+}
+@supports not (animation-timeline: scroll()) {
+ .fade-y, .fade-x { --fade-start: 8px; --fade-end: 8px; }
+}

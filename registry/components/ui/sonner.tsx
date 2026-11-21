@@ -33,7 +33,7 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
           icon: "mt-px flex size-5 shrink-0 items-center justify-center",
           content: "grid min-w-0 flex-1 gap-0.5 pr-6",
           title: "text-body! leading-body font-medium! text-fg",
-          description: "max-h-40 overflow-y-auto text-body! leading-body text-fg-muted! whitespace-pre-line wrap-anywhere",
+          description: "fade-y max-h-40 overflow-y-auto text-body! leading-body text-fg-muted! whitespace-pre-line wrap-anywhere",
           actionButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-primary! px-3.5! font-sans text-body! leading-tight font-normal! text-on-primary! outline-none transition-[background-color] duration-150 ease-out hover:bg-primary-hover! active:bg-primary-hover! active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
           cancelButton: "inline-flex h-8! shrink-0 items-center rounded-pill! bg-subtle! px-3.5! font-sans text-body! leading-tight font-normal! text-fg! outline-none transition-[background-color] duration-150 ease-out hover:bg-subtle-hover! active:bg-subtle-hover! active:brightness-95 active:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
           closeButton: "top-2.5! right-2! left-auto! inline-flex size-8! transform-none! items-center justify-center rounded-control! border-0! bg-transparent! text-fg-faint! shadow-none! outline-none transition-colors duration-150 ease-out hover:bg-subtle! hover:text-fg-muted! focus-visible:outline-2 focus-visible:outline-focus-ring",

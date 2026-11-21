@@ -44,7 +44,7 @@ function DatePickerTrigger({ empty, label, className, children, ...props }: Reac
 
 function Presets<T>({ presets, isActive, onPick }: { presets: Preset<T>[]; isActive: (p: Preset<T>) => boolean; onPick: (value: T) => void }) {
   return (
-    <div data-slot="date-picker-presets" role="group" aria-label="Presets" className="flex gap-1 overflow-x-auto border-line-subtle p-1 max-sm:border-b sm:w-40 sm:flex-col sm:border-r">
+    <div data-slot="date-picker-presets" role="group" aria-label="Presets" className="fade-x flex gap-1 overflow-x-auto border-line-subtle p-1 max-sm:border-b sm:w-40 sm:flex-col sm:border-r">
       {presets.map((p) => (
         <button
           key={p.label}

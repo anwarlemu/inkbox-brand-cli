@@ -64,7 +64,7 @@ function DashboardShell({ title = "Usage", description = "This billing cycle, ac
         </ul>
         <section className="grid gap-3">
           <h2 className="text-body-lg leading-heading font-medium text-fg">Agents</h2>
-          <div className="overflow-x-auto">
+          <div className="fade-x overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

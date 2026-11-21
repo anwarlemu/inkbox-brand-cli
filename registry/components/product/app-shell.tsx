@@ -91,7 +91,9 @@ function AppShell({ children, nav = CONSOLE_NAV, foot = CONSOLE_FOOT, account = 
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="min-h-0 overflow-y-auto">{children}</SidebarInset>
+      <SidebarInset className="min-h-0 overflow-hidden">
+        <div data-slot="app-shell-scroll" className="fade-y flex min-h-0 flex-1 flex-col overflow-y-auto">{children}</div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

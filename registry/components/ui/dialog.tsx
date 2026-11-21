@@ -81,7 +81,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 /** The scrolling middle of a dialog, with the head's 24px sides (16px on phones). */
 function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="dialog-body" className={cn("min-h-0 flex-1 content-start overflow-y-auto px-6 pt-0 pb-6 max-md:px-4", className)} {...props} />;
+  return <div data-slot="dialog-body" className={cn("fade-y min-h-0 flex-1 content-start overflow-y-auto px-6 pt-0 pb-6 max-md:px-4", className)} {...props} />;
 }
 
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {

@@ -1,6 +1,7 @@
 import type { Command } from 'commander';
 import { unknown } from '../assets/io.js';
 import { deckCommand } from './deck.js';
+import { designCommand } from './design.js';
 import { figmaCommand } from './figma.js';
 import { illustrateCommand } from './illustrate.js';
 import { imageCommand } from './image.js';
@@ -9,7 +10,7 @@ import { merchCommand } from './merch.js';
 import { videoCommand } from './video.js';
 
 // The asset commands: image (share images, social posts, banners; og and social), deck, video, merch, illustrate,
-// figma, and manifest (describe), the one document that lists them all for agents.
+// design, figma, and manifest (describe), the one document that lists them all for agents.
 
 export function assets(program: Command) {
 	imageCommand(program);
@@ -17,6 +18,7 @@ export function assets(program: Command) {
 	videoCommand(program);
 	merchCommand(program);
 	illustrateCommand(program);
+	designCommand(program);
 	figmaCommand(program);
 	manifestCommand(program);
 }

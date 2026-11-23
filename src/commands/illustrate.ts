@@ -1,11 +1,12 @@
 import { join, resolve } from 'node:path';
 import type { Command } from 'commander';
-import { readPicture } from '../assets/image.js';
+import { readPicture, sizeId } from '../assets/image.js';
 import { illustrateCatalog, renderIllustration, subjects } from '../assets/illustrate.js';
 import { display, num, pick, write, type OutFile } from '../assets/io.js';
 import { cli } from '../lib/brand.js';
 import { helpRow } from '../lib/help-row.js';
 import { emit } from '../lib/output.js';
+import { formatsOf, IMAGE_FORMATS } from './image.js';
 
 // `illustrate`: the brand's illustration style as code (brand/illustration.md): the octopus, the reef, the console
 // window and the wordmark patterns as scenes, SVG (real vector shapes) and PNG.
@@ -23,7 +24,9 @@ export function illustrateCommand(program: Command) {
 		.option('--height <px>', 'custom size height, 160 to 4000')
 		.option('-i, --image <file>', 'window: your capture in a browser window instead of the console')
 		.option('--image-url <text>', 'window: the address over the capture')
-		.option('-f, --format <format>', 'png, svg or both (default both, or what an --out file ends in)')
+		.option('--console <what>', 'window without --image: inbox (Acme placeholder mail, the default) or blank')
+		.option('--seed <n>', 'a variation of the scene')
+		.option('-f, --format <formats>', 'png, svg, jpg, webp, a comma list, both (png and svg, the default) or all; or what an --out file ends in')
 		.option('--scale <n>', 'PNG pixel multiple, 1 to 4', '1')
 		.option('-o, --out <path>', 'a directory (default illustrations/), or one .png or .svg file')
 		.option('--all', 'every subject at the size')
@@ -52,8 +55,9 @@ async function runIllustrate(positional: string | undefined, o: Opts) {
 		emit(o, cat, () => [...cat.subjects.map((s) => helpRow(s.id, `${s.description}${s.picture ? ' Takes --image.' : ''}`, 10)), '', `Poses: ${cat.poses.map((p) => p.id).join(', ')}. Themes: ${cat.themes.join(', ')}. Sizes: any image size, square by default.`].join('\n'));
 		return;
 	}
-	const outExt = typeof o.out === 'string' ? /\.(png|svg)$/i.exec(o.out)?.[1]?.toLowerCase() : undefined;
-	const format = pick('format', String(o.format ?? outExt ?? 'both'), ['png', 'svg', 'both'] as const);
+	const outExt = typeof o.out === 'string' ? /\.(png|svg|jpe?g|webp)$/i.exec(o.out)?.[1]?.toLowerCase().replace('jpeg', 'jpg') : undefined;
+	const formats = formatsOf(String(o.format ?? outExt ?? 'both'));
+	const seed = num('seed', o.seed, 1, 1_000_000_000, { integer: true });
 	const scale = num('scale', o.scale, 1, 4) ?? 1;
 	const width = num('width', o.width, 160, 4000, { integer: true });
 	const height = num('height', o.height, 160, 4000, { integer: true });
@@ -66,21 +70,22 @@ async function runIllustrate(positional: string | undefined, o: Opts) {
 		list = [pick('subject', positional, subjects())];
 	}
 	const out = typeof o.out === 'string' ? o.out : undefined;
-	const single = out && /\.(png|svg)$/i.test(out) ? resolve(cwd, out) : undefined;
-	if (single && (list.length > 1 || format === 'both')) throw new Error('--out names one file, so pass one subject and --format png or svg. For several files, pass a directory.');
+	const single = out && outExt ? resolve(cwd, out) : undefined;
+	if (single && (list.length > 1 || formats.length > 1)) throw new Error('--out names one file, so pass one subject and one --format. For several files, pass a directory.');
+	if (single && formats[0] !== outExt) throw new Error(`--out ends in ${single.split('.').pop()} but --format is ${formats[0]}.`);
 	const dir = resolve(cwd, out && !single ? out : 'illustrations');
 	const picture = typeof o.image === 'string' ? await readPicture(cwd, o.image) : null;
 	const files: OutFile[] = [];
 	for (const subject of list) {
-		const r = await renderIllustration({ subject, theme: typeof o.theme === 'string' ? o.theme : undefined, size: typeof o.size === 'string' ? o.size : undefined, width, height, pose: typeof o.pose === 'string' ? o.pose : undefined, picture: o.all ? null : picture, pictureUrl: typeof o.imageUrl === 'string' ? o.imageUrl : undefined }, { png: format !== 'svg', svg: format !== 'png', scale });
-		const stem = single ? single.replace(/\.(png|svg)$/i, '') : join(dir, `${subject}-${r.theme}-${typeof o.size === 'string' ? o.size : 'square'}`);
-		if (r.png) {
-			write(`${stem}.png`, r.png);
-			files.push({ path: display(cwd, `${stem}.png`), format: 'png', subject, theme: r.theme, width: r.width, height: r.height });
-		}
-		if (r.svg) {
-			write(`${stem}.svg`, r.svg);
-			files.push({ path: display(cwd, `${stem}.svg`), format: 'svg', subject, theme: r.theme, width: Math.round(r.width / scale), height: Math.round(r.height / scale) });
+		const r = await renderIllustration({ subject, theme: typeof o.theme === 'string' ? o.theme : undefined, size: typeof o.size === 'string' ? o.size : undefined, width, height, pose: typeof o.pose === 'string' ? o.pose : undefined, picture: o.all ? null : picture, pictureUrl: typeof o.imageUrl === 'string' ? o.imageUrl : undefined, console: typeof o.console === 'string' ? o.console : undefined, seed }, { png: formats.includes('png'), svg: formats.includes('svg'), jpg: formats.includes('jpg'), webp: formats.includes('webp'), scale });
+		const stem = join(dir, `${subject}-${r.theme}-${typeof o.size === 'string' ? sizeId(o.size) : 'square'}`);
+		for (const f of IMAGE_FORMATS) {
+			const data = r[f];
+			if (data === undefined) continue;
+			const path = single ?? `${stem}.${f}`;
+			const k = f === 'svg' ? scale : 1;
+			write(path, data);
+			files.push({ path: display(cwd, path), format: f, subject, theme: r.theme, width: Math.round(r.width / k), height: Math.round(r.height / k) });
 		}
 	}
 	emit(o, { files }, () => files.map((f) => `${f.path}  ${f.width}x${f.height}`).join('\n'));

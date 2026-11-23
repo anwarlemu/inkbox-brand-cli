@@ -3,16 +3,17 @@ import { dirname, isAbsolute, join, resolve } from 'node:path';
 import type { Command } from 'commander';
 import { deckCatalog, renderSlide, slideTypes, type Slide } from '../assets/deck.js';
 import { readPicture } from '../assets/image.js';
-import { display, pick, write, type OutFile } from '../assets/io.js';
+import { display, num, pick, write, type OutFile } from '../assets/io.js';
 import { imagesToPdf } from '../assets/pdf.js';
 import { cli } from '../lib/brand.js';
 import { helpRow } from '../lib/help-row.js';
 import { emit } from '../lib/output.js';
+import { formatsOf } from './image.js';
 
 // `deck`: slides at 1920 by 1080 from a JSON file or flags, a PNG per slide and one PDF.
 
 type Opts = Record<string, string | boolean | undefined> & { json?: boolean };
-const SLOT_FLAGS = ['title', 'body', 'number', 'items', 'stat', 'quote', 'attribution', 'url'];
+const SLOT_FLAGS = ['title', 'headline', 'body', 'number', 'badge', 'items', 'stat', 'quote', 'attribution', 'url'];
 
 export function deckCommand(program: Command) {
 	program
@@ -22,6 +23,8 @@ export function deckCommand(program: Command) {
 		.option('--slide <type>', 'one slide of this type, from flags')
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep (default: the type\'s)')
 		.option('--title <text>', 'the title (every type but quote); *stars* highlight a phrase')
+		.option('--headline <text>', 'the same as --title')
+		.option('--badge <text>', 'section: the same as --number')
 		.option('--body <text>', 'cover and image: the line under the title')
 		.option('--number <text>', 'section: the number in the badge')
 		.option('--items <text>', 'bullets: up to six points separated by |')
@@ -30,7 +33,10 @@ export function deckCommand(program: Command) {
 		.option('--attribution <text>', 'quote: who said it (a role and a company, never a made-up person)')
 		.option('--url <text>', 'image and end: the address')
 		.option('--image <file>', 'image: your capture in the window (default: the console\'s inbox)')
-		.option('-f, --format <format>', 'both (PNG and PDF), png, pdf or svg', 'both')
+		.option('-s, --size <size>', '16:9 (1920 by 1080, the one slide size)')
+		.option('--seed <n>', 'a variation of the slide\'s layout')
+		.option('--sample', 'fill the words you did not pass with sample copy')
+		.option('-f, --format <formats>', 'png, pdf, svg, jpg, webp, a comma list, both (PNG and PDF, the default) or all', 'both')
 		.option('-o, --out <dir>', 'output directory (default deck/)')
 		.option('--list', 'slide types with their slots')
 		.option('--json', 'JSON output')
@@ -58,7 +64,10 @@ async function runDeck(positional: string | undefined, o: Opts) {
 		emit(o, cat, () => cat.slides.map((s) => helpRow(s.id, `${s.description} Slots: ${Object.keys(s.slots).join(', ')}${s.picture ? ', image' : ''}. Theme: ${s.theme}.`, 12)).join('\n'));
 		return;
 	}
-	const format = pick('format', String(o.format ?? 'both'), ['both', 'png', 'pdf', 'svg'] as const);
+	const typed = String(o.format ?? 'both');
+	const formats = typed === 'both' ? ['png', 'pdf'] : formatsOf(typed, ['png', 'pdf', 'svg', 'jpg', 'webp']);
+	if (typeof o.size === 'string') pick('slide size', o.size, ['16:9', '16x9', 'landscape', '1920x1080'] as const);
+	const seed = num('seed', o.seed, 1, 1_000_000_000, { integer: true });
 	const type = positional ?? (typeof o.slide === 'string' ? o.slide : undefined);
 	if (type && o.input) throw new Error('Pass --input or one slide type, not both.');
 	let slides: Record<string, unknown>[];
@@ -83,8 +92,11 @@ async function runDeck(positional: string | undefined, o: Opts) {
 		if (typeof o.image === 'string') one.image = o.image;
 		slides = [one];
 	}
+	if (o.sample || seed) slides = slides.map((s) => ({ ...(o.sample ? { sample: true } : {}), ...(seed ? { seed } : {}), ...s }));
 	const dir = resolve(cwd, typeof o.out === 'string' ? o.out : 'deck');
 	const files: OutFile[] = [];
+	// Every slide is drawn before any is written, so a slide that cannot hold its words writes nothing.
+	const writes: [string, Buffer | string][] = [];
 	const pages: { rgb: Buffer; width: number; height: number }[] = [];
 	for (const [i, s] of slides.entries()) {
 		if (!s || typeof s.type !== 'string') throw new Error(`Slide ${i + 1} needs a "type" (${slideTypes().join(', ')}).`);
@@ -92,26 +104,32 @@ async function runDeck(positional: string | undefined, o: Opts) {
 		const picture = typeof s.image === 'string' && s.image.trim() ? await readPicture(base, s.image) : null;
 		let r;
 		try {
-			r = await renderSlide({ ...(s as Slide), type: id, picture }, { png: format !== 'svg', svg: format === 'svg' });
+			r = await renderSlide({ ...(s as Slide), type: id, picture }, { png: formats.some((f) => f !== 'svg'), svg: formats.includes('svg'), jpg: formats.includes('jpg'), webp: formats.includes('webp') });
 		} catch (err) {
 			throw new Error(`Slide ${i + 1} (${id}): ${(err as Error).message}`);
 		}
 		const name = join(dir, `slide-${String(i + 1).padStart(2, '0')}-${id}`);
 		if (r.svg) {
-			write(`${name}.svg`, r.svg);
+			writes.push([`${name}.svg`, r.svg]);
 			files.push({ path: display(cwd, `${name}.svg`), format: 'svg', slide: id, width: r.width, height: r.height });
 		}
-		if (r.png && format !== 'pdf') {
-			write(`${name}.png`, r.png);
+		for (const f of ['jpg', 'webp'] as const) {
+			if (!r[f]) continue;
+			writes.push([`${name}.${f}`, r[f]!]);
+			files.push({ path: display(cwd, `${name}.${f}`), format: f, slide: id, width: r.width, height: r.height });
+		}
+		if (r.png && formats.includes('png')) {
+			writes.push([`${name}.png`, r.png]);
 			files.push({ path: display(cwd, `${name}.png`), format: 'png', slide: id, width: r.width, height: r.height });
 		}
-		if (r.rgb) pages.push({ rgb: r.rgb, width: r.width, height: r.height });
+		if (r.rgb && formats.includes('pdf')) pages.push({ rgb: r.rgb, width: r.width, height: r.height });
 	}
-	if (format === 'both' || format === 'pdf') {
+	if (formats.includes('pdf')) {
 		const pdf = join(dir, 'deck.pdf');
 		// 16:9 pages, 13.33 by 7.5 in.
-		write(pdf, imagesToPdf(pages, 960));
+		writes.push([pdf, imagesToPdf(pages, 960)]);
 		files.push({ path: display(cwd, pdf), format: 'pdf', pages: pages.length, width: 1920, height: 1080 });
 	}
+	for (const [path, data] of writes) write(path, data);
 	emit(o, { files }, () => files.map((f) => `${f.path}  ${f.format === 'pdf' ? `${f.pages} page${f.pages === 1 ? '' : 's'}` : `${f.width}x${f.height}`}`).join('\n'));
 }

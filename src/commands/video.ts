@@ -16,14 +16,20 @@ export function videoCommand(program: Command) {
 	program
 		.command('video [template]')
 		.description('Motion pieces (reveal, inbox, band, announce, card) at square, portrait, vertical and landscape: MP4 and WebM through ffmpeg, else PNG frames')
-		.option('-s, --size <size>', 'square (default), portrait, vertical or landscape')
+		.option('-s, --size <size>', 'square (default), portrait, vertical (also story, 9:16) or landscape (also 16:9)')
 		.option('--layout <template>', 'reveal: the share template to bring in (tile, reef, hatch, partner, ...)')
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep')
-		.option('--occasion <name>', 'launch, feature, partnership, funding, hiring, changelog, milestone or event: its words')
+		.option('--occasion <name>', 'launch, feature, partnership, funding, hiring, changelog, milestone or event: its looks, and its words with the sample flag')
 		.option('--headline <text>', 'the headline; *stars* highlight a phrase')
 		.option('--body <text>', 'the line under it')
-		.option('--badge <style>', 'pill, solid, dot or none')
-		.option('--badge-text <text>', 'the badge\'s words')
+		.option('--badge <text>', 'the badge\'s words (pill, solid, dot or none alone is its style)')
+		.option('--badge-style <style>', 'pill, solid, dot or none')
+		.option('--badge-text <text>', 'the same as --badge')
+		.option('--credit <text>', 'a small credit under the words')
+		.option('--partner <name>', 'a partner\'s name beside the lockup')
+		.option('--highlight <name>', 'pink, lilac, violet or ink')
+		.option('--sample', 'fill the words you did not pass with sample copy')
+		.option('--seed <n>', 'a variation of the layout')
 		.option('--image <file>', 'inbox: your capture in the window instead of the console')
 		.option('--seconds <n>', 'length, 2 to 20 (default: the template\'s)')
 		.option('--fps <n>', '12 to 60 (default 30)')
@@ -67,7 +73,9 @@ async function runVideo(positional: string | undefined, o: Opts) {
 	const ff = hasFfmpeg();
 	const format = pick('format', String(o.format ?? (ff ? 'all' : 'frames')), ['mp4', 'webm', 'frames', 'all'] as const);
 	if ((format === 'mp4' || format === 'webm' || format === 'all') && !ff && o.still === undefined) throw new Error(`${format === 'all' ? 'MP4 and WebM need' : `${format.toUpperCase()} needs`} ffmpeg on the PATH. Without it: --format frames.`);
-	const sizeId = pick('size', String(o.size ?? 'square'), Object.keys(videoDoc().sizes));
+	const alias: Record<string, string> = { story: 'vertical', '9:16': 'vertical', '9x16': 'vertical', '1:1': 'square', '4:5': 'portrait', '16:9': 'landscape', '16x9': 'landscape', wide: 'landscape' };
+	const askedSize = String(o.size ?? 'square').toLowerCase();
+	const sizeId = pick('size', alias[askedSize] ?? askedSize, Object.keys(videoDoc().sizes));
 	const [width, height] = videoDoc().sizes[sizeId]!;
 	const fps = num('fps', o.fps, 12, 60, { integer: true }) ?? videoDoc().fps;
 	const seconds = num('seconds', o.seconds, 2, 20) ?? def.seconds;
@@ -86,6 +94,12 @@ async function runVideo(positional: string | undefined, o: Opts) {
 		body: typeof o.body === 'string' ? o.body : undefined,
 		badge: typeof o.badge === 'string' ? o.badge : undefined,
 		badgeText: typeof o.badgeText === 'string' ? o.badgeText : undefined,
+		badgeStyle: typeof o.badgeStyle === 'string' ? o.badgeStyle : undefined,
+		credit: typeof o.credit === 'string' ? o.credit : undefined,
+		partner: typeof o.partner === 'string' ? o.partner : undefined,
+		highlight: typeof o.highlight === 'string' ? o.highlight : undefined,
+		sample: !!o.sample,
+		seed: num('seed', o.seed, 1, 1_000_000_000, { integer: true }),
 		picture: typeof o.image === 'string',
 	};
 	const pics = await picturesFor(typeof o.image === 'string' ? await readPicture(cwd, o.image) : null);

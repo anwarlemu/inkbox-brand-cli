@@ -37,7 +37,7 @@ async function add(group, id, args, pick = (files) => files.find((f) => f.format
 }
 
 const IMAGE = [['tile', 'launch'], ['app', 'launch'], ['outline', 'launch'], ['hatch', 'changelog'], ['reef', 'launch'], ['feature', 'feature'], ['partner', 'partnership'], ['funding', 'funding'], ['announce', 'hiring'], ['card', 'feature']];
-for (const [t, occ] of IMAGE) await add('image', `image-${t}`, ['image', t, '--occasion', occ, '--format', 'png', '--out', 'img']);
+for (const [t, occ] of IMAGE) await add('image', `image-${t}`, ['image', t, '--occasion', occ, '--sample', '--format', 'png', '--out', 'img']);
 const SOCIAL = [
 	['launch', 'square', []],
 	['hiring', 'portrait', []],
@@ -46,18 +46,18 @@ const SOCIAL = [
 	['launch', 'linkedin-banner', ['--template', 'tile']],
 	['changelog', 'landscape', ['--template', 'card', '--theme', 'mist']],
 ];
-for (const [occ, size, extra] of SOCIAL) await add('social', `social-${occ}-${size}`, ['image', '--occasion', occ, '--size', size, ...extra, '--format', 'png', '--out', 'social']);
-writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'image', 'end'].map((type) => ({ type })) }));
+for (const [occ, size, extra] of SOCIAL) await add('social', `social-${occ}-${size}`, ['image', '--occasion', occ, '--sample', '--size', size, ...extra, '--format', 'png', '--out', 'social']);
+writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'image', 'end'].map((type) => ({ type, sample: true })) }));
 const slides = cli(['deck', '--input', 'deck.json', '--out', 'deck']).files.filter((f) => f.format === 'png');
-for (const f of slides) examples.deck.push({ id: f.slide, command: `deck ${f.slide}`, ...(await webp(f.path, `deck-${f.slide}`, 0.25)) });
+for (const f of slides) examples.deck.push({ id: f.slide, command: `deck ${f.slide} --sample`, ...(await webp(f.path, `deck-${f.slide}`, 0.25)) });
 for (const [t, size] of [['reveal', 'square'], ['inbox', 'landscape'], ['band', 'square'], ['card', 'square']]) {
-	const res = cli(['video', t, '--size', size, '--format', 'mp4', '--out', 'video']);
+	const res = cli(['video', t, '--sample', '--size', size, '--format', 'mp4', '--out', 'video']);
 	copyFileSync(join(work, res.files[0].path), join(out, `video-${t}.mp4`));
-	const still = cli(['video', t, '--size', size, '--still', '--out', 'video']);
-	examples.video.push({ id: t, command: `video ${t} --size ${size}`, video: `/assets-examples/video-${t}.mp4`, ...(await webp(still.files[0].path, `video-${t}`, 0.4)) });
+	const still = cli(['video', t, '--sample', '--size', size, '--still', '--out', 'video']);
+	examples.video.push({ id: t, command: `video ${t} --sample --size ${size}`, video: `/assets-examples/video-${t}.mp4`, ...(await webp(still.files[0].path, `video-${t}`, 0.4)) });
 }
 for (const [item, variant] of [['tee-front', 'color'], ['tee-back', 'color'], ['hoodie-front', 'one-ink'], ['cap-front', 'one-purple'], ['tote', 'color'], ['mug-wrap', 'lavender'], ['sticker', 'paper'], ['poster', 'paper']])
-	await add('merch', `merch-${item}`, ['merch', item, '--variant', variant, '--dpi', '72', '--format', 'png', '--out', 'merch'], undefined, 1);
+	await add('merch', `merch-${item}`, ['merch', item, '--variant', variant, ...(['tee-back', 'poster'].includes(item) ? ['--sample'] : []), '--dpi', '72', '--format', 'png', '--out', 'merch'], undefined, 1);
 for (const [s, extra] of [['octopus', []], ['octopus', ['--pose', 'hang', '--theme', 'purple']], ['reef', []], ['window', []], ['tile', []], ['pattern', []], ['outline', []], ['hatch', []]])
 	await add('illustrations', `illustration-${s}${extra.length ? '-hang' : ''}`, ['illustrate', s, ...extra, '--format', 'png', '--out', `ill-${extra.length}`]);
 // One SVG per kind, as written, for the Illustrations page's download links.

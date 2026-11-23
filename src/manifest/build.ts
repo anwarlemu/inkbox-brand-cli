@@ -7,6 +7,8 @@ import { imageCatalog } from '../assets/image.js';
 import { illustrateCatalog } from '../assets/illustrate.js';
 import { merchCatalog } from '../assets/merch.js';
 import { videoCatalog } from '../assets/video.js';
+import { adapter } from '../design/adapter.js';
+import { designManifest } from '../design/index.js';
 import { listComponents } from '../library/describe.js';
 import { brand, cli } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
@@ -57,6 +59,7 @@ export function manifest(program: Command) {
 				push: ['image', 'slide', 'illustration', 'asset', 'component', 'page'],
 				note: 'The CLI never calls Figma: each action writes files and prints the Figma MCP tool calls to make, in order.',
 			},
+			design: designManifest(adapter(), bin),
 			lockups: logoDoc().lockups,
 			rules: { illustration: 'brand/illustration.md', images: 'brand/assets/image.json notes' },
 		},

@@ -10,7 +10,7 @@ export { brandFonts, compactSvg, pixelsOf, scratch, stableIds, surface, toPng, t
 export { artImage, brandColor, imageDoc, logoDoc, themeNames, themes, wordmarkPath } from './brand-art.js';
 export { designStart, drawDesign, frameOf, hatchLines, layoutFor, tileWords, TEMPLATES, type Design, type Motion, type Pictures, type Template } from './share.js';
 export { appStart, drawApp, loadIcons, type AppContent } from './window.js';
-export { designOf, emphasise, imageCatalog, imageSizes, occasionNames, picturesFor, readPicture, renderDesign, sizeId, varyLayout, type ImageRequest, type Rendered } from './image.js';
+export { designOf, emphasise, imageCatalog, imageSizes, occasionNames, picturesFor, readPicture, renderDesign, sizeId, carouselDesigns, designSvg, measureDesign, type ImageRequest, type Rendered } from './image.js';
 export { deckCatalog, drawSlide, renderSlide, slideTypes, type Slide, type SlideType } from './deck.js';
 export { drawItem, findItem, merchCatalog, merchItems, renderItem, PX_PER_IN, type MerchItem } from './merch.js';
 export { easeOut, encode, hasFfmpeg, stillFrame, videoCatalog, videoFrames, videoTemplates, type VideoOptions } from './video.js';

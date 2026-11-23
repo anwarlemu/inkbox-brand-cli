@@ -1,10 +1,6 @@
 {
-	"$comment": "Merch print files only (no mockups). Item list, trim sizes, bleed and safe areas are common vendor print areas (the spyglass-ds and context-ds engines use the same conventions; confirm with the vendor template). Layouts are in inches from the trim. Only the approved lockups (logo.json: the octopus and wordmark, the wordmark alone, the octopus alone) and the brand's own patterns (the wordmark tile, the outline band, hatching, the reef) are used. The octopus is full-color art, so it prints only on full-color variants; one-color variants (embroidery, one-ink screen print) carry the wordmark alone. Colors come from the variant, as tokens.",
+	"$comment": "Merch print files only (no mockups). Item list, trim sizes, bleed and safe areas are common vendor print areas (the spyglass-ds and context-ds engines use the same conventions; confirm with the vendor template). Layouts are in inches from the trim. Only the approved lockups (logo.json: the octopus and wordmark, the wordmark alone, the octopus alone) and the brand's own patterns (the wordmark tile, the outline band, hatching, the reef) are used. The octopus is full-color art, so it prints only on full-color variants; one-color variants (embroidery, one-ink screen print) carry the wordmark alone. Colors come from the variant, as tokens. Only the words that are passed are printed (sample copy with --sample). Highlighted words are pink on purple and ink, and rose (the pink's dark partner, 5.9:1 on white) elsewhere. A band or a tile prints whole wordmarks only, inside the safe area; the reef, the hatching and a printed ground run into the bleed.",
 	"dpi": 300,
-	"slots": {
-		"headline": "Give every *AI agent* a way to be reached",
-		"url": "inkbox.ai"
-	},
 	"variants": {
 		"paper": {
 			"ground": "white",
@@ -12,7 +8,8 @@
 			"line": "text-faint",
 			"tile": "brand",
 			"fullColor": true,
-			"groundPrinted": true
+			"groundPrinted": true,
+			"highlight": "rose"
 		},
 		"lavender": {
 			"ground": "tag-purple",
@@ -20,7 +17,8 @@
 			"line": "text-faint",
 			"tile": "brand",
 			"fullColor": true,
-			"groundPrinted": true
+			"groundPrinted": true,
+			"highlight": "rose"
 		},
 		"purple": {
 			"ground": "brand",
@@ -31,7 +29,8 @@
 			},
 			"tile": "white",
 			"fullColor": true,
-			"groundPrinted": true
+			"groundPrinted": true,
+			"highlight": "pink"
 		},
 		"ink": {
 			"ground": "ink",
@@ -42,7 +41,8 @@
 			},
 			"tile": "white",
 			"fullColor": true,
-			"groundPrinted": true
+			"groundPrinted": true,
+			"highlight": "pink"
 		},
 		"color": {
 			"ground": "",
@@ -50,7 +50,8 @@
 			"line": "text-faint",
 			"tile": "brand",
 			"fullColor": true,
-			"groundPrinted": false
+			"groundPrinted": false,
+			"highlight": "rose"
 		},
 		"one-ink": {
 			"ground": "",
@@ -144,6 +145,12 @@
 						7.8,
 						8,
 						1.6
+					],
+					"boxOne": [
+						2,
+						3.6,
+						8,
+						1.6
 					]
 				}
 			]
@@ -183,20 +190,20 @@
 					"type": "pattern",
 					"kind": "outline",
 					"box": [
-						0,
-						10.6,
-						12,
-						3.2
+						0.5,
+						10.9,
+						11,
+						2.6
 					]
 				},
 				{
 					"type": "art",
 					"id": "hang",
 					"box": [
-						3.25,
-						6.6,
-						5.5,
-						5.5
+						3.6,
+						6.75,
+						4.8,
+						4.8
 					]
 				},
 				{
@@ -282,6 +289,12 @@
 						10.6,
 						8,
 						1.6
+					],
+					"boxOne": [
+						2,
+						6,
+						8,
+						1.6
 					]
 				}
 			]
@@ -311,7 +324,8 @@
 						2.3,
 						9,
 						1.2
-					]
+					],
+					"drop": 0.36
 				},
 				{
 					"type": "logo",
@@ -383,7 +397,8 @@
 						2.2,
 						1.5,
 						0.5
-					]
+					],
+					"clear": true
 				}
 			]
 		},
@@ -453,17 +468,21 @@
 					"type": "text",
 					"slot": "url",
 					"box": [
-						1,
-						22.5,
-						16,
+						8,
+						1.28,
+						9,
 						0.6
 					],
 					"size": 0.42,
-					"align": "left",
+					"align": "right",
 					"face": "mono",
 					"maxLines": 1
 				}
 			]
 		}
-	]
+	],
+	"sample": {
+		"headline": "Give every *AI agent* a way to be reached",
+		"url": "inkbox.ai"
+	}
 }

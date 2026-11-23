@@ -33,6 +33,10 @@ export type AppContent = {
 	radius: number;
 	/* A video's arriving messages: how many rows of the list show (the last one, fractional, fading and rising in). */
 	rows?: number;
+	/* How wide the view is on the console's grid (1040 is all of it). */
+	width?: number;
+	/* No messages: the console with an empty list and reading pane. */
+	blank?: boolean;
 };
 
 export const APP_W = 1040;
@@ -193,16 +197,17 @@ export function drawApp(ctx: Ctx, a0: Partial<AppContent>, icons: Icons, fonts: 
 	const x1 = cols[0]!;
 	const x2 = x1 + cols[1]!;
 	const x3 = x2 + cols[2]!;
-	const openW = APP_W - x3;
+	const APPW = a.width ?? APP_W;
+	const openW = APPW - x3;
 
 	ctx.fillStyle = C.bg;
-	ctx.fillRect(0, 0, APP_W, APP_H);
+	ctx.fillRect(0, 0, APPW, APP_H * 2);
 	if (cols[1]) {
 		ctx.fillStyle = C.side;
-		ctx.fillRect(x1, 0, 156, APP_H);
+		ctx.fillRect(x1, 0, 156, APP_H * 2);
 	}
 	ctx.fillStyle = C.line;
-	for (const x of [x1, x2, x3]) if (x > 0 && x < APP_W) ctx.fillRect(x - 0.27, 0, 0.54, APP_H);
+	for (const x of [x1, x2, x3]) if (x > 0 && x < APPW) ctx.fillRect(x - 0.27, 0, 0.54, APP_H * 2);
 
 	const nav = (it: Item, x: number, y: number, w: number, pill: string) => {
 		if (it.on) {
@@ -296,7 +301,7 @@ export function drawApp(ctx: Ctx, a0: Partial<AppContent>, icons: Icons, fonts: 
 		ctx.restore();
 	}
 
-	const mails = parseMails(a.mails);
+	const mails = a.blank ? [] : parseMails(a.mails);
 	const chosen = Math.min(Math.max(0, a.openIndex), Math.max(0, mails.length - 1));
 
 	if (cols[2]) {
@@ -343,7 +348,7 @@ export function drawApp(ctx: Ctx, a0: Partial<AppContent>, icons: Icons, fonts: 
 		ctx.restore();
 	}
 
-	if (a.showOpen && openW > 40) {
+	if (a.showOpen && openW > 40 && !a.blank) {
 		ctx.save();
 		ctx.translate(x3, 0);
 		const first = mails[chosen] ?? { from: '', date: '', subject: '', preview: '' };

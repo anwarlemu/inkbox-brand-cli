@@ -67,6 +67,14 @@ export function toPng(s: Surface, opts: { dpi?: number; opaque?: boolean } = {})
 	return encodePng(rgb, px.width, px.height, 3, opts.dpi);
 }
 
+/** The surface as JPEG (quality 92) or WebP (quality 92), for the web. */
+export function toJpg(s: Surface): Buffer {
+	return (s.canvas as Canvas).toBuffer('image/jpeg', 92);
+}
+export function toWebp(s: Surface): Buffer {
+	return (s.canvas as Canvas).toBuffer('image/webp', 92);
+}
+
 /** The surface as an SVG document. `physical` sets the root size in inches (print files). */
 export function toSvg(s: Surface, physical?: { widthIn: number; heightIn: number }): string {
 	if (!s.svg) throw new Error('This surface holds pixels; draw again with { svg: true } for SVG.');

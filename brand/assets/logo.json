@@ -1,5 +1,5 @@
 {
-	"$comment": "The logo as the asset commands draw it, from the share-image editor (agd-playground src/components/inkbox-og/brand.ts, which takes it from the Figma logo file KtJhYsxU4hqtBzqqbFuMWy): the wordmark as six paths on a 142.862 by 32.641 box, and the lockup (the sitting octopus, then the wordmark) on a 215 by 46.08 box. The wordmark draws in one color (the theme ink); the octopus is the brand art (art/octo-sit.png) and is never recolored. brand/logo/wordmark.svg is the same letterforms from inkbox.ai. The brand defines no numeric clear space or minimum size, so none is enforced; the lockup keeps the gap the Figma file draws (14.95 units between the mark and the wordmark).",
+	"$comment": "The logo as the asset commands draw it, from the share-image editor (agd-playground src/components/inkbox-og/brand.ts, which takes it from the Figma logo file KtJhYsxU4hqtBzqqbFuMWy): the wordmark as six paths on a 142.862 by 32.641 box, and the lockup (the sitting octopus, then the wordmark) on a 215 by 46.08 box. The wordmark draws in one color (the theme ink); the octopus is the brand art (art/octo-sit.png) and is never recolored. brand/logo/wordmark.svg is the same letterforms from inkbox.ai. The brand publishes no clear space or minimum size. The only spacing its logo file draws is the lockup's own gap (14.95 of 46.08 units between the mark and the wordmark), so `clear` keeps that much free round the lockup, and the smallest lockup is 70 percent of the 46.08 units the editor sets on a 1200 by 630 image; both are derived, not published.",
 	"wordmark": {
 		"w": 142.862,
 		"h": 32.641,
@@ -72,5 +72,10 @@
 				"mark"
 			]
 		}
-	]
+	],
+	"clear": {
+		"share": 0.3244,
+		"min": 32,
+		"source": "Derived: logo.json lockup gap 14.95 / 46.08; 70% of the editor's 46.08 units."
+	}
 }

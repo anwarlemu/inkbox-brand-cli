@@ -1,10 +1,13 @@
 import { readFileSync } from 'node:fs';
-import type { Image } from '@napi-rs/canvas';
+import type { Canvas, Image } from '@napi-rs/canvas';
 import { pkgPath } from '../lib/paths.js';
-import { artImage, brandColor, logoDoc, wordmarkPath } from './brand-art.js';
-import { brandFonts, scratch, surface, tokenColor, toPng, toSvg, type ColorRef, type Ctx } from './canvas.js';
+import { artImage, logoDoc, wordmarkPath } from './brand-art.js';
+import { brandFonts, pixelsOf, scratch, surface, tokenColor, toPng, toSvg, type ColorRef, type Ctx } from './canvas.js';
+import { drawable } from './glyphs.js';
 import { pick } from './io.js';
-import { hatchLines, tileWords, type Rect } from './share.js';
+import { imagesToPdf } from './pdf.js';
+import { contrast } from './place.js';
+import { hatchLines, inkBox, reefInkIn, tileWords, type DrawnLayer, type Rect } from './share.js';
 import { fit } from './text.js';
 
 // Merch print files (brand/assets/merch.json): each item's trim, bleed and safe area in inches, and a layout of the
@@ -15,14 +18,14 @@ import { fit } from './text.js';
 export const PX_PER_IN = 300;
 type Box = [number, number, number, number];
 type Layer =
-	| { type: 'logo'; part: 'full' | 'wordmark' | 'mark'; fallback?: 'wordmark'; box: Box; align?: 'left' | 'center' }
+	| { type: 'logo'; part: 'full' | 'wordmark' | 'mark'; fallback?: 'wordmark'; box: Box; boxOne?: Box; clear?: boolean; align?: 'left' | 'center' }
 	| { type: 'art'; id: string; box: Box }
-	| { type: 'pattern'; kind: 'tile' | 'outline' | 'hatch' | 'reef'; box: Box; fade?: boolean }
-	| { type: 'text'; slot: string; box: Box; size: number; align?: 'left' | 'center'; face?: 'sans' | 'mono'; maxLines?: number; highlight?: boolean };
+	| { type: 'pattern'; kind: 'tile' | 'outline' | 'hatch' | 'reef'; box: Box; fade?: boolean; drop?: number }
+	| { type: 'text'; slot: string; box: Box; size: number; align?: 'left' | 'center' | 'right'; face?: 'sans' | 'mono'; maxLines?: number; highlight?: boolean };
 
 export type MerchItem = { id: string; name: string; size: [number, number]; bleed: number; safe: number; method: string; source: string; cut?: { radius: number }; variants: string[]; layers: Layer[] };
-type Variant = { ground: string; ink: ColorRef; line: ColorRef; tile: ColorRef; fullColor: boolean; groundPrinted: boolean };
-type MerchDoc = { dpi: number; slots: Record<string, string>; variants: Record<string, Variant>; items: MerchItem[] };
+type Variant = { ground: string; ink: ColorRef; line: ColorRef; tile: ColorRef; fullColor: boolean; groundPrinted: boolean; highlight?: string };
+type MerchDoc = { dpi: number; sample: Record<string, string>; variants: Record<string, Variant>; items: MerchItem[] };
 
 let doc: MerchDoc | undefined;
 export const merchDoc = (): MerchDoc => (doc ??= JSON.parse(readFileSync(pkgPath('brand', 'assets', 'merch.json'), 'utf8')) as MerchDoc);
@@ -53,7 +56,7 @@ export function merchCatalog() {
 	};
 }
 
-export type MerchRequest = { variant?: string; slots?: Record<string, string>; guides?: boolean };
+export type MerchRequest = { variant?: string; slots?: Record<string, string>; guides?: boolean; sample?: boolean };
 
 const LOCK = () => logoDoc().lockup;
 const WM = () => logoDoc().wordmark;
@@ -102,7 +105,14 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 	const px = (b: Box): Rect => ({ x: b[0] * PX_PER_IN + o, y: b[1] * PX_PER_IN + o, w: b[2] * PX_PER_IN, h: b[3] * PX_PER_IN });
 	const takes = new Set(item.layers.flatMap((l) => (l.type === 'text' ? [l.slot] : [])));
 	for (const k of Object.keys(req.slots ?? {})) if (!takes.has(k)) throw new Error(`${item.id} does not draw --${k}.${takes.size ? ` It takes ${[...takes].map((s) => `--${s}`).join(', ')}.` : ' It takes no text.'}`);
-	const slots = { ...merchDoc().slots, ...req.slots };
+	const slots: Record<string, string> = { ...(req.sample ? Object.fromEntries(Object.entries(merchDoc().sample).filter(([k]) => takes.has(k))) : {}), ...Object.fromEntries(Object.entries(req.slots ?? {}).filter(([, t]) => t.trim())) };
+	for (const l of item.layers) if (l.type === 'text') drawable(l.slot, slots[l.slot], l.face === 'mono' ? 'mono' : 'sans');
+	const layers: DrawnLayer[] = [];
+	const inGround = [ground || tokenColor('white')];
+	const add = (id: string, kind: DrawnLayer['kind'], box: Rect, more: Partial<DrawnLayer> = {}) => {
+		const n = layers.filter((x) => x.id === id || x.id.startsWith(`${id}-`)).length;
+		layers.push({ id: n ? `${id}-${n + 1}` : id, kind, box, can: {}, ...more });
+	};
 	const fonts = brandFonts();
 	const mark = await artImage('sit');
 	if (v.groundPrinted && ground) {
@@ -110,6 +120,13 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 		ctx.fillRect(0, 0, W, H);
 	}
 	const u = PX_PER_IN / 60;
+	/* Whole wordmarks inside the safe area, so the trim never cuts one. */
+	const safe: Rect = { x: o + item.safe * PX_PER_IN, y: o + item.safe * PX_PER_IN, w: W - 2 * (o + item.safe * PX_PER_IN), h: H - 2 * (o + item.safe * PX_PER_IN) };
+	const inSafe = (r: Rect): Rect => {
+		const x = Math.max(r.x, safe.x);
+		const y = Math.max(r.y, safe.y);
+		return { x, y, w: Math.min(r.x + r.w, safe.x + safe.w) - x, h: Math.min(r.y + r.h, safe.y + safe.h) - y };
+	};
 	for (const l of item.layers) {
 		const b = px(l.box);
 		if (l.type === 'pattern') {
@@ -125,6 +142,7 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 			}
 			// The reef is full-color art and the tile is drawn as a tint, so one-color files leave both out.
 			if ((l.kind === 'reef' || l.kind === 'tile') && !v.fullColor) continue;
+			add(l.kind, 'art', r, { bleeds: true, ...(l.kind === 'reef' ? { ink: reefInkIn(await artImage('reef'), r.x, r.y + r.h, r.w, l.drop ?? 0) } : {}) });
 			if (l.kind === 'hatch') {
 				ctx.strokeStyle = line;
 				ctx.lineWidth = u;
@@ -139,7 +157,8 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 					// Fading down: the tile drawn through a mask that thins it toward the lockup.
 					const off = scratch(r.w, r.h);
 					off.ctx.fillStyle = ctx.fillStyle as string;
-					tileWords(off.ctx, { x: 0, y: 0, w: r.w, h: r.h }, 51.6, u, true, 0, 0);
+					const q = inSafe(r);
+					tileWords(off.ctx, { x: q.x - r.x, y: q.y - r.y, w: q.w, h: q.h }, 51.6, u, true);
 					off.ctx.globalCompositeOperation = 'destination-in';
 					const g = off.ctx.createLinearGradient(0, 0, 0, r.h);
 					g.addColorStop(0, 'rgba(0,0,0,1)');
@@ -147,34 +166,29 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 					off.ctx.fillStyle = g;
 					off.ctx.fillRect(0, 0, r.w, r.h);
 					ctx.drawImage(off.canvas, r.x, r.y);
-				} else tileWords(ctx, r, 51.6, u, true, r.x, r.y);
+				} else tileWords(ctx, inSafe(r), 51.6, u, true);
 				ctx.restore();
 			} else if (l.kind === 'outline') {
-				const bh = r.h;
-				const k = bh / WM().h;
+				/* One whole wordmark, as wide as the box, its rule the box's width. */
+				const k = Math.min(r.h / WM().h, r.w / WM().w);
 				const bw = WM().w * k;
-				const gap = bh * 0.12;
 				ctx.save();
-				ctx.beginPath();
-				ctx.rect(r.x, r.y, r.w, r.h);
-				ctx.clip();
 				ctx.fillStyle = line;
 				ctx.fillRect(r.x, r.y + WM().xTop * k, r.w, Math.max(1, u));
-				let x0 = r.x + r.w / 2 - bw / 2;
-				while (x0 > r.x - bw) x0 -= bw + gap;
-				for (let x = x0; x < r.x + r.w; x += bw + gap) {
-					ctx.save();
-					ctx.translate(x, r.y);
-					ctx.scale(k, k);
-					if (ground) {
-						ctx.fillStyle = ground;
-						ctx.fill(wordmarkPath());
-					}
-					ctx.strokeStyle = line;
-					ctx.lineWidth = (1.6 * u) / k;
-					ctx.stroke(wordmarkPath());
-					ctx.restore();
+				ctx.translate(r.x + (r.w - bw) / 2, r.y);
+				ctx.scale(k, k);
+				if (ground) {
+					ctx.fillStyle = ground;
+					ctx.fill(wordmarkPath());
+				} else {
+					/* Nothing is printed inside the letters: the rule shows only between them. */
+					ctx.globalCompositeOperation = 'destination-out';
+					ctx.fill(wordmarkPath());
+					ctx.globalCompositeOperation = 'source-over';
 				}
+				ctx.strokeStyle = line;
+				ctx.lineWidth = (1.6 * u) / k;
+				ctx.stroke(wordmarkPath());
 				ctx.restore();
 			} else {
 				const reef = await artImage('reef');
@@ -188,7 +202,7 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 					off.ctx.fillStyle = ground;
 					off.ctx.fillRect(0, 0, r.w, rh);
 				}
-				ctx.drawImage(off.canvas, r.x, r.y + r.h - rh);
+				ctx.drawImage(off.canvas, r.x, r.y + r.h - rh * (1 - (l.drop ?? 0)));
 			}
 		} else if (l.type === 'art') {
 			if (!v.fullColor) continue;
@@ -197,17 +211,29 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 			const w = Math.min(b.w, b.h / ratio);
 			const h = w * ratio;
 			ctx.drawImage(im, b.x + (b.w - w) / 2, b.y + (b.h - h) / 2, w, h);
+			add('art', 'art', inkBox(l.id, b.x + (b.w - w) / 2, b.y + (b.h - h) / 2, w), { over: ['reef', 'outline', 'tile', 'hatch'] });
 		} else if (l.type === 'logo') {
 			const part = !v.fullColor && l.part !== 'wordmark' ? l.fallback ?? null : l.part;
 			if (!part) continue;
+			const at = part !== l.part && l.boxOne ? px(l.boxOne) : b;
 			const ratio = ratioOf(part);
-			const h = Math.min(b.h, b.w / ratio);
+			const h = Math.min(at.h, at.w / ratio);
 			const w = h * ratio;
-			drawLockupPart(ctx, part, l.align === 'left' ? b.x : b.x + (b.w - w) / 2, b.y + (b.h - h) / 2, h, ink, mark);
+			const box = { x: l.align === 'left' ? at.x : at.x + (at.w - w) / 2, y: at.y + (at.h - h) / 2, w, h };
+			const clear = part === 'mark' ? 0 : h * logoDoc().clear.share;
+			if (l.clear && ground) {
+				/* The pattern stops short of the wordmark. */
+				ctx.fillStyle = ground;
+				ctx.beginPath();
+				ctx.roundRect(box.x - clear * 1.2, box.y - clear, box.w + clear * 2.4, box.h + clear * 2, h / 2);
+				ctx.fill();
+			}
+			add('logo', 'logo', box, { logo: { clear: part === 'wordmark' ? 0 : clear, min: 0.25 * PX_PER_IN }, over: ['hatch', 'tile'] });
+			drawLockupPart(ctx, part, box.x, box.y, h, ink, mark);
 		} else {
 			const value = slots[l.slot] ?? '';
 			if (!value.trim()) continue;
-			const plain = value.replace(/\*/g, '');
+			const plain = value.replace(/\\n/g, '\n').replace(/\*/g, '');
 			const style = l.face === 'mono' ? { family: fonts.mono, weight: 500, size: l.size * PX_PER_IN, tracking: 0, leading: 1.2, color: ink, align: l.align ?? 'center' } : { family: fonts.sans, weight: 600, size: l.size * PX_PER_IN, tracking: -0.01, leading: 1.04, color: ink, align: l.align ?? 'center' };
 			const f = fit(ctx, plain, style as never, b.w, l.maxLines ?? 2, 0.6, `${item.id} ${l.slot}`);
 			// Highlighted words (in *stars*) take the pink on full-color variants, as the share images do.
@@ -229,18 +255,24 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 			ctx.textBaseline = 'alphabetic';
 			ctx.textAlign = 'left';
 			let word = 0;
+			const lineBoxes: Rect[] = [];
+			const hiColor = v.highlight ? tokenColor(v.highlight) : ink;
 			f.lines.forEach((ln, i) => {
 				const lw = f.widths[i]!;
-				let x = f.style.align === 'center' ? b.x + (b.w - lw) / 2 : b.x;
+				let x = f.style.align === 'center' ? b.x + (b.w - lw) / 2 : f.style.align === 'right' ? b.x + b.w - lw : b.x;
+				lineBoxes.push({ x, y: b.y + i * lh, w: lw, h: f.size * 1.1 });
 				const yb = b.y + i * lh + f.size * 0.92;
 				for (const w of ln.split(' ')) {
-					ctx.fillStyle = hi.has(word) ? brandColor('pink') : ink;
+					ctx.fillStyle = hi.has(word) ? hiColor : ink;
 					ctx.fillText(w, x, yb);
 					x += ctx.measureText(`${w} `).width;
 					word++;
 				}
 			});
 			ctx.letterSpacing = '0px';
+			const said = plain.replace(/\s+/g, ' ').trim();
+			const box = { x: Math.min(...lineBoxes.map((q) => q.x)), y: lineBoxes[0]!.y, w: Math.max(...lineBoxes.map((q) => q.w)), h: lineBoxes.length * lh };
+			add(l.slot, 'text', box, { ink: lineBoxes, text: { asked: said, drawn: f.lines.join(' '), size: f.size, color: hi.size && v.ground && contrast(hiColor, inGround[0]!) < contrast(ink, inGround[0]!) ? hiColor : ink, ground: v.ground ? inGround : [contrast(ink, tokenColor('white')) >= contrast(ink, tokenColor('ink')) ? tokenColor('white') : tokenColor('ink')], ...(req.sample && !req.slots?.[l.slot] ? { sample: true } : {}) } });
 		}
 	}
 	if (req.guides) {
@@ -253,7 +285,7 @@ export async function drawItem(ctx: Ctx, item: MerchItem, req: MerchRequest = {}
 		ctx.strokeRect(o + s, o + s, item.size[0] * PX_PER_IN - 2 * s, item.size[1] * PX_PER_IN - 2 * s);
 		ctx.restore();
 	}
-	return { variant, width: W, height: H };
+	return { variant, width: W, height: H, layers };
 }
 
 /** The die line (the cutter's CutContour spot path) for an item with a cut: in the SVG only, never printed. */
@@ -268,24 +300,40 @@ export function cutPath(item: MerchItem): string {
 	return `<g id="CutContour"><path d="${d}" fill="none" stroke="#FF00FF" stroke-width="3"/></g>`;
 }
 
-export type MerchRender = { png?: Buffer; svg?: string; variant: string; width: number; height: number; widthIn: number; heightIn: number; dpi: number };
+export type MerchRender = { png?: Buffer; svg?: string; pdf?: Buffer; layers: DrawnLayer[]; variant: string; width: number; height: number; widthIn: number; heightIn: number; dpi: number };
 
 /** An item as print files: SVG at physical size (with the die line, if any) and PNG at `dpi` (72 to 600). */
-export async function renderItem(item: MerchItem, req: MerchRequest & { png?: boolean; svg?: boolean; dpi?: number } = {}): Promise<MerchRender> {
+export async function renderItem(item: MerchItem, req: MerchRequest & { png?: boolean; svg?: boolean; pdf?: boolean; dpi?: number } = {}): Promise<MerchRender> {
 	const widthIn = item.size[0] + 2 * item.bleed;
 	const heightIn = item.size[1] + 2 * item.bleed;
 	const W = Math.round(widthIn * PX_PER_IN);
 	const H = Math.round(heightIn * PX_PER_IN);
 	const dpi = req.dpi ?? PX_PER_IN;
-	const out: MerchRender = { variant: '', width: Math.round(widthIn * dpi), height: Math.round(heightIn * dpi), widthIn, heightIn, dpi };
-	if (req.png !== false) {
+	const out: MerchRender = { layers: [], variant: '', width: Math.round(widthIn * dpi), height: Math.round(heightIn * dpi), widthIn, heightIn, dpi };
+	if (req.png !== false || req.pdf) {
 		const s = surface(W, H, { scale: dpi / PX_PER_IN });
-		out.variant = (await drawItem(s.ctx, item, req)).variant;
-		out.png = toPng(s, { dpi });
+		const drawn = await drawItem(s.ctx, item, req);
+		out.variant = drawn.variant;
+		out.layers = drawn.layers;
+		if (req.png !== false) out.png = toPng(s, { dpi });
+		if (req.pdf) {
+			/* One page at the item's physical size, bleed included, on white where nothing is printed. */
+			const flat = surface(W, H, { scale: dpi / PX_PER_IN });
+			flat.ctx.fillStyle = tokenColor('white');
+			flat.ctx.fillRect(0, 0, W, H);
+			flat.ctx.setTransform(1, 0, 0, 1, 0, 0);
+			flat.ctx.drawImage(s.canvas as Canvas, 0, 0);
+			const px = pixelsOf(flat);
+			const rgb = Buffer.alloc((px.data.length / 4) * 3);
+			for (let i = 0, j = 0; i < px.data.length; i += 4, j += 3) px.data.copy(rgb, j, i, i + 3);
+			out.pdf = imagesToPdf([{ rgb, width: px.width, height: px.height }], widthIn * 72);
+		}
 	}
 	if (req.svg) {
 		const s = surface(W, H, { svg: true });
-		out.variant = (await drawItem(s.ctx, item, req)).variant;
+		const drawn = await drawItem(s.ctx, item, req);
+		out.variant = drawn.variant;
+		out.layers = drawn.layers;
 		out.svg = toSvg(s, { widthIn, heightIn }).replace(/<\/svg>\s*$/, `${cutPath(item)}</svg>\n`);
 	}
 	return out;

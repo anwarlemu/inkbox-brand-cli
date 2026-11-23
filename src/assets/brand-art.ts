@@ -7,16 +7,16 @@ import { tokenColor, type ColorRef } from './canvas.js';
 // occasions, the window's content) and logo.json (the wordmark's paths, the lockup, the art files). Every color comes
 // out resolved through the tokens, so the drawing code never holds a hex of its own.
 
-export type ThemeDoc = { label: string; bg: ColorRef; ink: ColorRef; line: ColorRef; tile: ColorRef; tileAlpha: number; border: ColorRef; reefFade: number; dark: boolean };
-export type Theme = Omit<ThemeDoc, 'bg' | 'ink' | 'line' | 'tile' | 'border'> & { bg: string; ink: string; muted: string; line: string; tile: string; border: string };
+export type ThemeDoc = { label: string; bg: ColorRef; ink: ColorRef; muted: ColorRef; line: ColorRef; tile: ColorRef; tileAlpha: number; border: ColorRef; reefFade: number; dark: boolean; pill?: ColorRef };
+export type Theme = Omit<ThemeDoc, 'bg' | 'ink' | 'muted' | 'line' | 'tile' | 'border' | 'pill'> & { pill: string; bg: string; ink: string; muted: string; line: string; tile: string; border: string };
 export type SizeDef = { label: string; w: number; h: number; aliases: string[] };
-export type Look = { template: string; theme: string; label: string; words?: Record<string, unknown> };
-export type OccasionDef = { label: string; words: Record<string, unknown>; looks: Look[] };
+export type Look = { template: string; theme: string; label: string; style?: Record<string, unknown>; sample?: Record<string, string> };
+export type OccasionDef = { label: string; style: Record<string, unknown>; sample: Record<string, string>; looks: Look[] };
 
 export type ImageDoc = {
 	colors: Record<string, ColorRef | ColorRef[]>;
 	themes: Record<string, ThemeDoc>;
-	highlights: Record<string, { label: string; color: string }>;
+	highlights: Record<string, { label: string; color: string; on?: Record<string, string> }>;
 	tones: Record<string, string>;
 	notes: string[];
 	groups: Record<string, { label: string; sizes: string[] }>;
@@ -31,6 +31,7 @@ export type ImageDoc = {
 export type LogoDoc = {
 	wordmark: { w: number; h: number; xTop: number; paths: string[] };
 	lockup: { w: number; h: number; mark: { x: number; y: number; w: number; h: number }; word: { x: number; y: number; w: number; h: number } };
+	clear: { share: number; min: number; source: string };
 	art: Record<string, { file: string; label: string; ratio: number; source: string }>;
 	reef: { file: string; w: number; h: number; source: string };
 	lockups: { id: string; label: string; parts: ('mark' | 'word')[] }[];
@@ -60,13 +61,17 @@ export function themes(): Record<string, Theme> {
 	themeCache = {};
 	for (const [id, t] of Object.entries(imageDoc().themes)) {
 		const ink = tokenColor(t.ink);
-		themeCache[id] = { ...t, bg: tokenColor(t.bg), ink, muted: ink, line: tokenColor(t.line), tile: tokenColor(t.tile), border: tokenColor(t.border) };
+		themeCache[id] = { ...t, bg: tokenColor(t.bg), ink, muted: tokenColor(t.muted), line: tokenColor(t.line), tile: tokenColor(t.tile), border: tokenColor(t.border), pill: t.pill ? tokenColor(t.pill) : brandColor(t.dark ? 'pillFillDark' : 'pillFill') };
 	}
 	return themeCache;
 }
 export const themeNames = () => Object.keys(imageDoc().themes);
 export const highlightNames = () => Object.keys(imageDoc().highlights);
-export const highlightColor = (name: string) => tokenColor(imageDoc().highlights[name]?.color ?? '');
+/** A highlight on a theme: its own color, or the token recorded for grounds it cannot be read on. */
+export const highlightColor = (name: string, theme: string) => {
+	const h = imageDoc().highlights[name];
+	return tokenColor(h?.on?.[theme] ?? h?.color ?? '');
+};
 export const toneColor = (name: string) => tokenColor(imageDoc().tones[name] ?? imageDoc().tones.lilac!);
 
 let word: Path2D | undefined;

@@ -10,6 +10,7 @@ import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart
 import { readHookInput } from './hooks/payload.js';
 import { registerDiscover } from './commands/discover.js';
 import { assets, rejectUnknownCommand } from './commands/assets.js';
+import { tryDesign } from './commands/design.js';
 import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
 
@@ -77,7 +78,8 @@ assets(program);
 registerDiscover(program);
 rejectUnknownCommand(program, process.argv.slice(2));
 
-program.parseAsync().catch((error: Error & { exitCode?: number; code?: string }) => {
+const designed = await tryDesign(process.argv.slice(2));
+if (!designed) program.parseAsync().catch((error: Error & { exitCode?: number; code?: string }) => {
 	if (error.exitCode === 0 || error.code === 'commander.helpDisplayed' || error.code === 'commander.version') process.exit(error.exitCode ?? 0);
 	const message = error.message.replace(/^error:\s*/i, '');
 	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: message })}\n`);

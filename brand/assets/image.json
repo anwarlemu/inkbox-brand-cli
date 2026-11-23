@@ -55,7 +55,8 @@
 				"alpha": 0.22
 			},
 			"reefFade": 0.62,
-			"dark": false
+			"dark": false,
+			"muted": "text-secondary"
 		},
 		"mist": {
 			"label": "Mist",
@@ -69,7 +70,8 @@
 				"alpha": 0.18
 			},
 			"reefFade": 0.62,
-			"dark": false
+			"dark": false,
+			"muted": "icon-secondary"
 		},
 		"mono": {
 			"label": "Paper, black ink",
@@ -83,7 +85,8 @@
 				"alpha": 0.22
 			},
 			"reefFade": 0.62,
-			"dark": false
+			"dark": false,
+			"muted": "text-secondary"
 		},
 		"lavender": {
 			"label": "Lavender",
@@ -97,7 +100,8 @@
 				"alpha": 0.3
 			},
 			"reefFade": 0.5,
-			"dark": false
+			"dark": false,
+			"muted": "icon-secondary"
 		},
 		"purple": {
 			"label": "Purple",
@@ -114,7 +118,12 @@
 				"alpha": 0.6
 			},
 			"reefFade": 0,
-			"dark": true
+			"dark": true,
+			"muted": "white",
+			"pill": {
+				"token": "ink",
+				"alpha": 0.2
+			}
 		},
 		"deep": {
 			"label": "Deep",
@@ -131,21 +140,39 @@
 				"alpha": 0.3
 			},
 			"reefFade": 0,
-			"dark": true
+			"dark": true,
+			"muted": "border-default"
 		}
 	},
 	"highlights": {
 		"pink": {
 			"label": "Pink",
-			"color": "pink"
+			"color": "pink",
+			"on": {
+				"paper": "rose",
+				"mist": "rose",
+				"mono": "rose",
+				"lavender": "rose"
+			}
 		},
 		"lilac": {
 			"label": "Lilac",
-			"color": "text-faint"
+			"color": "text-faint",
+			"on": {
+				"paper": "brand",
+				"mist": "brand",
+				"mono": "brand",
+				"lavender": "brand",
+				"purple": "border-default"
+			}
 		},
 		"violet": {
 			"label": "Violet",
-			"color": "brand"
+			"color": "brand",
+			"on": {
+				"purple": "pink",
+				"deep": "text-faint"
+			}
 		},
 		"ink": {
 			"label": "No highlight",
@@ -167,17 +194,23 @@
 		"The window is the console, so its colors are the console's tokens: strong #2f2438 is ink, nav #5d4d67 is icon-secondary (#5B4C6A), muted #8679a3 is text-muted (#998EA5), accent #7f69b0 is brand, tint #f4f2f7 and the second rail #f8f7fb are lilac (#F4F2F6), hairlines #ece8f2 are border-subtle (#F3F1F5), the avatar #4f6bed is avatar (#5063B1), the unread tag #dbe8fe and #3b6fd8 are tag-blue and tag-blue-fg, the BETA tag's #fff7f7 is white.",
 		"Browser chrome: #f6f4f9 is lilac; the three dots #f2b8b5, #f5d99a, #bfe3b4 are pink, status-warning-bg and status-success-bg; the address ink #8679a3 is text-muted.",
 		"Shadows: the editor's rgba(47,36,56,a) uses the ink token at the same alpha.",
-		"Left out: the Y Combinator badge (the orange Y square is a third-party mark) and the orange highlight that matched it (#f97316 has no token). The launch and funding occasions keep their words in the pill badge.",
 		"The window's placeholder mailbox is Acme: the editor's sample messages named a real person and handle, so none of them ship.",
 		"The editor's console screens (public/inkbox-og/screens) are labelled placeholders, so they are not shipped; pass --image for a real capture in the window.",
-		"A pasted X post becomes a headline with the author as a small credit in the editor; here pass --headline and --credit (an Acme placeholder in examples, never a real post, name or avatar)."
+		"A pasted X post becomes a headline with the author as a small credit in the editor; here pass --headline and --credit (an Acme placeholder in examples, never a real post, name or avatar).",
+		"Left out: the Y Combinator badge (the orange Y square is a third-party mark), the orange highlight that matched it (#f97316 has no token), the claim in words, and the X mark beside the card's handle.",
+		"Only the words that were asked for are drawn. The occasions' words are samples (Acme) and are drawn with --sample only. The lockup, the brand's own handle and address (card) and the address over the console (feature) stay.",
+		"The console in the window is a picture of the product with Acme placeholder mail (brand/illustration.md rule 14). --console blank draws it without messages; --image puts your own capture there.",
+		"Highlights: pink on white is 1.75:1, so on the light themes the highlighted words are rose (#8C5659), the token tokens.css names as the pink's dark partner; on purple and deep they stay pink. Lilac is 2.0:1 on white, so it is brand there, and border-default on purple; violet on purple is pink and on deep text-faint. The pink stays in the badge's dot, which is not a word.",
+		"The line under the headline was the ink at 78 percent: it is the nearest token that reads at 4.5:1, text-secondary on white, icon-secondary on mist and lavender, white on purple, border-default on deep.",
+		"The outline band cut its letters at the canvas's sides and 9.84 units under its foot: the band now fades at both ends and its letters stand on the foot. The wordmark tile draws whole wordmarks only.",
+		"Sizes: the shared ids and pixels (src/design/platforms.ts, with what each platform covers, its upload limit and their sources); li-square is the editor's own. The editor's card (1200 by 675) is landscape, its li-page (1128 by 191) is linkedin-page (1512 by 256, the same shape) and its email header is 1200 by 400.",
+		"The pill on the purple theme is the ink at 20 percent: white words on white at 14 percent over the purple were 3.96:1. The deep theme keeps the white tint."
 	],
 	"groups": {
 		"share": {
 			"label": "Link previews",
 			"sizes": [
 				"og",
-				"card",
 				"linkedin"
 			]
 		},
@@ -188,7 +221,8 @@
 				"portrait",
 				"story",
 				"landscape",
-				"li-square"
+				"li-square",
+				"youtube-thumbnail"
 			]
 		},
 		"banner": {
@@ -196,9 +230,15 @@
 			"sizes": [
 				"x-banner",
 				"linkedin-banner",
-				"li-page",
+				"linkedin-page",
 				"youtube",
 				"email"
+			]
+		},
+		"profile": {
+			"label": "Profile pictures",
+			"sizes": [
+				"avatar"
 			]
 		}
 	},
@@ -211,16 +251,6 @@
 				"link",
 				"preview",
 				"link-preview"
-			]
-		},
-		"card": {
-			"label": "X card",
-			"w": 1200,
-			"h": 675,
-			"aliases": [
-				"x",
-				"twitter",
-				"x-card"
 			]
 		},
 		"linkedin": {
@@ -260,10 +290,12 @@
 			]
 		},
 		"landscape": {
-			"label": "Landscape 16:9",
+			"label": "Landscape 16:9 (and X card)",
 			"w": 1200,
 			"h": 675,
 			"aliases": [
+				"card",
+				"x-card",
 				"wide",
 				"16:9",
 				"16x9"
@@ -273,7 +305,9 @@
 			"label": "LinkedIn square",
 			"w": 1200,
 			"h": 1200,
-			"aliases": []
+			"aliases": [
+				"linkedin-square"
+			]
 		},
 		"x-banner": {
 			"label": "X header",
@@ -293,24 +327,41 @@
 				"li-banner"
 			]
 		},
-		"li-page": {
-			"label": "LinkedIn page banner",
-			"w": 1128,
-			"h": 191,
-			"aliases": []
+		"linkedin-page": {
+			"label": "LinkedIn page cover",
+			"w": 1512,
+			"h": 256,
+			"aliases": [
+				"li-page",
+				"linkedin-cover-page"
+			]
 		},
 		"youtube": {
-			"label": "YouTube channel",
+			"label": "YouTube channel art",
 			"w": 2560,
 			"h": 1440,
 			"aliases": [
 				"yt"
 			]
 		},
+		"youtube-thumbnail": {
+			"label": "YouTube thumbnail",
+			"w": 1280,
+			"h": 720,
+			"aliases": [
+				"yt-thumb"
+			]
+		},
 		"email": {
 			"label": "Email header",
 			"w": 1200,
-			"h": 300,
+			"h": 400,
+			"aliases": []
+		},
+		"avatar": {
+			"label": "Profile picture",
+			"w": 800,
+			"h": 800,
 			"aliases": []
 		}
 	},
@@ -321,27 +372,27 @@
 		},
 		"app": {
 			"label": "Product",
-			"description": "The words over the console's inbox in a window between two guides, the octopus hanging over its edge, the reef behind."
+			"description": "The words over (beside, on a banner) the console's inbox in a window, the octopus hanging over its edge, the reef behind. The window fades into the ground where it does not fit."
 		},
 		"outline": {
 			"label": "Outline",
-			"description": "Centered words over a band of huge outlined wordmarks on a rule, hatched strips down the sides, the octopus hanging over the rule."
+			"description": "Centered words over a band of huge outlined wordmarks that fades at both ends, hatched strips down the sides, the octopus hanging over the rule."
 		},
 		"hatch": {
 			"label": "Hatched",
-			"description": "Words set right over a hatched floor, the octopus hanging over its edge."
+			"description": "Words set right over (beside, on a banner) a hatched floor, the octopus hanging over its edge."
 		},
 		"reef": {
 			"label": "Reef",
-			"description": "Centered words, the sitting octopus and the reef along the bottom, and the lockup."
+			"description": "The lockup, the words, the sitting octopus and the reef along the bottom."
 		},
 		"feature": {
 			"label": "Feature",
-			"description": "Centered words with a pill badge over the console in a browser window, inside a hatched border."
+			"description": "Words with a badge over (beside, on a banner) the console in a browser window, inside a hatched border. The window fades out before the border."
 		},
 		"partner": {
 			"label": "Lockup",
-			"description": "The lockup beside a partner's name (Acme by default) over centered words, on a staggered wordmark tile inside a line border."
+			"description": "The lockup, beside a partner's name when one is given, over centered words, on a staggered wordmark tile inside a line border."
 		},
 		"funding": {
 			"label": "Big number",
@@ -353,26 +404,27 @@
 		},
 		"card": {
 			"label": "Card",
-			"description": "The new-feature card: the lockup top left, a solid pill top right, the words centered between, and a mono footer with the handle and address."
+			"description": "The new-feature card: the lockup top left, the badge as a solid pill top right, the words centered between, and the brand's handle and address in a mono footer."
+		},
+		"mark": {
+			"label": "Lockup",
+			"description": "The lockup alone on the theme's ground (the octopus alone in a profile picture). It draws no words."
 		}
 	},
 	"start": {
-		"badge": "pill",
-		"badgeText": "Backed by Y Combinator",
-		"headline": "Give every *AI agent*\na way to be reached",
 		"footLeft": "@inkbox_ai",
-		"footIcon": "x",
 		"footRight": "inkbox.ai",
 		"winUrl": "inkbox.ai"
 	},
 	"occasions": {
 		"launch": {
 			"label": "Launch",
-			"words": {
-				"badge": "pill",
-				"badgeText": "Backed by Y Combinator",
-				"headline": "Give every *AI agent*\na way to be reached",
-				"body": ""
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
+				"badgeText": "New",
+				"headline": "Give every *AI agent*\na way to be reached"
 			},
 			"looks": [
 				{
@@ -399,8 +451,10 @@
 		},
 		"feature": {
 			"label": "Feature",
-			"words": {
-				"badge": "pill",
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
 				"badgeText": "New feature",
 				"headline": "Agents can now\n*talk to each other*",
 				"body": "Agent-to-Agent ships today: delegate work to any agent over the open A2A protocol."
@@ -410,10 +464,12 @@
 					"template": "card",
 					"theme": "mist",
 					"label": "New feature card",
-					"words": {
+					"style": {
 						"badge": "solid",
-						"badgeText": "NEW",
 						"highlight": "ink"
+					},
+					"sample": {
+						"badgeText": "NEW"
 					}
 				},
 				{
@@ -435,12 +491,13 @@
 		},
 		"partnership": {
 			"label": "Partnership",
-			"words": {
-				"badge": "pill",
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
 				"badgeText": "Partnership",
 				"headline": "Inkbox is partnering\nwith *Acme*",
 				"body": "Every Acme agent now gets its own email, phone number and Agent Card.",
-				"logo": true,
 				"partnerName": "Acme"
 			},
 			"looks": [
@@ -468,10 +525,12 @@
 		},
 		"funding": {
 			"label": "Funding",
-			"words": {
-				"badge": "pill",
-				"badgeText": "Backed by Y Combinator",
-				"headline": "We raised *$4M*",
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
+				"badgeText": "Funding",
+				"headline": "Acme raised *$4M*",
 				"body": "to give every AI agent a way to be reached."
 			},
 			"looks": [
@@ -499,8 +558,10 @@
 		},
 		"hiring": {
 			"label": "Hiring",
-			"words": {
-				"badge": "dot",
+			"style": {
+				"badge": "dot"
+			},
+			"sample": {
 				"badgeText": "We’re hiring",
 				"headline": "Come build the inbox\nfor *AI agents*",
 				"body": "Founding engineers, in San Francisco."
@@ -530,8 +591,10 @@
 		},
 		"changelog": {
 			"label": "Changelog",
-			"words": {
-				"badge": "pill",
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
 				"badgeText": "Changelog",
 				"headline": "What’s new in *Inkbox*",
 				"body": "Agent Cards, public directory, invitations and SDK 0.5.14."
@@ -546,10 +609,12 @@
 					"template": "card",
 					"theme": "mist",
 					"label": "Card",
-					"words": {
+					"style": {
 						"badge": "solid",
-						"badgeText": "CHANGELOG",
 						"highlight": "ink"
+					},
+					"sample": {
+						"badgeText": "CHANGELOG"
 					}
 				},
 				{
@@ -566,11 +631,12 @@
 		},
 		"milestone": {
 			"label": "Milestone",
-			"words": {
-				"badge": "dot",
+			"style": {
+				"badge": "dot"
+			},
+			"sample": {
 				"badgeText": "Milestone",
-				"headline": "*1,000,000* emails\nsent by agents",
-				"body": ""
+				"headline": "*1,000* agents\nonline at Acme"
 			},
 			"looks": [
 				{
@@ -597,8 +663,10 @@
 		},
 		"event": {
 			"label": "Event",
-			"words": {
-				"badge": "pill",
+			"style": {
+				"badge": "pill"
+			},
+			"sample": {
 				"badgeText": "Live · Thursday 6pm",
 				"headline": "Build an agent that\n*answers its own email*",
 				"body": "A live session with the Inkbox team."

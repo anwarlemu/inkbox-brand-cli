@@ -85,7 +85,10 @@ export function videoDesign(o: VideoOptions): { design: Design; def: TemplateDef
 	const def = videoDoc().templates[pick('video template', o.template, videoTemplates())]!;
 	const layout = o.layout ? pick('layout', o.layout, TEMPLATES) : def.layout;
 	if (o.layout && o.template !== 'reveal') throw new Error('--layout goes with the reveal template; the others have their own.');
-	const design = designOf({ ...o, template: layout, theme: o.theme ? pick('theme', o.theme, themeNames()) : def.theme, size: 'custom', width: o.width, height: o.height });
+	/* The vertical frame is a story, so it keeps to a story's safe area; the others are posts. */
+	const known = ({ square: 'square', portrait: 'portrait', vertical: 'story' } as Record<string, string>)[o.size];
+	const { seconds: _s, fps: _f, reduced: _r, layout: _l, ...req } = o;
+	const design = designOf({ ...req, template: layout, theme: o.theme ? pick('theme', o.theme, themeNames()) : def.theme, ...(known ? { size: known, width: undefined, height: undefined } : { size: 'custom', width: o.width, height: o.height }) });
 	return { design, def };
 }
 

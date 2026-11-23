@@ -1,18 +1,20 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadImage, createCanvas } from '@napi-rs/canvas';
 import { describe, expect, it } from 'vitest';
-import { logoDoc } from '../src/assets/brand-art.js';
+import { highlightColor, logoDoc, themes } from '../src/assets/brand-art.js';
 import { tokenColor } from '../src/assets/canvas.js';
 import { renderSlide, slideTypes } from '../src/assets/deck.js';
 import { designOf, imageSizes, picturesFor, renderDesign } from '../src/assets/image.js';
 import { renderIllustration, subjects } from '../src/assets/illustrate.js';
 import { findItem, merchItems, renderItem, PX_PER_IN } from '../src/assets/merch.js';
+import { contrast } from '../src/assets/place.js';
 import { TEMPLATES } from '../src/assets/share.js';
 import { stillFrame, videoDoc, videoTemplates } from '../src/assets/video.js';
+import { mustPass } from '../src/design/adapter.js';
 import { figmaTokens, figmaTokenScripts } from '../src/figma/tokens.js';
 import { tokens } from '../src/lib/brand.js';
 import { helpRow } from '../src/lib/help-row.js';
@@ -20,7 +22,8 @@ import { helpRow } from '../src/lib/help-row.js';
 const ROOT = join(import.meta.dirname, '..');
 const BIN = join(ROOT, 'bin.js');
 const sha = (b: Buffer | string) => createHash('sha256').update(b).digest('hex');
-const SOCIAL = ['og', 'square', 'portrait', 'story', 'landscape', 'x-banner', 'linkedin-banner'];
+const SOCIAL = ['og', 'square', 'portrait', 'story', 'landscape', 'x-banner', 'linkedin-banner', 'avatar'];
+const LONG = 'Everything your agents need to search, buy and reply in one place';
 
 function run(args: string[], cwd?: string) {
 	return spawnSync(process.execPath, [BIN, ...args], { encoding: 'utf8', cwd });
@@ -40,7 +43,7 @@ describe('image', () => {
 		const pics = await picturesFor(null);
 		for (const size of SOCIAL) {
 			const want = imageSizes().find((s) => s.id === size)!;
-			for (const template of TEMPLATES) {
+			for (const template of size === 'avatar' ? (['mark'] as const) : TEMPLATES) {
 				const a = await renderDesign(designOf({ template, size }), pics);
 				const im = await loadImage(a.png!);
 				expect([im.width, im.height]).toEqual([want.width, want.height]);
@@ -56,12 +59,13 @@ describe('image', () => {
 		const pics = await picturesFor(null);
 		const allowed = tokenHexes();
 		for (const template of TEMPLATES) {
-			const r = await renderDesign(designOf({ template, size: 'og' }), pics, { png: false, svg: true });
+			const req = { template, size: 'og', ...(template === 'mark' ? {} : { headline: LONG, badge: 'New' }) };
+			const r = await renderDesign(designOf(req), pics, { png: false, svg: true });
 			expect(r.svg).toMatch(/^<\?xml|^<svg/);
 			expect(r.svg).not.toMatch(/<text/);
-			const again = await renderDesign(designOf({ template, size: 'og' }), pics, { png: false, svg: true });
+			const again = await renderDesign(designOf(req), pics, { png: false, svg: true });
 			expect(sha(again.svg!)).toBe(sha(r.svg!));
-			for (const c of svgColors(r.svg!)) expect(allowed.has(c), `${template}: ${c} is not a token`).toBe(true);
+			for (const c of svgColors(r.svg!)) if (c !== '#FFFFFF') expect(allowed.has(c), `${template}: ${c} is not a token`).toBe(true);
 		}
 	}, 60_000);
 
@@ -70,8 +74,11 @@ describe('image', () => {
 		const one = await renderDesign(designOf({ template: 'tile', seed: 42 }), pics);
 		const again = await renderDesign(designOf({ template: 'tile', seed: 42 }), pics);
 		expect(sha(again.png!)).toBe(sha(one.png!));
-		const seeds = new Set(await Promise.all([1, 2, 3, 4, 5, 6].map(async (seed) => designOf({ template: 'tile', seed }).template)));
-		expect(seeds.size).toBeGreaterThan(1);
+		const shas = new Set(await Promise.all([1, 2, 3, 4, 5, 6].map(async (seed) => sha((await renderDesign(designOf({ template: 'tile', seed }), pics)).png!))));
+		expect(shas.size).toBeGreaterThan(1);
+		// A named template is kept; with none named, the seed picks one.
+		expect(designOf({ template: 'tile', seed: 5 }).template).toBe('tile');
+		expect(new Set([1, 2, 3, 4, 5, 6].map((seed) => designOf({ seed }).template)).size).toBeGreaterThan(1);
 	});
 
 	it('takes a picture only in a template with a window, and rejects unknown names', () => {
@@ -80,28 +87,121 @@ describe('image', () => {
 		expect(() => designOf({ template: 'tiles' })).toThrow(/Did you mean `tile`/);
 		expect(() => designOf({ template: 'tile', size: 'sqare' })).toThrow(/Did you mean `square`/);
 		expect(() => designOf({ template: 'tile', theme: 'lavendar' })).toThrow(/Did you mean `lavender`/);
-		expect(() => designOf({ template: 'tile', badge: 'yc' })).toThrow(/Unknown badge/);
+		expect(() => designOf({ template: 'tile', badgeStyle: 'yc' })).toThrow(/Unknown badge style/);
+		expect(designOf({ template: 'tile', badge: 'Beta' }).badgeText).toBe('Beta');
+		expect(designOf({ template: 'tile', badge: 'dot', badgeText: 'Beta' })).toMatchObject({ badge: 'dot', badgeText: 'Beta' });
 	});
 
-	it('picks an occasion\'s look and words', () => {
+	it('picks an occasion\'s look, and draws its words only as a sample', () => {
 		const d = designOf({ template: 'hiring' });
 		expect(d.template).toBe('announce');
 		expect(d.theme).toBe('purple');
-		expect(d.headline).toMatch(/AI agents/);
+		expect([d.headline, d.body, d.badgeText, d.credit, d.partnerName]).toEqual(['', '', '', '', '']);
+		expect(designOf({ template: 'hiring', sample: true }).headline).toMatch(/AI agents/);
 	});
 
-	it('keeps the lockup\'s own gap between the octopus and the wordmark (the brand defines no clear space)', () => {
+	it('draws every word whole on every template and size, or refuses and says what to shorten', async () => {
+		const pics = await picturesFor(null);
+		let drawn = 0;
+		for (const s of imageSizes()) {
+			for (const template of TEMPLATES) {
+				if (template === 'mark' || s.id === 'avatar') continue;
+				let r;
+				try {
+					const d = designOf({ template, size: s.id, headline: `${LONG}, with email, phone numbers and calendars`, badge: 'New', body: 'One line about it', credit: '@acme' });
+					r = await renderDesign(d, pics);
+					mustPass(d, r);
+				} catch (err) {
+					expect((err as Error).message, `${template} ${s.id}`).toMatch(/too long/);
+					continue;
+				}
+				drawn++;
+				const head = r.layers.find((l) => l.id === 'headline')!.text!;
+				expect(head.drawn).toBe(head.asked);
+				for (const id of ['badge', 'body', 'credit']) expect(r.layers.some((l) => l.id === id), `${template} ${s.id} ${id}`).toBe(true);
+			}
+		}
+		expect(drawn).toBeGreaterThan(110);
+	}, 240_000);
+
+	it('invents nothing: without copy, the only words are the brand\'s own', async () => {
+		const pics = await picturesFor(null);
+		for (const template of TEMPLATES) {
+			const r = await renderDesign(designOf({ template }), pics);
+			for (const l of r.layers) if (l.text) expect(l.text.own, `${template} ${l.id}: ${l.text.drawn}`).toBe(true);
+		}
+	}, 60_000);
+
+	it('refuses letters the brand\'s face does not have, and takes the ones it does', () => {
+		expect(() => designOf({ template: 'tile', headline: 'Launch day 🚀' })).toThrow(/no character for "🚀"/);
+		expect(() => designOf({ template: 'tile', headline: 'こんにちは' })).toThrow(/no character/);
+		expect(designOf({ template: 'tile', headline: 'Почта “для” агентов & więcej' }).headline).toContain('&');
+	});
+
+	it('refuses a word wider than the room for words, and a template that draws no words', async () => {
+		const pics = await picturesFor(null);
+		const long = designOf({ template: 'tile', size: 'x-banner', headline: 'Donaudampfschifffahrtselektrizitätenhauptbetriebswerk' });
+		await expect(renderDesign(long, pics)).rejects.toThrow(/is too long for tile/);
+		expect(() => designOf({ template: 'mark', headline: 'Hello' })).toThrow(/draws no words/);
+		expect(() => designOf({ template: 'tile', size: 'avatar' })).toThrow(/mark/);
+	});
+
+	it('fades a window that does not fit, in PNG and SVG', async () => {
+		const pics = await picturesFor(null);
+		for (const template of ['app', 'feature'] as const) {
+			const r = await renderDesign(designOf({ template, headline: LONG }), pics, { png: true, svg: true });
+			expect(r.drawn.fade, template).toBeTruthy();
+			expect(r.svg).toMatch(/<mask id="window-fade"[\s\S]*linearGradient|linearGradient[\s\S]*<mask id="window-fade"/);
+			const win = r.layers.find((l) => l.id === 'window')!.box;
+			expect(win.y + win.h).toBeLessThanOrEqual(630);
+		}
+	});
+
+	it('keeps its highlighted words readable on every theme', () => {
+		for (const [theme, t] of Object.entries(themes())) for (const h of ['pink', 'lilac', 'violet']) expect(contrast(highlightColor(h, theme), t.bg), `${h} on ${theme}`).toBeGreaterThanOrEqual(3);
+		for (const t of Object.values(themes())) expect(contrast(t.muted, t.bg)).toBeGreaterThanOrEqual(4.5);
+	});
+
+	it('makes a numbered carousel with one headline size', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'ds-carousel-'));
+		try {
+			writeFileSync(join(dir, 'c.json'), JSON.stringify({ template: 'announce', slides: [{ headline: 'One' }, { headline: LONG }, { headline: 'Three', body: 'Last' }] }));
+			const r = run(['image', '--carousel', 'c.json', '--size', 'portrait', '--format', 'png', '--out', 'out', '--json'], dir);
+			expect(r.status, r.stdout).toBe(0);
+			expect(JSON.parse(r.stdout).files.map((f: { path: string }) => f.path)).toEqual(['out/01-announce-portrait.png', 'out/02-announce-portrait.png', 'out/03-announce-portrait.png']);
+			writeFileSync(join(dir, 'bad.json'), JSON.stringify({ slides: [{ headline: 'One', hedline: 'x' }, {}] }));
+			expect(run(['image', '--carousel', 'bad.json', '--json'], dir).stdout).toMatch(/Did you mean `headline`/);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 30_000);
+
+	it('writes every format, several sizes at once, and into a path with spaces', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'ds images '));
+		try {
+			const r = run(['image', 'tile', '--headline', 'Ship', '--size', 'og,x-banner', '--format', 'all', '--out', 'my images', '--json'], dir);
+			expect(r.status, r.stdout).toBe(0);
+			expect(JSON.parse(r.stdout).files.map((f: { format: string }) => f.format)).toEqual(['png', 'svg', 'jpg', 'webp', 'png', 'svg', 'jpg', 'webp']);
+			expect(readFileSync(join(dir, 'my images', 'tile-paper-og.jpg')).subarray(0, 2).toString('hex')).toBe('ffd8');
+			expect(readFileSync(join(dir, 'my images', 'tile-paper-og.webp')).subarray(8, 12).toString('latin1')).toBe('WEBP');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 60_000);
+
+	it('keeps the lockup\'s own gap between the octopus and the wordmark (the brand publishes no clear space, so that gap is the clear space)', () => {
 		const L = logoDoc().lockup;
 		expect(L.word.x - L.mark.w).toBeCloseTo(14.95, 2);
 		expect(L.mark.h).toBe(L.h);
+		expect(logoDoc().clear.share).toBeCloseTo(14.95 / 46.08, 3);
 	});
 });
 
 describe('deck', () => {
 	it('renders every slide type at 1920 by 1080, the same bytes every time', async () => {
 		for (const type of slideTypes()) {
-			const a = await renderSlide({ type });
-			const b = await renderSlide({ type });
+			const a = await renderSlide({ type, sample: true });
+			const b = await renderSlide({ type, sample: true });
 			const im = await loadImage(a.png!);
 			expect([im.width, im.height]).toEqual([1920, 1080]);
 			expect(sha(b.png!)).toBe(sha(a.png!));
@@ -111,11 +211,14 @@ describe('deck', () => {
 	it('writes one PDF with a page per slide and rejects unknown slots', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'ds-deck-'));
 		try {
-			const r = run(['deck', 'cover', '--out', dir, '--json']);
+			const r = run(['deck', 'cover', '--title', 'Agents', '--out', dir, '--json']);
 			expect(r.status).toBe(0);
 			const pdf = readFileSync(join(dir, 'deck.pdf'), 'latin1');
 			expect(pdf.startsWith('%PDF-')).toBe(true);
 			expect(pdf.match(/\/Type \/Page\b/g)?.length).toBe(1);
+			const none = run(['deck', 'cover', '--out', dir, '--json']);
+			expect(none.status).toBe(1);
+			expect(JSON.parse(none.stdout).error).toMatch(/needs "title"/);
 			const bad = run(['deck', 'covr', '--json']);
 			expect(bad.status).toBe(1);
 			expect(JSON.parse(bad.stdout).error).toMatch(/Did you mean `cover`/);
@@ -132,7 +235,7 @@ describe('video', () => {
 		const a = await stillFrame(o, pics, 0.3);
 		expect(sha(await stillFrame(o, pics, 0.3))).toBe(sha(a));
 		const end = await stillFrame(o, pics, 4);
-		const image = await renderDesign({ ...designOf({ template: 'tile', size: 'custom', width: 1080, height: 1080 }) }, pics);
+		const image = await renderDesign({ ...designOf({ template: 'tile', size: 'square' }) }, pics);
 		const px = async (b: Buffer) => {
 			const im = await loadImage(b);
 			const c = createCanvas(im.width, im.height);
@@ -192,6 +295,16 @@ describe('merch', () => {
 		for (let k = 0; k < data.length; k += 4) if (data[k + 3] === 255 && (Math.abs(data[k]! - R!) > 1 || Math.abs(data[k + 1]! - G!) > 1 || Math.abs(data[k + 2]! - B!) > 1)) off++;
 		expect(off).toBe(0);
 	});
+
+	it('prints only the words that were passed, whole, with room round the lockup', async () => {
+		for (const item of merchItems()) {
+			const bare = await renderItem(item, { dpi: 72 });
+			expect(bare.layers.filter((l) => l.text)).toEqual([]);
+		}
+		const r = await renderItem(findItem('poster'), { dpi: 72, slots: { headline: LONG, url: 'acme.com' } });
+		expect(r.layers.find((l) => l.id === 'headline')!.text!.drawn).toBe(LONG);
+		await expect(renderItem(findItem('poster'), { dpi: 72, slots: { headline: `${LONG} ${LONG} ${LONG} ${LONG}` } })).rejects.toThrow(/too long/);
+	}, 60_000);
 
 	it('rejects a variant the item does not offer', () => {
 		const bad = run(['merch', 'cap-front', '--variant', 'paper', '--json']);

@@ -1,5 +1,5 @@
 {
-	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. Opening copy is the editor's (occasions) or an Acme placeholder.",
+	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. The words in slots are sample copy, drawn with --sample only.",
 	"width": 1920,
 	"height": 1080,
 	"slides": {
@@ -48,8 +48,8 @@
 			"template": "funding",
 			"theme": "paper",
 			"slots": {
-				"stat": "1,000,000",
-				"title": "emails sent by agents"
+				"stat": "1,000",
+				"title": "agents online at Acme"
 			}
 		},
 		"quote": {

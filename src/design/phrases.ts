@@ -98,7 +98,7 @@ export function parsePhrases(text: string, c: PhraseContext): { edits: Edit[]; u
 		}
 	};
 	const segments = safe.split(/[,;\n]|\.(?:\s|$)|!(?:\s|$)|\bthen\b/i).map((s) => s.trim()).filter(Boolean);
-	if (!segments.length) throw new DesignError('Say what to change, for example "bigger headline, logo top right".', examples(c).slice(0, 6));
+	if (!segments.length) throw new DesignError('Say what to change, for example "bigger headline, logo top right".', variety(examples(c), 6));
 	for (const seg of segments) {
 		const whole = attempt(seg);
 		if (whole.edits) {
@@ -120,7 +120,7 @@ export function parsePhrases(text: string, c: PhraseContext): { edits: Edit[]; u
 		const all = examples(c);
 		const hints = [...new Set(failed.flatMap((f) => close(f.phrase, all)))].slice(0, 6);
 		const lines = failed.map((f) => (f.why ? `"${f.phrase}": ${f.why}` : `"${f.phrase}" is not something this design understands.`));
-		throw new DesignError(`Nothing was changed.\n${lines.join('\n')}\nThings you can say here: ${(hints.length ? hints : all.slice(0, 6)).join('; ')}. Copy goes in quotes. For exact edits use \`design edit\`.`, hints);
+		throw new DesignError(`Nothing was changed.\n${lines.join('\n')}\nThings you can say here: ${(hints.length ? hints : variety(all, 6)).join('; ')}. Copy goes in quotes. For exact edits use \`design edit\`.`, hints);
 	}
 	return { edits: understood.flatMap((u) => u.edits), understood };
 }
@@ -402,6 +402,12 @@ export function examples(c: Pick<PhraseContext, 'adapter' | 'info'> & { doc?: De
 	if (c.info.options.length || c.doc?.seed !== undefined) for (const o of c.info.options) out.push(o.range ? `more ${o.id}` : `${o.id} ${o.values?.[0] ?? ''}`.trim());
 	if (c.doc?.seed !== undefined) out.push('another version');
 	return out;
+}
+
+/** A few examples of different kinds. */
+export function variety(all: string[], n: number): string[] {
+	if (all.length <= n) return all;
+	return Array.from({ length: n }, (_, i) => all[Math.floor((i * all.length) / n)]!);
 }
 
 /** The examples nearest a phrase: those sharing its words first, then by spelling. */

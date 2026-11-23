@@ -288,6 +288,8 @@ export function adapter(): Adapter {
 			return has({ headline: s.headline ?? '', body: s.body ?? '', badge: s.badgeText ?? '', ...(template === 'partner' ? { partner: s.partnerName ?? 'Acme' } : {}) });
 		},
 		colors: wordColors,
+		/* A highlight's stars are marks, not words. */
+		words: (text) => text.replace(/\\\*/g, '\u0000').replace(/\*/g, '').replace(/\u0000/g, '*'),
 		aliases: {
 			sizes: { ...Object.fromEntries(imageSizes().flatMap((s) => s.aliases.map((a) => [a, s.id]))), vertical: 'portrait' },
 			templates: Object.fromEntries(Object.entries(imageDoc().occasions).map(([id, o]) => [id, o.looks[0]!.template])),

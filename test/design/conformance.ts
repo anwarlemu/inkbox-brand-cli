@@ -17,6 +17,8 @@ export type ConformanceOptions = {
 	plain?: (doc: DesignDoc) => Promise<Uint8Array | undefined>;
 	/** Sizes to try for every template (default: all it comes in). */
 	sizes?: (t: TemplateInfo) => string[];
+	/** Templates left out of the byte checks (slow ones, or ones that need a browser). */
+	skip?: (t: TemplateInfo) => boolean;
 	/** Milliseconds per test. */
 	timeout?: number;
 };
@@ -161,7 +163,7 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 		}
 
 		it('draws the same bytes twice, and the plain command\'s bytes when nothing is edited', { timeout }, async () => {
-			for (const t of templates) {
+			for (const t of templates.filter((x) => !opts.skip?.(x))) {
 				const doc = make(t, t.sizes[0]!, (opts.short ?? shortCopy)(t));
 				const a = (await draw(doc)).png;
 				const b = (await draw(doc)).png;

@@ -66,6 +66,8 @@ export type Adapter = {
 	/** Draws the document with its layer edits applied inside the real drawing code (text re-wraps, art re-flows).
 	 * Throws an Error saying what to shorten when the words cannot be drawn whole. */
 	render(doc: DesignDoc, dir: string, out: { formats: Format[]; scale: number }): Promise<{ files: Record<string, Uint8Array>; layers: DrawnLayer[] }>;
+	/** The words of copy as they are drawn, for comparing: takes out the brand's own markup ("*accent*" marks). */
+	words?(text: string): string;
 	/** Sample copy for a template, only ever used when the person passes --sample. */
 	sample?(template: string): Record<string, string>;
 	/** Every color words may be drawn in or on, as hex. The check refuses any other. */

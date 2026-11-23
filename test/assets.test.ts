@@ -157,6 +157,30 @@ describe('image', () => {
 		}
 	});
 
+	it('keeps the lockup\'s clear space from the words at every anchor, on every template', async () => {
+		const pics = await picturesFor(null);
+		const anchors = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'] as const;
+		const problems: string[] = [];
+		for (const template of TEMPLATES) {
+			if (template === 'mark') continue;
+			for (const anchor of anchors) {
+				let r;
+				try {
+					r = await renderDesign(designOf({ template, headline: LONG, badge: 'New', body: 'One line about it', edits: { logo: { anchor } } }), pics);
+				} catch (err) {
+					expect((err as Error).message, `${template} ${anchor}`).toMatch(/too long/);
+					continue;
+				}
+				const logo = r.layers.find((l) => l.id === 'logo')!;
+				const clear = logo.logo!.clear;
+				const zone = { x: logo.box.x - clear, y: logo.box.y - clear, w: logo.box.w + 2 * clear, h: logo.box.h + 2 * clear };
+				for (const l of r.layers.filter((x) => x.kind === 'text' && x.id !== 'partner'))
+					for (const q of l.ink ?? [l.box]) if (q.x < zone.x + zone.w - 0.5 && zone.x < q.x + q.w - 0.5 && q.y < zone.y + zone.h - 0.5 && zone.y < q.y + q.h - 0.5) problems.push(`${template} ${anchor}: ${l.id}`);
+			}
+		}
+		expect(problems).toEqual([]);
+	}, 240_000);
+
 	it('keeps its highlighted words readable on every theme', () => {
 		for (const [theme, t] of Object.entries(themes())) for (const h of ['pink', 'lilac', 'violet']) expect(contrast(highlightColor(h, theme), t.bg), `${h} on ${theme}`).toBeGreaterThanOrEqual(3);
 		for (const t of Object.values(themes())) expect(contrast(t.muted, t.bg)).toBeGreaterThanOrEqual(4.5);

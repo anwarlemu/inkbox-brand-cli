@@ -26,7 +26,7 @@ export const NEVER_ALLOWED = new Set(['color', 'contrast', 'logo-size', 'logo-cl
 /** Small text at the width it is shown at, in CSS px. */
 export const SMALL_FLOOR = 8;
 
-export type CheckInput = { doc: DesignDoc; info: TemplateInfo; layers: DrawnLayer[]; adapter: Pick<Adapter, 'colors' | 'aliases'>; png?: Uint8Array };
+export type CheckInput = { doc: DesignDoc; info: TemplateInfo; layers: DrawnLayer[]; adapter: Pick<Adapter, 'colors' | 'aliases' | 'words'>; png?: Uint8Array };
 
 const right = (r: Rect) => r.x + r.w;
 const bottom = (r: Rect) => r.y + r.h;
@@ -106,6 +106,7 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 	};
 	const moved = doc.kind === 'image' || doc.kind === 'slide';
 	const texts = layers.filter((l) => l.text);
+	const plainWords = (t: string) => wordsOf(adapter.words ? adapter.words(t) : t);
 	const brandColors = adapter.colors ? new Set(adapter.colors().map(norm)) : undefined;
 
 	for (const l of texts) {
@@ -122,8 +123,8 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 		}
 		const shown = (t.size * platform.shown) / W;
 		if (moved && shown < SMALL_FLOOR - 0.05) add('small-text', [l.id], `The ${l.id} is ${t.size.toFixed(1)} px, about ${shown.toFixed(1)} px where ${platform.label} is shown ${r0(platform.shown)} px wide. It needs ${Math.ceil((SMALL_FLOOR * W) / platform.shown)} px or more: shorten it, or use a bigger size.`);
-		const asked = wordsOf(t.asked);
-		const drawn = wordsOf(t.drawn);
+		const asked = plainWords(t.asked);
+		const drawn = plainWords(t.drawn);
 		if (asked.join(' ') !== drawn.join(' ')) {
 			const gone = missing(asked, drawn);
 			add('words', [l.id], gone.length ? `The ${l.id} lost "${gone.join(' ')}". Shorten it to fit.` : `The ${l.id} reads "${t.drawn}", not "${t.asked}".`);
@@ -133,16 +134,16 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 	// Copy that never reached a layer, and layers that say more than the copy.
 	const ids = layers.map((l) => l.id);
 	const hidden = Object.entries(doc.layers).filter(([, e]) => e.hidden).map(([id]) => id);
-	const drawnWords = texts.flatMap((l) => wordsOf(l.text!.asked));
+	const drawnWords = texts.flatMap((l) => plainWords(l.text!.asked));
 	for (const [slot, v] of Object.entries(doc.copy)) {
 		if (hidden.some((h) => h === slot || (!ids.includes(slot) && sameAs(slot, [h], adapter.aliases?.copy) === h))) continue;
-		const gone = missing(wordsOf(v), drawnWords);
+		const gone = missing(plainWords(v), drawnWords);
 		if (gone.length) add('words', [slot], `The ${slot} was passed "${gone.join(' ')}", which is not drawn.`);
 	}
-	const allWords = Object.values(doc.copy).flatMap(wordsOf);
+	const allWords = Object.values(doc.copy).flatMap(plainWords);
 	for (const l of texts) {
 		if (l.text!.own || l.text!.sample) continue;
-		const extra = wordsOf(l.text!.drawn).filter((w) => !allWords.includes(w));
+		const extra = plainWords(l.text!.drawn).filter((w) => !allWords.includes(w));
 		if (extra.length) add('invented', [l.id], `The ${l.id} says "${extra.join(' ')}", which nobody passed.`);
 	}
 
@@ -205,28 +206,47 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 	return out.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));
 }
 
-/** The side where a layer that says it fades is still visible on the last row of pixels, if any. */
+/** The side where a layer that says it fades is still visible on the edge of the picture, if any. Read as the median
+ * light of short stretches of the last few rows, so grain and thin lines (a rule crossing the edge) do not count. */
 function hardEdge(px: Pixels, l: DrawnLayer, all: DrawnLayer[], W: number, H: number): string | undefined {
 	const k = px.width / W;
-	const others = all.filter((o) => o !== l && o.kind !== 'panel' && !(o.bleeds && inside({ x: 0, y: 0, w: W, h: H }, o.box)));
+	const canvas = { x: 0, y: 0, w: W, h: H };
+	// Other layers at the edge are not this one's business. One that covers the whole canvas (a ground, a frame) counts
+	// only by its ink; without ink it is the ground itself.
+	const others = all.filter((o) => o !== l && o.kind !== 'panel' && (!inside(canvas, o.box) || !!o.ink?.length));
 	const sides = [
-		{ name: 'top', on: l.box.y < -0.5, at: (t: number) => [t, 0.5], from: l.box.x, to: right(l.box), end: W },
-		{ name: 'bottom', on: bottom(l.box) > H + 0.5, at: (t: number) => [t, H - 0.5], from: l.box.x, to: right(l.box), end: W },
-		{ name: 'left', on: l.box.x < -0.5, at: (t: number) => [0.5, t], from: l.box.y, to: bottom(l.box), end: H },
-		{ name: 'right', on: right(l.box) > W + 0.5, at: (t: number) => [W - 0.5, t], from: l.box.y, to: bottom(l.box), end: H },
+		{ name: 'top', on: l.box.y < -0.5, at: (t: number, d: number) => [t, d], from: l.box.x, to: right(l.box), end: W },
+		{ name: 'bottom', on: bottom(l.box) > H + 0.5, at: (t: number, d: number) => [t, H - d], from: l.box.x, to: right(l.box), end: W },
+		{ name: 'left', on: l.box.x < -0.5, at: (t: number, d: number) => [d, t], from: l.box.y, to: bottom(l.box), end: H },
+		{ name: 'right', on: right(l.box) > W + 0.5, at: (t: number, d: number) => [W - d, t], from: l.box.y, to: bottom(l.box), end: H },
 	];
-	const at = (x: number, y: number) => {
+	const light = (x: number, y: number) => {
 		const i = (Math.min(px.height - 1, Math.max(0, Math.floor(y * k))) * px.width + Math.min(px.width - 1, Math.max(0, Math.floor(x * k)))) * 4;
-		return [px.data[i]!, px.data[i + 1]!, px.data[i + 2]!];
+		return 0.2126 * px.data[i]! + 0.7152 * px.data[i + 1]! + 0.0722 * px.data[i + 2]!;
 	};
+	const SPAN = 12;
+	/** The median light of a stretch along the edge, three rows deep. */
+	const stretch = (s: (typeof sides)[number], t: number) => {
+		const v: number[] = [];
+		for (let a = 0; a < SPAN; a++) for (const d of [0.5, 1.5, 2.5]) {
+			const [x, y] = s.at(t + a, d) as [number, number];
+			v.push(light(x, y));
+		}
+		v.sort((p, q) => p - q);
+		return v[v.length >> 1]!;
+	};
+	const near = (s: (typeof sides)[number], t: number) => others.some((o) => inkOf(o).some((r) => {
+		const [x, y] = s.at(t, 0) as [number, number];
+		const [x2, y2] = s.at(t + SPAN, 3) as [number, number];
+		return Math.max(x, x2) >= r.x - 2 && Math.min(x, x2) <= right(r) + 2 && Math.max(y, y2) >= r.y - 2 && Math.min(y, y2) <= bottom(r) + 2 && (r.w > 3 && r.h > 3);
+	}));
 	for (const s of sides) {
 		if (!s.on) continue;
-		for (let t = Math.max(0, s.from - 8); t < Math.min(s.end, s.to + 8) - 4; t += 1) {
-			const [x, y] = s.at(t) as [number, number];
-			if (others.some((o) => inkOf(o).some((r) => x >= r.x - 4 && x <= right(r) + 4 && y >= r.y - 4 && y <= bottom(r) + 4))) continue;
-			const [x2, y2] = s.at(t + 4) as [number, number];
-			const [a, b] = [at(x, y), at(x2, y2)];
-			if (a.some((v, i) => Math.abs(v - b[i]!) > 14)) return s.name;
+		const from = Math.max(0, s.from - SPAN);
+		const to = Math.min(s.end, s.to + SPAN) - SPAN * 2;
+		for (let t = from; t <= to; t += SPAN / 2) {
+			if (near(s, t) || near(s, t + SPAN)) continue;
+			if (Math.abs(stretch(s, t) - stretch(s, t + SPAN)) > 20) return s.name;
 		}
 	}
 	return undefined;

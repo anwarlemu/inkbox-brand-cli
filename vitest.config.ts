@@ -1,3 +1,4 @@
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({ test: { include: ['test/**/*.test.ts'], testTimeout: 30000 } });
+// The design conformance draws hundreds of pictures beside the other files, so a command test gets more time under load.
+export default defineConfig({ test: { include: ['test/**/*.test.ts'], testTimeout: 90000 } });

@@ -3,7 +3,7 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'nod
 import { checkDesign, checkText, errorsOf, NEVER_ALLOWED, RULES } from './check.js';
 import { canSay, DesignError, differences, docText, nearest, parseDoc, redo, sameAs, sizeLabel, sizeOf, stateOf, templateOf, undo, unknownName } from './doc.js';
 import { applyEdits, create, layerFlag, type Applied, type Edit } from './ops.js';
-import { examples, parsePhrases } from './phrases.js';
+import { examples, parsePhrases, variety } from './phrases.js';
 import { PLATFORMS } from './platforms.js';
 
 import { comparison, contactSheet, type Painter } from './sheet.js';
@@ -497,10 +497,10 @@ export function designHelp(adapter: Adapter, bin: string): string {
 		`(${RULES.filter((r) => !NEVER_ALLOWED.has(r.id)).map((r) => r.id).join(', ')}); brand rules (${[...NEVER_ALLOWED].join(', ')}) can never be allowed.`,
 		'',
 		`Templates: ${adapter.templates().map((t) => t.id).join(', ')}`,
-		`Things you can say to a ${first.id}: ${examples({ adapter, info: first }).slice(0, 8).join('; ')}.`,
+		`Things you can say to a ${first.id}: ${variety(examples({ adapter, info: first }), 10).join('; ')}.`,
 		'',
-		`  ${bin} design new ${first.id} --${first.copy[0]?.id ?? 'headline'} "Ship faster" -o ${first.id}.design.json`,
-		`  ${bin} design revise ${first.id}.design.json "${examples({ adapter, info: first }).slice(0, 2).join(', ')}"`,
+		`  ${bin} design new ${first.id} --${(first.copy.find((c) => c.required) ?? first.copy[0])?.id ?? 'headline'} "Ship faster" -o ${first.id}.design.json`,
+		`  ${bin} design revise ${first.id}.design.json "${variety(examples({ adapter, info: first }), 4).slice(0, 2).join(', ')}"`,
 		`  ${bin} design undo ${first.id}.design.json`,
 	].join('\n');
 }

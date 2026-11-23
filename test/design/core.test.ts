@@ -289,6 +289,38 @@ describe('design check', () => {
 		const panel: DrawnLayer = { id: 'panel', kind: 'panel', box: { x: 50, y: 170, w: 500, h: 60 }, can: {} };
 		expect(await with_((l) => (l.push(panel), (layer(l, 'headline').over = ['panel']), undefined)), 'words past a panel edge').toContain('overlap');
 	});
+	it('a fade on a grained ground, crossed by a thin rule, still passes; a hard edge does not', () => {
+		const W = 400;
+		const H = 200;
+		const make = (hard: boolean) => {
+			const data = new Uint8Array(W * H * 4);
+			for (let i = 0; i < W * H; i++) {
+				const g = 240 + ((i * 2654435761) >>> 28);   // grain, 240 to 255
+				const x = i % W;
+				const y = Math.floor(i / W);
+				const art = hard && x >= 100 && x < 300 && y > 120;
+				const rule = x === 200;
+				const v = rule ? 20 : art ? 40 : g;
+				data.set([v, v, v, 255], i * 4);
+			}
+			return encodePng({ width: W, height: H, data });
+		};
+		const d = create(fake(), 'plain', 'custom', [{ op: 'copy', slot: 'headline', value: 'x' }], { width: W, height: H }).doc;
+		const layers: DrawnLayer[] = [
+			{ id: 'art', kind: 'art', box: { x: 100, y: 120, w: 200, h: 120 }, fades: true, can: {} },
+			{ id: 'field', kind: 'art', box: { x: 0, y: 0, w: W, h: H }, ink: [{ x: 200, y: 0, w: 1, h: H }], bleeds: true, can: {} },
+		];
+		const cut = (png: Uint8Array) => checkDesign({ doc: d, info: fake().templates()[0]!, layers, adapter: {}, png }).filter((f) => f.rule === 'cut');
+		expect(cut(make(false))).toEqual([]);
+		expect(cut(make(true)).map((f) => f.message)).toEqual(['The art should fade out before the bottom edge, but it is still drawn there.']);
+	});
+	it('compares words without the brand\'s markup when the adapter says how', () => {
+		const d = doc({ body: 'One *accent* word' });
+		const layers: DrawnLayer[] = [{ id: 'headline', kind: 'text', box: { x: 60, y: 200, w: 300, h: 70 }, text: { asked: 'Ship your next idea', drawn: 'Ship your next idea', size: 64, color: '#1a1a1a', ground: ['#ffffff'] }, can: {} }, { id: 'body', kind: 'text', box: { x: 60, y: 300, w: 300, h: 40 }, text: { asked: 'One *accent* word', drawn: 'One accent word', size: 32, color: '#1a1a1a', ground: ['#ffffff'] }, can: {} }];
+		const rules = (a: Partial<Adapter>) => errorsOf(checkDesign({ doc: d, info: adapter.templates()[0]!, layers, adapter: a })).map((f) => f.rule);
+		expect(rules({})).toContain('words');
+		expect(rules({ words: (t) => t.replace(/\*/g, '') })).toEqual([]);
+	});
 	it('keeps to the platform\'s safe area', async () => {
 		const d = create(adapter, 'bare', 'story', [{ op: 'copy', slot: 'headline', value: 'Ship your next idea' }]).doc;
 		expect(await found(adapter, d)).toEqual([]);

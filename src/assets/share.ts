@@ -101,6 +101,8 @@ export type Design = {
 	logoAnchor: Align;
 	/* The most a lockup with a partner's name may be wide, in pixels; 0 is no limit. */
 	logoMax: number;
+	/* Where a moved lockup is, so the brand's own small words give it room. */
+	logoKeep?: Rect;
 	partnerName: string;
 	pattern: 'none' | 'panel' | 'full';
 	panel: Rect;
@@ -208,10 +210,13 @@ export function frameOf(d: Pick<Design, 'size' | 'w' | 'h'>) {
 	return s ? { w: s.w, h: s.h } : { w: clampDim(d.w), h: clampDim(d.h) };
 }
 
-/* One unit: a pixel of the 1200 by 630 link preview, grown with the area (the part no platform covers). */
+/* One unit: a pixel of the 1200 by 630 link preview, grown with the area. */
 export function unitOf(d: Pick<Design, 'size' | 'w' | 'h'>) {
-	const { F } = frameFor(d);
-	return Math.sqrt((F.w * F.h) / (1200 * 630));
+	/* The editor's unit, from the whole canvas; where a platform shows only a small part of it (YouTube's channel art),
+	   from that part. */
+	const { F, W, H } = frameFor(d);
+	const part = (F.w * F.h) / (W * H) < 0.45;
+	return Math.sqrt(((part ? F.w : W) * (part ? F.h : H)) / (1200 * 630));
 }
 
 const WM = () => logoDoc().wordmark;
@@ -312,7 +317,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 	const squareish = !wide && !tall;
 	const v = varied(seed);
 	/* Banners are short: their sizes follow the height, not the area. */
-	const hk = banner ? Math.min(1, F.h / (500 * u)) : 1;
+	const hk = banner ? Math.min(1, ((F.w * F.h) / (W * H) < 0.45 ? F.h : H) / (500 * u)) : 1;
 	const m = (banner ? 48 * hk : 40) * u;
 	const near = 12 * u;
 	/* The content's edges: the margin, or just inside what a platform covers. */
@@ -355,6 +360,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 		group: false,
 		outlineFloor: 0,
 		pad: P,
+		logoMax: P.r - P.l,
 	};
 
 	/* The band of outlined wordmarks: its letters stand on the canvas's foot, or on a hatched floor where a platform
@@ -414,8 +420,8 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 		}
 		case 'app': {
 			if (banner) {
-				const ww = Math.min((avoid.length ? 0.42 : 0.5) * F.w, F.h * 1.6);
-				const os = Math.min(210 * u * hk, F.h * 0.46);
+				const ww = Math.min(0.52 * F.w, F.h * 1.7);
+				const os = Math.min(250 * u * hk, F.h * 0.56);
 				const wx = v.flip && !avoid.length ? P.l + ww / 2 : P.r - ww / 2;
 				const top = P.t + os * 0.4;
 				return {
@@ -448,6 +454,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 				badge: 'pill',
 				guides: true,
 				guideInset: gi / u,
+				logoMax: ww - 40 * u,
 				reef: true,
 				reefScale: tall ? 260 : 100,
 				window: 'app',
@@ -513,7 +520,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 			const R = logoDoc().reef;
 			const scale = banner ? 100 : tall ? 260 : 120;
 			const rh = (W * (scale / 100) * R.h) / R.w;
-			const oct = banner ? 0.46 * F.h : (tall ? 0.52 : 0.4) * S;
+			const oct = banner ? 0.56 * F.h : (tall ? 0.52 : 0.4) * S;
 			const drop = banner ? Math.min(0.26, Math.max(0.16, 1 - (0.55 * F.h) / rh)) : 0;
 			const sand = H - rh * (0.285 - drop);
 			const ground = Math.min(sand + oct * 0.04, fb - 14 * u, banner ? F.y + F.h * 0.94 : fb);
@@ -522,7 +529,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 				...base,
 				align: banner ? 'left' : 'center',
 				area: box(Math.max(P.l, banner ? F.x + F.w * 0.1 : P.l), P.t, P.r, P.b),
-				textSize: (banner ? 58 : tall ? 84 : 66) * hk,
+				textSize: (banner ? 64 : tall ? 84 : 66) * hk,
 				badge: 'pill',
 				reef: true,
 				reefScale: scale,
@@ -540,7 +547,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 			const frame = { frame: 'hatch' as const, frameWidth: fw / u, frameRadius: 18 * hk, frameTone: 'lilac' as const };
 			const L = { l: Math.max(P.l, fw + 40 * u * hk), r: Math.min(P.r, W - fw - 40 * u * hk) };
 			if (banner) {
-				const ww = Math.min((avoid.length ? 0.42 : 0.46) * F.w, (F.h - fw) * 1.7);
+				const ww = Math.min(0.5 * F.w, (F.h - fw) * 1.8);
 				const onLeft = v.flip && !avoid.length;
 				const wx = onLeft ? L.l + ww / 2 : L.r - ww / 2;
 				return {
@@ -626,14 +633,16 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 				logoY: banner ? fy(I.t) : fy(I.b - lk),
 				logoAnchor: banner ? (left ? 'left' : 'right') : left ? 'right' : 'left',
 				logoSize: LOCKUP().h * hk,
+				logoMax: I.r - I.l - (ultra || banner ? 0 : oct * 0.8 + 24 * u),
 				stickers: ultra ? [] : [sit(fx(left ? I.l + oct / 2 : I.r - oct / 2), fy(I.b - (oct * 0.8055) / 2), sz(oct), { rest: 'sit', edge: I.b })],
 			};
 		}
 		case 'card': {
 			/* The new-feature card, measured off a 1200 by 1200 post: the lockup top left, a solid pill top right, the
 			   words centred between them, and a mono footer. `q` turns those pixels into this size's. */
-			const mm = Math.min(71 * u, 0.09 * S);
-			const q = mm / 98;
+			const mm = Math.min(71 * u, 0.09 * Math.min(W, H));
+			/* On a banner the card's type follows the height, as the editor's banners do. */
+			const q = (mm / 98) * (banner ? 1.45 : 1);
 			const px = (n: number) => (n * q) / u;
 			const { small } = floorsOf(at);
 			const l = Math.max(P.l, F.x + mm);
@@ -1123,6 +1132,7 @@ function layWords(ctx: Ctx, d: Design, base: number, maxW: number, fonts: Fonts,
 		/* A tight last line's descenders hang under its line box. */
 		if (!d.body.trim() && !d.credit.trim()) y += size * Math.max(0, 1.1 - d.leading);
 	}
+	let tail = 0;
 	const plain = (id: 'body' | 'credit', text: string, fs: number, weight: number, leading: number, width: number, gap: number) => {
 		if (!text.trim() || hidden(d, id)) return;
 		const f = fs * (edit(d, id).scale ?? 1);
@@ -1138,12 +1148,14 @@ function layWords(ctx: Ctx, d: Design, base: number, maxW: number, fonts: Fonts,
 		}
 		out[id] = { lines: lines.map((l) => ({ text: l.text, w: l.w })), size: f, top: y };
 		y += lines.length * f * leading;
+		/* Room for the last line's lowest marks (@, g, y) under its line box. */
+		tail = f * Math.max(0, 1.3 - leading);
 	};
 	const bw = d.bodyWidth > 0 ? d.bodyWidth * maxW : maxW;
 	plain('body', d.body, Math.max(small * 1.1, base * 0.34 * (d.bodyScale / 100)), d.bodyWeight, d.bodyLeading, bw, base * (d.bodyGap / 100) * (out.head ? 1 : 0.6));
 	const credit = d.credit.trim();
 	if (credit) plain('credit', credit, Math.max(small, base * 0.2), 500, 1.15, bw, base * (d.body.trim() ? 0.14 : 0.24));
-	out.h = y;
+	out.h = y + tail;
 	return out;
 }
 
@@ -1425,6 +1437,7 @@ function freeCorner(d: Design, b: LogoBox, u: number, pics: Pictures): LogoBox |
 	const reef = pics.get('reef');
 	if (d.reef && reef) taken.push(...reefInk(d, reef, W, H));
 	if (d.window !== 'none') taken.push({ x: d.winX * W - (d.winW * W) / 2, y: d.winFollow ? d.area.y + d.area.h * 0.6 : d.winY * H, w: d.winW * W, h: H });
+	const baseTaken = taken.length;
 	for (const s of d.stickers) if (!s.onWindow) taken.push(stickerInk(s, W, H, null));
 		else taken.push({ x: s.x * W - (s.size * Math.min(W, H)) / 2, y: 0, w: s.size * Math.min(W, H), h: d.winY * H });
 	const lift = b.y - b.top;
@@ -1432,9 +1445,10 @@ function freeCorner(d: Design, b: LogoBox, u: number, pics: Pictures): LogoBox |
 	const center = (l + r) / 2 - b.w / 2;
 	const xs = d.align === 'center' ? [center, l, r - b.w] : [...left, center];
 	const spots = [...xs.slice(0, 2).map((x) => ({ x, y: bt - b.h })), ...xs.map((x) => ({ x, y: t }))];
-	for (const p of spots) {
+	for (const [pass, p] of [...spots.map((p) => [0, p] as const), ...spots.slice(2).map((p) => [1, p] as const)]) {
 		const box = { x: p.x, y: p.y, w: b.w, h: b.h };
-		if (taken.some((q) => inter(box, q, b.clear))) continue;
+		/* Second time round, art on a window may give way: the words below take the room that is left. */
+		if (taken.slice(0, pass ? baseTaken : taken.length).some((q) => inter(box, q, b.clear))) continue;
 		const e = edit(d, 'logo');
 		const x = p.x + (e.dx ?? 0) * W;
 		const y = p.y + (e.dy ?? 0) * H;
@@ -1460,7 +1474,7 @@ function footBox(ctx: Ctx, d: Design, u: number, fonts: Fonts): FootBox | null {
 	}
 	/* The handle and the address are the brand's own, so where a platform covers one it is left out. */
 	const { avoid } = frameFor(d);
-	const shown = rects.filter((x) => !avoid.some((a) => inter(x.box, a, fs)));
+	const shown = rects.filter((x) => !avoid.some((a) => inter(x.box, a, fs)) && !(d.logoKeep && inter(x.box, d.logoKeep)));
 	const has = (t: string) => shown.some((x) => x.text === t);
 	return { fs, mid: b - fs * 0.5, l, r, left: left && has(left) ? left : '', right: right && has(right) ? right : '', rects: shown };
 }
@@ -1595,7 +1609,9 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		const ax = align === 'left' ? area.x : align === 'right' ? area.x + area.w : head.anchor ? area.x + area.w / 2 : center;
 		const px = align === 'left' ? r.x : align === 'right' ? r.x + r.w : r.x + r.w / 2;
 		const v = head.anchor ? (head.anchor.startsWith('top') ? 0 : head.anchor.startsWith('bottom') ? 1 : 0.5) : d.valign === 'top' ? 0 : d.valign === 'bottom' ? 1 : 0.5;
-		const off = Math.hypot((px - ax) / W, (p.y + b.h * v - (area.y + area.h * v)) / H);
+		/* Words keep to the side the layout sets them on: across is costlier than down (a profile picture's corner is
+		   cleared by going over it, not by moving to the other half). */
+		const off = Math.hypot(((px - ax) / W) * 1.8, (p.y + b.h * v - (area.y + area.h * v)) / H);
 		/* A stack of short lines reads worse than fewer, a little smaller. */
 		const lines = b.head?.lines.length ?? 0;
 		const words = plainWords(d.headline).split(' ').length;
@@ -1628,7 +1644,7 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 			const obstacles = [...fixed, ...stickers.filter((s) => !s.onWindow).map((s) => grow(stickerInk(s, W, H, null), gap))];
 			const spot = hasWords ? solve(obstacles) : null;
 			if (hasWords && !spot) continue;
-			const score = (spot ? Math.min(1, spot.size / nominal / 0.9) : 1) + k * 0.45 - (bad ? 1.5 : 0) - (mirror ? 0.02 : 0) + (spot ? Math.min(0, spot.score - spot.size / nominal) * 0.6 : 0);
+			const score = (spot ? Math.min(1, spot.size / nominal / 0.9) : 1) + k * 0.7 - (bad ? 1.5 : 0) - (mirror ? 0.02 : 0) + (spot ? Math.min(0, spot.score - spot.size / nominal) * 0.6 : 0);
 			if (!best || score > best.score + 1e-6) best = { spot, stickers, score, k, mirror };
 			if (!hasWords && !bad) break;
 		}
@@ -1987,10 +2003,11 @@ const bandStops = (g: { addColorStop(o: number, c: string): void }, color: strin
  * Draws the design onto a context whose transform maps the design's frame onto the surface (`px` device pixels per
  * frame pixel, used for the off-screen reef and window; `svg` when the surface records SVG). Returns what it drew.
  */
-export function drawDesign(ctx: Ctx, d: Design, pics: Pictures, icons: Icons, fonts: Fonts, px = 1, svg = false, move?: Motion, phase: Phase = 'all'): Drawn {
+export function drawDesign(ctx: Ctx, d0: Design, pics: Pictures, icons: Icons, fonts: Fonts, px = 1, svg = false, move?: Motion, phase: Phase = 'all'): Drawn {
 	motion = move;
+	const u = unitOf(d0);
+	const d = yieldToLogo(ctx, d0, u, fonts);
 	const { w: W, h: H } = frameOf(d);
-	const u = unitOf(d);
 	const S = Math.min(W, H);
 	const C = colorsOf(d);
 	const layers: DrawnLayer[] = [];
@@ -2227,6 +2244,24 @@ export function drawDesign(ctx: Ctx, d: Design, pics: Pictures, icons: Icons, fo
 	ctx.restore();
 	motion = undefined;
 	return { layers, text: wordsBox, logo: at.logo ? logoRect(at.logo) : null, window: win, stickers: boxes, size: at.size, fade };
+}
+
+/* A lockup moved onto the card's corner badge or its footer: the badge joins the words, the brand's own handle or
+   address under it is left out. */
+function yieldToLogo(ctx: Ctx, d: Design, u: number, fonts: Fonts): Design {
+	const e = edit(d, 'logo');
+	if (!e.anchor && !e.dx && !e.dy) return d;
+	const b = logoBox(ctx, d, u, fonts);
+	if (!b) return d;
+	const zone = grow(logoRect(b), b.clear + 8 * u);
+	let out = { ...d, logoKeep: zone };
+	if (d.badgeAt === 'corner' && d.badgeText.trim()) {
+		const { w: W, h: H } = frameOf(d);
+		const fs = Math.max(floorsOf(d).small, 19 * u * (d.badgeScale / 100));
+		const m = drawBadge(ctx, d, 0, 0, fs, '#000000', '', false, fonts, true, '#FFFFFF');
+		if (inter({ x: d.badgeX * W - m.w, y: d.badgeY * H - m.h / 2, w: m.w, h: m.h }, zone)) out = { ...out, badgeAt: 'words', badgeScale: 100 };
+	}
+	return out;
 }
 
 /* The words' own box, lines and all. */

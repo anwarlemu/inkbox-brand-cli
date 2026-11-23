@@ -29,7 +29,7 @@ async function webp(file, id, scale = 0.5) {
 	return { src: `/assets-examples/${id}.webp`, width: w, height: h };
 }
 
-const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [] };
+const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [], designs: [] };
 async function add(group, id, args, pick = (files) => files.find((f) => f.format === 'png'), scale) {
 	const res = cli(args);
 	const f = pick(res.files);
@@ -65,6 +65,29 @@ for (const s of ['reef', 'pattern']) {
 	const res = cli(['illustrate', s, '--format', 'svg', '--out', 'svg']);
 	copyFileSync(join(work, res.files[0].path), join(out, `illustration-${s}.svg`));
 }
+// A real design session: an X banner made, then revised step by step, as the Designs page shows it.
+const steps = [
+	['new tile --size x-banner --headline "Everything your agents need in one place" --badge "Now in beta" -o banner.design.json', ['design', 'new', 'tile', '--size', 'x-banner', '--headline', 'Everything your agents need in one place', '--badge', 'Now in beta', '-o', 'banner.design.json']],
+	['revise banner.design.json "bigger headline"', ['design', 'revise', 'banner.design.json', 'bigger headline']],
+	['revise banner.design.json "darker theme"', ['design', 'revise', 'banner.design.json', 'darker theme']],
+	['revise banner.design.json "use the outline layout"', ['design', 'revise', 'banner.design.json', 'use the outline layout']],
+	['revise banner.design.json "change the headline to \\"Every agent gets an inbox of its own\\", smaller octopus"', ['design', 'revise', 'banner.design.json', 'change the headline to "Every agent gets an inbox of its own", smaller octopus']],
+	['revise banner.design.json "logo top right"', ['design', 'revise', 'banner.design.json', 'logo top right']],
+	['edit banner.design.json --set body="Email, phone and calendars"', ['design', 'edit', 'banner.design.json', '--set', 'body=Email, phone and calendars']],
+];
+mkdirSync(join(work, 'design'), { recursive: true });
+for (const [i, [command, args]] of steps.entries()) {
+	execFileSync(process.execPath, [bin, ...args], { cwd: join(work, 'design'), encoding: 'utf8' });
+	copyFileSync(join(work, 'design', 'banner.png'), join(work, `design-${i}.png`));
+	examples.designs.push({ id: `design-${i}`, command: `design ${command}`, ...(await webp(`design-${i}.png`, `design-${i}`, 0.5)) });
+}
+let refused = '';
+try {
+	execFileSync(process.execPath, [bin, 'design', 'revise', 'banner.design.json', 'make the logo neon green'], { cwd: join(work, 'design'), encoding: 'utf8', stdio: 'pipe' });
+} catch (err) {
+	refused = String(err.stdout || err.stderr).trim();
+}
+examples.designs.push({ id: 'design-refused', command: 'design revise banner.design.json "make the logo neon green"', note: refused, src: examples.designs.at(-1).src, width: examples.designs.at(-1).width, height: examples.designs.at(-1).height });
 writeFileSync(join(out, 'examples.json'), `${JSON.stringify(examples, null, '\t')}\n`);
 rmSync(work, { recursive: true, force: true });
 console.log(`assets examples: ${Object.values(examples).flat().length} pictures in ${out}`);

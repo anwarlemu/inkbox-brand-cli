@@ -2,70 +2,70 @@
 	"image": [
 		{
 			"id": "image-tile",
-			"command": "image tile --occasion launch",
+			"command": "image tile --occasion launch --sample",
 			"src": "/assets-examples/image-tile.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-app",
-			"command": "image app --occasion launch",
+			"command": "image app --occasion launch --sample",
 			"src": "/assets-examples/image-app.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-outline",
-			"command": "image outline --occasion launch",
+			"command": "image outline --occasion launch --sample",
 			"src": "/assets-examples/image-outline.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-hatch",
-			"command": "image hatch --occasion changelog",
+			"command": "image hatch --occasion changelog --sample",
 			"src": "/assets-examples/image-hatch.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-reef",
-			"command": "image reef --occasion launch",
+			"command": "image reef --occasion launch --sample",
 			"src": "/assets-examples/image-reef.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-feature",
-			"command": "image feature --occasion feature",
+			"command": "image feature --occasion feature --sample",
 			"src": "/assets-examples/image-feature.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-partner",
-			"command": "image partner --occasion partnership",
+			"command": "image partner --occasion partnership --sample",
 			"src": "/assets-examples/image-partner.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-funding",
-			"command": "image funding --occasion funding",
+			"command": "image funding --occasion funding --sample",
 			"src": "/assets-examples/image-funding.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-announce",
-			"command": "image announce --occasion hiring",
+			"command": "image announce --occasion hiring --sample",
 			"src": "/assets-examples/image-announce.webp",
 			"width": 600,
 			"height": 315
 		},
 		{
 			"id": "image-card",
-			"command": "image card --occasion feature",
+			"command": "image card --occasion feature --sample",
 			"src": "/assets-examples/image-card.webp",
 			"width": 600,
 			"height": 315
@@ -74,42 +74,42 @@
 	"social": [
 		{
 			"id": "social-launch-square",
-			"command": "image --occasion launch --size square",
+			"command": "image --occasion launch --sample --size square",
 			"src": "/assets-examples/social-launch-square.webp",
 			"width": 540,
 			"height": 540
 		},
 		{
 			"id": "social-hiring-portrait",
-			"command": "image --occasion hiring --size portrait",
+			"command": "image --occasion hiring --sample --size portrait",
 			"src": "/assets-examples/social-hiring-portrait.webp",
 			"width": 540,
 			"height": 675
 		},
 		{
 			"id": "social-feature-story",
-			"command": "image --occasion feature --size story --template feature",
+			"command": "image --occasion feature --sample --size story --template feature",
 			"src": "/assets-examples/social-feature-story.webp",
 			"width": 540,
 			"height": 960
 		},
 		{
 			"id": "social-launch-x-banner",
-			"command": "image --occasion launch --size x-banner --template reef --theme lavender",
+			"command": "image --occasion launch --sample --size x-banner --template reef --theme lavender",
 			"src": "/assets-examples/social-launch-x-banner.webp",
 			"width": 750,
 			"height": 250
 		},
 		{
 			"id": "social-launch-linkedin-banner",
-			"command": "image --occasion launch --size linkedin-banner --template tile",
+			"command": "image --occasion launch --sample --size linkedin-banner --template tile",
 			"src": "/assets-examples/social-launch-linkedin-banner.webp",
 			"width": 792,
 			"height": 198
 		},
 		{
 			"id": "social-changelog-landscape",
-			"command": "image --occasion changelog --size landscape --template card --theme mist",
+			"command": "image --occasion changelog --sample --size landscape --template card --theme mist",
 			"src": "/assets-examples/social-changelog-landscape.webp",
 			"width": 600,
 			"height": 338
@@ -118,56 +118,56 @@
 	"deck": [
 		{
 			"id": "cover",
-			"command": "deck cover",
+			"command": "deck cover --sample",
 			"src": "/assets-examples/deck-cover.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "section",
-			"command": "deck section",
+			"command": "deck section --sample",
 			"src": "/assets-examples/deck-section.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "statement",
-			"command": "deck statement",
+			"command": "deck statement --sample",
 			"src": "/assets-examples/deck-statement.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "bullets",
-			"command": "deck bullets",
+			"command": "deck bullets --sample",
 			"src": "/assets-examples/deck-bullets.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "stat",
-			"command": "deck stat",
+			"command": "deck stat --sample",
 			"src": "/assets-examples/deck-stat.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "quote",
-			"command": "deck quote",
+			"command": "deck quote --sample",
 			"src": "/assets-examples/deck-quote.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "image",
-			"command": "deck image",
+			"command": "deck image --sample",
 			"src": "/assets-examples/deck-image.webp",
 			"width": 480,
 			"height": 270
 		},
 		{
 			"id": "end",
-			"command": "deck end",
+			"command": "deck end --sample",
 			"src": "/assets-examples/deck-end.webp",
 			"width": 480,
 			"height": 270
@@ -176,7 +176,7 @@
 	"video": [
 		{
 			"id": "reveal",
-			"command": "video reveal --size square",
+			"command": "video reveal --sample --size square",
 			"video": "/assets-examples/video-reveal.mp4",
 			"src": "/assets-examples/video-reveal.webp",
 			"width": 432,
@@ -184,7 +184,7 @@
 		},
 		{
 			"id": "inbox",
-			"command": "video inbox --size landscape",
+			"command": "video inbox --sample --size landscape",
 			"video": "/assets-examples/video-inbox.mp4",
 			"src": "/assets-examples/video-inbox.webp",
 			"width": 768,
@@ -192,7 +192,7 @@
 		},
 		{
 			"id": "band",
-			"command": "video band --size square",
+			"command": "video band --sample --size square",
 			"video": "/assets-examples/video-band.mp4",
 			"src": "/assets-examples/video-band.webp",
 			"width": 432,
@@ -200,7 +200,7 @@
 		},
 		{
 			"id": "card",
-			"command": "video card --size square",
+			"command": "video card --sample --size square",
 			"video": "/assets-examples/video-card.mp4",
 			"src": "/assets-examples/video-card.webp",
 			"width": 432,
@@ -217,7 +217,7 @@
 		},
 		{
 			"id": "merch-tee-back",
-			"command": "merch tee-back --variant color --dpi 72",
+			"command": "merch tee-back --variant color --sample --dpi 72",
 			"src": "/assets-examples/merch-tee-back.webp",
 			"width": 864,
 			"height": 1152
@@ -259,7 +259,7 @@
 		},
 		{
 			"id": "merch-poster",
-			"command": "merch poster --variant paper --dpi 72",
+			"command": "merch poster --variant paper --sample --dpi 72",
 			"src": "/assets-examples/merch-poster.webp",
 			"width": 1314,
 			"height": 1746
@@ -321,6 +321,65 @@
 			"src": "/assets-examples/illustration-hatch.webp",
 			"width": 540,
 			"height": 540
+		}
+	],
+	"designs": [
+		{
+			"id": "design-0",
+			"command": "design new tile --size x-banner --headline \"Everything your agents need in one place\" --badge \"Now in beta\" -o banner.design.json",
+			"src": "/assets-examples/design-0.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-1",
+			"command": "design revise banner.design.json \"bigger headline\"",
+			"src": "/assets-examples/design-1.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-2",
+			"command": "design revise banner.design.json \"darker theme\"",
+			"src": "/assets-examples/design-2.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-3",
+			"command": "design revise banner.design.json \"use the outline layout\"",
+			"src": "/assets-examples/design-3.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-4",
+			"command": "design revise banner.design.json \"change the headline to \\\"Every agent gets an inbox of its own\\\", smaller octopus\"",
+			"src": "/assets-examples/design-4.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-5",
+			"command": "design revise banner.design.json \"logo top right\"",
+			"src": "/assets-examples/design-5.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-6",
+			"command": "design edit banner.design.json --set body=\"Email, phone and calendars\"",
+			"src": "/assets-examples/design-6.webp",
+			"width": 750,
+			"height": 250
+		},
+		{
+			"id": "design-refused",
+			"command": "design revise banner.design.json \"make the logo neon green\"",
+			"note": "Nothing was changed.\n\"make the logo neon green\": Effects are not part of the brand.\nThings you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
+			"src": "/assets-examples/design-6.webp",
+			"width": 750,
+			"height": 250
 		}
 	]
 }

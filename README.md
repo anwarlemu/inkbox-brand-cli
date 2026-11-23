@@ -123,7 +123,8 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 | `brand` | Read tokens, fonts, logos and voice. `brand tokens <group-or-token>` reads one group or one exact token. |
 | `principles [topic]` | Read product and website rules, voice, or one section. `product` and `website` use the one console look. |
 | `components` | List components. `components inspect <name>` reads props and states. `components emit <name>` copies real markup. |
-| `image` | Share images, posts and banners: ten templates, eight occasions, six themes, every size. PNG and SVG. |
+| `image` | Share images, posts, banners, thumbnails and profile pictures: eleven templates, six themes, every platform size. PNG, SVG, JPEG and WebP. |
+| `design` | A picture you revise: `new`, `revise "bigger headline, logo top right"`, `edit`, `undo`, `variants`, `sizes`, `check`. |
 | `og`, `social` | `image` at the link-preview size, or a post size. |
 | `deck` | Slides at 1920 by 1080: a PNG per slide and one PDF. |
 | `video` | Motion pieces as MP4 and WebM (ffmpeg), PNG frames, or one still. |
@@ -140,10 +141,10 @@ command takes `--list` (what exists) and `--json` (the files it wrote); an unkno
 ```sh
 npx inkbox-ds image --list --json
 npx inkbox-ds image tile --headline "Give every *AI agent* a way to be reached"
-npx inkbox-ds image launch --size square                      # an occasion picks its words and first look
-npx inkbox-ds image --occasion hiring --all --size post       # its four looks at every post size
+npx inkbox-ds image launch --headline "Agent Cards" --size square   # an occasion picks its first look
+npx inkbox-ds image --occasion hiring --all --size post --headline "Come build with us"
 npx inkbox-ds image feature --image capture.png --image-url acme.com
-npx inkbox-ds image card --seed 42                             # a new layout for the same words
+npx inkbox-ds image card --headline "..." --seed 42             # a variation of the layout
 npx inkbox-ds deck --input deck.json --out deck                # a PNG per slide and deck.pdf
 npx inkbox-ds video inbox --size landscape                     # MP4 and WebM (ffmpeg); --still for one PNG
 npx inkbox-ds merch poster --headline "Give every *AI agent* a way to be reached"
@@ -152,14 +153,19 @@ npx inkbox-ds figma tokens
 ```
 
 - `image` (shortcuts `og` and `social`): templates `tile`, `app`, `outline`, `hatch`, `reef`, `feature`, `partner`,
-  `funding`, `announce` and `card`; occasions `launch`, `feature`, `partnership`, `funding`, `hiring`, `changelog`,
-  `milestone` and `event`; themes `paper`, `mist`, `mono`, `lavender`, `purple` and `deep`. Sizes: `og`, `card`,
-  `linkedin`, `square`, `portrait`, `story`, `landscape`, `li-square`, `x-banner`, `linkedin-banner`, `li-page`,
-  `youtube`, `email`, or `custom` with `--width` and `--height`; `--size share|post|banner|all` writes a group.
-  Copy: `--headline` (`*stars*` set a phrase in pink), `--body`, `--credit` (an `@handle` under a post),
-  `--badge pill|solid|dot|none`, `--badge-text`, `--partner` (a name beside the lockup, never another logo), or the
-  same fields in `--content file.json`. `--image` puts your capture in the window of `app` and `feature` only.
-  PNG and SVG (text as paths); `--out` is a directory or one `.png`/`.svg` file.
+  `funding`, `announce`, `card` and `mark` (the lockup alone; the octopus alone in a profile picture); occasions
+  `launch`, `feature`, `partnership`, `funding`, `hiring`, `changelog`, `milestone` and `event` pick looks; themes
+  `paper`, `mist`, `mono`, `lavender`, `purple` and `deep`. Sizes (the same ids in every brand CLI): `og`, `linkedin`,
+  `square`, `portrait`, `story`, `landscape` (also `card`), `li-square`, `x-banner`, `linkedin-banner`,
+  `linkedin-page`, `youtube`, `youtube-thumbnail`, `email`, `avatar`, or `custom` with `--width` and `--height`;
+  `--size og,x-banner`, a group (`share`, `post`, `banner`, `profile`) or `all`. Copy: `--headline` (`*stars*` set a
+  phrase in the highlight), `--body`, `--badge`, `--credit` and `--partner` (a name beside the lockup, never another
+  logo), or the same fields in `--content file.json`. Only the words you pass are drawn, whole: they shrink to a
+  readable size and re-wrap, and copy that still does not fit fails and says what to shorten. `--sample` fills sample
+  copy to look at a template. Words, the lockup and the octopus keep out of what a platform covers (the X profile
+  picture, the story bars, YouTube's crop). `--image` puts your capture in the window of `app` and `feature` only.
+  `--carousel steps.json` makes numbered pictures with one look. PNG, SVG, JPEG and WebP (`--format png,jpg` or
+  `all`); `--out` is a directory or one file.
 - `deck`: `cover`, `section`, `statement`, `bullets` (up to six points), `stat`, `quote` (attribute to a role, never a
   made-up person), `image` and `end`, at 1920 by 1080, from `--input deck.json` (`{ "slides": [{ "type": "cover",
   "title": "..." }] }`) or one slide from flags.
@@ -179,6 +185,33 @@ npx inkbox-ds figma tokens
 
 Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
 person's own `--image`.
+
+## Revising a design
+
+When a person wants a picture they can react to ("make it bigger", "darker", "logo top right"), make a design file and
+revise it instead of drawing a new image each time. Every write draws the picture and checks it; anything off brand,
+cut off, overlapping, illegible or under a platform's furniture is refused and nothing changes.
+
+```sh
+npx inkbox-ds design new tile --size x-banner --headline "Every agent gets *an inbox*" -o banner.design.json
+npx inkbox-ds design revise banner.design.json "bigger headline, logo top right, darker theme"
+npx inkbox-ds design edit banner.design.json --layer art.scale=0.8 --set body="Email, phone and calendars"
+npx inkbox-ds design undo banner.design.json
+npx inkbox-ds design variants banner.design.json --by theme      # one file each and a contact sheet
+npx inkbox-ds design sizes banner.design.json --to og,square,story,linkedin-banner
+npx inkbox-ds design check banner.design.json --json
+```
+
+1. Make it with `design new`, then look at the PNG it wrote.
+2. Change it with `design revise "<plain words>"` (a fixed grammar: anything it does not understand fails and lists
+   what it can do) or, when you know the exact change, `design edit` (`--set`, `--theme`, `--size`, `--template`,
+   `--layer <id>.anchor|dx|dy|scale|align|hidden`, `--hide`, `--seed`).
+3. Look again, and repeat until the person is happy. `design history`, `undo` and `redo` walk the steps.
+4. Never edit the PNG or SVG by hand: change the design file and let the CLI draw it. `design --json` lists every
+   template, its layers and what each can do, the phrases and the rules.
+
+Slides (`slide-cover`, ...), print files (`merch-poster`, ...), illustrations (`illustration-reef`, ...) and video
+(`video-reveal`, ...) are designs too: their copy, theme, options, size and seed change the same way.
 
 ## Read the brand, the components and the rules
 

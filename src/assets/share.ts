@@ -1562,7 +1562,10 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		else area = { ...area, y: area.y + logo.h + 34 * u, h: area.h - logo.h - 34 * u };
 	}
 	const nominal0 = d.textSize * u;
-	const nominal = Math.max(floors.head, d.textCap > 0 ? Math.min(d.textCap, nominal0) : nominal0);
+	/* Where the words are without the edits: an edit that is not about them keeps them there, at no larger a size. */
+	const keep = Object.keys(d.edits).length && !head.anchor && !head.align ? resolve(ctx, { ...d, edits: {}, logo: !!layoutFor(d.template, { size: d.size, w: d.w, h: d.h }, d.seed).logo || !!d.partnerName.trim() }, u, pics, fonts).placed : null;
+	const nominal1 = Math.max(floors.head, d.textCap > 0 ? Math.min(d.textCap, nominal0) : nominal0);
+	const nominal = keep ? Math.min(nominal1, keep.block.size) : nominal1;
 
 	/* The largest size the words fit a rectangle at, no smaller than the floor; null when they do not. */
 	const memo = new Map<string, Block>();
@@ -1603,6 +1606,12 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		const mid = Math.max(r.y, Math.min(r.y + r.h - b.h, area.y + area.h / 2 - b.h / 2));
 		return { x: r.x, y: v === 'top' ? r.y : v === 'bottom' ? r.y + r.h - b.h : mid };
 	};
+	const keepAt = keep ? { x: keep.align === 'left' ? keep.x : keep.align === 'right' ? keep.x + keep.w : keep.x + keep.w / 2, y: keep.y } : null;
+	const drift = (r: Rect, b: Block) => {
+		if (!keepAt) return 0;
+		const px = align === 'left' ? r.x : align === 'right' ? r.x + r.w : r.x + r.w / 2;
+		return Math.hypot((px - keepAt.x) / W, (want(b, r).y - keepAt.y) / H);
+	};
 	const rate = (r: Rect, size: number): number => {
 		const b = lay(size, r.w);
 		const p = want(b, r);
@@ -1615,7 +1624,7 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		/* A stack of short lines reads worse than fewer, a little smaller. */
 		const lines = b.head?.lines.length ?? 0;
 		const words = plainWords(d.headline).split(' ').length;
-		return size / nominal - off * 1.1 - Math.max(0, lines - Math.max(2, words / 3)) * 0.08;
+		return size / nominal - off * 1.1 - Math.max(0, lines - Math.max(2, words / 3)) * 0.08 - drift(r, b) * 8;
 	};
 	const solve = (obstacles: Rect[]): Spot | null => {
 		let best: Spot | null = null;
@@ -1707,20 +1716,56 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 				const obstacles = [...fixed, ...stickers.filter((s) => !s.onWindow).map((s) => grow(stickerInk(s, W, H, null), gap))];
 				for (const x of spotsIn(obstacles)) {
 					const b = lay(size, x.w, forced);
-					if (fits(b, x)) {
+					/* A bigger or smaller headline stays where it was; where it no longer fits there, the check says so. */
+					if (fits(b, x) && drift(x, b) < 0.02) {
 						const score = k * 0.3 + rate(x, size);
 						if (!found || score > found.score + 1e-6) found = { r: x, stickers, score };
 					} else {
-						const over = Math.max(0, b.h - x.h) / H + Math.max(0, Math.max(b.w, b.word) - x.w) / W;
+						const over = Math.max(0, b.h - x.h) / H + Math.max(0, Math.max(b.w, b.word) - x.w) / W + drift(x, b) * 10;
 						if (!fallback || over < fallback.over - 1e-6) fallback = { r: x, stickers, over };
 					}
 				}
 			}
-			const use = found ?? fallback;
+			/* Where the asked size does not fit where the words are, they grow as far as the room there allows; only when
+			   that is hardly bigger at all does the check refuse it. */
+			let nearly: { r: Rect; stickers: Sticker[]; f: number } | null = null;
+			if (!found && scale > 1) {
+				for (const k of visible.length ? ladder : [1]) {
+					const stickers = visible.map((s, i) => (own ? chosen.stickers[i]! : placedSticker(d, s, k, chosen.mirror)));
+					const obstacles = [...fixed, ...stickers.filter((s) => !s.onWindow).map((s) => grow(stickerInk(s, W, H, null), gap))];
+					for (const x of spotsIn(obstacles)) {
+						let lo = 1;
+						let hi = scale;
+						if (!(fits(lay(size, x.w, size), x) && drift(x, lay(size, x.w, size)) < 0.02)) continue;
+						for (let i = 0; i < 8; i++) {
+							const mid = (lo + hi) / 2;
+							if (fits(lay(size, x.w, size * mid), x)) lo = mid;
+							else hi = mid;
+						}
+						if (!nearly || lo > nearly.f + 1e-6) nearly = { r: x, stickers, f: lo };
+					}
+				}
+			}
+			/* Something now stands where the words were (a lockup moved onto them): then they move to the best room left. */
+			let moved: { r: Rect; stickers: Sticker[]; score: number } | null = null;
+			if (!found && !(nearly)) {
+				for (const k of visible.length ? ladder : [1]) {
+					const stickers = visible.map((s, i) => (own ? chosen.stickers[i]! : placedSticker(d, s, k, chosen.mirror)));
+					const obstacles = [...fixed, ...stickers.filter((s) => !s.onWindow).map((s) => grow(stickerInk(s, W, H, null), gap))];
+					const home = spotsIn(obstacles).some((x) => fits(lay(size, x.w, size), x) && drift(x, lay(size, x.w, size)) < 0.02);
+					if (home) continue;
+					for (const x of spotsIn(obstacles)) {
+						if (!fits(lay(size, x.w, forced), x)) continue;
+						const score = k * 0.3 + rate(x, size) + drift(x, lay(size, x.w, forced)) * 8;
+						if (!moved || score > moved.score + 1e-6) moved = { r: x, stickers, score };
+					}
+				}
+			}
+			const use = found ?? (nearly ? nearly : null) ?? moved ?? fallback;
 			if (use) {
 				r = use.r;
 				chosen.stickers = use.stickers;
-				block = lay(size, r.w, forced);
+				block = lay(size, r.w, 'f' in use ? size * use.f : forced);
 			}
 		}
 		const p = want(block, r);
@@ -1823,6 +1868,8 @@ function appView(d: Design, b: { w: number; h: number; chrome: number }): Partia
 	const ratio = (b.h - b.chrome) / b.w;
 	if (ratio > 1) return { showWorkspace: false, showOpen: false, width: 378 };
 	if (ratio > 0.7) return { showWorkspace: false, width: 700 };
+	/* A small window shows less of the console, larger, so it reads at full strength. */
+	if (b.w < 760 * unitOf(d)) return { showWorkspace: false, width: 700 };
 	return { width: APP_W };
 }
 
@@ -1914,7 +1961,8 @@ function windowFade(d: Design, u: number, box: { y: number; h: number }): { from
 	const end = Math.min(H - ring, F.y + F.h) - (inset.b || ring ? 2 * u : 0);
 	const room = ring || inset.b ? 0 : 28 * u;
 	if (box.y + box.h <= end - Math.max(room, 10 * u)) return null;
-	const from = Math.max(box.y + (end - box.y) * 0.45, end - (d.reef ? 90 : 190) * u);
+	/* Only the band where it leaves goes: the window keeps its full strength above it. */
+	const from = Math.max(box.y + (end - box.y) * 0.62, end - (d.reef ? 80 : 110) * u);
 	return { from, to: end };
 }
 

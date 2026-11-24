@@ -68,9 +68,9 @@ for (const s of ['reef', 'pattern']) {
 // A real design session: an X banner made, then revised step by step, as the Designs page shows it.
 const steps = [
 	['new tile --size x-banner --headline "Everything your agents need in one place" --badge "Now in beta" -o banner.design.json', ['design', 'new', 'tile', '--size', 'x-banner', '--headline', 'Everything your agents need in one place', '--badge', 'Now in beta', '-o', 'banner.design.json']],
+	['revise banner.design.json "use the outline layout"', ['design', 'revise', 'banner.design.json', 'use the outline layout']],
 	['revise banner.design.json "bigger headline"', ['design', 'revise', 'banner.design.json', 'bigger headline']],
 	['revise banner.design.json "darker theme"', ['design', 'revise', 'banner.design.json', 'darker theme']],
-	['revise banner.design.json "use the outline layout"', ['design', 'revise', 'banner.design.json', 'use the outline layout']],
 	['revise banner.design.json "change the headline to \\"Every agent gets an inbox of its own\\", smaller octopus"', ['design', 'revise', 'banner.design.json', 'change the headline to "Every agent gets an inbox of its own", smaller octopus']],
 	['revise banner.design.json "logo top right"', ['design', 'revise', 'banner.design.json', 'logo top right']],
 	['edit banner.design.json --set body="Email, phone and calendars"', ['design', 'edit', 'banner.design.json', '--set', 'body=Email, phone and calendars']],

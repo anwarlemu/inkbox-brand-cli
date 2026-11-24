@@ -333,21 +333,21 @@
 		},
 		{
 			"id": "design-1",
-			"command": "design revise banner.design.json \"bigger headline\"",
+			"command": "design revise banner.design.json \"use the outline layout\"",
 			"src": "/assets-examples/design-1.webp",
 			"width": 750,
 			"height": 250
 		},
 		{
 			"id": "design-2",
-			"command": "design revise banner.design.json \"darker theme\"",
+			"command": "design revise banner.design.json \"bigger headline\"",
 			"src": "/assets-examples/design-2.webp",
 			"width": 750,
 			"height": 250
 		},
 		{
 			"id": "design-3",
-			"command": "design revise banner.design.json \"use the outline layout\"",
+			"command": "design revise banner.design.json \"darker theme\"",
 			"src": "/assets-examples/design-3.webp",
 			"width": 750,
 			"height": 250

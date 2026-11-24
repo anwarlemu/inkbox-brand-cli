@@ -2,6 +2,8 @@ import type { Command } from 'commander';
 import { unknown } from '../assets/io.js';
 import { deckCommand } from './deck.js';
 import { designCommand } from './design.js';
+import { iconsCommand } from './icons.js';
+import { emailCommand } from './email.js';
 import { figmaCommand } from './figma.js';
 import { illustrateCommand } from './illustrate.js';
 import { imageCommand } from './image.js';
@@ -19,6 +21,8 @@ export function assets(program: Command) {
 	merchCommand(program);
 	illustrateCommand(program);
 	designCommand(program);
+	iconsCommand(program);
+	emailCommand(program);
 	figmaCommand(program);
 	manifestCommand(program);
 }

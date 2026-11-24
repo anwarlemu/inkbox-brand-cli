@@ -274,7 +274,7 @@ describe('video', () => {
 	}, 60_000);
 
 	it('rejects unknown templates and sizes', () => {
-		expect(videoTemplates()).toEqual(['reveal', 'inbox', 'band', 'announce', 'card']);
+		expect(videoTemplates()).toEqual(['reveal', 'inbox', 'band', 'announce', 'card', 'logo']);
 		expect(Object.keys(videoDoc().sizes)).toEqual(['square', 'portrait', 'vertical', 'landscape']);
 		const bad = run(['video', 'revel', '--still', '--json']);
 		expect(bad.status).toBe(1);
@@ -390,6 +390,42 @@ describe('commands', () => {
 		for (const c of ['image', 'deck', 'video', 'merch', 'illustrate', 'figma']) {
 			const help = execFileSync(process.execPath, [BIN, c, '--help'], { encoding: 'utf8' });
 			for (const line of help.split('\n')) if (/^\s+-/.test(line) && line.length > 40) expect(line).toMatch(/\S\s{2,}\S/);
+		}
+	});
+});
+
+describe('icons, email and stationery', () => {
+	it('writes the favicon set with an ico holding 16, 32 and 48, and leaves another company\'s mark out of the glyphs', async () => {
+		const { iconSet, glyphs } = await import('../src/assets/icons.js');
+		const set = await iconSet();
+		const icoFile = set.files.find((f) => f.name === 'favicon.ico')!;
+		expect(icoFile.data.readUInt16LE(4)).toBe(3);
+		for (const f of set.files.filter((x) => x.name.endsWith('.png'))) expect((await loadImage(f.data)).width).toBe(f.width);
+		expect(glyphs().map((g) => g.name)).not.toContain('apple-logo');
+	});
+
+	it('writes emails from the words passed, and refuses one without what it needs', async () => {
+		const { email } = await import('../src/assets/email.js');
+		const r = await email('announcement', { headline: 'Agent Cards are here', button: 'Read', url: 'https://acme.com' });
+		expect(r.html).toContain('Agent Cards are here');
+		expect(r.html).not.toMatch(/Lorem|Inkbox/);
+		await expect(email('receipt', { headline: 'Receipt' })).rejects.toThrow(/needs --items/);
+		await expect(email('signature', { name: 'A', items: 'x' })).rejects.toThrow(/does not take --items/);
+	});
+
+	it('prints stationery with only the words passed', async () => {
+		for (const id of ['business-card', 'letterhead-letter', 'certificate-letter', 'event-badge', 'name-tag', 'report-cover-letter']) {
+			const bare = await renderItem(findItem(id), { dpi: 72 });
+			expect(bare.layers.filter((l) => l.text), id).toEqual([]);
+		}
+		const card = await renderItem(findItem('business-card'), { dpi: 72, slots: { name: 'Your name', role: 'Your role' } });
+		expect(card.layers.filter((l) => l.text).map((l) => l.text!.drawn)).toEqual(['Your name', 'Your role']);
+	});
+
+	it('draws the agenda, timeline and questions slides', async () => {
+		for (const type of ['agenda', 'timeline', 'qa']) {
+			const r = await renderSlide({ type, sample: true });
+			expect((await loadImage(r.png!)).width).toBe(1920);
 		}
 	});
 });

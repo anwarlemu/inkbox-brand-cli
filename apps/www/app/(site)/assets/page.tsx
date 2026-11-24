@@ -9,10 +9,14 @@ const RUN = CLI_COMMAND.replace("npx -y ", "npx ");
 
 const COMMANDS: [string, string][] = [
   ["manifest --json", "Every command, flag, template, size, slot, theme, subject and lockup. Start here; an unknown name exits 1 with the closest match."],
-  ["image <template|occasion>", "Share images, posts and banners: tile, app, outline, hatch, reef, feature, partner, funding, announce and card, in six themes, at every size. PNG and SVG. og and social are shortcuts."],
-  ["deck", "Slides at 1920 by 1080 from a JSON file or flags: cover, section, statement, bullets, stat, quote, image and end. A PNG per slide and one PDF."],
-  ["video <template>", "The share images' layers coming in on the brand's ease-out: reveal, inbox, band, announce and card. MP4 and WebM through ffmpeg, PNG frames without it, or one still."],
+  ["image <template|occasion>", "Share images, posts, banners, thumbnails and profile pictures: tile, app, outline, hatch, reef, feature, partner, funding, announce, card and mark, in six themes, at every platform size or custom. PNG, SVG, JPEG and WebP; numbered carousels. Only the words you pass are drawn."],
+  ["design new|revise|edit", "A picture you revise in plain words or exact edits, checked at every step. See Designs."],
+  ["deck", "Slides at 1920 by 1080 from a JSON file or flags: cover, section, statement, bullets, agenda, timeline, stat, quote, image, questions and end. A PNG per slide and one PDF."],
+  ["video <template>", "The share images' layers coming in on the brand's ease-out: reveal, inbox, band, announce, card and a logo sting. MP4, WebM and GIF through ffmpeg, PNG frames without it, or one still."],
   ["merch <item>", "Print files only: SVG at physical size and 300 dpi PNG with bleed and safe area, the sticker's die line, approved lockups only."],
+  ["merch <item> (stationery)", "Business card front and back, letterheads (Letter and A4), report cover, certificate, event badge, name tag and notebook cover: built from the lockups, patterns and tokens (the brand made none of its own). PDF, SVG and PNG."],
+  ["icons", "The favicon set (ico, 16, 32, 48), the Apple touch icon, web app icons (192, 512, maskable), the 1024 app icon, and the console's Phosphor glyphs (MIT)."],
+  ["email <kind>", "Newsletter, announcement, receipt, password reset and signature, as HTML tables mail clients keep, with the logo."],
   ["illustrate <subject>", "The octopus, the reef, the console window and the wordmark patterns as scenes. See Illustrations."],
   ["figma <action>", "Tokens as Figma variables, pushes, pulls and checks through the Figma MCP tools. See Figma."],
 ];
@@ -37,6 +41,22 @@ export default function AssetsPage() {
         </Section>
         <Section title="Video" description="Entrances use --ds-easing-out, 420 ms each and 80 ms apart; the outline band slides at a constant speed. The last frame is the finished image. --reduced-motion keeps the fades only.">
           <Gallery items={examples.video} columns="sm:grid-cols-2" />
+        </Section>
+        <Section title="Stationery" description="Print files built only from the lockups, the patterns and the tokens, at common print sizes with bleed. Pass the words; --sample shows Acme placeholders.">
+          <Gallery items={examples.print} columns="grid-cols-2 lg:grid-cols-3" />
+        </Section>
+        <Section title="Icons" description="The octopus on the theme's ground at every size browsers and app stores ask for; the maskable icon keeps inside the 80% circle.">
+          <Gallery items={examples.icons} columns="grid-cols-3 lg:grid-cols-6" />
+        </Section>
+        <Section title="Email" description="Plain HTML tables with inline styles, the brand's colors and type, and the logo.">
+          <ul className="grid gap-6 lg:grid-cols-2">
+            {examples.email.map((e) => (
+              <li key={e.id} className="grid gap-2">
+                <iframe src={e.src} title={e.id} className="h-96 w-full rounded-control bg-subtle shadow-s" />
+                <code className="font-mono text-caption break-words text-fg-muted">{e.command}</code>
+              </li>
+            ))}
+          </ul>
         </Section>
         <Section title="Merch" description="Print files at real size. Sizes are common vendor print areas: confirm them with the vendor's template. One-color files carry the wordmark alone.">
           <Gallery items={examples.merch} columns="grid-cols-2 lg:grid-cols-4" />

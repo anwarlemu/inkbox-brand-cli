@@ -29,7 +29,7 @@ async function webp(file, id, scale = 0.5) {
 	return { src: `/assets-examples/${id}.webp`, width: w, height: h };
 }
 
-const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [], designs: [] };
+const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [], designs: [], print: [], icons: [], email: [] };
 async function add(group, id, args, pick = (files) => files.find((f) => f.format === 'png'), scale) {
 	const res = cli(args);
 	const f = pick(res.files);
@@ -47,10 +47,10 @@ const SOCIAL = [
 	['changelog', 'landscape', ['--template', 'card', '--theme', 'mist']],
 ];
 for (const [occ, size, extra] of SOCIAL) await add('social', `social-${occ}-${size}`, ['image', '--occasion', occ, '--sample', '--size', size, ...extra, '--format', 'png', '--out', 'social']);
-writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'image', 'end'].map((type) => ({ type, sample: true })) }));
+writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'image', 'qa', 'end'].map((type) => ({ type, sample: true })) }));
 const slides = cli(['deck', '--input', 'deck.json', '--out', 'deck']).files.filter((f) => f.format === 'png');
 for (const f of slides) examples.deck.push({ id: f.slide, command: `deck ${f.slide} --sample`, ...(await webp(f.path, `deck-${f.slide}`, 0.25)) });
-for (const [t, size] of [['reveal', 'square'], ['inbox', 'landscape'], ['band', 'square'], ['card', 'square']]) {
+for (const [t, size] of [['reveal', 'square'], ['inbox', 'landscape'], ['band', 'square'], ['card', 'square'], ['logo', 'square']]) {
 	const res = cli(['video', t, '--sample', '--size', size, '--format', 'mp4', '--out', 'video']);
 	copyFileSync(join(work, res.files[0].path), join(out, `video-${t}.mp4`));
 	const still = cli(['video', t, '--sample', '--size', size, '--still', '--out', 'video']);
@@ -88,6 +88,23 @@ try {
 	refused = String(err.stdout || err.stderr).trim();
 }
 examples.designs.push({ id: 'design-refused', command: 'design revise banner.design.json "make the logo neon green"', note: refused, src: examples.designs.at(-1).src, width: examples.designs.at(-1).width, height: examples.designs.at(-1).height });
+for (const item of ['business-card', 'business-card-back', 'letterhead-letter', 'report-cover-letter', 'certificate-letter', 'event-badge', 'name-tag', 'notebook-cover'])
+	await add('print', `print-${item}`, ['merch', item, '--sample', '--dpi', '72', '--format', 'png', '--out', 'print'], undefined, 1);
+const icons = cli(['icons', '--out', 'icons']).files.filter((f) => f.format === 'png');
+for (const f of icons) examples.icons.push({ id: f.path.split('/').pop(), command: `icons  (${f.path.split('/').pop()})`, ...(await webp(f.path, `icon-${f.width}-${examples.icons.length}`, 1)) });
+const mails = [
+	['announcement', ['--headline', 'Agent Cards are here', '--body', 'Every agent can now publish a card other agents can find.', '--button', 'Read more', '--url', 'https://acme.com', '--footer', 'Acme, 1 Main Street']],
+	['receipt', ['--headline', 'Your receipt', '--items', 'Pro plan - $20 | Extra numbers - $5', '--total', '$25']],
+	['password-reset', ['--headline', 'Reset your password', '--button', 'Reset password', '--url', 'https://acme.com/reset']],
+	['signature', ['--name', 'Your name', '--role', 'Your role', '--email', 'you@acme.com', '--url', 'acme.com']],
+];
+for (const [kind, args] of mails) {
+	cli(['email', kind, ...args, '--out', 'email']);
+	mkdirSync(join(out, 'email'), { recursive: true });
+	copyFileSync(join(work, 'email', `${kind}.html`), join(out, 'email', `${kind}.html`));
+	examples.email.push({ id: kind, command: `email ${kind} ${args.map((a) => (a.startsWith('--') ? a : `"${a}"`)).join(' ')}`, src: `/assets-examples/email/${kind}.html`, width: 600, height: 400 });
+}
+copyFileSync(join(work, 'email', 'logo.png'), join(out, 'email', 'logo.png'));
 writeFileSync(join(out, 'examples.json'), `${JSON.stringify(examples, null, '\t')}\n`);
 rmSync(work, { recursive: true, force: true });
 console.log(`assets examples: ${Object.values(examples).flat().length} pictures in ${out}`);

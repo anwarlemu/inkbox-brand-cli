@@ -10,16 +10,23 @@ import { emit } from '../lib/output.js';
 // `merch`: print files only (never mockups). SVG at physical size and PNG at 300 dpi, bleed included.
 
 type Opts = Record<string, string | boolean | undefined> & { json?: boolean };
+const SLOTS = ['headline', 'body', 'name', 'role', 'email', 'url', 'address', 'date'];
 
 export function merchCommand(program: Command) {
 	program
 		.command('merch [item]')
-		.description('Merch print files (cap, tee front and back, hoodie, tote, mug wrap, die-cut sticker, poster): SVG at physical size and 300 dpi PNG with bleed')
+		.description('Print files: merch (cap, tee, hoodie, tote, mug, sticker, poster, notebook) and stationery (business card, letterhead, report cover, certificate, event badge, name tag), SVG at physical size, PNG and PDF with bleed')
 		.option('--item <id>', 'cap-front, tee-front, tee-back, hoodie-front, tote, mug-wrap, sticker or poster')
 		.option('--theme <id>', 'the same as --variant')
 		.option('-v, --variant <id>', 'paper, lavender, purple or ink (a printed ground); color (full color, no ground); one-ink, one-white or one-purple (one color, the wordmark alone); each item names its own')
 		.option('--headline <text>', 'tee-back and poster: the line (*stars* take the pink on the poster)')
-		.option('--url <text>', 'tee-back and poster: the address')
+		.option('--url <text>', 'the address (tee-back, poster, business card, letterhead)')
+		.option('--body <text>', 'report cover and certificate: the line under the headline')
+		.option('--name <text>', 'business card, badge, name tag, certificate: a person\'s name (theirs, never made up)')
+		.option('--role <text>', 'business card, badge, name tag: the role')
+		.option('--email <text>', 'business card: the email address')
+		.option('--address <text>', 'letterhead: the postal address')
+		.option('--date <text>', 'report cover and certificate: the date')
 		.option('--sample', 'print sample copy where you passed none')
 		.option('--dpi <n>', 'PNG resolution, 72 to 600', String(PX_PER_IN))
 		.option('--guides', 'draw the trim and safe lines for proofing')
@@ -52,7 +59,7 @@ async function runMerch(positional: string | undefined, o: Opts) {
 	const variant = typeof o.variant === 'string' ? o.variant : typeof o.theme === 'string' ? o.theme : undefined;
 	const dpi = num('dpi', o.dpi, 72, 600, { integer: true }) ?? PX_PER_IN;
 	const slots: Record<string, string> = {};
-	for (const k of ['headline', 'url']) if (typeof o[k] === 'string') slots[k] = o[k] as string;
+	for (const k of SLOTS) if (typeof o[k] === 'string') slots[k] = o[k] as string;
 	const named = positional ?? (typeof o.item === 'string' ? o.item : undefined);
 	const jobs: { id: string; variant?: string }[] = [];
 	if (o.all) {

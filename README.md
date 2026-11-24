@@ -130,6 +130,8 @@ Run these commands with `npx inkbox-ds` after installing the CLI.
 | `video` | Motion pieces as MP4 and WebM (ffmpeg), PNG frames, or one still. |
 | `merch` | Print files at real size with bleed: SVG in inches and PNG at a dpi. |
 | `illustrate` | The octopus, the reef, the console window and the wordmark patterns as scenes. SVG and PNG. |
+| `icons` | Favicons, app icons and the console's glyphs (Phosphor, MIT). |
+| `email` | Emails as HTML tables: newsletter, announcement, receipt, password reset, signature. |
 | `figma` | Tokens as Figma variables, pushes, pulls and checks through the Figma MCP tools. |
 
 ## Make images, posts, slides, video, merch and illustrations
@@ -185,6 +187,24 @@ npx inkbox-ds figma tokens
 
 Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
 person's own `--image`.
+
+## I need X: which command
+
+| I need | Run |
+|---|---|
+| A link preview, post, banner, thumbnail or ad at any size | `npx inkbox-ds image <template> --size <id or custom> --headline "..."` |
+| A picture the person will revise with me | `npx inkbox-ds design new <template>`, then `design revise "..."` |
+| The same picture at every size | `npx inkbox-ds design sizes <file> --to og,square,story,...` or `image --size all` |
+| A numbered carousel | `npx inkbox-ds image <template> --carousel slides.json` |
+| A profile picture or the lockup alone | `npx inkbox-ds image mark --size avatar` |
+| Slides or a PDF deck (cover, agenda, timeline, bullets, stat, quote, image, questions, end) | `npx inkbox-ds deck --input deck.json` |
+| A video, a GIF loop or a logo sting | `npx inkbox-ds video <reveal\|inbox\|band\|announce\|card\|logo> --format mp4,gif` |
+| Merch or stationery print files (business card, letterhead, report cover, certificate, badge, name tag, notebook, poster) | `npx inkbox-ds merch <item> --format pdf,png` |
+| Favicons, app icons and the console's glyphs | `npx inkbox-ds icons`, `npx inkbox-ds icons glyphs` |
+| An email (newsletter, announcement, receipt, password reset, signature) | `npx inkbox-ds email <kind>` |
+| An illustration, pattern or background still at any size | `npx inkbox-ds illustrate <subject> --size <id>` |
+| A component, section or page | `npx inkbox-ds add <name>`; `npx inkbox-ds list` shows every one |
+| Figma variables, pushes and checks | `npx inkbox-ds figma <action>` |
 
 ## Revising a design
 

@@ -133,6 +133,24 @@ command takes `--list` (what exists) and `--json` (the files it wrote); an unkno
 Never put real people's names, posts, photos or avatars, or another company's logo, in an asset: use Acme and the
 person's own `--image`.
 
+## I need X: which command
+
+| I need | Run |
+|---|---|
+| A link preview, post, banner, thumbnail or ad at any size | `{{cli}} image <template> --size <id or custom> --headline "..."` |
+| A picture the person will revise with me | `{{cli}} design new <template>`, then `design revise "..."` |
+| The same picture at every size | `{{cli}} design sizes <file> --to og,square,story,...` or `image --size all` |
+| A numbered carousel | `{{cli}} image <template> --carousel slides.json` |
+| A profile picture or the lockup alone | `{{cli}} image mark --size avatar` |
+| Slides or a PDF deck (cover, agenda, timeline, bullets, stat, quote, image, questions, end) | `{{cli}} deck --input deck.json` |
+| A video, a GIF loop or a logo sting | `{{cli}} video <reveal\|inbox\|band\|announce\|card\|logo> --format mp4,gif` |
+| Merch or stationery print files (business card, letterhead, report cover, certificate, badge, name tag, notebook, poster) | `{{cli}} merch <item> --format pdf,png` |
+| Favicons, app icons and the console's glyphs | `{{cli}} icons`, `{{cli}} icons glyphs` |
+| An email (newsletter, announcement, receipt, password reset, signature) | `{{cli}} email <kind>` |
+| An illustration, pattern or background still at any size | `{{cli}} illustrate <subject> --size <id>` |
+| A component, section or page | `{{cli}} add <name>`; `{{cli}} list` shows every one |
+| Figma variables, pushes and checks | `{{cli}} figma <action>` |
+
 ## Revising a design
 
 When a person wants a picture they can react to ("make it bigger", "darker", "logo top right"), make a design file and

@@ -145,6 +145,20 @@
 			"height": 270
 		},
 		{
+			"id": "agenda",
+			"command": "deck agenda --sample",
+			"src": "/assets-examples/deck-agenda.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "timeline",
+			"command": "deck timeline --sample",
+			"src": "/assets-examples/deck-timeline.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
 			"id": "stat",
 			"command": "deck stat --sample",
 			"src": "/assets-examples/deck-stat.webp",
@@ -162,6 +176,13 @@
 			"id": "image",
 			"command": "deck image --sample",
 			"src": "/assets-examples/deck-image.webp",
+			"width": 480,
+			"height": 270
+		},
+		{
+			"id": "qa",
+			"command": "deck qa --sample",
+			"src": "/assets-examples/deck-qa.webp",
 			"width": 480,
 			"height": 270
 		},
@@ -203,6 +224,14 @@
 			"command": "video card --sample --size square",
 			"video": "/assets-examples/video-card.mp4",
 			"src": "/assets-examples/video-card.webp",
+			"width": 432,
+			"height": 432
+		},
+		{
+			"id": "logo",
+			"command": "video logo --sample --size square",
+			"video": "/assets-examples/video-logo.mp4",
+			"src": "/assets-examples/video-logo.webp",
 			"width": 432,
 			"height": 432
 		}
@@ -376,10 +405,156 @@
 		{
 			"id": "design-refused",
 			"command": "design revise banner.design.json \"make the logo neon green\"",
-			"note": "Nothing was changed.\n\"make the logo neon green\": Effects are not part of the brand.\nThings you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
+			"note": "Nothing was changed.\n\"make the logo neon green\": Colors outside the brand palette are refused. The palette: #74629D, #000000, #FFFFFF, #3E2A53, #F4F2F6, #F9B1B5, #8C5659, #5063B1, #ECE9F0, #FFFFFE, #F0F0F0, #FBFBFC, #B1ADBB, #70637E, #998EA5, #9E94A9, #BCB3C5, #5B4C6A, #A31515, #0451A5, #237893, #F8CC5E, #1A202C, #0431FA, #0B216F, #4A4A4A, #0000FF, #008000, #098658, #795E26, #267F99, #800000, #E50000, #D2C9DB, #F3F1F5, #E0E0E0, #67568E, #1CA721, #C6F6D5, #8A581D, #F6E8C9, #4A2F0B, #8E7045, #BD5557, #A71C1F, #1C7390, #C9EBF6, #0D4152, #BEE3F8, #2A4365, #E9D8FD, #6D5C9B, #EDF2F7, #EEECF3, #DEE1EC, #DBCAF1, #69578E, #59486B, in the themes paper, mist, mono, lavender, purple, deep.\nThings you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
 			"src": "/assets-examples/design-6.webp",
 			"width": 750,
 			"height": 250
+		}
+	],
+	"print": [
+		{
+			"id": "print-business-card",
+			"command": "merch business-card --sample --dpi 72",
+			"src": "/assets-examples/print-business-card.webp",
+			"width": 270,
+			"height": 162
+		},
+		{
+			"id": "print-business-card-back",
+			"command": "merch business-card-back --sample --dpi 72",
+			"src": "/assets-examples/print-business-card-back.webp",
+			"width": 270,
+			"height": 162
+		},
+		{
+			"id": "print-letterhead-letter",
+			"command": "merch letterhead-letter --sample --dpi 72",
+			"src": "/assets-examples/print-letterhead-letter.webp",
+			"width": 612,
+			"height": 792
+		},
+		{
+			"id": "print-report-cover-letter",
+			"command": "merch report-cover-letter --sample --dpi 72",
+			"src": "/assets-examples/print-report-cover-letter.webp",
+			"width": 630,
+			"height": 810
+		},
+		{
+			"id": "print-certificate-letter",
+			"command": "merch certificate-letter --sample --dpi 72",
+			"src": "/assets-examples/print-certificate-letter.webp",
+			"width": 810,
+			"height": 630
+		},
+		{
+			"id": "print-event-badge",
+			"command": "merch event-badge --sample --dpi 72",
+			"src": "/assets-examples/print-event-badge.webp",
+			"width": 306,
+			"height": 234
+		},
+		{
+			"id": "print-name-tag",
+			"command": "merch name-tag --sample --dpi 72",
+			"src": "/assets-examples/print-name-tag.webp",
+			"width": 252,
+			"height": 162
+		},
+		{
+			"id": "print-notebook-cover",
+			"command": "merch notebook-cover --sample --dpi 72",
+			"src": "/assets-examples/print-notebook-cover.webp",
+			"width": 414,
+			"height": 630
+		}
+	],
+	"icons": [
+		{
+			"id": "favicon-16.png",
+			"command": "icons  (favicon-16.png)",
+			"src": "/assets-examples/icon-16-0.webp",
+			"width": 16,
+			"height": 16
+		},
+		{
+			"id": "favicon-32.png",
+			"command": "icons  (favicon-32.png)",
+			"src": "/assets-examples/icon-32-1.webp",
+			"width": 32,
+			"height": 32
+		},
+		{
+			"id": "favicon-48.png",
+			"command": "icons  (favicon-48.png)",
+			"src": "/assets-examples/icon-48-2.webp",
+			"width": 48,
+			"height": 48
+		},
+		{
+			"id": "apple-touch-icon.png",
+			"command": "icons  (apple-touch-icon.png)",
+			"src": "/assets-examples/icon-180-3.webp",
+			"width": 180,
+			"height": 180
+		},
+		{
+			"id": "icon-192.png",
+			"command": "icons  (icon-192.png)",
+			"src": "/assets-examples/icon-192-4.webp",
+			"width": 192,
+			"height": 192
+		},
+		{
+			"id": "icon-512.png",
+			"command": "icons  (icon-512.png)",
+			"src": "/assets-examples/icon-512-5.webp",
+			"width": 512,
+			"height": 512
+		},
+		{
+			"id": "icon-maskable-512.png",
+			"command": "icons  (icon-maskable-512.png)",
+			"src": "/assets-examples/icon-512-6.webp",
+			"width": 512,
+			"height": 512
+		},
+		{
+			"id": "app-icon-1024.png",
+			"command": "icons  (app-icon-1024.png)",
+			"src": "/assets-examples/icon-1024-7.webp",
+			"width": 1024,
+			"height": 1024
+		}
+	],
+	"email": [
+		{
+			"id": "announcement",
+			"command": "email announcement --headline \"Agent Cards are here\" --body \"Every agent can now publish a card other agents can find.\" --button \"Read more\" --url \"https://acme.com\" --footer \"Acme, 1 Main Street\"",
+			"src": "/assets-examples/email/announcement.html",
+			"width": 600,
+			"height": 400
+		},
+		{
+			"id": "receipt",
+			"command": "email receipt --headline \"Your receipt\" --items \"Pro plan - $20 | Extra numbers - $5\" --total \"$25\"",
+			"src": "/assets-examples/email/receipt.html",
+			"width": 600,
+			"height": 400
+		},
+		{
+			"id": "password-reset",
+			"command": "email password-reset --headline \"Reset your password\" --button \"Reset password\" --url \"https://acme.com/reset\"",
+			"src": "/assets-examples/email/password-reset.html",
+			"width": 600,
+			"height": 400
+		},
+		{
+			"id": "signature",
+			"command": "email signature --name \"Your name\" --role \"Your role\" --email \"you@acme.com\" --url \"acme.com\"",
+			"src": "/assets-examples/email/signature.html",
+			"width": 600,
+			"height": 400
 		}
 	]
 }

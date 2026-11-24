@@ -15,7 +15,7 @@ type Opts = Record<string, string | boolean | undefined> & { json?: boolean };
 export function videoCommand(program: Command) {
 	program
 		.command('video [template]')
-		.description('Motion pieces (reveal, inbox, band, announce, card) at square, portrait, vertical and landscape: MP4 and WebM through ffmpeg, else PNG frames')
+		.description('Motion pieces (reveal, inbox, band, announce, card, logo) at square, portrait, vertical and landscape: MP4 and WebM through ffmpeg, else PNG frames')
 		.option('-s, --size <size>', 'square (default), portrait, vertical (also story, 9:16) or landscape (also 16:9)')
 		.option('--layout <template>', 'reveal: the share template to bring in (tile, reef, hatch, partner, ...)')
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep')
@@ -34,7 +34,7 @@ export function videoCommand(program: Command) {
 		.option('--seconds <n>', 'length, 2 to 20 (default: the template\'s)')
 		.option('--fps <n>', '12 to 60 (default 30)')
 		.option('--reduced-motion', 'fades only, no movement')
-		.option('-f, --format <format>', 'mp4, webm, frames or all (default: mp4 and webm with ffmpeg, frames without)')
+		.option('-f, --format <format>', 'mp4, webm, gif (a loop for chat and docs), frames or all (default: mp4 and webm with ffmpeg, frames without)')
 		.option('--still [seconds]', 'one PNG frame instead of a video (default: the last, the finished design)')
 		.option('-o, --out <path>', 'output directory (default video/); with --still, a .png file name')
 		.option('--list', 'templates, sizes and timing')
@@ -71,8 +71,8 @@ async function runVideo(positional: string | undefined, o: Opts) {
 	const id = pick('video template', positional ?? 'reveal', videoTemplates());
 	const def = videoDoc().templates[id]!;
 	const ff = hasFfmpeg();
-	const format = pick('format', String(o.format ?? (ff ? 'all' : 'frames')), ['mp4', 'webm', 'frames', 'all'] as const);
-	if ((format === 'mp4' || format === 'webm' || format === 'all') && !ff && o.still === undefined) throw new Error(`${format === 'all' ? 'MP4 and WebM need' : `${format.toUpperCase()} needs`} ffmpeg on the PATH. Without it: --format frames.`);
+	const format = pick('format', String(o.format ?? (ff ? 'all' : 'frames')), ['mp4', 'webm', 'gif', 'frames', 'all'] as const);
+	if ((format === 'mp4' || format === 'webm' || format === 'gif' || format === 'all') && !ff && o.still === undefined) throw new Error(`${format === 'all' ? 'MP4 and WebM need' : `${format.toUpperCase()} needs`} ffmpeg on the PATH. Without it: --format frames.`);
 	const alias: Record<string, string> = { story: 'vertical', '9:16': 'vertical', '9x16': 'vertical', '1:1': 'square', '4:5': 'portrait', '16:9': 'landscape', '16x9': 'landscape', wide: 'landscape' };
 	const askedSize = String(o.size ?? 'square').toLowerCase();
 	const sizeId = pick('size', alias[askedSize] ?? askedSize, Object.keys(videoDoc().sizes));
@@ -122,7 +122,7 @@ async function runVideo(positional: string | undefined, o: Opts) {
 		}
 		files.push({ path: display(cwd, join(dir, name)), format: 'frames', template: id, frames: n, fps, width, height });
 	} else {
-		const outputs = (format === 'all' ? (['mp4', 'webm'] as const) : [format]).map((f) => ({ path: join(dir, `${name}.${f}`), format: f as 'mp4' | 'webm' }));
+		const outputs = (format === 'all' ? (['mp4', 'webm'] as const) : [format]).map((f) => ({ path: join(dir, `${name}.${f}`), format: f as 'mp4' | 'webm' | 'gif' }));
 		async function* rgba() {
 			for await (const f of videoFrames(opts, pics)) yield f.rgba;
 		}

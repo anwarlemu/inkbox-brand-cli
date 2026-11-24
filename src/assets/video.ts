@@ -35,7 +35,7 @@ export function videoCatalog() {
 		fps: d.fps,
 		easing: { token: '--ds-easing-out', value: tokens().site['--ds-easing-out'] },
 		enter: d.enter,
-		formats: ['mp4', 'webm', 'frames', 'all'],
+		formats: ['mp4', 'webm', 'gif', 'frames', 'all'],
 		encoder: 'ffmpeg (H.264 MP4, VP9 WebM) when installed; otherwise PNG frames.',
 		reducedMotion: '--reduced-motion keeps the fades and drops every movement; --still writes one PNG frame (the finished design at the end).',
 	};
@@ -144,12 +144,13 @@ export async function stillFrame(o: VideoOptions, pics: Pictures, at: number): P
 }
 
 /** Pipes raw RGBA frames into one ffmpeg run that writes each asked format, with bit-exact flags. */
-export async function encode(frames: AsyncIterable<Buffer>, o: { width: number; height: number; fps: number; outputs: { path: string; format: 'mp4' | 'webm' }[] }) {
+export async function encode(frames: AsyncIterable<Buffer>, o: { width: number; height: number; fps: number; outputs: { path: string; format: 'mp4' | 'webm' | 'gif' }[] }) {
 	for (const out of o.outputs) mkdirSync(dirname(out.path), { recursive: true });
 	const args = ['-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${o.width}x${o.height}`, '-r', String(o.fps), '-i', '-'];
 	for (const out of o.outputs) {
 		args.push('-map_metadata', '-1', '-fflags', '+bitexact', '-flags:v', '+bitexact');
 		if (out.format === 'mp4') args.push('-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', '-threads', '1', '-movflags', '+faststart', out.path);
+		else if (out.format === 'gif') args.push('-filter_complex', `fps=${Math.min(o.fps, 15)},scale=${Math.min(o.width, 720)}:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=5`, '-loop', '0', out.path);
 		else args.push('-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', '28', '-pix_fmt', 'yuv420p', '-row-mt', '0', '-threads', '1', out.path);
 	}
 	const ff = spawn('ffmpeg', args, { stdio: ['pipe', 'ignore', 'pipe'] });

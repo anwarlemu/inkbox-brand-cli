@@ -8,6 +8,8 @@ import { illustrateCatalog } from '../assets/illustrate.js';
 import { merchCatalog } from '../assets/merch.js';
 import { videoCatalog } from '../assets/video.js';
 import { adapter } from '../design/adapter.js';
+import { EMAILS, emailTakes } from '../assets/email.js';
+import { glyphs, ICONS } from '../assets/icons.js';
 import { designManifest } from '../design/index.js';
 import { listComponents } from '../library/describe.js';
 import { brand, cli } from '../lib/brand.js';
@@ -60,6 +62,8 @@ export function manifest(program: Command) {
 				note: 'The CLI never calls Figma: each action writes files and prints the Figma MCP tool calls to make, in order.',
 			},
 			design: designManifest(adapter(), bin),
+			icons: { files: ICONS.map((i) => ({ file: i.name, size: i.size, purpose: i.purpose })), glyphs: glyphs().map((g) => g.name), licence: 'Phosphor Icons, MIT' },
+			email: { kinds: EMAILS.map((k) => ({ kind: k, ...emailTakes(k) })) },
 			lockups: logoDoc().lockups,
 			rules: { illustration: 'brand/illustration.md', images: 'brand/assets/image.json notes' },
 		},

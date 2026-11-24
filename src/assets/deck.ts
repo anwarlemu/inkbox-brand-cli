@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { Path2D, type Image } from '@napi-rs/canvas';
 import { pkgPath } from '../lib/paths.js';
 import { brandColor, logoDoc, themeNames, themes, wordmarkPath } from './brand-art.js';
-import { brandFonts, pixelsOf, surface, toJpg, toPng, toSvg, toWebp, type Ctx, type Fonts } from './canvas.js';
+import { brandFonts, pixelsOf, surface, tokenColor, toJpg, toPng, toSvg, toWebp, type Ctx, type Fonts } from './canvas.js';
 import { drawable } from './glyphs.js';
 import { designOf, designSvg, measureDesign, picturesFor, svgPictures } from './image.js';
 import { pick } from './io.js';
@@ -14,7 +14,9 @@ import { loadIcons } from './window.js';
 // slide's size with the slide's words, so a deck and a post share their layers; bullets lays out its own points with the
 // filled check circle. PNG per slide, the RGB pixels a PDF page wants, and SVG.
 
-export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'stat' | 'quote' | 'image' | 'end';
+export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'agenda' | 'timeline' | 'stat' | 'quote' | 'image' | 'qa' | 'end';
+/* The slides that lay out a list of their own; the rest are share templates. */
+export const LISTS: SlideType[] = ['bullets', 'agenda', 'timeline'];
 type SlideDef = { name: string; description: string; template: string; theme: string; slots: Record<string, string> };
 type DeckDoc = { width: number; height: number; slides: Record<SlideType, SlideDef> };
 
@@ -34,7 +36,7 @@ export function deckCatalog() {
 }
 
 /* The words a slide cannot do without. */
-const MAIN: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', stat: 'stat', quote: 'quote' };
+const MAIN: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title' };
 
 /** The slots a slide type takes, with what it was given (and sample copy for the rest, when asked). Unknown slots throw. */
 export function slotsFor(type: SlideType, given: Record<string, unknown>): Record<string, string> {
@@ -69,6 +71,7 @@ export function slideDesign(type: SlideType, slots: Record<string, string>, them
 			return { ...d, textSize: d.textSize * 1.6, badgeScale: 120 };
 		}
 		case 'statement':
+		case 'qa':
 			return designOf({ ...req, headline: slots.title, body: '' });
 		case 'stat':
 			return designOf({ ...req, headline: `*${(slots.stat ?? '').replace(/\*/g, '')}*`, body: slots.title ?? '' });
@@ -85,7 +88,7 @@ export function slideDesign(type: SlideType, slots: Record<string, string>, them
 
 /** Bullets: the title top left, the points in one or two columns each led by the filled check circle, hatched strips
  * down the sides (the outline template's), and the lockup bottom left. */
-function drawBullets(ctx: Ctx, slots: Record<string, string>, theme: string, pics: Pictures, fonts: Fonts) {
+function drawBullets(ctx: Ctx, slots: Record<string, string>, theme: string, pics: Pictures, fonts: Fonts, mode: 'bullets' | 'agenda' | 'timeline' = 'bullets') {
 	const W = deckDoc().width;
 	const H = deckDoc().height;
 	const t = themes()[theme]!;
@@ -158,12 +161,36 @@ function drawBullets(ctx: Ctx, slots: Record<string, string>, theme: string, pic
 	wrapped.forEach((f, i) => {
 		const x = left + Math.floor(i / rows) * (colW + 64 * u);
 		const y = listTop + (i % rows) * pitch;
-		ctx.save();
-		ctx.translate(x, y + pt * 0.1);
-		ctx.scale((pt * 1.2) / 256, (pt * 1.2) / 256);
-		ctx.fillStyle = t.dark ? brandColor('pink') : brandColor('purple');
-		ctx.fill(check);
-		ctx.restore();
+		const mark = t.dark ? brandColor('pink') : brandColor('purple');
+		if (mode === 'bullets') {
+			ctx.save();
+			ctx.translate(x, y + pt * 0.1);
+			ctx.scale((pt * 1.2) / 256, (pt * 1.2) / 256);
+			ctx.fillStyle = mark;
+			ctx.fill(check);
+			ctx.restore();
+		} else {
+			/* An agenda numbers its points in the mono; a timeline hangs them on a rule, a dot at each. */
+			const cx = x + pt * 0.6;
+			const cy = y + pt * 0.7;
+			if (mode === 'timeline' && i % rows < rows - 1) {
+				ctx.fillStyle = t.line;
+				ctx.fillRect(cx - u / 2, cy, u, pitch);
+			}
+			ctx.fillStyle = mark;
+			ctx.beginPath();
+			ctx.arc(cx, cy, mode === 'agenda' ? pt * 0.6 : pt * 0.28, 0, Math.PI * 2);
+			ctx.fill();
+			if (mode === 'agenda') {
+				ctx.fillStyle = t.dark ? t.ink : tokenColor('white');
+				ctx.font = `600 ${pt * 0.62}px ${fonts.mono}`;
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				ctx.fillText(String(i + 1), cx, cy + pt * 0.03);
+				ctx.textAlign = 'left';
+				ctx.textBaseline = 'alphabetic';
+			}
+		}
 		const box = drawFitted(ctx, f, x + pt * 1.7, y + pt * 0.12);
 		layers.push({ id: `point-${i + 1}`, kind: 'text', box, text: { asked: items[i]!.replace(/\s+/g, ' ').trim(), drawn: f.lines.join(' '), size: f.size, color: t.ink, ground: [t.bg] }, can: {} });
 	});
@@ -210,9 +237,9 @@ export async function drawSlide(ctx: Ctx, slide: Slide, opts: { px?: number; svg
 	if (slide.picture && type !== 'image') throw new Error(`A ${type} slide holds no picture; "image" goes with the image slide.`);
 	const pics = opts.pics ?? (await picturesFor(slide.picture ?? null));
 	const fonts = brandFonts();
-	if (type === 'bullets') {
-		if (slide.edits && Object.keys(slide.edits as object).length) throw new Error('A bullets slide has no layers to move: change its words, theme or highlight.');
-		return drawBullets(ctx, slots, theme, pics, fonts);
+	if (LISTS.includes(type)) {
+		if (slide.edits && Object.keys(slide.edits as object).length) throw new Error('A list slide has no layers to move: change its words, theme or highlight.');
+		return drawBullets(ctx, slots, theme, pics, fonts, type as 'bullets');
 	}
 	return drawDesign(ctx, slideOf(slide), pics, await loadIcons(), fonts, opts.px ?? 1, !!opts.svg).layers;
 }
@@ -241,7 +268,7 @@ export async function renderSlide(slide: Slide, opts: { png?: boolean; svg?: boo
 	}
 	if (opts.svg) {
 		const pics = await picturesFor(slide.picture ?? null);
-		if (slide.type === 'bullets') {
+		if (LISTS.includes(slide.type as SlideType)) {
 			const s = surface(W, H, { svg: true });
 			out.layers = await drawSlide(s.ctx, slide, { svg: true, px: 1, pics: await svgPictures(pics, W) });
 			out.svg = toSvg(s);

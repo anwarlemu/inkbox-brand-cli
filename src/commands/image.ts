@@ -28,8 +28,8 @@ function options(c: Command, sizeHelp: string) {
 		.option('--occasion <name>', `${occasionNames().join(', ')}: its looks, and its words with the sample flag`)
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep (default: the occasion\'s look, else paper)')
 		.option('-s, --size <size>', sizeHelp)
-		.option('--width <px>', 'custom size width, 160 to 4000')
-		.option('--height <px>', 'custom size height, 160 to 4000')
+		.option('--width <px>', 'custom size width, 50 to 4000')
+		.option('--height <px>', 'custom size height, 50 to 4000')
 		.option('--headline <text>', 'the headline; *stars* highlight a phrase, \\n breaks a line')
 		.option('--body <text>', 'the line under the headline')
 		.option('--credit <text>', 'a small credit under the words, such as @handle for a post')
@@ -56,7 +56,7 @@ function options(c: Command, sizeHelp: string) {
 }
 
 export function imageCommand(program: Command) {
-	const sizes = `${imageSizes().map((s) => s.id).join(', ')}, custom; a comma list; a group (share, post, banner, profile); or all`;
+	const sizes = `${imageSizes().map((s) => s.id).join(', ')}, custom, or WxH (300x250); a comma list; a group (share, post, banner, profile, ads); or all`;
 	options(program.command('image [template]').description(`Share images, social posts, banners, thumbnails and profile pictures (${TEMPLATES.join(', ')}) as PNG, SVG, JPEG and WebP`), sizes)
 		.action(async (t: string | undefined, _o, cmd: Command) => runImage(t, cmd.optsWithGlobals() as Opts, 'og'))
 		.addHelpText('after', () => help());
@@ -96,16 +96,30 @@ export function formatsOf(typed: string, pool: readonly string[] = IMAGE_FORMATS
 	return [...new Set(out)];
 }
 
-/** Sizes as typed: one, a comma list, a group or all. */
+/** The display ad sizes (IAB) Google takes most, as custom sizes. */
+export const ADS = ['300x250', '336x280', '728x90', '300x600', '320x50', '160x600', '970x250'];
+
+/** A size id as a request: a known id, or WxH as a custom size. */
+export function sizeRequest(size: string): { size: string; width?: number; height?: number } {
+	const m = /^(\d+)x(\d+)$/.exec(size);
+	if (!m) return { size };
+	const [w, h] = [Number(m[1]), Number(m[2])];
+	if (w < 50 || h < 50 || w > 4000 || h > 4000) throw new Error(`A size takes 50 to 4000 pixels each way, not ${size}.`);
+	return { size: 'custom', width: w, height: h };
+}
+
+/** Sizes as typed: one, a comma list, WxH, a group (or ads, the IAB display sizes) or all. */
 export function sizesOf(typed: string): { ids: string[]; wide: boolean } {
 	const groups = imageDoc().groups;
 	const ids: string[] = [];
 	let wide = false;
 	for (const part of typed.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)) {
-		if (part === 'all') ids.push(...imageSizes().map((s) => s.id));
+		if (/^\d+x\d+$/.test(part)) ids.push(part);
+		else if (part === 'ads') ids.push(...ADS);
+		else if (part === 'all') ids.push(...imageSizes().map((s) => s.id));
 		else if (groups[part]) ids.push(...groups[part]!.sizes);
 		else ids.push(sizeId(part));
-		if (part === 'all' || groups[part]) wide = true;
+		if (part === 'all' || part === 'ads' || groups[part]) wide = true;
 	}
 	if (!ids.length) throw new Error('--size takes a size id.');
 	return { ids: [...new Set(ids)], wide };
@@ -148,8 +162,8 @@ async function runImage(positional: string | undefined, flags: Opts, defaultSize
 	const outExt = str('out') ? /\.(png|svg|jpe?g|webp)$/i.exec(str('out')!)?.[1]?.toLowerCase().replace('jpeg', 'jpg') : undefined;
 	const formats = formatsOf(String(o.format ?? outExt ?? 'both'));
 	const scale = num('scale', o.scale, 1, 4) ?? 1;
-	const width = num('width', o.width, 160, 4000, { integer: true });
-	const height = num('height', o.height, 160, 4000, { integer: true });
+	const width = num('width', o.width, 50, 4000, { integer: true });
+	const height = num('height', o.height, 50, 4000, { integer: true });
 	const seed = num('seed', o.seed, 1, 1_000_000_000, { integer: true });
 	const base: ImageRequest = {
 		occasion: str('occasion'),
@@ -194,7 +208,7 @@ async function runImage(positional: string | undefined, flags: Opts, defaultSize
 		const total = list.length;
 		for (const size of own) {
 			for (const [i, x] of (list as Record<string, string>[]).entries())
-				jobs.push({ size, template: x.template ?? template, image: x.image ? resolve(dirname(path), x.image) : undefined, name: `${String(i + 1).padStart(2, '0')}-${x.template ?? template ?? 'tile'}-${size}`, request: { ...base, theme: base.theme ?? (spec.theme as string | undefined), highlight: base.highlight ?? (spec.highlight as string | undefined), badgeStyle: base.badgeStyle ?? (spec.badgeStyle as string | undefined), seed: seed ?? (typeof spec.seed === 'number' ? spec.seed : undefined), headline: x.headline, body: x.body, credit: x.credit, badge: x.badge ?? base.badge ?? (spec.badge as string | undefined), picture: !!x.image, pictureUrl: x.imageUrl, page: o.numbers === false ? '' : `${i + 1}/${total}`, template: x.template ?? template ?? 'tile', size } });
+				jobs.push({ size, template: x.template ?? template, image: x.image ? resolve(dirname(path), x.image) : undefined, name: `${String(i + 1).padStart(2, '0')}-${x.template ?? template ?? 'tile'}-${size}`, request: { ...base, theme: base.theme ?? (spec.theme as string | undefined), highlight: base.highlight ?? (spec.highlight as string | undefined), badgeStyle: base.badgeStyle ?? (spec.badgeStyle as string | undefined), seed: seed ?? (typeof spec.seed === 'number' ? spec.seed : undefined), headline: x.headline, body: x.body, credit: x.credit, badge: x.badge ?? base.badge ?? (spec.badge as string | undefined), picture: !!x.image, pictureUrl: x.imageUrl, page: o.numbers === false ? '' : `${i + 1}/${total}`, template: x.template ?? template ?? 'tile', ...sizeRequest(size) } });
 		}
 	} else if (o.all) {
 		if (template && !occasionNames().includes(template.toLowerCase())) throw new Error('Pass a template or --all, not both (an occasion with --all gives its four looks).');
@@ -232,7 +246,7 @@ async function runImage(positional: string | undefined, flags: Opts, defaultSize
 		for (const group of bySize.values()) designs.push(...(await carouselDesigns(group.map((j) => j.request!), (i) => picsFor(group[i]!.image))));
 	}
 	for (const [i, job] of jobs.entries()) {
-		const d = designs[i] ?? designOf({ ...base, template: job.template, theme: job.theme ?? base.theme, size: job.size });
+		const d = designs[i] ?? designOf({ ...base, template: job.template, theme: job.theme ?? base.theme, ...sizeRequest(job.size) });
 		const pics = await picsFor(job.image ?? (job.request ? undefined : str('image')));
 		const r = await renderDesign(d, pics, { png: formats.includes('png'), svg: formats.includes('svg'), jpg: formats.includes('jpg'), webp: formats.includes('webp'), scale });
 		mustPass(d, r);

@@ -1,5 +1,5 @@
 {
-	"$comment": "Merch print files only (no mockups). Item list, trim sizes, bleed and safe areas are common vendor print areas (the spyglass-ds and context-ds engines use the same conventions; confirm with the vendor template). Layouts are in inches from the trim. Only the approved lockups (logo.json: the octopus and wordmark, the wordmark alone, the octopus alone) and the brand's own patterns (the wordmark tile, the outline band, hatching, the reef) are used. The octopus is full-color art, so it prints only on full-color variants; one-color variants (embroidery, one-ink screen print) carry the wordmark alone. Colors come from the variant, as tokens. Only the words that are passed are printed (sample copy with --sample). Highlighted words are pink on purple and ink, and rose (the pink's dark partner, 5.9:1 on white) elsewhere. A band or a tile prints whole wordmarks only, inside the safe area; the reef, the hatching and a printed ground run into the bleed.",
+	"$comment": "Merch print files only (no mockups). Item list, trim sizes, bleed and safe areas are common vendor print areas (the spyglass-ds and context-ds engines use the same conventions; confirm with the vendor template). Layouts are in inches from the trim. Only the approved lockups (logo.json: the octopus and wordmark, the wordmark alone, the octopus alone) and the brand's own patterns (the wordmark tile, the outline band, hatching, the reef) are used. The octopus is full-color art, so it prints only on full-color variants; one-color variants (embroidery, one-ink screen print) carry the wordmark alone. Colors come from the variant, as tokens. Only the words that are passed are printed (sample copy with --sample). Highlighted words are pink on purple and ink, and rose (the pink's dark partner, 5.9:1 on white) elsewhere. A band or a tile prints whole wordmarks only, inside the safe area; the reef, the hatching and a printed ground run into the bleed. Business cards, letterheads, a report cover, a certificate, an event badge, a name tag and a notebook cover are derived the same way (the brand made none of its own): see each item's source.",
 	"dpi": 300,
 	"variants": {
 		"paper": {
@@ -479,10 +479,656 @@
 					"maxLines": 1
 				}
 			]
+		},
+		{
+			"id": "business-card",
+			"name": "Business card, front",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "Derived: the brand has no business card of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.22,
+						0.22,
+						1.25,
+						0.27
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.22,
+						0.82,
+						2.4,
+						0.3
+					],
+					"size": 0.16,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.22,
+						1.1,
+						2.4,
+						0.2
+					],
+					"size": 0.095,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "email",
+					"box": [
+						0.22,
+						1.42,
+						2.4,
+						0.16
+					],
+					"size": 0.075,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.22,
+						1.6,
+						2.4,
+						0.16
+					],
+					"size": 0.075,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						2.55,
+						1.05,
+						0.8,
+						0.72
+					]
+				}
+			]
+		},
+		{
+			"id": "business-card-back",
+			"name": "Business card, back",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "Derived: the brand has no business card of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						1.45,
+						3.5,
+						0.55
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.85,
+						0.55,
+						1.8,
+						0.5
+					]
+				}
+			]
+		},
+		{
+			"id": "letterhead-letter",
+			"name": "Letterhead, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print",
+			"source": "Derived: the brand has no letterhead of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"color",
+				"one-ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						0.75,
+						0.6,
+						1.9,
+						0.42
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.5,
+						0.72,
+						3.25,
+						0.2
+					],
+					"size": 0.13,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						10.35,
+						8.5,
+						0.65
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						9.95,
+						7,
+						0.2
+					],
+					"size": 0.11,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "letterhead-a4",
+			"name": "Letterhead, A4",
+			"size": [
+				8.27,
+				11.69
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print",
+			"source": "Derived: the brand has no letterhead of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"color",
+				"one-ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						0.75,
+						0.6,
+						1.9,
+						0.42
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.3,
+						0.72,
+						3.22,
+						0.2
+					],
+					"size": 0.13,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						11.04,
+						8.27,
+						0.65
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						10.64,
+						6.8,
+						0.2
+					],
+					"size": 0.11,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "report-cover-letter",
+			"name": "Report cover, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "Derived: the brand has no report cover of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						8.5,
+						4.6
+					],
+					"fade": true
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.75,
+						5.2,
+						2.2,
+						0.48
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						6.2,
+						7,
+						2.4
+					],
+					"size": 0.6,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						0.75,
+						8.75,
+						7,
+						0.8
+					],
+					"size": 0.2,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						0.75,
+						10.1,
+						7,
+						0.22
+					],
+					"size": 0.13,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "certificate-letter",
+			"name": "Certificate, US Letter landscape",
+			"size": [
+				11,
+				8.5
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "Derived: the brand has no certificate of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						4.3,
+						0.8,
+						2.4,
+						0.55
+					]
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1,
+						1.85,
+						9,
+						0.9
+					],
+					"size": 0.45,
+					"align": "center",
+					"maxLines": 2,
+					"highlight": true
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						1,
+						3.15,
+						9,
+						0.9
+					],
+					"size": 0.6,
+					"align": "center",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						1.5,
+						4.25,
+						8,
+						0.9
+					],
+					"size": 0.2,
+					"align": "center",
+					"maxLines": 3
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						1,
+						5.35,
+						9,
+						0.25
+					],
+					"size": 0.14,
+					"align": "center",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "outline",
+					"box": [
+						0.6,
+						6.2,
+						9.8,
+						2.2
+					]
+				}
+			]
+		},
+		{
+			"id": "event-badge",
+			"name": "Event badge, 4 by 3 in",
+			"size": [
+				4,
+				3
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital print",
+			"source": "Derived: the brand has no event badge of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.25,
+						0.3,
+						1.4,
+						0.32
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						2.0,
+						0.3,
+						1.75,
+						0.32
+					],
+					"size": 0.09,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.25,
+						1.05,
+						3.5,
+						0.5
+					],
+					"size": 0.3,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.25,
+						1.6,
+						3.5,
+						0.25
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						2.35,
+						4,
+						0.65
+					]
+				}
+			]
+		},
+		{
+			"id": "name-tag",
+			"name": "Name tag, 3.5 by 2.25 in",
+			"size": [
+				3.5,
+				2.25
+			],
+			"bleed": 0,
+			"safe": 0.125,
+			"method": "adhesive label",
+			"source": "Derived: the brand has no name tag of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.2,
+						0.18,
+						1.2,
+						0.27
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.2,
+						0.75,
+						3.1,
+						0.55
+					],
+					"size": 0.32,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.2,
+						1.38,
+						3.1,
+						0.25
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						1.8,
+						3.5,
+						0.45
+					]
+				}
+			]
+		},
+		{
+			"id": "notebook-cover",
+			"name": "Notebook cover, 5.5 by 8.5 in",
+			"size": [
+				5.5,
+				8.5
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "digital print",
+			"source": "Derived: the brand has no notebook of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						5.5,
+						5.2
+					],
+					"fade": true
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						1.6,
+						5.3,
+						2.3,
+						2.0
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						1.4,
+						7.55,
+						2.7,
+						0.55
+					]
+				}
+			]
 		}
 	],
 	"sample": {
 		"headline": "Give every *AI agent* a way to be reached",
-		"url": "inkbox.ai"
+		"url": "inkbox.ai",
+		"name": "Alex Acme",
+		"role": "Head of operations, Acme",
+		"email": "alex@acme.com",
+		"address": "Acme, 1 Main Street",
+		"date": "November 2026",
+		"body": "A short line about what this is."
 	}
 }

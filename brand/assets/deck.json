@@ -1,5 +1,5 @@
 {
-	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. The words in slots are sample copy, drawn with --sample only.",
+	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. The words in slots are sample copy, drawn with --sample only. Agenda and timeline are the bullets layout with numbers or a rule; questions is the statement layout on lavender. Neither exists in the brand's files as such: they are built from its layouts and tokens.",
 	"width": 1920,
 	"height": 1080,
 	"slides": {
@@ -42,6 +42,26 @@
 				"items": "Its own email address | A phone number for calls and texts | An Agent Card other agents can find | A vault for its keys"
 			}
 		},
+		"agenda": {
+			"name": "Agenda",
+			"description": "A title and up to six numbered points, each led by its number in the mono on a purple dot, between hatched strips, with the lockup (the bullets slide's layout).",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "Agenda",
+				"items": "Why agents need an inbox | What Acme built | Questions"
+			}
+		},
+		"timeline": {
+			"name": "Timeline",
+			"description": "A title and up to six moments on a rule, a dot at each, between hatched strips, with the lockup (the bullets slide's layout). Write each as when, then what.",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "How we got here",
+				"items": "Spring: the first inbox | Summer: phone numbers | Autumn: Agent Cards"
+			}
+		},
 		"stat": {
 			"name": "Stat",
 			"description": "A very large number and a line under it over the outline band, the octopus hanging over the rule (the big number template).",
@@ -71,6 +91,15 @@
 				"title": "The inbox *built for agents*",
 				"body": "Every message, call and Agent Card in one console.",
 				"url": "inkbox.ai"
+			}
+		},
+		"qa": {
+			"name": "Questions",
+			"description": "One line for questions inside the solid purple border, with the lockup and the sitting octopus (the announcement template).",
+			"template": "announce",
+			"theme": "lavender",
+			"slots": {
+				"title": "Questions?"
 			}
 		},
 		"end": {

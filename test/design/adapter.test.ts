@@ -14,13 +14,14 @@ c.getContext('2d').fillRect(0, 0, 1200, 700);
 writeFileSync(shot, c.toBuffer('image/png'));
 
 const ITEMS = 'Its own address | A phone number | An open card';
-const copy = (long: boolean) => (t: { kind: string; copy: { id: string }[] }) =>
+const copy = (long: boolean) => (t: { id: string; kind: string; copy: { id: string }[] }) =>
 	Object.fromEntries(
 		t.copy
 			.filter((x) => x.id !== 'partner' || !long)
 			.map((x) => {
 				const head = long ? 'Everything your agents need to search, buy and reply in one place' : 'Ship your next idea today';
-				const of: Record<string, string> = { headline: head, title: head, quote: head, body: long ? 'A second line that says a little more about it' : 'One line about it', badge: 'New', credit: '@acme', partner: 'Acme', stat: long ? '1,000,000+' : '42%', number: '01', items: ITEMS, url: 'acme.com', attribution: 'Head of operations, Acme' };
+				const of: Record<string, string> = { headline: head, title: head, quote: head, body: long ? 'A second line that says a little more about it' : 'One line about it', badge: 'New', credit: '@acme', partner: 'Acme', stat: long ? '1,000,000+' : '42%', number: '01', items: ITEMS, url: 'acme.com', attribution: 'Head of operations, Acme', data: 'Email 42 | Phone 31 | Cards 27', left: 'Before', right: 'After', 'left-items': 'Shared inboxes | Manual replies', 'right-items': 'An address per agent | Replies in seconds' };
+				if (x.id === 'items' && t.id === 'slide-team') of.items = 'Your name - Founder | A colleague - Engineer';
 				return [x.id, of[x.id] ?? 'One line'];
 			}),
 	);

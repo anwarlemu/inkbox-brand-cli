@@ -8,15 +8,19 @@ import { designOf, designSvg, measureDesign, picturesFor, svgPictures } from './
 import { pick } from './io.js';
 import { drawDesign, type Design, type DrawnLayer, type LayerEdit, type Pictures } from './share.js';
 import { drawFitted, fit } from './text.js';
+import { composePictures, drawCompose, type ComposePictures } from './compose.js';
+import type { DesignDoc } from '../design/index.js';
 import { loadIcons } from './window.js';
 
 // Deck slides at 1920 by 1080 (brand/assets/deck.json). Every slide but bullets is a share-image template drawn at the
 // slide's size with the slide's words, so a deck and a post share their layers; bullets lays out its own points with the
 // filled check circle. PNG per slide, the RGB pixels a PDF page wants, and SVG.
 
-export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'agenda' | 'timeline' | 'stat' | 'quote' | 'image' | 'qa' | 'end';
+export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'agenda' | 'timeline' | 'stat' | 'quote' | 'image' | 'qa' | 'team' | 'comparison' | 'chart' | 'images' | 'end';
 /* The slides that lay out a list of their own; the rest are share templates. */
-export const LISTS: SlideType[] = ['bullets', 'agenda', 'timeline'];
+export const LISTS: SlideType[] = ['bullets', 'agenda', 'timeline', 'team', 'comparison', 'chart', 'images'];
+/* The slides laid out from compose blocks on the slide's grid. */
+export const COMPOSED: SlideType[] = ['team', 'comparison', 'chart', 'images'];
 type SlideDef = { name: string; description: string; template: string; theme: string; slots: Record<string, string> };
 type DeckDoc = { width: number; height: number; slides: Record<SlideType, SlideDef> };
 
@@ -36,14 +40,14 @@ export function deckCatalog() {
 }
 
 /* The words a slide cannot do without. */
-const MAIN: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title' };
+const MAIN: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title', team: 'items', chart: 'data' };
 
 /** The slots a slide type takes, with what it was given (and sample copy for the rest, when asked). Unknown slots throw. */
 export function slotsFor(type: SlideType, given: Record<string, unknown>): Record<string, string> {
 	const def = deckDoc().slides[type].slots;
 	const out: Record<string, string> = given.sample ? { ...def } : {};
 	for (const [k0, v] of Object.entries(given)) {
-		if (['type', 'theme', 'picture', 'image', 'sample', 'seed', 'edits', 'highlight'].includes(k0)) continue;
+		if (['type', 'theme', 'picture', 'image', 'images', 'sample', 'seed', 'edits', 'highlight'].includes(k0)) continue;
 		/* The names the image command uses, as well as the slide's own. */
 		const k = k0 === 'headline' ? ('title' in def ? 'title' : 'quote' in def ? 'quote' : k0) : k0 === 'badge' && 'number' in def ? 'number' : k0;
 		if (!(k in def)) throw new Error(`A ${type} slide does not take "${k}". It takes ${Object.keys(def).map((s) => `"${s}"`).join(', ')}${type === 'image' ? ' and "image"' : ''}.`);
@@ -229,6 +233,70 @@ export function slideOf(slide: Slide): Design {
 	return { ...d, asked, sample: !!slide.sample };
 }
 
+/* Team, comparison, chart and picture-grid slides: compose blocks on the slide's 12 by 12 grid, so they share the posts'
+   parts (cards, lists, the chart in the chart-series colors, the console window) and their checks. */
+async function composedDoc(type: SlideType, slots: Record<string, string>, theme: string, slide: Slide): Promise<{ doc: DesignDoc; pics: ComposePictures }> {
+	const at = (col: number, row: number, cols: number, rows: number) => ({ col, row, cols, rows });
+	const blocks: DesignDoc['blocks'] = [];
+	const copy: Record<string, string> = {};
+	const options: Record<string, string> = {};
+	const images: Record<string, string> = {};
+	const pictures: Record<string, Image | null> = {};
+	const title = slots.title?.trim();
+	const top = title ? 3 : 1;
+	if (title) {
+		blocks.push({ id: 'headline', type: 'headline', at: at(0, 0, 12, 2) });
+		copy['headline.text'] = title;
+	}
+	const items = (v?: string) => (v ?? '').split('|').map((x) => x.trim()).filter(Boolean);
+	if (type === 'team') {
+		const people = items(slots.items);
+		if (people.length > 6) throw new Error(`A team slide holds up to 6 people; it was given ${people.length}. Split it.`);
+		const cols = people.length > 3 ? 3 : people.length;
+		people.forEach((p, i) => {
+			const [name, ...role] = p.split(/\s+-\s+/);
+			const id = `person-${i + 1}`;
+			blocks.push({ id, type: 'card', at: at((i % cols) * (12 / cols), top + Math.floor(i / cols) * 4, 12 / cols, 3) });
+			copy[`${id}.heading`] = name!.trim();
+			if (role.join(' - ').trim()) copy[`${id}.text`] = role.join(' - ').trim();
+		});
+	} else if (type === 'comparison') {
+		for (const [side, col] of [['left', 0], ['right', 6]] as const) {
+			if (slots[side]?.trim()) {
+				blocks.push({ id: side, type: 'body', at: at(col, top, 6, 1) });
+				copy[`${side}.text`] = slots[side]!;
+			}
+			if (slots[`${side}-items`]?.trim()) {
+				blocks.push({ id: `${side}-items`, type: 'list', at: at(col, top + 2, 5, 12 - top - 4) });
+				copy[`${side}-items.items`] = slots[`${side}-items`]!;
+			}
+		}
+	} else if (type === 'chart') {
+		blocks.push({ id: 'chart', type: 'chart', at: at(0, top, 9, 12 - top - 2) });
+		copy['chart.data'] = slots.data ?? '';
+		options['chart.kind'] = slots.kind ? pick('chart kind', slots.kind, ['bar', 'line', 'donut'] as const) : 'bar';
+	} else {
+		const files = (Array.isArray(slide.images) ? (slide.images as unknown[]) : []).filter((f): f is Image => !!f && typeof f === 'object');
+		if (files.length < 2 || files.length > 4) throw new Error(`A picture grid takes 2 to 4 pictures ("images"); it was given ${files.length}.`);
+		files.forEach((im, i) => {
+			const id = `picture-${i + 1}`;
+			const w = 12 / files.length;
+			blocks.push({ id, type: 'window', at: at(i * w, top, w, 12 - top - 2) });
+			images[id] = id;
+			pictures[id] = im;
+		});
+	}
+	blocks.push({ id: 'logo', type: 'logo', at: at(0, 11, 3, 1) });
+	const doc = { version: 1, brand: '', kind: 'image', template: 'compose', size: { id: 'slide', width: deckDoc().width, height: deckDoc().height }, theme, copy, images, options, layers: {}, blocks, history: [], future: [] } as DesignDoc;
+	const base = await composePictures({ ...doc, blocks: [] } as DesignDoc, async () => null);
+	return { doc, pics: { ...base, pictures } };
+}
+
+async function drawComposed(ctx: Ctx, type: SlideType, slots: Record<string, string>, theme: string, slide: Slide, fonts: Fonts, svg = false): Promise<DrawnLayer[]> {
+	const { doc, pics } = await composedDoc(type, slots, theme, slide);
+	return drawCompose(ctx, doc, pics, await loadIcons(), fonts, svg);
+}
+
 /** Draws one slide on a 1920 by 1080 context. */
 export async function drawSlide(ctx: Ctx, slide: Slide, opts: { px?: number; svg?: boolean; pics?: Pictures } = {}): Promise<DrawnLayer[]> {
 	const type = pick('slide type', slide.type, slideTypes());
@@ -239,6 +307,7 @@ export async function drawSlide(ctx: Ctx, slide: Slide, opts: { px?: number; svg
 	const fonts = brandFonts();
 	if (LISTS.includes(type)) {
 		if (slide.edits && Object.keys(slide.edits as object).length) throw new Error('A list slide has no layers to move: change its words, theme or highlight.');
+		if (COMPOSED.includes(type)) return drawComposed(ctx, type, slots, theme, slide, fonts, opts.svg);
 		return drawBullets(ctx, slots, theme, pics, fonts, type as 'bullets');
 	}
 	return drawDesign(ctx, slideOf(slide), pics, await loadIcons(), fonts, opts.px ?? 1, !!opts.svg).layers;

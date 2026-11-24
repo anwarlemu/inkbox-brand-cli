@@ -102,9 +102,10 @@ async function runDeck(positional: string | undefined, o: Opts) {
 		if (!s || typeof s.type !== 'string') throw new Error(`Slide ${i + 1} needs a "type" (${slideTypes().join(', ')}).`);
 		const id = pick('slide type', s.type, slideTypes());
 		const picture = typeof s.image === 'string' && s.image.trim() ? await readPicture(base, s.image) : null;
+		const pictures = Array.isArray(s.images) ? await Promise.all((s.images as unknown[]).map((f) => readPicture(base, String(f)))) : undefined;
 		let r;
 		try {
-			r = await renderSlide({ ...(s as Slide), type: id, picture }, { png: formats.some((f) => f !== 'svg'), svg: formats.includes('svg'), jpg: formats.includes('jpg'), webp: formats.includes('webp') });
+			r = await renderSlide({ ...(s as Slide), type: id, picture, ...(pictures ? { images: pictures } : {}) }, { png: formats.some((f) => f !== 'svg'), svg: formats.includes('svg'), jpg: formats.includes('jpg'), webp: formats.includes('webp') });
 		} catch (err) {
 			throw new Error(`Slide ${i + 1} (${id}): ${(err as Error).message}`);
 		}

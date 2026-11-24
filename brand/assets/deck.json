@@ -102,6 +102,49 @@
 				"title": "Questions?"
 			}
 		},
+		"team": {
+			"name": "Team",
+			"description": "A title and up to six people as cards: a name and a role each, written \"name - role\" with | between (people who agreed to be shown; no photos).",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "The team",
+				"items": "Your name - Founder | A colleague - Engineer"
+			}
+		},
+		"comparison": {
+			"name": "Comparison",
+			"description": "A title and two columns, each a label over points led by the check circle.",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "Before and after",
+				"left": "Before",
+				"left-items": "Shared inboxes | Manual replies",
+				"right": "With an agent inbox",
+				"right-items": "An address per agent | Replies in seconds"
+			}
+		},
+		"chart": {
+			"name": "Chart",
+			"description": "A title and a bar, line or donut chart from \"label value\" rows, in the chart-series colors.",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "Messages by channel",
+				"data": "Email 42 | Phone 31 | Cards 27",
+				"kind": "bar"
+			}
+		},
+		"images": {
+			"name": "Picture grid",
+			"description": "A title and two to four of your captures in console windows (\"images\": a list of files).",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "What it looks like"
+			}
+		},
 		"end": {
 			"name": "End card",
 			"description": "The lockup centered over the staggered wordmark tile inside a line border, a line under it and the address (the lockup template).",

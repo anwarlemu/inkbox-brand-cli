@@ -13,12 +13,12 @@ import { formatsOf } from './image.js';
 // `deck`: slides at 1920 by 1080 from a JSON file or flags, a PNG per slide and one PDF.
 
 type Opts = Record<string, string | boolean | undefined> & { json?: boolean };
-const SLOT_FLAGS = ['title', 'headline', 'body', 'number', 'badge', 'items', 'stat', 'quote', 'attribution', 'url'];
+const SLOT_FLAGS = ['title', 'headline', 'body', 'number', 'badge', 'items', 'stat', 'quote', 'attribution', 'url', 'data', 'kind', 'left', 'right', 'leftItems', 'rightItems'];
 
 export function deckCommand(program: Command) {
 	program
 		.command('deck [slide]')
-		.description('Slides at 1920 by 1080 (cover, section, statement, bullets, stat, quote, image, end): PNG per slide and one PDF')
+		.description('Slides at 1920 by 1080 (cover, section, statement, bullets, agenda, timeline, stat, quote, image, questions, team, comparison, chart, picture grid, end): PNG per slide and one PDF')
 		.option('-i, --input <file>', 'deck.json: { "slides": [ { "type": "cover", "title": "..." }, ... ] }')
 		.option('--slide <type>', 'one slide of this type, from flags')
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep (default: the type\'s)')
@@ -31,6 +31,13 @@ export function deckCommand(program: Command) {
 		.option('--stat <text>', 'stat: the big number')
 		.option('--quote <text>', 'quote: the quote')
 		.option('--attribution <text>', 'quote: who said it (a role and a company, never a made-up person)')
+		.option('--data <rows>', 'chart: "label value" rows separated by |')
+		.option('--kind <kind>', 'chart: bar, line or donut')
+		.option('--left <text>', 'comparison: the left column\'s label')
+		.option('--left-items <text>', 'comparison: the left column\'s points, | between')
+		.option('--right <text>', 'comparison: the right column\'s label')
+		.option('--right-items <text>', 'comparison: the right column\'s points, | between')
+		.option('--images <files>', 'images: two to four captures, comma separated')
 		.option('--url <text>', 'image and end: the address')
 		.option('--image <file>', 'image: your capture in the window (default: the console\'s inbox)')
 		.option('-s, --size <size>', '16:9 (1920 by 1080, the one slide size)')
@@ -87,7 +94,8 @@ async function runDeck(positional: string | undefined, o: Opts) {
 	} else {
 		if (!type) throw new Error(`Pass --input deck.json or a slide type: ${cli()} deck cover (one of ${slideTypes().join(', ')}).`);
 		const one: Record<string, unknown> = { type };
-		for (const k of SLOT_FLAGS) if (typeof o[k] === 'string') one[k] = (o[k] as string).replace(/\\n/g, '\n');
+		for (const k of SLOT_FLAGS) if (typeof o[k] === 'string') one[k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)] = (o[k] as string).replace(/\\n/g, '\n');
+		if (typeof o.images === 'string') one.images = o.images.split(',').map((f) => f.trim()).filter(Boolean);
 		if (typeof o.theme === 'string') one.theme = o.theme;
 		if (typeof o.image === 'string') one.image = o.image;
 		slides = [one];

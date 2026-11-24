@@ -1,3 +1,4 @@
+import { COMPOSE, composeInfo, validateBlocks } from './compose.js';
 import type { Adapter, DesignDoc, DesignState, LayerEdit, TemplateInfo } from './types.js';
 import { PLATFORMS, sizeAlias } from './platforms.js';
 
@@ -12,7 +13,7 @@ export class DesignError extends Error {
 	}
 }
 
-export const STATE_KEYS = ['template', 'size', 'theme', 'copy', 'images', 'seed', 'options', 'layers', 'allow'] as const;
+export const STATE_KEYS = ['template', 'size', 'theme', 'copy', 'images', 'seed', 'options', 'layers', 'allow', 'blocks', 'grid'] as const;
 type StateKey = (typeof STATE_KEYS)[number];
 const DOC_KEYS = ['version', 'brand', 'kind', ...STATE_KEYS, 'history', 'future'] as const;
 const KINDS = ['image', 'slide', 'merch', 'illustration', 'video'];
@@ -58,8 +59,14 @@ export function unknownName(what: string, typed: string, pool: string[]): Design
 const aliasOf = (table: Record<string, string> | undefined, typed: string) => Object.entries(table ?? {}).find(([k]) => k.toLowerCase() === typed.trim().toLowerCase())?.[1];
 const matching = (typed: string, pool: string[]) => pool.find((p) => p.toLowerCase() === typed.trim().toLowerCase()) ?? pool.find((p) => plain(p) !== '' && plain(p) === plain(typed));
 
+/** Every template, with compose when the brand has blocks. */
+export const allTemplates = (adapter: Adapter): TemplateInfo[] => [...adapter.templates(), ...(adapter.compose ? [composeInfo(adapter)] : [])];
+
+/** What a design takes: its template's, or for a compose design, its blocks'. */
+export const infoFor = (adapter: Adapter, s: Pick<DesignState, 'template' | 'blocks'>): TemplateInfo => (s.template === COMPOSE ? composeInfo(adapter, s) : templateOf(adapter, s.template));
+
 export function templateOf(adapter: Adapter, typed: string): TemplateInfo {
-	const all = adapter.templates();
+	const all = allTemplates(adapter);
 	const id = matching(typed, all.map((t) => t.id)) ?? matching(aliasOf(adapter.aliases?.templates, typed) ?? '', all.map((t) => t.id));
 	const hit = all.find((t) => t.id === id) ?? all.find((t) => t.layouts?.some((l) => plain(l) === plain(typed)));
 	if (!hit) throw unknownName('template', typed, all.map((t) => t.id));
@@ -149,10 +156,12 @@ export function tidy(s: DesignState): DesignState {
 		options: sorted(s.options),
 		layers: sorted(layers),
 		...(s.allow?.length ? { allow: [...new Set(s.allow)].sort() } : {}),
+		...(s.blocks ? { blocks: s.blocks.map((b) => ({ id: b.id, type: b.type, at: { col: b.at.col, row: b.at.row, cols: b.at.cols, rows: b.at.rows } })) } : {}),
+		...(s.grid ? { grid: { cols: s.grid.cols, rows: s.grid.rows } } : {}),
 	};
 }
 
-export const stateOf = (d: DesignDoc): DesignState => tidy(structuredClone({ template: d.template, size: d.size, theme: d.theme, copy: d.copy, images: d.images, seed: d.seed, options: d.options, layers: d.layers, allow: d.allow }));
+export const stateOf = (d: DesignDoc): DesignState => tidy(structuredClone({ template: d.template, size: d.size, theme: d.theme, copy: d.copy, images: d.images, seed: d.seed, options: d.options, layers: d.layers, allow: d.allow, blocks: d.blocks, grid: d.grid }));
 
 /** The document as written to disk. */
 export function docText(d: DesignDoc): string {
@@ -192,16 +201,23 @@ export function parseDoc(text: string, adapter: Adapter, name = 'The file'): Des
 		const v = d[k] ?? [];
 		if (!Array.isArray(v) || v.some((h) => !h || typeof h.change !== 'string' || typeof h[want] !== 'object')) throw new DesignError(`${name}: "${k}" is damaged.`);
 	}
+	if (d.blocks !== undefined && (!Array.isArray(d.blocks) || d.template !== COMPOSE)) throw new DesignError(`${name}: "blocks" belong to a compose design, as a list.`);
+	for (const b of (d.blocks as Record<string, unknown>[] | undefined) ?? []) {
+		const extra = Object.keys(b ?? {}).filter((k) => !['id', 'type', 'at'].includes(k));
+		if (extra.length) throw new DesignError(`${name}: a block holds id, type and at; its words are copy ("${String(b.id)}.text"), not "${extra[0]}".`);
+	}
+	if (d.grid !== undefined && (typeof d.grid !== 'object' || d.template !== COMPOSE)) throw new DesignError(`${name}: "grid" belongs to a compose design.`);
 	if (d.allow !== undefined && (!Array.isArray(d.allow) || d.allow.some((a) => typeof a !== 'string'))) throw new DesignError(`${name}: "allow" must be a list of rule names.`);
-	const doc = { ...tidy({ template: String(d.template), size, theme: d.theme as string | undefined, copy: obj('copy'), images: obj('images'), seed: d.seed as number | undefined, options: obj('options'), layers: obj('layers'), allow: d.allow as string[] | undefined }), version: 1, brand: adapter.brand, kind: d.kind, history: d.history ?? [], future: d.future ?? [] } as DesignDoc;
+	const doc = { ...tidy({ template: String(d.template), size, theme: d.theme as string | undefined, copy: obj('copy'), images: obj('images'), seed: d.seed as number | undefined, options: obj('options'), layers: obj('layers'), allow: d.allow as string[] | undefined, blocks: d.blocks as DesignState['blocks'], grid: d.grid as DesignState['grid'] }), version: 1, brand: adapter.brand, kind: d.kind, history: d.history ?? [], future: d.future ?? [] } as DesignDoc;
 	validate(doc, adapter);
 	return doc;
 }
 
 /** Checks every value against what the template takes. Throws the first thing that is not allowed. */
 export function validate(d: DesignDoc, adapter: Adapter): TemplateInfo {
-	const info = adapter.templates().find((t) => t.id === d.template);
-	if (!info) throw unknownName('template', d.template, adapter.templates().map((t) => t.id));
+	if (d.template === COMPOSE) validateBlocks(adapter, d);
+	const info = d.template === COMPOSE ? composeInfo(adapter, d) : allTemplates(adapter).find((t) => t.id === d.template);
+	if (!info) throw unknownName('template', d.template, allTemplates(adapter).map((t) => t.id));
 	if (info.kind !== d.kind) throw new DesignError(`${d.template} is ${article(info.kind)}, not ${article(d.kind)}.`);
 	if (d.size.id !== 'custom' && !info.sizes.includes(d.size.id)) throw new DesignError(`The ${info.id} layout does not come in ${d.size.id}. It comes in ${info.sizes.join(', ')}.`, info.sizes);
 	if (d.size.id === 'custom' && !info.sizes.includes('custom')) throw new DesignError(`The ${info.id} layout does not take a custom size. It comes in ${info.sizes.join(', ')}.`, info.sizes);
@@ -347,5 +363,8 @@ export function differences(a: DesignDoc, b: DesignDoc): string[] {
 	for (const k of ['copy', 'images', 'options'] as const) for (const id of [...new Set([...Object.keys(a[k]), ...Object.keys(b[k])])].sort()) line(`${k}.${id}`, a[k][id], b[k][id]);
 	for (const id of [...new Set([...Object.keys(a.layers), ...Object.keys(b.layers)])].sort()) for (const p of LAYER_KEYS) line(`${id}.${p}`, a.layers[id]?.[p], b.layers[id]?.[p]);
 	line('allow', a.allow, b.allow);
+	line('grid', a.grid, b.grid);
+	for (const id of [...new Set([...(a.blocks ?? []), ...(b.blocks ?? [])].map((x) => x.id))].sort()) line(`block ${id}`, a.blocks?.find((x) => x.id === id), b.blocks?.find((x) => x.id === id));
+	if (JSON.stringify(a.blocks?.map((x) => x.id)) !== JSON.stringify(b.blocks?.map((x) => x.id)) && a.blocks && b.blocks) out.push(`block order: ${a.blocks.map((x) => x.id).join(', ')} -> ${b.blocks.map((x) => x.id).join(', ')}`);
 	return out;
 }

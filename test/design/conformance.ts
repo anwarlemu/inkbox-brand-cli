@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { applyEdits, checkDesign, create, errorsOf, parseDoc, parsePhrases, runDesign, stateOf, type Adapter, type DesignDoc, type DesignIO, type Edit, type Finding, type TemplateInfo } from '../../src/design/index.js';
+import { applyEdits, checkDesign, composeInfo, create, wordsOf, errorsOf, parseDoc, parsePhrases, runDesign, stateOf, type Adapter, type DesignDoc, type DesignIO, type Edit, type Finding, type TemplateInfo } from '../../src/design/index.js';
 
 // What every brand's adapter has to do, run by each repo against its own: `designConformance(adapter, opts)`.
 
@@ -214,6 +214,48 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 						if (/bottom/.test(anchor)) expect(cy, `${t.id} ${l.id} ${anchor}`).toBeGreaterThan(0.5);
 					}
 				}
+			});
+		}
+
+		if (adapter.compose) {
+			it('compose: every block draws on its own at every compose size, and the phrases that add and move it work', { timeout }, async () => {
+				const problems: string[] = [];
+				const sizes = (adapter.compose!.sizes ?? ['og', 'square', 'story']).filter((s) => s !== 'custom').slice(0, 4);
+				for (const b of adapter.compose!.blocks()) for (const size of sizes) {
+					const copy = b.sample ?? Object.fromEntries(b.copy.map((c) => [c.id, c.id === 'number' || c.id === 'value' ? '42%' : 'Ship faster']));
+					const base = create(adapter, 'compose', size, []).doc;
+					const d = applyEdits(base, [{ op: 'block-add', type: b.type, copy }, ...(b.image?.required ? [{ op: 'image', slot: b.type, value: b.image.values?.[0] ?? opts.picture! } as Edit] : [])], adapter).doc;
+					const r = await tryDraw(d);
+					if (!r) continue;
+					if (!r.layers.some((l) => l.id === b.type)) problems.push(`${b.type} ${size}: no layer called ${b.type} was reported`);
+					problems.push(...errorsOf(r.findings).map((f) => `${b.type} ${size}: ${f.rule}: ${f.message}`));
+				}
+				expect(problems.join('\n')).toBe('');
+				const info = composeInfo(adapter);
+				const first = adapter.compose!.blocks()[0]!;
+				const d = applyEdits(create(adapter, 'compose', info.sizes[0], []).doc, parsePhrases(`add a ${first.type}${first.copy.length ? ` "${first.sample?.[first.copy[0]!.id] ?? 'Ship faster'}"` : ''} top left`, { adapter, doc: create(adapter, 'compose', info.sizes[0], []).doc, info }).edits, adapter).doc;
+				expect(d.blocks!.map((x) => x.type)).toEqual([first.type]);
+			});
+			it('compose: every template can be recreated as blocks, whole and clean', { timeout }, async () => {
+				const problems: string[] = [];
+				let made = 0;
+				for (const t of laidOut.filter((x) => x.kind === 'image')) {
+					const copy = (opts.short ?? shortCopy)(t);
+					const r0 = adapter.compose!.recipe?.(t.id, t.sizes[0]!, copy);
+					if (!r0) {
+						problems.push(`${t.id}: no recipe`);
+						continue;
+					}
+					const base = create(adapter, 'compose', t.sizes.includes(composeInfo(adapter).sizes[0]!) ? t.sizes[0] : composeInfo(adapter).sizes[0], []).doc;
+					const d = { ...base, ...r0, theme: r0.theme ?? base.theme } as DesignDoc;
+					const r = await draw(d);
+					made++;
+					problems.push(...errorsOf(r.findings).map((f) => `${t.id}: ${f.rule}: ${f.message}`));
+					const kept = Object.values(d.copy).flatMap(wordsOf);
+					for (const [k, v] of Object.entries(copy)) if (wordsOf(v).some((w) => !kept.includes(w))) problems.push(`${t.id}: the recipe leaves out words of ${k}`);
+				}
+				expect(problems.join('\n')).toBe('');
+				expect(made).toBeGreaterThan(0);
 			});
 		}
 

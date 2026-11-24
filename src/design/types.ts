@@ -37,6 +37,31 @@ export type DesignState = {
 	options: Record<string, OptionValue>;
 	layers: Record<string, LayerEdit>;
 	allow?: string[];                                  // composition rules the person accepted (--allow)
+	blocks?: ComposeBlock[];                           // compose designs: the blocks in drawing order (first is underneath)
+	grid?: { cols: number; rows: number };             // compose designs: the grid (12 by 12 unless set)
+};
+
+/** A block of a compose design: a type the brand draws, at cells of the grid. Its words are copy["<id>.<slot>"], its
+ * picture images["<id>"], its options options["<id>.<option>"]. */
+export type ComposeBlock = { id: string; type: string; at: { col: number; row: number; cols: number; rows: number } };
+
+/** A kind of block the brand draws in compose designs. */
+export type BlockInfo = {
+	type: string; names?: string[]; kind: LayerKind; description: string;
+	copy: { id: string; required?: boolean }[];
+	image?: { required?: boolean; values?: string[] };
+	options?: { id: string; values?: string[]; range?: [number, number] }[];
+	span: { cols: number; rows: number };                // the cells it takes when added without a place
+	place?: Anchor;                                      // where it goes when added without a place
+	under?: boolean;                                     // it may sit under other blocks (a panel, art, a pattern)
+	sample?: Record<string, string>;                     // words that fit it, for tests and --sample
+};
+
+/** A section a page can be built from. */
+export type SectionInfo = {
+	type: string; description: string;
+	copy: { id: string; required?: boolean }[];
+	items?: { count: [number, number]; copy: { id: string; required?: boolean }[] };
 };
 
 export type DesignDoc = DesignState & {
@@ -65,12 +90,30 @@ export type Adapter = {
 	templates(): TemplateInfo[];
 	defaults(template: string, size: string): Pick<DesignDoc, 'size' | 'theme' | 'seed' | 'options'>;
 	/** Draws the document with its layer edits applied inside the real drawing code (text re-wraps, art re-flows).
-	 * Throws an Error saying what to shorten when the words cannot be drawn whole. */
-	render(doc: DesignDoc, dir: string, out: { formats: Format[]; scale: number }): Promise<{ files: Record<string, Uint8Array>; layers: DrawnLayer[] }>;
+	 * Throws an Error saying what to shorten when the words cannot be drawn whole. `notes` say where it did less than an
+	 * edit asked ("the headline grew 12%, the most that fits, not 20%"); they are printed with the change. */
+	render(doc: DesignDoc, dir: string, out: { formats: Format[]; scale: number }): Promise<{ files: Record<string, Uint8Array>; layers: DrawnLayer[]; notes?: string[] }>;
 	/** The words of copy as they are drawn, for comparing: takes out the brand's own markup ("*accent*" marks). */
 	words?(text: string): string;
 	/** Sample copy for a template, only ever used when the person passes --sample. */
 	sample?(template: string): Record<string, string>;
+	/** Open composition: the blocks this brand draws. render() gets template "compose" with doc.blocks; blockRects(doc) gives each
+	 * block's rect, and every block's DrawnLayer has the block's id. */
+	compose?: {
+		blocks(): BlockInfo[];
+		themes: string[];
+		grounds?: Record<string, string>;
+		sizes?: string[];
+		formats?: Format[];
+		/** A template's design as blocks, to show any template can be recreated (conformance). */
+		recipe?(template: string, size: string, copy: Record<string, string>): (Pick<DesignState, 'blocks' | 'copy'> & Partial<Pick<DesignState, 'grid' | 'theme' | 'layers'>>) | undefined;
+	};
+	/** Pages from sections: the outline is checked by the core, then written in each flavor the brand ships. */
+	page?: {
+		sections(): SectionInfo[];
+		flavors: string[];
+		write(outline: { title?: string; sections: { type: string; copy?: Record<string, string>; items?: Record<string, string>[] }[] }, flavor: string): Promise<Record<string, string>>;
+	};
 	/** Every color words may be drawn in or on, as hex. The check refuses any other. */
 	colors?(): string[];
 	/** The brand's own older names, mapped to the shared ids: sizes ("s-4x5": "portrait"), themes, templates, copy slots. */

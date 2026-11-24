@@ -1,4 +1,5 @@
-import { ANCHORS, checkLayer, checkOption, commit, DesignError, layerOf, sameAs, sizeOf, slotOf, stateOf, templateOf, themeOf, tidy, unknownName, validate } from './doc.js';
+import { applyCompose, COMPOSE, composeInfo, type ComposeEdit } from './compose.js';
+import { ANCHORS, checkLayer, checkOption, commit, DesignError, infoFor, layerOf, sameAs, sizeOf, slotOf, stateOf, templateOf, themeOf, tidy, unknownName, validate } from './doc.js';
 import { NEVER_ALLOWED, RULES } from './check.js';
 import type { Adapter, Anchor, DesignDoc, DesignState, LayerEdit, OptionValue, TemplateInfo } from './types.js';
 
@@ -16,7 +17,8 @@ export type Edit =
 	| { op: 'option'; id: string; value: OptionValue | string }
 	| { op: 'layer'; layer: string; set: LayerEdit; by?: boolean }   // by: scale multiplies, dx and dy add to what is there
 	| { op: 'reset'; layer?: string }
-	| { op: 'allow'; rule: string };
+	| { op: 'allow'; rule: string }
+	| ComposeEdit;
 
 /** `touched` names the layers an edit changed, which then have to be drawn. */
 export type Applied = { doc: DesignDoc; changes: string[]; notes: string[]; touched?: string[] };
@@ -30,7 +32,7 @@ export function create(adapter: Adapter, template: string, size: string | undefi
 	const info = templateOf(adapter, template);
 	const id = size ? sizeOf(adapter, info, size) : info.sizes[0]!;
 	const s = opening(adapter, info, id, dims);
-	const blank = { version: 1, brand: adapter.brand, kind: info.kind, ...tidy({ ...s, template: info.id, copy: {}, images: {}, layers: {} }), history: [], future: [] } as DesignDoc;
+	const blank = { version: 1, brand: adapter.brand, kind: info.kind, ...tidy({ ...s, template: info.id, copy: {}, images: {}, layers: {}, ...(info.id === COMPOSE ? { blocks: [] } : {}) }), history: [], future: [] } as DesignDoc;
 	const r = applyEdits(blank, edits, adapter, 'new');
 	return { ...r, doc: { ...r.doc, history: [], future: [] } };
 }
@@ -91,13 +93,19 @@ export function applyEdits(doc: DesignDoc, edits: Edit[], adapter: Adapter, chan
 	const changes: string[] = [];
 	const notes: string[] = [];
 	const touched: string[] = [];
-	const infoOf = () => templateOf(adapter, s.template);
-	const order = (e: Edit) => (e.op === 'template' ? 0 : e.op === 'size' ? 1 : e.op === 'theme' ? 2 : 3);
+	const infoOf = () => infoFor(adapter, s);
+	// The template and size first, blocks before the words that go in them.
+	const order = (e: Edit) => (e.op === 'template' ? 0 : e.op === 'size' ? 1 : e.op === 'theme' ? 2 : e.op === 'grid' || e.op.startsWith('block') ? 3 : 4);
 	for (const e of [...edits].sort((a, b) => order(a) - order(b))) {
 		const info = infoOf();
+		if (e.op === 'grid' || e.op.startsWith('block')) {
+			changes.push(applyCompose(adapter, s, e as ComposeEdit));
+			continue;
+		}
 		switch (e.op) {
 			case 'template': {
 				const next = templateOf(adapter, e.value);
+				if ((next.id === COMPOSE) !== (s.template === COMPOSE)) throw new DesignError(next.id === COMPOSE ? 'A template does not turn into a compose design; start one with `design new compose`.' : 'A compose design does not turn into a template; start one with `design new <template>`.');
 				if (next.kind !== doc.kind) throw new DesignError(`${next.id} makes ${next.kind}s; this design is ${doc.kind === 'image' || doc.kind === 'illustration' ? 'an' : 'a'} ${doc.kind}. Start it with \`design new ${next.id}\`.`);
 				const size = s.size.id === 'custom' && next.sizes.includes('custom') ? 'custom' : next.sizes.includes(s.size.id) ? s.size.id : next.sizes[0]!;
 				if (size !== s.size.id) notes.push(`${next.id} does not come in ${s.size.id}, so it opens at ${size}`);
@@ -106,7 +114,7 @@ export function applyEdits(doc: DesignDoc, edits: Edit[], adapter: Adapter, chan
 				break;
 			}
 			case 'size': {
-				const id = sizeOf(adapter, info, e.value);
+				const id = sizeOf(adapter, info.id === COMPOSE ? composeInfo(adapter) : info, e.value);
 				s = move(s, adapter, info, id, { width: e.width, height: e.height }, notes);
 				changes.push(`size ${s.size.id} ${s.size.width}x${s.size.height}`);
 				break;

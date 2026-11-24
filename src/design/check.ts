@@ -1,3 +1,4 @@
+import { COMPOSE, outsideCells } from './compose.js';
 import { sameAs } from './doc.js';
 import { platformOf, zonePx } from './platforms.js';
 import { decodePng, type Pixels } from './png.js';
@@ -18,6 +19,7 @@ export const RULES: { id: string; says: string; severity: 'error' | 'warning' }[
 	{ id: 'overlap', severity: 'error', says: 'Words, art, pictures and panel edges do not touch.' },
 	{ id: 'safe-area', severity: 'error', says: 'Words, the logo and key art stay clear of what the platform covers or crops.' },
 	{ id: 'cut', severity: 'error', says: 'Nothing is cut off at the edge: it is whole, it fades out, or it is a pattern meant to run off.' },
+	{ id: 'cells', severity: 'error', says: 'In a compose design, each block\'s words stay inside its cells.' },
 	{ id: 'small-text', severity: 'error', says: 'Small text is readable at the width the picture is usually shown at.' },
 	{ id: 'upload-size', severity: 'warning', says: 'The file is under what the platform takes.' },
 ];
@@ -205,6 +207,8 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 			}
 		}
 	}
+
+	if (doc.template === COMPOSE) for (const id of outsideCells(doc, layers)) add('cells', [id], `The ${id}'s words run out of its cells. Give it more cells (make it wider or taller) or fewer words.`);
 
 	if (png && platform.limit && png.byteLength > platform.limit.bytes) add('upload-size', [], `The PNG is ${(png.byteLength / 1048576).toFixed(1)} MB and ${platform.label} takes ${(platform.limit.bytes / 1048576).toFixed(0)} MB${platform.limit.official ? '' : ' (approximate)'}. Use --format jpg or webp.`);
 	return out.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));

@@ -1,4 +1,5 @@
 import { luminance } from './check.js';
+import { composeExamples, composePhrase, isCompose } from './compose.js';
 import { canSay, DesignError, layerOf, nearest, SAME, sameAs, templateOf } from './doc.js';
 import type { Edit } from './ops.js';
 import { PLATFORMS, sizeAlias } from './platforms.js';
@@ -137,6 +138,11 @@ function refusal(part: string, c: PhraseContext, v: Vocabulary): string | undefi
 }
 
 function clause(raw: string, quotes: string[], c: PhraseContext, v: Vocabulary, state: { last?: string[] }): Edit[] | undefined {
+	if (isCompose(c.doc)) {
+		const t0 = raw.toLowerCase().replace(/\b(?:please|the|a|an|my)\b/g, ' ').replace(/[:=]/g, ' ').replace(/\s+/g, ' ').trim();
+		const hit = composePhrase(t0, quotes, c.adapter, c.doc);
+		if (hit) return hit as Edit[];
+	}
 	let t = ` ${raw.toLowerCase()} `;
 	const degree = SMALL.test(t) ? 'small' : LARGE.test(t) ? 'large' : 'normal';
 	SMALL.lastIndex = LARGE.lastIndex = 0;
@@ -381,7 +387,7 @@ function shadeOf(word: string, c: PhraseContext): string {
 
 /** Phrases this design understands, for errors, help and the manifest. */
 export function examples(c: Pick<PhraseContext, 'adapter' | 'info'> & { doc?: DesignDoc }): string[] {
-	const out: string[] = [];
+	const out: string[] = c.info.id === 'compose' ? composeExamples(c.adapter, c.doc) : [];
 	for (const l of c.info.layers) {
 		const n = l.id.replace(/[-_]/g, ' ');
 		if (l.can.scale) out.push(`bigger ${n}`, `${n} a bit smaller`);

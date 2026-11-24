@@ -1,7 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { checkDesign, checkText, errorsOf, NEVER_ALLOWED, RULES } from './check.js';
-import { canSay, DesignError, differences, docText, nearest, parseDoc, redo, sameAs, sizeLabel, sizeOf, stateOf, templateOf, undo, unknownName } from './doc.js';
+import { blockInfo, COMPOSE, parseAt, validateOutline, type ComposeEdit } from './compose.js';
+import { allTemplates, canSay, DesignError, differences, docText, infoFor, nearest, parseDoc, redo, sameAs, sizeLabel, sizeOf, stateOf, templateOf, undo, unknownName } from './doc.js';
 import { applyEdits, create, layerFlag, type Applied, type Edit } from './ops.js';
 import { examples, parsePhrases, variety } from './phrases.js';
 import { PLATFORMS } from './platforms.js';
@@ -28,8 +29,8 @@ export type DesignIO = {
 
 type Args = { _: string[]; flags: Map<string, string[]>; json: boolean };
 
-const BOOLEAN = new Set(['json', 'force', 'help', 'dry-run', 'sample']);
-const FLAGS = ['template', 'size', 'theme', 'width', 'height', 'seed', 'set', 'option', 'image', 'layer', 'hide', 'show', 'reset', 'allow', 'out', 'format', 'scale', 'by', 'count', 'to', 'steps', 'replace', ...BOOLEAN];
+const BOOLEAN = new Set(['json', 'force', 'help', 'dry-run', 'sample', 'front', 'back']);
+const FLAGS = ['template', 'size', 'theme', 'width', 'height', 'seed', 'set', 'option', 'image', 'layer', 'hide', 'show', 'reset', 'allow', 'out', 'format', 'scale', 'by', 'count', 'to', 'steps', 'replace', 'at', 'place', 'id', 'grid', 'flavor', ...BOOLEAN];
 const SHORT: Record<string, string> = { o: 'out', s: 'size', t: 'theme', f: 'format', i: 'image', h: 'help' };
 
 function parseArgs(argv: string[], slots: string[]): Args {
@@ -82,7 +83,7 @@ const pair = (text: string, flag: string): [string, string] => {
 const unescape = (s: string) => s.replace(/\\n/g, '\n');
 
 /** Every copy slot of every template, for flags like --headline. */
-const slotNames = (adapter: Adapter) => [...new Set([...adapter.templates().flatMap((t) => t.copy.map((c) => c.id)), ...Object.keys(adapter.aliases?.copy ?? {}), 'headline', 'title', 'body', 'subtitle', 'badge', 'eyebrow', 'cta'])].filter((n) => !FLAGS.includes(n));
+const slotNames = (adapter: Adapter) => [...new Set([...allTemplates(adapter).flatMap((t) => t.copy.map((c) => c.id)), ...Object.keys(adapter.aliases?.copy ?? {}), 'headline', 'title', 'body', 'subtitle', 'badge', 'eyebrow', 'cta'])].filter((n) => !FLAGS.includes(n));
 
 /** The edits a command's flags ask for, in the order they apply. */
 function editsFrom(a: Args, adapter: Adapter, base: string, cwd: string, info?: TemplateInfo): Edit[] {
@@ -158,12 +159,12 @@ function formatsOf(a: Args, info: TemplateInfo, fallback: Format[] = ['png']): F
 	}))];
 }
 
-type Drawn = { files: Record<string, Uint8Array>; layers: DrawnLayer[]; findings: Finding[] };
+type Drawn = { files: Record<string, Uint8Array>; layers: DrawnLayer[]; findings: Finding[]; notes: string[] };
 async function draw(adapter: Adapter, doc: DesignDoc, dir: string, formats: Format[], scale = 1): Promise<Drawn> {
-	const info = templateOf(adapter, doc.template);
+	const info = infoFor(adapter, doc);
 	const r = await adapter.render(doc, dir, { formats, scale });
 	const findings = checkDesign({ doc, info, layers: r.layers, adapter, png: r.files.png });
-	return { files: r.files, layers: r.layers, findings };
+	return { files: r.files, layers: r.layers, findings, notes: r.notes ?? [] };
 }
 
 /** A failed check: the findings are the message, and nothing was written. */
@@ -180,11 +181,13 @@ function save(path: string, data: Uint8Array | string) {
 
 /** Draws, checks, and only then writes the document and its pictures. */
 async function write(adapter: Adapter, io: DesignIO, a: Args, path: string, r: Applied, command: string) {
-	const info = templateOf(adapter, r.doc.template);
+	const info = infoFor(adapter, r.doc);
 	const d = await draw(adapter, r.doc, dirname(path), formatsOf(a, info));
 	const absent = (r.touched ?? []).filter((id) => !d.layers.some((l) => l.id === id));
 	if (absent.length) throw new DesignError(`There is no ${absent.join(' or ')} in this design to change. It draws ${d.layers.map((l) => l.id).join(', ')}.${absent.some((id) => info.copy.some((c) => c.id === id)) ? ` Add words for it first: --set ${absent[0]}="...".` : ''}`);
 	if (errorsOf(d.findings).length) throw new CheckFailed(d.findings, `${command === 'new' ? 'The design breaks a rule, so nothing was written.' : 'That breaks a rule, so nothing was changed.'}`);
+	// What the drawing did differently from what was asked is said beside the change, never hidden.
+	r = { ...r, notes: [...r.notes, ...d.notes] };
 	const files: string[] = [];
 	if (!a.flags.has('dry-run')) {
 		save(path, docText(r.doc));
@@ -242,7 +245,7 @@ type Command = (a: Args, adapter: Adapter, io: DesignIO) => Promise<number | voi
 const COMMANDS: Record<string, Command> = {
 	async new(a, adapter, io) {
 		const named = a._[0] ?? one(a, 'template');
-		if (!named) throw new DesignError(`Name a template: ${io.bin} design new <${adapter.templates().map((t) => t.id).join('|')}>`);
+		if (!named) throw new DesignError(`Name a template: ${io.bin} design new <${allTemplates(adapter).map((t) => t.id).join('|')}>`);
 		if (a._.length > 1) throw new DesignError(`One template at a time (got ${a._.join(', ')}). Copy goes in flags: --headline "...".`);
 		const info = templateOf(adapter, named);
 		const size = one(a, 'size') ? sizeOf(adapter, info, one(a, 'size')!) : one(a, 'width') ? 'custom' : undefined;
@@ -269,7 +272,7 @@ const COMMANDS: Record<string, Command> = {
 		const { path, doc } = open(adapter, io, a._[0], 'revise');
 		const text = a._.slice(1).join(' ').trim();
 		if (!text) throw new DesignError(`Say what to change: ${io.bin} design revise ${shown(io.cwd, path)} "bigger headline, logo top right"`);
-		const info = templateOf(adapter, doc.template);
+		const info = infoFor(adapter, doc);
 		const now = await adapter.render(doc, dirname(path), { formats: [], scale: 1 });
 		const parsed = parsePhrases(text, { adapter, doc, info, drawn: now.layers });
 		const edits = parsed.edits.map((e) => (e.op === 'image' && e.value !== null ? { ...e, value: imagePath(e.value, dirname(path), io.cwd) } : e));
@@ -281,7 +284,7 @@ const COMMANDS: Record<string, Command> = {
 	async edit(a, adapter, io) {
 		const { path, doc } = open(adapter, io, a._[0], 'edit');
 		if (a._.length > 1) throw new DesignError(`\`design edit\` takes flags (--set headline="..."), not "${a._[1]}". For plain words use \`design revise\`.`);
-		const edits = editsFrom(a, adapter, dirname(path), io.cwd, templateOf(adapter, doc.template));
+		const edits = editsFrom(a, adapter, dirname(path), io.cwd, infoFor(adapter, doc));
 		if (!edits.length) throw new DesignError(`Say what to change: --set headline="..." --theme ... --size ... --layer logo.anchor=top-right --hide badge --seed 5 --template ...`);
 		const r = applyEdits(doc, edits, adapter);
 		if (r.doc === doc) throw new DesignError('The design is already like that, so nothing was changed.');
@@ -311,7 +314,7 @@ const COMMANDS: Record<string, Command> = {
 
 	async show(a, adapter, io) {
 		const { path, doc } = open(adapter, io, a._[0], 'show');
-		const info = templateOf(adapter, doc.template);
+		const info = infoFor(adapter, doc);
 		const d = await draw(adapter, doc, dirname(path), ['png']);
 		const data = { ok: true, file: shown(io.cwd, path), design: summary(doc), layers: d.layers.map(layerOut), takes: takes(info), phrases: examples({ adapter, info, doc }), check: { errors: errorsOf(d.findings).length, findings: d.findings } };
 		report(io, a, data, () => [
@@ -339,7 +342,7 @@ const COMMANDS: Record<string, Command> = {
 
 	async render(a, adapter, io) {
 		const { path, doc } = open(adapter, io, a._[0], 'render');
-		const info = templateOf(adapter, doc.template);
+		const info = infoFor(adapter, doc);
 		const raw = one(a, 'scale');
 		const scale = raw === undefined ? 1 : Number(raw);
 		if (!Number.isFinite(scale) || scale < 0.25 || scale > 4) throw new DesignError(`--scale takes 0.25 to 4, not ${raw}.`);
@@ -362,9 +365,10 @@ const COMMANDS: Record<string, Command> = {
 		const { path, doc } = open(adapter, io, a._[0], 'variants');
 		const by = one(a, 'by') ?? 'theme';
 		if (!['theme', 'seed', 'template'].includes(by)) throw unknownName('way to vary', by, ['theme', 'seed', 'template']);
-		const info = templateOf(adapter, doc.template);
+		const info = infoFor(adapter, doc);
 		const count = whole(a, 'count', 1, 24);
 		const picks: { name: string; edit: Edit }[] = [];
+		if (by === 'template' && doc.template === COMPOSE) throw new DesignError('A compose design has no other templates; vary it by theme or seed.');
 		if (by === 'theme') for (const t of info.themes) picks.push({ name: t, edit: { op: 'theme', value: t } });
 		else if (by === 'template') for (const t of adapter.templates().filter((x) => x.kind === doc.kind)) picks.push({ name: t.id, edit: { op: 'template', value: t.id } });
 		else for (let i = 1; i <= (count ?? 4); i++) picks.push({ name: `seed-${(doc.seed ?? 0) + i}`, edit: { op: 'seed', value: (doc.seed ?? 0) + i } });
@@ -375,7 +379,7 @@ const COMMANDS: Record<string, Command> = {
 
 	async sizes(a, adapter, io) {
 		const { path, doc } = open(adapter, io, a._[0], 'sizes');
-		const info = templateOf(adapter, doc.template);
+		const info = infoFor(adapter, doc);
 		const to = one(a, 'to');
 		if (!to) throw new DesignError(`Say which sizes: --to ${info.sizes.filter((s) => s !== 'custom').slice(0, 4).join(',')} (or --to all).`);
 		const ids = to.trim().toLowerCase() === 'all' ? info.sizes.filter((s) => s !== 'custom') : to.split(',').map((s) => sizeOf(adapter, info, s));
@@ -393,10 +397,81 @@ const COMMANDS: Record<string, Command> = {
 		report(io, a, { ok: true, files: [shown(io.cwd, out)], differences: diff, drawn: moved }, () => [shown(io.cwd, out), ...(diff.length || moved.length ? [...diff, ...moved].map((d) => `  ${d}`) : ['  No differences.'])].join('\n'));
 	},
 
+	async compose(a, adapter, io) {
+		const [sub, file, ...rest] = a._;
+		const SUBS = ['add', 'move', 'remove', 'order', 'span', 'grid'];
+		if (!sub || !SUBS.includes(sub)) throw unknownName('compose command', sub ?? '', SUBS);
+		const { path, doc } = open(adapter, io, file, `compose ${sub}`);
+		if (doc.template !== COMPOSE) throw new DesignError(`${basename(path)} is a ${doc.template} design; blocks go in a compose design (design new compose).`);
+		const where = () => ({ ...(one(a, 'at') ? { at: parseAt(one(a, 'at')!) } : {}), ...(one(a, 'place') ? { place: placeName(one(a, 'place')!) } : {}) });
+		let e: ComposeEdit;
+		if (sub === 'add') {
+			if (!rest[0]) throw new DesignError(`Name a block: ${(adapter.compose?.blocks() ?? []).map((b) => b.type).join(', ')}.`);
+			const info = blockInfo(adapter, rest[0]);
+			const copy: Record<string, string> = {};
+			for (const s of all(a, 'set')) {
+				const [k, v] = pair(s, 'set');
+				copy[k] = unescape(v);
+			}
+			if (rest[1] !== undefined) copy[''] = rest[1];
+			e = { op: 'block-add', type: info.type, ...(one(a, 'id') ? { id: one(a, 'id') } : {}), ...where(), copy };
+		} else if (sub === 'move') e = { op: 'block-move', id: need(rest[0]), ...where() };
+		else if (sub === 'remove') e = { op: 'block-remove', id: need(rest[0]) };
+		else if (sub === 'order') e = { op: 'block-order', id: need(rest[0]), to: a.flags.has('back') ? 'back' : a.flags.has('front') ? 'front' : (rest[1] as 'forward' | 'backward' | undefined) ?? 'front' };
+		else if (sub === 'span') {
+			const [c, r] = (rest[1] ?? '').split(',').map(Number);
+			if (!Number.isInteger(c) || !Number.isInteger(r)) throw new DesignError('span takes the block and cols,rows to add, such as 1,0 or -1,2.');
+			e = { op: 'block-span', id: need(rest[0]), cols: c, rows: r };
+		} else {
+			const [c, r] = (rest[0] ?? one(a, 'grid') ?? '').split(/[x,]/).map(Number);
+			if (!Number.isInteger(c) || !Number.isInteger(r)) throw new DesignError('grid takes cols x rows, such as 12x8.');
+			e = { op: 'grid', cols: c!, rows: r! };
+		}
+		if ((sub === 'move') && !one(a, 'at') && !one(a, 'place')) throw new DesignError('Say where: --place top-right or --at col,row,cols,rows.');
+		const r = applyEdits(doc, [e], adapter, `compose ${sub} ${[...rest].join(' ')}`.trim());
+		await write(adapter, io, a, target(a, io, path), r, `compose ${sub}`);
+	},
+
+	async page(a, adapter, io) {
+		if (a._[0] !== 'compose') throw new DesignError(`Build a page: ${io.bin} design page compose outline.json [--flavor ${adapter.page?.flavors.join('|') ?? 'react'}] [-o dir]`);
+		if (!adapter.page) throw new DesignError('This command line has no sections to build pages from.');
+		const file = a._[1];
+		if (!file) throw new DesignError('Name the outline: design page compose outline.json');
+		let raw: unknown;
+		try {
+			raw = JSON.parse(readFileSync(resolve(io.cwd, file), 'utf8'));
+		} catch (err) {
+			throw new DesignError(`Could not read ${file} as JSON (${(err as Error).message}).`);
+		}
+		const outline = validateOutline(adapter, raw);
+		const flavors = one(a, 'flavor') ? one(a, 'flavor')!.split(',').map((f) => f.trim()) : adapter.page.flavors;
+		for (const f of flavors) if (!adapter.page.flavors.includes(f)) throw unknownName('flavor', f, adapter.page.flavors);
+		const dir = resolve(io.cwd, one(a, 'out') ?? basename(file).replace(/\.json$/i, ''));
+		const files: string[] = [];
+		const out: Record<string, string> = {};
+		for (const f of flavors) for (const [name, text] of Object.entries(await adapter.page.write(outline, f))) out[name] = text;
+		for (const [name, text] of Object.entries(out)) {
+			save(join(dir, name), text);
+			files.push(shown(io.cwd, join(dir, name)));
+		}
+		report(io, a, { ok: true, files, sections: outline.sections.map((s) => s.type) }, () => files.join('\n'));
+	},
+
 	async templates(a, adapter, io) {
 		const m = designManifest(adapter, io.bin);
 		report(io, a, { ok: true, templates: m.templates }, () => m.templates.map((t) => `${t.id.padEnd(14)} ${t.kind.padEnd(12)} ${t.description}\n${' '.repeat(28)}copy: ${t.copy.map((c) => `${c.id}${c.required ? ' (needed)' : ''}`).join(', ') || 'none'}; sizes: ${t.sizes.join(', ')}; themes: ${t.themes.join(', ') || 'one'}`).join('\n'));
 	},
+};
+
+const need = (id: string | undefined) => {
+	if (!id) throw new DesignError('Name the block.');
+	return id;
+};
+const placeName = (p: string) => {
+	const a = p.trim().toLowerCase().replace(/\s+/g, '-').replace('centre', 'center').replace('middle', 'center');
+	const all = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
+	if (!all.includes(a)) throw unknownName('place', p, all);
+	return a as 'center';
 };
 
 const isNow = (p: { edit: Edit }, d: DesignDoc) => (p.edit.op === 'theme' && p.edit.value === d.theme) || (p.edit.op === 'template' && p.edit.value === d.template);
@@ -430,7 +505,7 @@ async function many(a: Args, adapter: Adapter, io: DesignIO, path: string, doc: 
 			}
 			save(file, docText(placed));
 			save(`${base}-${name}.png`, d.files.png!);
-			made.push({ name: p.name, file: shown(io.cwd, file), png: shown(io.cwd, `${base}-${name}.png`), design: summary(placed), notes: r.notes, findings: d.findings });
+			made.push({ name: p.name, file: shown(io.cwd, file), png: shown(io.cwd, `${base}-${name}.png`), design: summary(placed), notes: [...r.notes, ...d.notes], findings: d.findings });
 			sheet.push({ label: `${p.name}${by === 'size' ? ` ${placed.size.width}x${placed.size.height}` : ''}${by !== 'size' && isNow(p, doc) ? ' (as it is)' : ''}`, png: d.files.png! });
 		} catch (err) {
 			blocked.push({ name: p.name, reason: (err as Error).message });
@@ -482,12 +557,15 @@ const SUBCOMMANDS: [string, string][] = [
 	['compare <a> <b> [-o compare.png]', 'Side by side, with what differs'],
 	['render <file> [--format png,svg,jpg,webp,pdf] [--scale 2] [-o out.png]', 'Draw it again in any format'],
 	['check <file>', 'Every brand and layout rule; exit 1 on errors'],
+	['compose add|move|remove|order|span|grid <file> ...', 'Blocks on a grid, for a layout no template has (design new compose first)'],
+	['page compose <outline.json> [--flavor ...] [-o dir]', 'A whole page from the brand\'s sections, in every flavor the library ships'],
 	['templates', 'What a design can start from'],
 ];
 
 /** Help text for `design --help`. */
 export function designHelp(adapter: Adapter, bin: string): string {
 	const first = adapter.templates()[0]!;
+	const blocks = adapter.compose?.blocks().map((b) => b.type) ?? [];
 	return [
 		`${bin} design: make a design, revise it until it is right, and keep it on brand.`,
 		'',
@@ -496,7 +574,8 @@ export function designHelp(adapter: Adapter, bin: string): string {
 		'Every command takes --json. new, revise and edit take --dry-run. --allow <rule> accepts a composition rule for this design',
 		`(${RULES.filter((r) => !NEVER_ALLOWED.has(r.id)).map((r) => r.id).join(', ')}); brand rules (${[...NEVER_ALLOWED].join(', ')}) can never be allowed.`,
 		'',
-		`Templates: ${adapter.templates().map((t) => t.id).join(', ')}`,
+		`Templates: ${allTemplates(adapter).map((t) => t.id).join(', ')}`,
+		...(blocks.length ? [`Blocks for compose: ${blocks.join(', ')}`] : []),
 		`Things you can say to a ${first.id}: ${variety(examples({ adapter, info: first }), 10).join('; ')}.`,
 		'',
 		`  ${bin} design new ${first.id} --${(first.copy.find((c) => c.required) ?? first.copy[0])?.id ?? 'headline'} "Ship faster" -o ${first.id}.design.json`,
@@ -514,7 +593,9 @@ export function designManifest(adapter: Adapter, bin: string) {
 		summary: 'Make a design, revise it in plain words or exact edits, check it, undo it. Works on a small JSON file; every write is checked against the brand and errors change nothing.',
 		commands: SUBCOMMANDS.map(([u, d]) => ({ name: u.split(' ')[0]!, usage: `${bin} design ${u}`, summary: d })),
 		flags: FLAGS,
-		templates: adapter.templates().map((t) => ({ ...t, formats: t.formats ?? ['png', 'svg'], phrases: examples({ adapter, info: t }) })),
+		templates: allTemplates(adapter).map((t) => ({ ...t, formats: t.formats ?? ['png', 'svg'], phrases: examples({ adapter, info: t }) })),
+		...(adapter.compose ? { blocks: adapter.compose.blocks(), grid: { cols: 12, rows: 12, note: 'a block sits at col,row,cols,rows cells; words are copy "<block>.<slot>"' } } : {}),
+		...(adapter.page ? { page: { flavors: adapter.page.flavors, sections: adapter.page.sections(), outline: '{ "title": "...", "sections": [ { "type": "hero", "copy": { ... }, "items": [ { ... } ] } ] }' } } : {}),
 		layerEdits: { anchor: 'a place from can.anchors', dx: 'share of the width, -0.5 to 0.5', dy: 'share of the height, -0.5 to 0.5', scale: 'times the size the layout gives it, within can.scale', align: 'left, center or right', hidden: 'true or false' },
 		rules: RULES.map((r) => ({ ...r, allowable: !NEVER_ALLOWED.has(r.id) })),
 		sizes: PLATFORMS.map((p) => ({ id: p.id, label: p.label, width: p.width, height: p.height, aliases: p.aliases, ...(p.avoid.length || p.safe ? { zones: [...p.avoid, ...(p.safe ? [p.safe] : [])].map((z) => ({ name: z.name, official: z.official, rect: z.rect })) } : {}), ...(p.limit ? { limitBytes: p.limit.bytes } : {}), ...(p.source ? { source: p.source } : {}), ...(p.note ? { note: p.note } : {}) })),

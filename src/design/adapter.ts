@@ -3,8 +3,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { highlightNames, imageDoc, themeNames, themes } from '../assets/brand-art.js';
-import { brandFonts, tokenColor } from '../assets/canvas.js';
-import { deckDoc, LISTS, renderSlide, slideTypes, type Slide, type SlideType } from '../assets/deck.js';
+import { brandFonts, pixelsOf, surface, tokenColor, toJpg, toPng, toSvg, toWebp } from '../assets/canvas.js';
+import { BLOCKS, composePictures, drawCompose, recipeFor } from '../assets/compose.js';
+import { SECTIONS, writePage } from '../assets/page.js';
+import { imagesToPdf } from '../assets/pdf.js';
+import { loadIcons } from '../assets/window.js';
+import { PLATFORMS } from './platforms.js';
+import { COMPOSED, deckDoc, LISTS, renderSlide, slideTypes, type Slide, type SlideType } from '../assets/deck.js';
 import { designOf, imageSizes, measureDesign, picturesFor, readPicture, renderDesign, type ImageRequest, type Rendered } from '../assets/image.js';
 import { illustrateDoc, renderIllustration, subjects } from '../assets/illustrate.js';
 import { findItem, merchDoc, merchItems, PX_PER_IN, renderItem } from '../assets/merch.js';
@@ -61,21 +66,23 @@ function imageInfo(t: Template): TemplateInfo {
 }
 
 const slideId = (t: SlideType) => `slide-${t}`;
+/* The layers a composed slide draws: its blocks and their parts. */
+const COMPOSED_LAYERS = ['headline', 'logo', ...[1, 2, 3, 4, 5, 6].flatMap((n) => [`person-${n}`, `person-${n}-heading`, `person-${n}-text`]), 'left', 'right', 'left-items', 'right-items', 'chart', 'chart-title'].map((id) => ({ id, can: {} }));
 const slideOf = (id: string) => id.replace(/^slide-/, '') as SlideType;
 function slideInfo(t: SlideType): TemplateInfo {
 	const def = deckDoc().slides[t];
-	const need: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title' };
+	const need: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title', team: 'items', chart: 'data' };
 	return {
 		id: slideId(t),
 		kind: 'slide',
 		description: def.description,
 		sizes: ['slide'],
 		themes: themeNames(),
-		copy: Object.keys(def.slots).filter((id) => !(t === 'image' && id === 'url')).map((id) => ({ id, ...(need[t] === id ? { required: true } : {}) })),
+		copy: Object.keys(def.slots).filter((id) => !(t === 'image' && id === 'url') && id !== 'kind').map((id) => ({ id, ...(need[t] === id ? { required: true } : {}) })),
 		images: t === 'image' ? [{ id: 'picture' }] : [],
-		options: LISTS.includes(t) ? [] : [WORD_OPTIONS[0]!],
+		options: t === 'chart' ? [{ id: 'kind', values: ['bar', 'line', 'donut'], description: 'the chart\'s kind' }] : LISTS.includes(t) ? [] : [WORD_OPTIONS[0]!],
 		reflows: REFLOWS,
-		layers: LISTS.includes(t) ? [{ id: 'headline', can: {} }, ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `point-${n}`, can: {} })), { id: 'logo', can: {} }, { id: 'hatch', can: {} }] : layerCans(def.template as Template, slideId(t)),
+		layers: COMPOSED.includes(t) ? COMPOSED_LAYERS : LISTS.includes(t) ? [{ id: 'headline', can: {} }, ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `point-${n}`, can: {} })), { id: 'logo', can: {} }, { id: 'hatch', can: {} }] : layerCans(def.template as Template, slideId(t)),
 		grounds: grounds(),
 		formats: ['png', 'svg', 'jpg', 'webp'],
 		layouts: [t === 'image' ? 'capture slide' : `${t} slide`, ...(['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'qa', 'end'].includes(t) ? [t] : [])],
@@ -141,7 +148,7 @@ function videoInfo(id: string): TemplateInfo {
 }
 
 let infos: TemplateInfo[] | undefined;
-const all = () => (infos ??= [...TEMPLATES.map(imageInfo), ...slideTypes().map(slideInfo), ...merchItems().map((i) => merchInfo(i.id)), ...subjects().map(illustrationInfo), ...videoTemplates().map(videoInfo)]);
+const all = () => (infos ??= [...TEMPLATES.map(imageInfo), ...slideTypes().filter((t) => t !== 'images').map(slideInfo), ...merchItems().map((i) => merchInfo(i.id)), ...subjects().map(illustrationInfo), ...videoTemplates().map(videoInfo)]);
 
 /* ------------------------------------------------------------- requests */
 
@@ -170,7 +177,7 @@ export function requestOf(doc: DesignDoc): ImageRequest {
 	};
 }
 
-const slideRequest = (doc: DesignDoc): Slide => ({ type: slideOf(doc.template), ...doc.copy, theme: doc.theme, ...(doc.seed ? { seed: doc.seed } : {}), ...(doc.options.highlight ? { highlight: String(doc.options.highlight) } : {}), ...(Object.keys(doc.layers).length ? { edits: doc.layers } : {}) });
+const slideRequest = (doc: DesignDoc): Slide => ({ type: slideOf(doc.template), ...doc.copy, theme: doc.theme, ...(doc.seed ? { seed: doc.seed } : {}), ...(doc.options.highlight ? { highlight: String(doc.options.highlight) } : {}), ...(doc.options.kind ? { kind: String(doc.options.kind) } : {}), ...(Object.keys(doc.layers).length ? { edits: doc.layers } : {}) });
 
 function videoRequest(doc: DesignDoc): VideoOptions {
 	const id = doc.template.replace(/^video-/, '');
@@ -197,6 +204,7 @@ async function render(doc: DesignDoc, dir: string, out: { formats: string[]; sca
 	const want = (f: string) => out.formats.includes(f);
 	const wants = { png: want('png'), svg: want('svg'), jpg: want('jpg'), webp: want('webp'), scale: out.scale };
 	const none = !out.formats.length;
+	if (doc.template === 'compose') return renderCompose(doc, dir, out);
 	switch (doc.kind) {
 		case 'image': {
 			const d = designOf(requestOf(doc));
@@ -253,6 +261,11 @@ function wordColors(): string[] {
 }
 
 function defaults(template: string, size: string): Pick<DesignDoc, 'size' | 'theme' | 'seed' | 'options'> {
+	if (template === 'compose') {
+		const own = imageSizes().find((s) => s.id === size);
+		const pf = PLATFORMS.find((p) => p.id === size);
+		return { size: { id: size, width: own?.width ?? pf?.width ?? 1200, height: own?.height ?? pf?.height ?? 800 }, theme: 'paper', seed: undefined, options: {} };
+	}
 	const info = all().find((t) => t.id === template)!;
 	const known = imageSizes().find((s) => s.id === size);
 	const px = known ? { id: size, width: known.width, height: known.height } : { id: size, width: 1200, height: 800 };
@@ -292,6 +305,15 @@ export function adapter(): Adapter {
 			const s = doc.occasions[doc.templateOccasion[template] ?? 'launch']!.sample;
 			return has({ headline: s.headline ?? '', body: s.body ?? '', badge: s.badgeText ?? '', ...(template === 'partner' ? { partner: s.partnerName ?? 'Acme' } : {}) });
 		},
+		compose: {
+			blocks: () => BLOCKS,
+			themes: themeNames(),
+			grounds: grounds(),
+			sizes: [...new Set([...imageSizes().map((s) => s.id), ...PLATFORMS.map((p) => p.id)]), 'custom'],
+			formats: ['png', 'svg', 'jpg', 'webp', 'pdf'],
+			recipe: (template, size, copy) => recipeFor(template, size, copy),
+		},
+		page: { sections: () => SECTIONS, flavors: ['react', 'html'], write: writePage },
 		colors: wordColors,
 		/* A highlight's stars are marks, not words. */
 		words: (text) => text.replace(/\\\*/g, '\u0000').replace(/\*/g, '').replace(/\u0000/g, '*'),
@@ -302,6 +324,37 @@ export function adapter(): Adapter {
 			layers: { octopus: 'art', mascot: 'art', console: 'window', lockup: 'logo', border: 'frame' },
 		},
 	};
+}
+
+async function renderCompose(doc: DesignDoc, dir: string, out: { formats: string[]; scale: number }) {
+	const { width: W, height: H } = doc.size;
+	const pics = await composePictures(doc, (f) => readPicture(dir, f));
+	const icons = await loadIcons();
+	const fonts = brandFonts();
+	const files: Record<string, Uint8Array> = {};
+	let layers: DrawnLayer[] = [];
+	const raster = out.formats.some((f) => f !== 'svg') || !out.formats.length;
+	if (raster) {
+		const s = surface(W, H, { scale: out.scale });
+		layers = drawCompose(s.ctx, doc, pics, icons, fonts);
+		if (out.formats.includes('png')) files.png = toPng(s);
+		if (out.formats.includes('jpg')) files.jpg = toJpg(s);
+		if (out.formats.includes('webp')) files.webp = toWebp(s);
+		if (out.formats.includes('pdf')) {
+			const px = pixelsOf(s);
+			const rgb = Buffer.alloc((px.data.length / 4) * 3);
+			for (let i = 0, j = 0; i < px.data.length; i += 4, j += 3) px.data.copy(rgb, j, i, i + 3);
+			const print = ['a4', 'letter', 'business-card'].includes(doc.size.id);
+			files.pdf = imagesToPdf([{ rgb, width: px.width, height: px.height }], (W / (print ? 300 : 96)) * 72);
+		}
+	}
+	if (out.formats.includes('svg')) {
+		const s = surface(W, H, { svg: true });
+		const l = drawCompose(s.ctx, doc, { ...pics }, icons, fonts, true);
+		if (!raster) layers = l;
+		files.svg = Buffer.from(toSvg(s));
+	}
+	return { files, layers };
 }
 
 /** Contact sheets, on the same canvas with the brand's face. */

@@ -22,7 +22,7 @@ function fake(over: Partial<{ extra: DrawnLayer[]; tamper: (l: DrawnLayer[]) => 
 	return {
 		brand: 'acme',
 		templates: () => [
-			{ id: 'plain', kind: 'image', description: 'A headline and a line.', sizes: ['og', 'square', 'custom'], themes: Object.keys(THEMES), copy: [{ id: 'headline', required: true }, { id: 'body' }, { id: 'badge' }], images: [{ id: 'picture', values: ['none', 'sample:one'] }], options: [{ id: 'density', range: [0, 10] }, { id: 'field', values: ['none', 'rings'] }], layers: Object.entries(CAN).map(([id, can]) => ({ id, can })), grounds: Object.fromEntries(Object.entries(THEMES).map(([k, v]) => [k, v.bg])) },
+			{ id: 'plain', kind: 'image', description: 'A headline and a line.', sizes: ['og', 'square', 'custom'], themes: Object.keys(THEMES), copy: [{ id: 'headline', required: true }, { id: 'body' }, { id: 'badge' }], images: [{ id: 'picture', values: ['none', 'sample:one'] }], options: [{ id: 'density', range: [0, 10] }, { id: 'field', values: ['none', 'rings'] }], layers: Object.entries(CAN).map(([id, can]) => ({ id, can })), reflows: { headline: ['body', 'badge'] }, grounds: Object.fromEntries(Object.entries(THEMES).map(([k, v]) => [k, v.bg])) },
 			{ id: 'bare', kind: 'image', description: 'A headline alone.', sizes: ['og', 'story'], themes: ['Paper', 'Ink'], copy: [{ id: 'headline', required: true }], images: [], options: [], layers: [{ id: 'logo', can: CAN.logo }, { id: 'headline', can: CAN.headline }] },
 			{ id: 'cap', kind: 'merch', description: 'A cap.', sizes: ['og'], themes: ['Ink'], copy: [{ id: 'title' }], images: [], options: [], layers: [] },
 		],
@@ -178,8 +178,9 @@ describe('design phrases', () => {
 		expect(refused('headline: Ship faster')).toMatch(/quotes/);
 	});
 	it('refuses what no brand allows, with the reason', () => {
-		expect(refused('make the headline red')).toMatch(/Colors come only from the brand's themes: Paper, Mid, Ink/);
-		expect(refused('#ff0000 background')).toMatch(/themes/);
+		expect(refused('make the headline red')).toMatch(/Colors outside the brand palette are refused. The palette: #ffffff, #1a1a1a/);
+		expect(refused('make the logo neon green')).toMatch(/Colors outside the brand palette/);
+		expect(refused('#ff0000 background')).toMatch(/palette/);
 		expect(refused('use Comic Sans')).toMatch(/Type comes from the brand/);
 		expect(refused('make the headline bold')).toMatch(/Type comes from the brand/);
 		expect(refused('stretch the logo')).toMatch(/stretched/);
@@ -330,6 +331,16 @@ describe('design check', () => {
 		const a = fake({ tamper: (l) => (l.find((x) => x.id === 'art')!.box = { ...l.find((x) => x.id === 'headline')!.ink![0]! }) });
 		const d = applyEdits(doc(), [{ op: 'allow', rule: 'overlap' }], a).doc;
 		expect(await found(a, d)).toEqual([]);
+	});
+	it('counts large text where the picture is shown', async () => {
+		// 30 px on a 1200 px link preview shown 540 px wide is 13.5 px: small, so it needs 4.5:1. Grey on white is 3.5.
+		const a = fake({ tamper: (l) => Object.assign(l.find((x) => x.id === 'body')!.text!, { size: 30, color: '#888888', ground: ['#ffffff'] }) });
+		const c = (x: Adapter) => found({ ...x, colors: () => ['#888888', '#ffffff', '#1a1a1a', '#4a4a4a', '#101010'] }, doc({ body: 'One line about it' }));
+		expect(await c(a)).toContain('contrast');
+		const big = fake({ tamper: (l) => Object.assign(l.find((x) => x.id === 'body')!.text!, { size: 54, color: '#888888', ground: ['#ffffff'] }) });
+		expect(await c(big)).not.toContain('contrast');
+		const bold = fake({ tamper: (l) => Object.assign(l.find((x) => x.id === 'body')!.text!, { size: 42, color: '#888888', ground: ['#ffffff'], bold: true }) });
+		expect(await c(bold)).not.toContain('contrast');
 	});
 	it('measures contrast as WCAG does', () => {
 		expect(contrast('#000000', '#ffffff')).toBeCloseTo(21);

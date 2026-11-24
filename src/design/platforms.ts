@@ -4,13 +4,18 @@ import type { Rect } from './types.js';
 // the picture, the width it is usually shown at and the largest file it takes. `source` is the platform's own page.
 // Each number is marked official (read on that page) or approximate (measured, or repeated by others where the
 // platform's page cannot be read). Read 2026-11-23.
+//
+// `shown` is the width the picture usually takes on a desktop page, measured in each platform's own web app on 2026-11-23
+// (X's timeline card 516 px and header 600 px, LinkedIn's feed 552 px and cover 792 px, Instagram's feed 468 px, a phone's
+// story 390 px, YouTube's channel page 1280 px and its grid 360 px, an email's 600 px column). All are approximate: the
+// platforms publish none. The small-text floor and the large-text line for contrast both read it.
 
 export type Zone = { name: string; rect: Rect; official: boolean };   // rect in shares of the canvas
 export type Platform = {
 	id: string; label: string; width: number; height: number; aliases: string[];
 	avoid: Zone[];                 // words, the logo and key art stay out of these
 	safe?: Zone;                   // and, when given, inside this
-	shown: number;                 // the width in CSS px it is usually shown at (approximate), for the small-text floor
+	shown: number;                 // the width in CSS px it is usually shown at (approximate), for small and large text
 	limit?: { bytes: number; official: boolean };
 	source?: string;
 	note?: string;

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { highlightNames, imageDoc, themeNames, themes } from '../assets/brand-art.js';
 import { brandFonts, tokenColor } from '../assets/canvas.js';
-import { deckDoc, renderSlide, slideTypes, type Slide, type SlideType } from '../assets/deck.js';
+import { deckDoc, LISTS, renderSlide, slideTypes, type Slide, type SlideType } from '../assets/deck.js';
 import { designOf, imageSizes, measureDesign, picturesFor, readPicture, renderDesign, type ImageRequest, type Rendered } from '../assets/image.js';
 import { illustrateDoc, renderIllustration, subjects } from '../assets/illustrate.js';
 import { findItem, merchDoc, merchItems, PX_PER_IN, renderItem } from '../assets/merch.js';
@@ -36,6 +36,9 @@ const WORD_OPTIONS: TemplateInfo['options'] = [
 	{ id: 'badge-style', values: ['pill', 'solid', 'dot'], description: 'how the badge is drawn' },
 	{ id: 'emphasis', values: bool, description: 'highlight a phrase when the headline has no stars' },
 ];
+/* What may give way when a layer changes: the words re-flow round a moved lockup or octopus, and a bigger headline
+   pushes the words under it and the octopus. */
+const REFLOWS: Record<string, string[]> = { headline: ['badge', 'body', 'credit', 'art', 'window', 'logo', 'partner'], badge: ['headline', 'body', 'credit'], body: ['credit'], logo: ['headline', 'badge', 'body', 'credit', 'partner', 'window', 'art'], art: ['headline', 'badge', 'body', 'credit'], window: ['art'] };
 const CONSOLE: TemplateInfo['options'][number] = { id: 'console', values: ['inbox', 'blank'], description: 'the console in the window: with Acme placeholder mail, or without messages' };
 
 function imageInfo(t: Template): TemplateInfo {
@@ -50,6 +53,7 @@ function imageInfo(t: Template): TemplateInfo {
 		images: windowed ? [{ id: 'picture' }] : [],
 		options: t === 'mark' ? [] : [...WORD_OPTIONS, ...(windowed ? [CONSOLE] : [])],
 		layers: layerCans(t),
+		reflows: REFLOWS,
 		grounds: grounds(),
 		formats: ['png', 'svg', 'jpg', 'webp'],
 		layouts: t === 'mark' ? ['lockup', 'logo'] : t === 'feature' ? ['browser'] : t === 'app' ? ['product', 'console'] : t === 'funding' ? ['number', 'big number'] : t === 'announce' ? ['announcement'] : [],
@@ -60,7 +64,7 @@ const slideId = (t: SlideType) => `slide-${t}`;
 const slideOf = (id: string) => id.replace(/^slide-/, '') as SlideType;
 function slideInfo(t: SlideType): TemplateInfo {
 	const def = deckDoc().slides[t];
-	const need: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', stat: 'stat', quote: 'quote' };
+	const need: Partial<Record<SlideType, string>> = { cover: 'title', section: 'title', statement: 'title', bullets: 'items', agenda: 'items', timeline: 'items', stat: 'stat', quote: 'quote', qa: 'title' };
 	return {
 		id: slideId(t),
 		kind: 'slide',
@@ -69,11 +73,12 @@ function slideInfo(t: SlideType): TemplateInfo {
 		themes: themeNames(),
 		copy: Object.keys(def.slots).filter((id) => !(t === 'image' && id === 'url')).map((id) => ({ id, ...(need[t] === id ? { required: true } : {}) })),
 		images: t === 'image' ? [{ id: 'picture' }] : [],
-		options: t === 'bullets' ? [] : [WORD_OPTIONS[0]!],
-		layers: t === 'bullets' ? [{ id: 'headline', can: {} }, ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `point-${n}`, can: {} })), { id: 'logo', can: {} }, { id: 'hatch', can: {} }] : layerCans(def.template as Template),
+		options: LISTS.includes(t) ? [] : [WORD_OPTIONS[0]!],
+		reflows: REFLOWS,
+		layers: LISTS.includes(t) ? [{ id: 'headline', can: {} }, ...[1, 2, 3, 4, 5, 6].map((n) => ({ id: `point-${n}`, can: {} })), { id: 'logo', can: {} }, { id: 'hatch', can: {} }] : layerCans(def.template as Template, slideId(t)),
 		grounds: grounds(),
 		formats: ['png', 'svg', 'jpg', 'webp'],
-		layouts: [t === 'image' ? 'capture slide' : `${t} slide`, ...(['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'end'].includes(t) ? [t] : [])],
+		layouts: [t === 'image' ? 'capture slide' : `${t} slide`, ...(['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'qa', 'end'].includes(t) ? [t] : [])],
 	};
 }
 
@@ -125,9 +130,9 @@ function videoInfo(id: string): TemplateInfo {
 		description: def.description,
 		sizes: Object.keys(videoDoc().sizes),
 		themes: themeNames(),
-		copy: Object.values(COPY),
+		copy: def.layout === 'mark' ? [COPY.partner] : Object.values(COPY),
 		images: def.layout === 'app' ? [{ id: 'picture' }] : [],
-		options: [...WORD_OPTIONS, { id: 'seconds', range: [2, 20], description: 'length' }, { id: 'fps', range: [12, 60], description: 'frames a second' }, { id: 'reduced-motion', values: bool, description: 'fades only, no movement' }, ...(id === 'reveal' ? [{ id: 'layout', values: TEMPLATES.filter((t) => t !== 'mark'), description: 'the share template it brings in' }] : [])],
+		options: [...(def.layout === 'mark' ? [] : WORD_OPTIONS), { id: 'seconds', range: [2, 20], description: 'length' }, { id: 'fps', range: [12, 60], description: 'frames a second' }, { id: 'reduced-motion', values: bool, description: 'fades only, no movement' }, ...(id === 'reveal' ? [{ id: 'layout', values: TEMPLATES.filter((t) => t !== 'mark'), description: 'the share template it brings in' }] : [])],
 		layers: [],
 		grounds: grounds(),
 		formats: ['png', 'mp4'],

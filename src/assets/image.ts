@@ -117,7 +117,7 @@ export function designOf(req: ImageRequest): Design {
 	}
 	const theme = req.theme ? pick('theme', req.theme, themeNames()) : occ?.looks.find((l) => l.template === template)?.theme ?? occ?.looks[0]?.theme ?? 'paper';
 	const size = req.size ? sizeId(req.size) : 'og';
-	if (size === 'custom' && (!req.width || !req.height)) throw new Error('A custom size needs --width and --height (160 to 4000).');
+	if (size === 'custom' && (!req.width || !req.height)) throw new Error('A custom size needs --width and --height (50 to 4000).');
 	if (size !== 'custom' && (req.width || req.height)) throw new Error(`--width and --height go with --size custom, not ${size}.`);
 	const known = doc.sizes[size];
 	const w = known?.w ?? clampDim(req.width!);
@@ -158,7 +158,7 @@ export function designOf(req: ImageRequest): Design {
 		if (template === 'partner') d.partnerName ||= sample.partnerName ?? 'Acme';
 	}
 	if (b.style) d.badge = b.style;
-	if (d.badge === 'none' && b.text?.trim()) throw new Error('--badge none draws no badge, so it takes no words: leave one of them out.');
+	if (b.style === 'none' && b.text?.trim()) throw new Error('--badge none draws no badge, so it takes no words: leave one of them out.');
 	if (req.highlight) d.highlight = pick('highlight', req.highlight, highlightNames());
 	/* A lockup that was moved, sized or asked for is drawn, where the layout leaves it out too. */
 	if (d.partnerName || (d.edits.logo && !d.edits.logo.hidden)) d.logo = d.logo || !isCircle(size);
@@ -293,7 +293,7 @@ export function imageCatalog() {
 		templates: TEMPLATES.map((id) => ({ id, name: doc.templates[id]!.label, description: doc.templates[id]!.description, window: (layoutFor(id, { size: 'og', w: 1200, h: 630 }).window ?? 'none') !== 'none', words: id !== 'mark' })),
 		occasions: occasionNames().map((id) => ({ id, name: doc.occasions[id]!.label, sample: doc.occasions[id]!.sample, looks: doc.occasions[id]!.looks.map((l) => ({ template: l.template, theme: l.theme, label: l.label })) })),
 		groups: Object.entries(doc.groups).map(([id, g]) => ({ id, label: g.label, sizes: g.sizes })),
-		sizes: [...imageSizes(), { id: 'custom', group: 'post', label: 'Custom', width: 0, height: 0, aliases: [] as string[], note: '--width and --height, 160 to 4000' }],
+		sizes: [...imageSizes(), { id: 'custom', group: 'post', label: 'Custom', width: 0, height: 0, aliases: [] as string[], note: '--width and --height, 50 to 4000' }],
 		safeAreas: PLATFORMS.filter((p) => p.avoid.length || p.safe).map((p) => ({ size: p.id, avoid: p.avoid, safe: p.safe, source: p.source, note: p.note })),
 		themes: Object.entries(doc.themes).map(([id, t]) => ({ id, label: t.label, dark: t.dark, bg: t.bg, ink: t.ink })),
 		highlights: Object.entries(doc.highlights).map(([id, h]) => ({ id, label: h.label, color: h.color || null, on: h.on ?? {} })),

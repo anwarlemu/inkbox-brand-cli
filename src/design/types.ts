@@ -15,8 +15,8 @@ export type DrawnLayer = {
 	fades?: boolean;          // it fades into the ground before it leaves the canvas (checked in the pixels)
 	over?: string[];          // layers it may sit on by design (text on a panel)
 	// asked is the user's copy this layer draws, drawn is what reached the canvas. ground lists every color behind it.
-	// own marks the brand's own words (its address) and numbering; sample marks copy filled in by --sample.
-	text?: { asked: string; drawn: string; size: number; color: string; ground: string[]; sample?: boolean; own?: boolean };
+	// bold: weight 600 or more (large text starts lower). own marks the brand's own words (its address) and numbering; sample marks copy filled in by --sample.
+	text?: { asked: string; drawn: string; size: number; color: string; ground: string[]; bold?: boolean; sample?: boolean; own?: boolean };
 	logo?: { clear: number; min: number };   // clear space in px at this size, minimum height in px (from brand/)
 	can: { move?: boolean; scale?: [number, number]; align?: boolean; hide?: boolean; anchors?: Anchor[] };
 };
@@ -55,6 +55,7 @@ export type TemplateInfo = {
 	layers: { id: string; can: DrawnLayer['can'] }[];
 	grounds?: Record<string, string>;                  // theme -> its ground as hex, so "darker theme" has an answer
 	formats?: Format[];                                // default: png and svg
+	reflows?: Record<string, string[]>;                // layer -> layers that may give way when it changes (art for a bigger headline)
 	layouts?: string[];                                // short names people may call this template by
 };
 

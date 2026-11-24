@@ -34,11 +34,13 @@ const PLACES: [RegExp, Anchor][] = [
 const PLACE = '((?:top|bottom|upper|lower|left|right|center|centre|middle|centered|centred|foot)(?:[ -](?:left|right|center|centre|middle|top|bottom))?)';
 
 // What people ask for that a brand design cannot do, with why.
-const REFUSALS: [RegExp, (c: PhraseContext) => string][] = [
+const COLOR = /#[0-9a-f]{3,8}\b|\b(?:recolou?r|colou?rs?|red|green|blue|yellow|purple|violet|pink|orange|teal|cyan|magenta|brown|gold|silver|gr[ae]y|black|white|beige|navy|lime|rgb|hsl|neon|pastel)\b/;
+const REFUSALS: [RegExp, (c: PhraseContext, t: string) => string][] = [
 	[/\b(?:rotate|rotated|tilt|tilted|stretch|stretched|skew|squash|squish|distort|warp|flip|mirror)\b/, () => 'Nothing in a design is rotated, stretched or distorted.'],
-	[/\b(?:shadow|glow|outline|stroke|bevel|emboss|3d|neon|gradient|blur|glitter|underline|italic)\b/, () => 'Effects are not part of the brand.'],
+	// A color by name or hex, unless it names a theme ("blue theme" is understood before this is read).
+	[COLOR, (c) => `Colors outside the brand palette are refused. The palette: ${c.adapter.colors ? c.adapter.colors().join(', ') : 'the themes'}${c.info.themes.length ? `, in the themes ${c.info.themes.join(', ')}` : ''}.`],
+	[/\b(?:shadow|glow|outline|stroke|bevel|emboss|3d|gradient|blur|glitter|underline|italic)\b/, () => 'Effects are not part of the brand.'],
 	[/\b(?:font|typeface|helvetica|arial|comic sans|times|inter|serif|sans|handwriting|cursive|bold|bolder|thin|thinner|weight|uppercase|all caps)\b/, () => 'Type comes from the brand: its faces, weights and case are fixed.'],
-	[/#[0-9a-f]{3,8}\b|\b(?:recolou?r|colou?rs?|red|green|blue|yellow|purple|violet|pink|orange|teal|cyan|magenta|brown|gold|silver|gr[ae]y|black|white|beige|navy|lime|rgb|hsl)\b/, (c) => `Colors come only from the brand's themes${c.info.themes.length ? `: ${c.info.themes.join(', ')}` : ''}.`],
 ];
 
 type Vocabulary = { layers: Map<string, string>; names: string };
@@ -127,7 +129,7 @@ export function parsePhrases(text: string, c: PhraseContext): { edits: Edit[]; u
 
 function refusal(part: string, c: PhraseContext, v: Vocabulary): string | undefined {
 	const t = part.toLowerCase().replace(/<\d+>/g, ' ');
-	for (const [re, why] of REFUSALS) if (re.test(t)) return why(c);
+	for (const [re, why] of REFUSALS) if (re.test(t)) return why(c, t);
 	// A part this layout does not have.
 	const named = new RegExp(`\\b(${SAME.flat().map(esc).join('|')})\\b`).exec(t)?.[1];
 	if (named && !v.layers.has(named) && !c.info.copy.some((s) => sameAs(named, [s.id])) && !c.info.images.some((s) => sameAs(named, [s.id]))) return `The ${c.info.id} layout has no ${named}${c.info.layers.length ? `. It has ${c.info.layers.map((l) => l.id).join(', ')}` : ''}.`;

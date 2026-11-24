@@ -204,7 +204,8 @@
 		"The line under the headline was the ink at 78 percent: it is the nearest token that reads at 4.5:1, text-secondary on white, icon-secondary on mist and lavender, white on purple, border-default on deep.",
 		"The outline band cut its letters at the canvas's sides and 9.84 units under its foot: the band now fades at both ends and its letters stand on the foot. The wordmark tile draws whole wordmarks only.",
 		"Sizes: the shared ids and pixels (src/design/platforms.ts, with what each platform covers, its upload limit and their sources); li-square is the editor's own. The editor's card (1200 by 675) is landscape, its li-page (1128 by 191) is linkedin-page (1512 by 256, the same shape) and its email header is 1200 by 400.",
-		"The pill on the purple theme is the ink at 20 percent: white words on white at 14 percent over the purple were 3.96:1. The deep theme keeps the white tint."
+		"The pill on the purple theme is the ink at 20 percent: white words on white at 14 percent over the purple were 3.96:1. The deep theme keeps the white tint.",
+		"logoAnchors: where the lockup may be put in each template (and slide), the places where it keeps its clear space from every part at every size; measured by drawing each, not chosen by hand."
 	],
 	"groups": {
 		"share": {
@@ -736,5 +737,128 @@
 			"shadow": "ink"
 		},
 		"source": "The console as the Figma share image draws it (739:75698, Agent Workspace, Inbox): the workspace nav, the mailbox nav, the message list and the open message on a 1040 by 585 grid."
+	},
+	"logoAnchors": {
+		"tile": [
+			"top-left"
+		],
+		"app": [
+			"top-left",
+			"top"
+		],
+		"outline": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right"
+		],
+		"hatch": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right"
+		],
+		"reef": [],
+		"feature": [
+			"top-left"
+		],
+		"partner": [
+			"top-right",
+			"right"
+		],
+		"funding": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right"
+		],
+		"announce": [],
+		"card": [
+			"center",
+			"right",
+			"bottom"
+		],
+		"mark": [
+			"top-left",
+			"top",
+			"top-right",
+			"center",
+			"right"
+		],
+		"slide-cover": [
+			"top-left",
+			"left",
+			"bottom-left"
+		],
+		"slide-section": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right",
+			"bottom-left",
+			"bottom",
+			"bottom-right"
+		],
+		"slide-statement": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right",
+			"bottom-left",
+			"bottom",
+			"bottom-right"
+		],
+		"slide-stat": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right",
+			"bottom-left",
+			"bottom-right"
+		],
+		"slide-quote": [
+			"top-left",
+			"top",
+			"top-right"
+		],
+		"slide-image": [
+			"top-left",
+			"top",
+			"top-right"
+		],
+		"slide-qa": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right",
+			"bottom-left",
+			"bottom",
+			"bottom-right"
+		],
+		"slide-end": [
+			"top-left",
+			"top",
+			"top-right",
+			"left",
+			"center",
+			"right",
+			"bottom-left",
+			"bottom",
+			"bottom-right"
+		]
 	}
 }

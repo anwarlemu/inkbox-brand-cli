@@ -25,6 +25,7 @@ export type ImageDoc = {
 	start: Record<string, string>;
 	occasions: Record<string, OccasionDef>;
 	templateOccasion: Record<string, string>;
+	logoAnchors?: Record<string, string[]>;
 	app: Record<string, unknown> & { colors: Record<string, string>; mails: string[]; source: string };
 };
 

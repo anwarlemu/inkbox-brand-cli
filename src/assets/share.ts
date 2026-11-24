@@ -203,7 +203,7 @@ function layer(ctx: Ctx, name: string, cx: number, cy: number, draw: () => void)
 	ctx.restore();
 }
 
-export const clampDim = (n: number) => Math.round(Math.min(4000, Math.max(160, n || 0)));
+export const clampDim = (n: number) => Math.round(Math.min(4000, Math.max(50, n || 0)));
 
 export function frameOf(d: Pick<Design, 'size' | 'w' | 'h'>) {
 	const s = imageDoc().sizes[d.size];
@@ -481,7 +481,7 @@ export function layoutFor(t: Template, at: At, seed?: number): Partial<Design> {
 				...base,
 				align: beside ? 'left' : 'center',
 				area: box(Math.max(P.l, sw + 30 * u), inset.t ? P.t : F.y + Math.max(44 * u * hk, (big ? (tall ? 110 : 58) : 64) * u * hk), Math.min(P.r, W - sw - 30 * u), b.rule - 14 * u * hk),
-				textSize: (big ? (tall ? 120 : banner ? 76 : wide ? 88 : 96) : banner ? 66 : tall ? 80 : 66) * hk,
+				textSize: (big ? (tall ? 108 : banner ? 76 : wide ? 76 : 86) : banner ? 66 : tall ? 80 : 66) * hk,
 				badge: 'pill',
 				badgeScale: big ? 115 : 100,
 				outline: true,
@@ -1216,7 +1216,7 @@ function drawWords(ctx: Ctx, d: Design, p: Placed, C: Colors, fonts: Fonts, out:
 		});
 		ctx.letterSpacing = '0px';
 		const color = lit && contrast(hi, C.bg) < contrast(C.ink, C.bg) ? hi : C.ink;
-		out.push({ id: 'headline', kind: 'text', box: union(ink), ink, text: { ...said(d, 'headline', plainWords(d.headline), drawn.join(' ')), size, color, ground: [C.bg] }, can: canOf(d, 'headline') });
+		out.push({ id: 'headline', kind: 'text', box: union(ink), ink, text: { ...said(d, 'headline', plainWords(d.headline), drawn.join(' ')), size, color, ground: [C.bg], bold: d.headWeight >= 600 }, can: canOf(d, 'headline') });
 		void headFloor;
 	}
 	const para = (id: 'body' | 'credit', weight: number, leading: number, color: string, asked: string) => {
@@ -1254,14 +1254,15 @@ function said(d: Design, slot: string, want: string, drawn: string) {
 
 type Can = DrawnLayer['can'];
 /** Every layer a template can draw and what may be changed about it, the same list the drawing reports. */
-export function layerCans(t: Template): { id: string; can: Can }[] {
+export function layerCans(t: Template, key: string = t): { id: string; can: Can }[] {
 	const words: { id: string; can: Can }[] = [
 		{ id: 'headline', can: { move: true, scale: [0.6, 1.6], align: true, hide: true, ...(headAnchors(t).length ? { anchors: headAnchors(t) } : {}) } },
 		{ id: 'body', can: { move: true, scale: [0.8, 1.6], hide: true } },
 		{ id: 'badge', can: { move: true, scale: [0.8, 1.6], hide: true } },
 		{ id: 'credit', can: { move: true, scale: [0.8, 1.6], hide: true } },
 	];
-	const logo = { id: 'logo', can: { move: true, scale: [0.7, 2], hide: true, anchors: ANCHORS } as Can };
+	const places = (imageDoc().logoAnchors?.[key] ?? ANCHORS) as NonNullable<Can['anchors']>;
+	const logo = { id: 'logo', can: { move: true, scale: [0.7, 2], hide: true, ...(places.length ? { anchors: places } : {}) } as Can };
 	const art = (anchors?: Can['anchors']) => ({ id: 'art', can: { move: true, scale: [0.5, 1.6], hide: true, ...(anchors ? { anchors } : {}) } as Can });
 	const window = { id: 'window', can: { move: true, scale: [0.7, 1.2], hide: true } as Can };
 	const decor = (...ids: string[]) => ids.map((id) => ({ id, can: { hide: true } as Can }));
@@ -1294,13 +1295,13 @@ export function headAnchors(t: Template): NonNullable<DrawnLayer['can']['anchors
 
 function badgeLayer(d: Design, box: Rect, fs: number, C: Colors): DrawnLayer {
 	const ground = d.badge === 'solid' ? C.ink : d.badge === 'pill' ? over(themes()[d.theme]!.pill, C.bg) : C.bg;
-	return { id: 'badge', kind: 'text', box, text: { ...said(d, 'badge', d.badgeText.replace(/\s+/g, ' ').trim(), d.badgeText.replace(/\s+/g, ' ').trim()), size: fs, color: d.badge === 'solid' ? C.bg : C.ink, ground: [ground] }, can: canOf(d, 'badge') };
+	return { id: 'badge', kind: 'text', box, text: { ...said(d, 'badge', d.badgeText.replace(/\s+/g, ' ').trim(), d.badgeText.replace(/\s+/g, ' ').trim()), size: fs, color: d.badge === 'solid' ? C.bg : C.ink, ground: [ground], bold: d.badgeWeight >= 600 }, can: canOf(d, 'badge') };
 }
 
 /* ------------------------------------------------------------- placing */
 
 /** What a design draws and where: the words in the room they have, the octopus and the lockup beside them. */
-type Resolved = { placed: Placed | null; logo: LogoBox | null; corner: { x: number; y: number; w: number; h: number; fs: number } | null; foot: FootBox | null; page: PageBox | null; stickers: Sticker[]; winTop: number | null; size: number };
+type Resolved = { placed: Placed | null; logo: LogoBox | null; corner: { x: number; y: number; w: number; h: number; fs: number } | null; foot: FootBox | null; page: PageBox | null; stickers: Sticker[]; winTop: number | null; size: number; reefDrop?: number };
 
 const inkOf: Record<string, [number, number, number, number]> = { sit: [0, 0, 1, 0.8055], hang: [0.117, 0.158, 0.742, 0.651] };
 /** The octopus's own box in its picture drawn `w` wide at (x, y). */
@@ -1521,7 +1522,7 @@ export function reefInk(d: Design, reef: Image | Canvas, W: number, H: number): 
 
 export class TooLong extends Error {}
 
-function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): Resolved {
+function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts, depth = 0, base?: number): Resolved {
 	const { W, H, avoid } = frameFor(d);
 	const floors = floorsOf(d);
 	let logo = logoBox(ctx, d, u, fonts);
@@ -1708,7 +1709,8 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		if (scale !== 1) {
 			/* An asked size is kept as asked: the words are set again at it in the room that holds them best, and the octopus
 			   gives way as far as it can. Where nothing holds them, the check says what they run into. */
-			const forced = size * scale;
+			const forced = (base ?? size) * scale;
+			const search = () => {
 			let found: { r: Rect; stickers: Sticker[]; score: number } | null = null;
 			let fallback: { r: Rect; stickers: Sticker[]; over: number } | null = null;
 			for (const k of visible.length ? ladder : [1]) {
@@ -1748,12 +1750,11 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 			}
 			/* Something now stands where the words were (a lockup moved onto them): then they move to the best room left. */
 			let moved: { r: Rect; stickers: Sticker[]; score: number } | null = null;
-			if (!found && !(nearly)) {
+			const enough = (n: typeof nearly) => !!n && (scale > 1 ? n.f >= 1 + (scale - 1) * 0.3 : true);
+			if (!found && !enough(nearly)) {
 				for (const k of visible.length ? ladder : [1]) {
 					const stickers = visible.map((s, i) => (own ? chosen.stickers[i]! : placedSticker(d, s, k, chosen.mirror)));
 					const obstacles = [...fixed, ...stickers.filter((s) => !s.onWindow).map((s) => grow(stickerInk(s, W, H, null), gap))];
-					const home = spotsIn(obstacles).some((x) => fits(lay(size, x.w, size), x) && drift(x, lay(size, x.w, size)) < 0.02);
-					if (home) continue;
 					for (const x of spotsIn(obstacles)) {
 						if (!fits(lay(size, x.w, forced), x)) continue;
 						const score = k * 0.3 + rate(x, size) + drift(x, lay(size, x.w, forced)) * 8;
@@ -1761,7 +1762,17 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 					}
 				}
 			}
-			const use = found ?? (nearly ? nearly : null) ?? moved ?? fallback;
+			return { found, nearly, moved, fallback, enough: !!found || enough(nearly) || !!moved };
+			};
+			let got = search();
+			/* A window under the words follows them down, so a bigger headline may take room from it. */
+			if (!got.enough && scale > 1 && d.winFollow && d.window !== 'none') {
+				area = { ...area, h: area.h + (scale - 1) * block.h * 1.4 };
+				got = search();
+			}
+			if (!got.enough && scale > 1 && d.reef && depth < 2) return resolve(ctx, { ...d, reefDrop: Math.min(0.5, d.reefDrop + 0.18) }, u, pics, fonts, depth + 1, base ?? size);
+			const { found, nearly, moved, fallback } = got;
+			const use = found ?? (nearly && (scale <= 1 || nearly.f >= 1 + (scale - 1) * 0.3) ? nearly : null) ?? moved ?? nearly ?? fallback;
 			if (use) {
 				r = use.r;
 				chosen.stickers = use.stickers;
@@ -1805,7 +1816,7 @@ function resolve(ctx: Ctx, d: Design, u: number, pics: Pictures, fonts: Fonts): 
 		const follow = d.winFollow ? (placed ? Math.max(d.winMinTop * H, placed.y + placed.block.h + n.y + d.winGap * u) : d.winMinTop * H) : d.winY * H;
 		winTop = follow + (edit(d, 'window').dy ?? 0) * H;
 	}
-	return { placed, logo, corner, foot, page, stickers: chosen.stickers, winTop, size };
+	return { placed, logo, corner, foot, page, stickers: chosen.stickers, winTop, size, reefDrop: d.reefDrop };
 }
 
 /* The brand's soft shadow, scaled to a thing `w` wide: the editor's three drop shadows in the ink. */
@@ -2054,7 +2065,7 @@ const bandStops = (g: { addColorStop(o: number, c: string): void }, color: strin
 export function drawDesign(ctx: Ctx, d0: Design, pics: Pictures, icons: Icons, fonts: Fonts, px = 1, svg = false, move?: Motion, phase: Phase = 'all'): Drawn {
 	motion = move;
 	const u = unitOf(d0);
-	const d = yieldToLogo(ctx, d0, u, fonts);
+	let d = yieldToLogo(ctx, d0, u, fonts);
 	const { w: W, h: H } = frameOf(d);
 	const S = Math.min(W, H);
 	const C = colorsOf(d);
@@ -2067,6 +2078,8 @@ export function drawDesign(ctx: Ctx, d0: Design, pics: Pictures, icons: Icons, f
 	ctx.letterSpacing = '0px';
 	/* Everything is placed before anything is drawn, so the patterns leave the words their room. */
 	const at = resolve(ctx, d, u, pics, fonts);
+	/* A bigger headline may have sunk the reef to make room. */
+	if (at.reefDrop !== undefined && at.reefDrop !== d.reefDrop) d = { ...d, reefDrop: at.reefDrop };
 	ctx.restore();
 	ctx.save();
 
@@ -2256,7 +2269,7 @@ export function drawDesign(ctx: Ctx, d0: Design, pics: Pictures, icons: Icons, f
 		const b = at.logo;
 		if (top) layer(ctx, 'lockup', b.x + b.w / 2, b.top + b.h / 2, () => drawLockup(ctx, d, b, C.ink, pics, fonts));
 		layers.push({ id: 'logo', kind: 'logo', box: logoRect(b), over: ['frame', ...(d.pattern === 'full' ? ['pattern'] : [])], logo: { clear: b.clear, min: logoDoc().clear.min * u * Math.min(1, frameFor(d).F.h / (500 * u)) }, can: canOf(d, 'logo') });
-		if (b.partner) layers.push({ id: 'partner', kind: 'text', box: { x: b.x + b.lw + b.gap * 2 + b.times, y: b.top, w: b.pw, h: b.h }, over: ['logo', 'frame', ...(d.pattern === 'full' ? ['pattern'] : [])], text: { ...said(d, 'partner', d.partnerName.trim(), b.partner), size: b.lh * 0.72, color: C.ink, ground: [C.bg] }, can: {} });
+		if (b.partner) layers.push({ id: 'partner', kind: 'text', box: { x: b.x + b.lw + b.gap * 2 + b.times, y: b.top, w: b.pw, h: b.h }, over: ['logo', 'frame', ...(d.pattern === 'full' ? ['pattern'] : [])], text: { ...said(d, 'partner', d.partnerName.trim(), b.partner), size: b.lh * 0.72, color: C.ink, ground: [C.bg], bold: true }, can: {} });
 	}
 
 	/* The badge on its own, its right edge at badgeX and middle at badgeY. */

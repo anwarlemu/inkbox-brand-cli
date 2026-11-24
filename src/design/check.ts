@@ -9,7 +9,7 @@ import type { Adapter, DesignDoc, DrawnLayer, Finding, Rect, TemplateInfo } from
 
 export const RULES: { id: string; says: string; severity: 'error' | 'warning' }[] = [
 	{ id: 'color', severity: 'error', says: 'Words are drawn in and on the brand\'s own colors.' },
-	{ id: 'contrast', severity: 'error', says: 'Words stand out from what is behind them: 4.5 to 1, or 3 to 1 from 24 px up on a 1200 px wide picture.' },
+	{ id: 'contrast', severity: 'error', says: 'Words stand out from what is behind them: 4.5 to 1, or 3 to 1 for large text (24 px, or 18.66 px bold, where the picture is usually shown).' },
 	{ id: 'logo-size', severity: 'error', says: 'The logo is never smaller than its minimum.' },
 	{ id: 'logo-clear', severity: 'error', says: 'Nothing sits inside the logo\'s clear space.' },
 	{ id: 'logo-whole', severity: 'error', says: 'The logo is inside the picture, whole.' },
@@ -25,6 +25,9 @@ export const NEVER_ALLOWED = new Set(['color', 'contrast', 'logo-size', 'logo-cl
 
 /** Small text at the width it is shown at, in CSS px. */
 export const SMALL_FLOOR = 8;
+/** Large text, for contrast: CSS px where the picture is shown (WCAG 2.2, 1.4.3: 18 pt, or 14 pt bold). */
+export const LARGE = 24;
+export const LARGE_BOLD = 18.66;
 
 export type CheckInput = { doc: DesignDoc; info: TemplateInfo; layers: DrawnLayer[]; adapter: Pick<Adapter, 'colors' | 'aliases' | 'words'>; png?: Uint8Array };
 
@@ -115,8 +118,9 @@ export function checkDesign({ doc, layers, adapter, png }: CheckInput): Finding[
 			const off = [t.color, ...t.ground].filter((c) => !brandColors.has(norm(c)));
 			if (off.length) add('color', [l.id], `The ${l.id} uses ${list([...new Set(off)])}, which ${off.length > 1 ? 'are' : 'is'} not brand color${off.length > 1 ? 's' : ''}.`);
 		}
-		const at1200 = (t.size * 1200) / W;
-		const need = at1200 >= 24 ? 3 : 4.5;
+		// Large text by WCAG: 24 px, or 18.66 px bold, at the width the picture is usually shown at.
+		const css = (t.size * platform.shown) / W;
+		const need = css >= LARGE - 0.01 || (t.bold && css >= LARGE_BOLD - 0.01) ? 3 : 4.5;
 		for (const g of new Set(t.ground)) {
 			const c = contrast(t.color, g);
 			if (c < need - 0.005) add('contrast', [l.id], `The ${l.id} is ${t.color} on ${g}, a contrast of ${c.toFixed(2)} (it needs ${need}).`);

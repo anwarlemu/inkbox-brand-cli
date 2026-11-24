@@ -1119,6 +1119,369 @@
 					]
 				}
 			]
+		},
+		{
+			"id": "poster-11x17",
+			"name": "Poster, 11 by 17 in",
+			"size": [
+				11,
+				17
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "A convention, not a vendor's template: a 11 by 17 in poster with 0.125 in bleed and 0.5 in safe margin, the 18 by 24 layout scaled to it. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.611,
+						0.708,
+						2.811,
+						0.708
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.611,
+						2.125,
+						9.778,
+						4.958
+					],
+					"size": 1.406,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0.0,
+						12.325,
+						11.0,
+						4.746
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						3.056,
+						8.146,
+						4.889,
+						4.958
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.889,
+						0.907,
+						5.5,
+						0.425
+					],
+					"size": 0.257,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "poster-24x36",
+			"name": "Poster, 24 by 36 in",
+			"size": [
+				24,
+				36
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "A convention, not a vendor's template: a 24 by 36 in poster with 0.125 in bleed and 0.5 in safe margin, the 18 by 24 layout scaled to it. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						1.333,
+						1.5,
+						6.133,
+						1.5
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1.333,
+						4.5,
+						21.333,
+						10.5
+					],
+					"size": 3.067,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0.0,
+						26.1,
+						24.0,
+						10.05
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						6.667,
+						17.25,
+						10.667,
+						10.5
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						10.667,
+						1.92,
+						12.0,
+						0.9
+					],
+					"size": 0.56,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "sticker-sheet",
+			"name": "Sticker sheet, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0.125,
+			"safe": 0.375,
+			"method": "kiss-cut vinyl sheet",
+			"source": "A convention, not a vendor's template: a letter-size sheet of the brand's stickers; the kiss-cut lines are drawn by the vendor's template round each one. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						0.75,
+						0.75,
+						3.25,
+						2.8
+					]
+				},
+				{
+					"type": "art",
+					"id": "hang",
+					"box": [
+						4.5,
+						0.6,
+						3.25,
+						3.25
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.75,
+						4.4,
+						7,
+						1.5
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.75,
+						6.6,
+						3.4,
+						0.9
+					]
+				},
+				{
+					"type": "logo",
+					"part": "mark",
+					"box": [
+						5.2,
+						6.2,
+						2.2,
+						1.8
+					]
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0.75,
+						8.6,
+						7,
+						1.6
+					]
+				}
+			]
+		},
+		{
+			"id": "lanyard",
+			"name": "Lanyard, 0.75 by 36 in",
+			"size": [
+				36,
+				0.75
+			],
+			"bleed": 0.0625,
+			"safe": 0.1,
+			"method": "dye sublimation",
+			"source": "A convention, not a vendor's template: a 3/4 in lanyard strap printed flat, 36 in long. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"purple",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						1,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						7,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						13,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						19,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						25,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						31,
+						0.17,
+						2.2,
+						0.41
+					]
+				}
+			]
+		},
+		{
+			"id": "socks",
+			"name": "Socks, one side",
+			"size": [
+				4.5,
+				16
+			],
+			"bleed": 0.125,
+			"safe": 0.375,
+			"method": "dye sublimation",
+			"source": "A convention, not a vendor's template: one side of a crew sock printed flat, 4.5 by 16 in, the cuff at the top. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						4.5,
+						9
+					],
+					"fade": true
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.6,
+						10.2,
+						3.3,
+						0.8
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						1.1,
+						12,
+						2.3,
+						2.0
+					]
+				}
+			]
 		}
 	],
 	"sample": {

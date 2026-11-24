@@ -274,7 +274,7 @@ describe('video', () => {
 	}, 60_000);
 
 	it('rejects unknown templates and sizes', () => {
-		expect(videoTemplates()).toEqual(['reveal', 'inbox', 'band', 'announce', 'card', 'logo']);
+		expect(videoTemplates()).toEqual(['reveal', 'inbox', 'band', 'announce', 'card', 'logo', 'stat', 'walkthrough', 'lower-third']);
 		expect(Object.keys(videoDoc().sizes)).toEqual(['square', 'portrait', 'vertical', 'landscape']);
 		const bad = run(['video', 'revel', '--still', '--json']);
 		expect(bad.status).toBe(1);
@@ -427,5 +427,29 @@ describe('icons, email and stationery', () => {
 			const r = await renderSlide({ type, sample: true });
 			expect((await loadImage(r.png!)).width).toBe(1920);
 		}
+	});
+});
+
+describe('motion and print additions', () => {
+	it('counts a figure up to exactly what was passed', async () => {
+		const { countTo } = await import('../src/assets/video.js');
+		expect(countTo('*1,250* agents', 1)).toBe('*1,250* agents');
+		expect(countTo('*1,250* agents', 0)).toBe('*0* agents');
+		expect(countTo('4.5x faster', 0.5)).toBe('2.3x faster');
+	});
+
+	it('draws the lower third over a transparent frame and refuses MP4 for it', async () => {
+		const pics = await picturesFor(null);
+		const png = await stillFrame({ template: 'lower-third', size: 'landscape', width: 1920, height: 1080, seconds: 4, fps: 30, headline: 'Your name', body: 'Your role' }, pics, 4);
+		const im = await loadImage(png);
+		const c = createCanvas(im.width, im.height);
+		c.getContext('2d').drawImage(im, 0, 0);
+		expect(c.getContext('2d').getImageData(10, 10, 1, 1).data[3]).toBe(0);
+		const bad = run(['video', 'lower-third', '--headline', 'Your name', '--format', 'mp4', '--json']);
+		expect(JSON.parse(bad.stdout).error).toMatch(/transparent/);
+	});
+
+	it('has the conventional merch sizes, marked as conventions', () => {
+		for (const id of ['poster-11x17', 'poster-24x36', 'sticker-sheet', 'lanyard', 'socks']) expect(findItem(id).source, id).toMatch(/convention/i);
 	});
 });

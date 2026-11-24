@@ -29,7 +29,7 @@ async function webp(file, id, scale = 0.5) {
 	return { src: `/assets-examples/${id}.webp`, width: w, height: h };
 }
 
-const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [], designs: [], print: [], icons: [], email: [] };
+const examples = { image: [], social: [], deck: [], video: [], merch: [], illustrations: [], designs: [], print: [], icons: [], email: [], compose: [] };
 async function add(group, id, args, pick = (files) => files.find((f) => f.format === 'png'), scale) {
 	const res = cli(args);
 	const f = pick(res.files);
@@ -47,16 +47,16 @@ const SOCIAL = [
 	['changelog', 'landscape', ['--template', 'card', '--theme', 'mist']],
 ];
 for (const [occ, size, extra] of SOCIAL) await add('social', `social-${occ}-${size}`, ['image', '--occasion', occ, '--sample', '--size', size, ...extra, '--format', 'png', '--out', 'social']);
-writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'image', 'qa', 'end'].map((type) => ({ type, sample: true })) }));
+writeFileSync(join(work, 'deck.json'), JSON.stringify({ slides: ['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'image', 'qa', 'team', 'comparison', 'chart', 'end'].map((type) => ({ type, sample: true })) }));
 const slides = cli(['deck', '--input', 'deck.json', '--out', 'deck']).files.filter((f) => f.format === 'png');
 for (const f of slides) examples.deck.push({ id: f.slide, command: `deck ${f.slide} --sample`, ...(await webp(f.path, `deck-${f.slide}`, 0.25)) });
-for (const [t, size] of [['reveal', 'square'], ['inbox', 'landscape'], ['band', 'square'], ['card', 'square'], ['logo', 'square']]) {
-	const res = cli(['video', t, '--sample', '--size', size, '--format', 'mp4', '--out', 'video']);
+for (const [t, size] of [['reveal', 'square'], ['inbox', 'landscape'], ['band', 'square'], ['card', 'square'], ['logo', 'square'], ['stat', 'square']]) {
+	const res = cli(['video', t, ...(t === 'stat' ? ['--headline', '*1,250* agents online'] : ['--sample']), '--size', size, '--format', 'mp4', '--out', 'video']);
 	copyFileSync(join(work, res.files[0].path), join(out, `video-${t}.mp4`));
-	const still = cli(['video', t, '--sample', '--size', size, '--still', '--out', 'video']);
+	const still = cli(['video', t, ...(t === 'stat' ? ['--headline', '*1,250* agents online'] : ['--sample']), '--size', size, '--still', '--out', 'video']);
 	examples.video.push({ id: t, command: `video ${t} --sample --size ${size}`, video: `/assets-examples/video-${t}.mp4`, ...(await webp(still.files[0].path, `video-${t}`, 0.4)) });
 }
-for (const [item, variant] of [['tee-front', 'color'], ['tee-back', 'color'], ['hoodie-front', 'one-ink'], ['cap-front', 'one-purple'], ['tote', 'color'], ['mug-wrap', 'lavender'], ['sticker', 'paper'], ['poster', 'paper']])
+for (const [item, variant] of [['sticker-sheet', 'paper'], ['socks', 'lavender'], ['tee-front', 'color'], ['tee-back', 'color'], ['hoodie-front', 'one-ink'], ['cap-front', 'one-purple'], ['tote', 'color'], ['mug-wrap', 'lavender'], ['sticker', 'paper'], ['poster', 'paper']])
 	await add('merch', `merch-${item}`, ['merch', item, '--variant', variant, ...(['tee-back', 'poster'].includes(item) ? ['--sample'] : []), '--dpi', '72', '--format', 'png', '--out', 'merch'], undefined, 1);
 for (const [s, extra] of [['octopus', []], ['octopus', ['--pose', 'hang', '--theme', 'purple']], ['reef', []], ['window', []], ['tile', []], ['pattern', []], ['outline', []], ['hatch', []]])
 	await add('illustrations', `illustration-${s}${extra.length ? '-hang' : ''}`, ['illustrate', s, ...extra, '--format', 'png', '--out', `ill-${extra.length}`]);
@@ -105,6 +105,16 @@ for (const [kind, args] of mails) {
 	examples.email.push({ id: kind, command: `email ${kind} ${args.map((a) => (a.startsWith('--') ? a : `"${a}"`)).join(' ')}`, src: `/assets-examples/email/${kind}.html`, width: 600, height: 400 });
 }
 copyFileSync(join(work, 'email', 'logo.png'), join(out, 'email', 'logo.png'));
+// Compose: designs built from blocks on the grid, as the docs' Designs page shows them.
+const composeRuns = [
+	['flow', [['new', 'compose', '--size', 'og', '-o', 'flow.design.json'], ['compose', 'add', 'flow.design.json', 'headline', 'How a message *reaches an agent*', '--place', 'top-left'], ['compose', 'add', 'flow.design.json', 'flow', '--set', 'steps=Message in | Agent reads | Agent replies | Person sees it', '--at', '0,5,12,3'], ['compose', 'add', 'flow.design.json', 'logo', '--place', 'bottom-left']]],
+	['chart', [['new', 'compose', '--size', 'square', '-o', 'chart.design.json'], ['compose', 'add', 'chart.design.json', 'headline', 'Where agents *get messages*', '--at', '0,0,12,2'], ['compose', 'add', 'chart.design.json', 'chart', '--set', 'data=Email 42 | Phone 31 | Cards 27', '--set', 'title=Messages by channel', '--at', '0,3,12,6'], ['compose', 'add', 'chart.design.json', 'art', '--at', '8,9,4,3'], ['compose', 'add', 'chart.design.json', 'logo', '--at', '0,11,4,1']]],
+];
+mkdirSync(join(work, 'compose'), { recursive: true });
+for (const [name, runs] of composeRuns) {
+	for (const args of runs) execFileSync(process.execPath, [bin, 'design', ...args], { cwd: join(work, 'compose'), encoding: 'utf8' });
+	examples.compose.push({ id: `compose-${name}`, command: runs.map((a) => `design ${a.map((x) => (/\s/.test(x) ? `"${x}"` : x)).join(' ')}`).join('\n'), ...(await webp(`compose/${name}.png`, `compose-${name}`, 0.5)) });
+}
 writeFileSync(join(out, 'examples.json'), `${JSON.stringify(examples, null, '\t')}\n`);
 rmSync(work, { recursive: true, force: true });
 console.log(`assets examples: ${Object.values(examples).flat().length} pictures in ${out}`);

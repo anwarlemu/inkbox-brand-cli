@@ -1,5 +1,5 @@
 {
-	"$comment": "Short motion pieces built from the share images (brand/assets/image.json): the same design, its layers coming in the way the console moves (tokens.css: one strong ease-out, --ds-easing-out, for every entrance, never ease-in; nothing appears from nothing). Video is explanatory, so an entrance runs longer than a UI transition (420 ms here, against the console's 120 to 160 ms), and the layers stagger 80 ms apart. Every piece ends on the finished design, so its last frame is the still image. The outline band slides at a constant speed (linear, as constant motion should) and loops; the inbox's messages arrive one after another. The editor and the brand's site have no motion of their own to copy, so these are the share images' layers with the console's motion rules.",
+	"$comment": "Short motion pieces built from the share images (brand/assets/image.json): the same design, its layers coming in the way the console moves (tokens.css: one strong ease-out, --ds-easing-out, for every entrance, never ease-in; nothing appears from nothing). Video is explanatory, so an entrance runs longer than a UI transition (420 ms here, against the console's 120 to 160 ms), and the layers stagger 80 ms apart. Every piece ends on the finished design, so its last frame is the still image. The outline band slides at a constant speed (linear, as constant motion should) and loops; the inbox's messages arrive one after another. The editor and the brand's site have no motion of their own to copy, so these are the share images' layers with the console's motion rules. The animated stat counts each figure up on the same ease-out; the walkthrough fades each capture in over 0.5 s; the lower third slides 40 px and fades in over about 0.6 s. Their panel is the library's white card (white, ink, text-secondary).",
 	"fps": 30,
 	"enter": {
 		"seconds": 0.42,
@@ -96,6 +96,33 @@
 				"lockup",
 				"sticker:*"
 			]
+		},
+		"stat": {
+			"name": "Animated stat",
+			"description": "The big-number layout: the figure in the headline counts up from zero on the ease-out, then holds; the last frame says exactly what was passed.",
+			"layout": "funding",
+			"theme": "paper",
+			"seconds": 4,
+			"counter": {
+				"seconds": 1.6
+			}
+		},
+		"walkthrough": {
+			"name": "Walkthrough",
+			"description": "Your captures (--image a.png,b.png,...) in the browser window one after another, each fading in over the last.",
+			"layout": "feature",
+			"theme": "paper",
+			"seconds": 8,
+			"walk": true
+		},
+		"lower-third": {
+			"name": "Lower third",
+			"description": "A name (--headline) and a role (--body) on a white panel with the octopus, sliding in over a transparent frame, for laying over footage: WebM with alpha or PNG frames.",
+			"layout": "card",
+			"theme": "paper",
+			"seconds": 4,
+			"lowerThird": true,
+			"transparent": true
 		}
 	}
 }

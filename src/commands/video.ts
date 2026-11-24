@@ -2,7 +2,7 @@ import { join, resolve } from 'node:path';
 import type { Command } from 'commander';
 import { picturesFor, readPicture } from '../assets/image.js';
 import { display, num, pick, write, type OutFile } from '../assets/io.js';
-import { encode, hasFfmpeg, stillFrame, videoCatalog, videoDoc, videoFrames, videoTemplates, type VideoOptions } from '../assets/video.js';
+import { encode, hasFfmpeg, shotsOf, stillFrame, videoCatalog, videoDoc, videoFrames, videoTemplates, type VideoOptions } from '../assets/video.js';
 import { cli } from '../lib/brand.js';
 import { helpRow } from '../lib/help-row.js';
 import { emit } from '../lib/output.js';
@@ -15,7 +15,7 @@ type Opts = Record<string, string | boolean | undefined> & { json?: boolean };
 export function videoCommand(program: Command) {
 	program
 		.command('video [template]')
-		.description('Motion pieces (reveal, inbox, band, announce, card, logo) at square, portrait, vertical and landscape: MP4 and WebM through ffmpeg, else PNG frames')
+		.description('Motion pieces (reveal, inbox, band, announce, card, logo, stat, walkthrough, lower-third) at square, portrait, vertical and landscape: MP4 and WebM through ffmpeg, else PNG frames')
 		.option('-s, --size <size>', 'square (default), portrait, vertical (also story, 9:16) or landscape (also 16:9)')
 		.option('--layout <template>', 'reveal: the share template to bring in (tile, reef, hatch, partner, ...)')
 		.option('--theme <name>', 'paper, mist, mono, lavender, purple or deep')
@@ -30,7 +30,7 @@ export function videoCommand(program: Command) {
 		.option('--highlight <name>', 'pink, lilac, violet or ink')
 		.option('--sample', 'fill the words you did not pass with sample copy')
 		.option('--seed <n>', 'a variation of the layout')
-		.option('--image <file>', 'inbox: your capture in the window instead of the console')
+		.option('--image <files>', 'inbox: your capture in the window; walkthrough: two or more, comma separated')
 		.option('--seconds <n>', 'length, 2 to 20 (default: the template\'s)')
 		.option('--fps <n>', '12 to 60 (default 30)')
 		.option('--reduced-motion', 'fades only, no movement')
@@ -100,15 +100,21 @@ async function runVideo(positional: string | undefined, o: Opts) {
 		highlight: typeof o.highlight === 'string' ? o.highlight : undefined,
 		sample: !!o.sample,
 		seed: num('seed', o.seed, 1, 1_000_000_000, { integer: true }),
-		picture: typeof o.image === 'string',
+		picture: typeof o.image === 'string' || !!def.walk,
 	};
-	const pics = await picturesFor(typeof o.image === 'string' ? await readPicture(cwd, o.image) : null);
+	const files0 = typeof o.image === 'string' ? o.image.split(',').map((f) => f.trim()).filter(Boolean) : [];
+	if (files0.length > 1 && !def.walk) throw new Error(`Several pictures go with the walkthrough template; ${id} takes one.`);
+	if (def.walk && files0.length < 2) throw new Error('A walkthrough takes two or more captures: --image a.png,b.png');
+	if (def.transparent && (format === 'mp4' || format === 'gif')) throw new Error(`The ${id} is drawn over a transparent frame, which ${format.toUpperCase()} cannot hold: use --format webm or frames.`);
+	const captures = await Promise.all(files0.map((f) => readPicture(cwd, f)));
+	const pics = await picturesFor(captures[0] ?? null);
+	const shots = def.walk ? shotsOf(pics, captures) : [];
 	const name = `${id}${opts.layout ? `-${opts.layout}` : ''}-${sizeId}`;
 	const files: OutFile[] = [];
 	if (o.still !== undefined) {
 		const at = o.still === true ? seconds : num('still', o.still, 0, seconds)!;
 		const file = typeof o.out === 'string' && /\.png$/i.test(o.out) ? resolve(cwd, o.out) : join(resolve(cwd, typeof o.out === 'string' ? o.out : 'video'), `${name}-${String(at).replace('.', '_')}s.png`);
-		write(file, await stillFrame(opts, pics, at));
+		write(file, await stillFrame(opts, pics, at, shots));
 		files.push({ path: display(cwd, file), format: 'png', template: id, at, width, height });
 		emit(o, { files }, () => files.map((f) => `${f.path}  ${f.width}x${f.height}, at ${f.at} s`).join('\n'));
 		return;
@@ -116,7 +122,7 @@ async function runVideo(positional: string | undefined, o: Opts) {
 	const dir = resolve(cwd, typeof o.out === 'string' ? o.out : 'video');
 	if (format === 'frames') {
 		let n = 0;
-		for await (const f of videoFrames(opts, pics)) {
+		for await (const f of videoFrames(opts, pics, shots)) {
 			write(join(dir, name, `frame-${String(f.index).padStart(5, '0')}.png`), f.png());
 			n++;
 		}
@@ -124,9 +130,9 @@ async function runVideo(positional: string | undefined, o: Opts) {
 	} else {
 		const outputs = (format === 'all' ? (['mp4', 'webm'] as const) : [format]).map((f) => ({ path: join(dir, `${name}.${f}`), format: f as 'mp4' | 'webm' | 'gif' }));
 		async function* rgba() {
-			for await (const f of videoFrames(opts, pics)) yield f.rgba;
+			for await (const f of videoFrames(opts, pics, shots)) yield f.rgba;
 		}
-		await encode(rgba(), { width, height, fps, outputs });
+		await encode(rgba(), { width, height, fps, outputs: def.transparent ? outputs.filter((x) => x.format === 'webm') : outputs, alpha: !!def.transparent });
 		for (const out of outputs) files.push({ path: display(cwd, out.path), format: out.format, template: id, seconds, fps, width, height });
 	}
 	emit(o, { files }, () => files.map((f) => `${f.path}  ${f.width}x${f.height}${f.format === 'frames' ? `, ${f.frames} frames` : `, ${f.seconds} s at ${f.fps} fps`}`).join('\n'));

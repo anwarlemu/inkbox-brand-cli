@@ -40,6 +40,7 @@ export const BLOCKS: BlockInfo[] = [
 	{ type: 'button', names: ['cta'], kind: 'text', description: 'The purple pill button.', copy: [{ id: 'text', required: true }], span: { cols: 3, rows: 1 }, place: 'bottom-left', sample: { text: 'Get started' } },
 	{ type: 'search', names: ['search-bar', 'input', 'field'], kind: 'text', description: 'A 40 px field with its lilac-gray edge and the magnifier.', copy: [{ id: 'text', required: true }], span: { cols: 8, rows: 1 }, place: 'center', sample: { text: 'Search messages' } },
 	{ type: 'chart', names: ['graph'], kind: 'text', description: 'A bar, line or donut chart from "label value | label value", in the chart-series colors.', copy: [{ id: 'data', required: true }, { id: 'title' }], options: [{ id: 'kind', values: ['bar', 'line', 'donut'] }], sample: { data: 'Email 42 | Phone 31 | Cards 27', title: 'Messages by channel' }, span: { cols: 6, rows: 6 } },
+	{ type: 'flow', names: ['diagram', 'steps', 'process', 'architecture'], kind: 'text', description: 'Steps in boxes joined by arrows, from "step | step | step": across in wide cells, down in tall ones (built from the card\'s edge and the line color).', copy: [{ id: 'steps', required: true }], sample: { steps: 'Message in | Agent reads | Agent replies' }, span: { cols: 12, rows: 3 } },
 	{ type: 'divider', names: ['rule', 'line'], kind: 'art', description: 'A hairline in the theme\'s line color.', copy: [], span: { cols: 12, rows: 1 }, place: 'center' },
 	{ type: 'icon', names: ['glyph'], kind: 'key', description: 'One of the console\'s Phosphor glyphs (MIT), by name.', copy: [], options: [{ id: 'name', values: glyphNames() }], span: { cols: 1, rows: 1 } },
 ];
@@ -592,6 +593,66 @@ export function drawCompose(ctx: Ctx, doc: DesignDoc, pics: ComposePictures, ico
 					});
 				}
 				layers.push({ id, kind: 'text', box: union(ink), ink, text: { asked: data.map((x) => `${x.label} ${x.value}`).join(' '), drawn: drawn.join(' '), size: fs, color: t.ink, ground: [t.bg] }, can: PART });
+				break;
+			}
+			case 'flow': {
+				const steps = words(id, 'steps').split('|').map((x) => x.trim()).filter(Boolean);
+				if (steps.length < 2 || steps.length > 6) throw new Error(`The ${id} takes 2 to 6 steps, not ${steps.length}.`);
+				const across = r.w / r.h >= 1.6;
+				const n = steps.length;
+				const gapA = (across ? r.w : r.h) * 0.08;
+				const boxW = across ? (r.w - gapA * (n - 1)) / n : r.w;
+				const boxH = across ? r.h : (r.h - gapA * (n - 1)) / n;
+				const fill = tokenColor('white');
+				const edge = tokenColor('border-field');
+				const ink = tokenColor('ink');
+				const inks: Rect[] = [];
+				const drawn: string[] = [];
+				let size = Infinity;
+				steps.forEach((step, i) => {
+					const bx = across ? r.x + i * (boxW + gapA) : r.x;
+					const by = across ? r.y : r.y + i * (boxH + gapA);
+					const box = { x: bx, y: by, w: boxW, h: boxH };
+					ctx.fillStyle = fill;
+					ctx.strokeStyle = edge;
+					ctx.lineWidth = Math.max(1, u);
+					ctx.beginPath();
+					ctx.roundRect(box.x, box.y, box.w, box.h, Math.min(16 * u, box.h / 3));
+					ctx.fill();
+					ctx.stroke();
+					const pad = Math.min(14 * u, box.h * 0.2, box.w * 0.1);
+					const inner = { x: box.x + pad, y: box.y + pad, w: box.w - 2 * pad, h: box.h - 2 * pad };
+					const f = fitText(id, step, sans(500, 1.25), Math.max(floor, Math.min(22 * u, inner.h)), inner);
+					const top = inner.y + (inner.h - f.h) / 2;
+					inks.push(...drawText(f, inner, 'center', ink, top));
+					drawn.push(f.lines.join(' '));
+					size = Math.min(size, f.size);
+					if (i < n - 1) {
+						/* The arrow to the next step, in the theme's line color. */
+						ctx.strokeStyle = t.dark ? t.ink : t.line;
+						ctx.fillStyle = ctx.strokeStyle;
+						ctx.lineWidth = Math.max(1.5, 1.5 * u);
+						const a = across ? { x: box.x + box.w + gapA * 0.18, y: box.y + box.h / 2 } : { x: box.x + box.w / 2, y: box.y + box.h + gapA * 0.18 };
+						const b = across ? { x: box.x + box.w + gapA * 0.82, y: a.y } : { x: a.x, y: box.y + box.h + gapA * 0.82 };
+						ctx.beginPath();
+						ctx.moveTo(a.x, a.y);
+						ctx.lineTo(b.x, b.y);
+						ctx.stroke();
+						const hs = Math.min(gapA * 0.25, 8 * u);
+						ctx.beginPath();
+						if (across) {
+							ctx.moveTo(b.x, b.y);
+							ctx.lineTo(b.x - hs, b.y - hs * 0.7);
+							ctx.lineTo(b.x - hs, b.y + hs * 0.7);
+						} else {
+							ctx.moveTo(b.x, b.y);
+							ctx.lineTo(b.x - hs * 0.7, b.y - hs);
+							ctx.lineTo(b.x + hs * 0.7, b.y - hs);
+						}
+						ctx.fill();
+					}
+				});
+				layers.push({ id, kind: 'text', box: r, ink: inks, text: { asked: steps.join(' '), drawn: drawn.join(' '), size, color: ink, ground: [fill] }, can: PART });
 				break;
 			}
 			case 'divider': {

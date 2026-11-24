@@ -20,7 +20,7 @@ describe('manifest', () => {
 		expect(data.assets.image.templates.map((item: { id: string }) => item.id)).toEqual(['tile', 'app', 'outline', 'hatch', 'reef', 'feature', 'partner', 'funding', 'announce', 'card', 'mark']);
 		expect(data.assets.image.sizes.map((item: { id: string }) => item.id)).toEqual(expect.arrayContaining(['og', 'square', 'portrait', 'story', 'landscape', 'x-banner', 'linkedin-banner', 'linkedin-page', 'youtube', 'youtube-thumbnail', 'email', 'avatar']));
 		expect(data.assets.design.templates.length).toBeGreaterThan(30);
-		expect(data.assets.video.templates.map((item: { id: string }) => item.id)).toEqual(['reveal', 'inbox', 'band', 'announce', 'card', 'logo']);
+		expect(data.assets.video.templates.map((item: { id: string }) => item.id)).toEqual(['reveal', 'inbox', 'band', 'announce', 'card', 'logo', 'stat', 'walkthrough', 'lower-third']);
 		expect(data.assets.deck.slides.map((item: { id: string }) => item.id)).toEqual(['cover', 'section', 'statement', 'bullets', 'agenda', 'timeline', 'stat', 'quote', 'image', 'qa', 'team', 'comparison', 'chart', 'images', 'end']);
 		expect(data.assets.illustrate.subjects.length).toBeGreaterThan(4);
 		expect(data.assets.lockups.map((l: { id: string }) => l.id)).toEqual(['full', 'wordmark', 'mark']);

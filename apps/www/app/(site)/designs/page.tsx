@@ -31,6 +31,16 @@ export default function DesignsPage() {
             <Code title="terminal" lang="bash" code={`${RUN} ${refused.command}\n${refused.note}`} />
           </Section>
         )}
+        <Section title="Compose" description="When no template fits: blocks of the brand (the headline, the octopus, the reef, the tile, the console window, cards, charts, flows and more) placed on a grid, with the same checks. design compose add|move|remove|order, or plain words: add a stat &quot;42%&quot; top right.">
+          <ul className="grid gap-6 lg:grid-cols-2">
+            {examples.compose.map((e) => (
+              <li key={e.id} className="grid gap-2">
+                <img src={e.src} width={e.width} height={e.height} alt={`${e.id}, as the CLI draws it`} loading="lazy" className="h-auto w-full rounded-control bg-subtle shadow-s" />
+                <pre className="fade-x overflow-x-auto font-mono text-caption whitespace-pre text-fg-muted">{e.command}</pre>
+              </li>
+            ))}
+          </ul>
+        </Section>
         <Section title="Commands">
           <CommandList
             rows={[

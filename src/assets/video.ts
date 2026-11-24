@@ -1,10 +1,11 @@
 import { spawn, spawnSync } from 'node:child_process';
+import type { Image as Capture } from '@napi-rs/canvas';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { tokens } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 import { themeNames } from './brand-art.js';
-import { brandFonts, pixelsOf, surface, toPng } from './canvas.js';
+import { brandFonts, pixelsOf, surface, tokenColor, toPng } from './canvas.js';
 import { designOf, type ImageRequest } from './image.js';
 import { pick } from './io.js';
 import { drawDesign, TEMPLATES, type Design, type LayerState, type Pictures } from './share.js';
@@ -15,7 +16,7 @@ import { loadIcons, type Icons } from './window.js';
 // (H.264) and WebM (VP9) when it is on the PATH; without it, the frames are written as PNG.
 
 type Enter = { seconds: number; stagger: number; gap: number; rise: number; windowRise: number; stickerRise: number; scaleFrom: number };
-type TemplateDef = { name: string; description: string; layout: string; theme: string; seconds: number; rows?: { start: number; every: number }; marquee?: boolean; order?: string[] };
+type TemplateDef = { name: string; description: string; layout: string; theme: string; seconds: number; rows?: { start: number; every: number }; marquee?: boolean; order?: string[]; counter?: { seconds: number }; walk?: boolean; lowerThird?: boolean; transparent?: boolean };
 type VideoDoc = { fps: number; enter: Enter; sizes: Record<string, [number, number]>; order: string[]; templates: Record<string, TemplateDef> };
 
 let doc: VideoDoc | undefined;
@@ -110,8 +111,77 @@ function motionAt(def: TemplateDef, t: number, reduced: boolean) {
 }
 
 /** One frame at time `t`. */
-export function drawFrame(ctx: Parameters<typeof drawDesign>[0], design: Design, def: TemplateDef, t: number, seconds: number, pics: Pictures, icons: Icons, reduced = false) {
+/* A number counting up to the one in the headline: every figure in it grows from 0 on the ease-out, keeping its own
+   separators and decimals, so the last frame says exactly what was passed. */
+export function countTo(text: string, p: number): string {
+	return text.replace(/\d[\d,.]*/g, (n) => {
+		const decimals = /\.(\d+)$/.exec(n)?.[1]?.length ?? 0;
+		const value = Number(n.replace(/,/g, '')) * p;
+		const s = value.toFixed(decimals);
+		return n.includes(',') ? Number(s).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : s;
+	});
+}
+
+/* The lower third: the person's name and role on a white panel with the lockup's octopus, sliding in from the left over
+   nothing (a transparent frame, for laying over footage). */
+function drawLowerThird(ctx: Parameters<typeof drawDesign>[0], design: Design, t: number, seconds: number, pics: Pictures, reduced: boolean) {
+	const W = design.w;
+	const H = design.h;
+	const u = Math.sqrt((W * H) / (1200 * 630));
+	const fonts = brandFonts();
+	const p = easeOut(Math.min(1, t / videoDoc().enter.seconds / 1.4));
+	const out = reduced ? 1 : p;
+	const name = design.headline.replace(/\*/g, '');
+	const role = design.body;
+	ctx.save();
+	ctx.font = `600 ${26 * u}px ${fonts.sans}`;
+	const nw = ctx.measureText(name).width;
+	ctx.font = `400 ${17 * u}px ${fonts.sans}`;
+	const rw = role ? ctx.measureText(role).width : 0;
+	const mark = pics.get('sit');
+	const pad = 18 * u;
+	const mh = 44 * u;
+	const w = pad * 3 + mh + Math.max(nw, rw);
+	const h = role ? 86 * u : 70 * u;
+	const x = 56 * u - (reduced ? 0 : (1 - out) * 40 * u);
+	const y = H - 72 * u - h;
+	ctx.globalAlpha = out;
+	ctx.shadowColor = tokenColor('shadow-drop');
+	ctx.shadowBlur = 12 * u;
+	ctx.shadowOffsetY = 4 * u;
+	ctx.fillStyle = tokenColor('white');
+	ctx.beginPath();
+	ctx.roundRect(x, y, w, h, 16 * u);
+	ctx.fill();
+	ctx.shadowColor = 'transparent';
+	if (mark) ctx.drawImage(mark, x + pad, y + (h - mh) / 2, mh * (mark.width / mark.height), mh);
+	ctx.fillStyle = tokenColor('ink');
+	ctx.textBaseline = 'alphabetic';
+	ctx.font = `600 ${26 * u}px ${fonts.sans}`;
+	ctx.fillText(name, x + pad * 2 + mh, y + (role ? 38 : 44) * u);
+	if (role) {
+		ctx.font = `400 ${17 * u}px ${fonts.sans}`;
+		ctx.fillStyle = tokenColor('text-secondary');
+		ctx.fillText(role, x + pad * 2 + mh, y + 64 * u);
+	}
+	ctx.restore();
+	void seconds;
+}
+
+export function drawFrame(ctx: Parameters<typeof drawDesign>[0], design: Design, def: TemplateDef, t: number, seconds: number, pics: Pictures, icons: Icons, reduced = false, shots: Pictures[] = []) {
+	if (def.lowerThird) return drawLowerThird(ctx, design, t, seconds, pics, reduced);
 	const d: Design = { ...design };
+	if (def.counter && !reduced) d.headline = countTo(design.headline, easeOut(Math.min(1, t / def.counter.seconds)));
+	if (def.walk && shots.length > 1) {
+		/* A walkthrough: each capture holds for its share of the time, the next one fading in over the window. */
+		const span = seconds / shots.length;
+		const k = Math.min(shots.length - 1, Math.floor(t / span));
+		const into = t - k * span;
+		const fade = Math.min(0.5, span * 0.3);
+		drawDesign(ctx, d, k > 0 && into < fade ? shots[k - 1]! : shots[k]!, icons, brandFonts(), 1, false, motionAt(def, t, reduced));
+		if (k > 0 && into < fade) drawDesign(ctx, d, shots[k]!, icons, brandFonts(), 1, false, (n) => (n === 'window' ? { a: easeOut(into / fade) } : undefined), 'window');
+		return;
+	}
 	if (def.marquee) d.outlineShift = design.outlineShift + (reduced ? 0 : t / seconds);
 	if (def.rows) {
 		const total = (d.app.mails ?? '').split('\n').filter(Boolean).length;
@@ -123,35 +193,40 @@ export function drawFrame(ctx: Parameters<typeof drawDesign>[0], design: Design,
 	drawDesign(ctx, d, pics, icons, brandFonts(), 1, false, motionAt(def, t, reduced));
 }
 
+/** The pictures of a walkthrough: one map per capture, each with the brand art. */
+export function shotsOf(pics: Pictures, captures: Capture[]): Pictures[] {
+	return captures.map((c) => new Map([...pics, ['picture', c]]));
+}
+
 /** Frames as straight RGBA buffers, one at a time. */
-export async function* videoFrames(o: VideoOptions, pics: Pictures): AsyncGenerator<{ index: number; rgba: Buffer; png: () => Buffer }> {
+export async function* videoFrames(o: VideoOptions, pics: Pictures, shots: Pictures[] = []): AsyncGenerator<{ index: number; rgba: Buffer; png: () => Buffer }> {
 	const { design, def } = videoDesign(o);
 	const icons = await loadIcons();
 	const count = Math.round(o.seconds * o.fps);
 	for (let i = 0; i < count; i++) {
 		const s = surface(o.width, o.height);
-		drawFrame(s.ctx, design, def, i / o.fps, o.seconds, pics, icons, o.reduced);
-		yield { index: i, rgba: pixelsOf(s).data, png: () => toPng(s, { opaque: true }) };
+		drawFrame(s.ctx, design, def, i / o.fps, o.seconds, pics, icons, o.reduced, shots);
+		yield { index: i, rgba: pixelsOf(s).data, png: () => toPng(s, { opaque: !def.transparent }) };
 	}
 }
 
 /** One PNG frame at `at` seconds. */
-export async function stillFrame(o: VideoOptions, pics: Pictures, at: number): Promise<Buffer> {
+export async function stillFrame(o: VideoOptions, pics: Pictures, at: number, shots: Pictures[] = []): Promise<Buffer> {
 	const { design, def } = videoDesign(o);
 	const s = surface(o.width, o.height);
-	drawFrame(s.ctx, design, def, at, o.seconds, pics, await loadIcons(), o.reduced);
-	return toPng(s, { opaque: true });
+	drawFrame(s.ctx, design, def, at, o.seconds, pics, await loadIcons(), o.reduced, shots);
+	return toPng(s, { opaque: !def.transparent });
 }
 
 /** Pipes raw RGBA frames into one ffmpeg run that writes each asked format, with bit-exact flags. */
-export async function encode(frames: AsyncIterable<Buffer>, o: { width: number; height: number; fps: number; outputs: { path: string; format: 'mp4' | 'webm' | 'gif' }[] }) {
+export async function encode(frames: AsyncIterable<Buffer>, o: { width: number; height: number; fps: number; outputs: { path: string; format: 'mp4' | 'webm' | 'gif' }[]; alpha?: boolean }) {
 	for (const out of o.outputs) mkdirSync(dirname(out.path), { recursive: true });
 	const args = ['-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${o.width}x${o.height}`, '-r', String(o.fps), '-i', '-'];
 	for (const out of o.outputs) {
 		args.push('-map_metadata', '-1', '-fflags', '+bitexact', '-flags:v', '+bitexact');
 		if (out.format === 'mp4') args.push('-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', '-threads', '1', '-movflags', '+faststart', out.path);
 		else if (out.format === 'gif') args.push('-filter_complex', `fps=${Math.min(o.fps, 15)},scale=${Math.min(o.width, 720)}:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=5`, '-loop', '0', out.path);
-		else args.push('-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', '28', '-pix_fmt', 'yuv420p', '-row-mt', '0', '-threads', '1', out.path);
+		else args.push('-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', '28', '-pix_fmt', o.alpha ? 'yuva420p' : 'yuv420p', '-row-mt', '0', '-threads', '1', out.path);
 	}
 	const ff = spawn('ffmpeg', args, { stdio: ['pipe', 'ignore', 'pipe'] });
 	let err = '';

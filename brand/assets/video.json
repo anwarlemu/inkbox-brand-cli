@@ -1,0 +1,128 @@
+{
+	"$comment": "Short motion pieces built from the share images (brand/assets/image.json): the same design, its layers coming in the way the console moves (tokens.css: one strong ease-out, --ds-easing-out, for every entrance, never ease-in; nothing appears from nothing). Video is explanatory, so an entrance runs longer than a UI transition (420 ms here, against the console's 120 to 160 ms), and the layers stagger 80 ms apart. Every piece ends on the finished design, so its last frame is the still image. The outline band slides at a constant speed (linear, as constant motion should) and loops; the inbox's messages arrive one after another. The editor and the brand's site have no motion of their own to copy, so these are the share images' layers with the console's motion rules. The animated stat counts each figure up on the same ease-out; the walkthrough fades each capture in over 0.5 s; the lower third slides 40 px and fades in over about 0.6 s. Their panel is the library's white card (white, ink, text-secondary).",
+	"fps": 30,
+	"enter": {
+		"seconds": 0.42,
+		"stagger": 0.08,
+		"gap": 0.12,
+		"rise": 16,
+		"windowRise": 28,
+		"stickerRise": 24,
+		"scaleFrom": 0.97
+	},
+	"sizes": {
+		"square": [
+			1080,
+			1080
+		],
+		"portrait": [
+			1080,
+			1350
+		],
+		"vertical": [
+			1080,
+			1920
+		],
+		"landscape": [
+			1920,
+			1080
+		]
+	},
+	"order": [
+		"badge",
+		"line:*",
+		"body",
+		"credit",
+		"window",
+		"sticker:*",
+		"lockup",
+		"foot"
+	],
+	"templates": {
+		"reveal": {
+			"name": "Reveal",
+			"description": "Any share template (--layout, default tile) with its badge, headline lines, line under them, window, octopus and lockup coming in one after another, then holding.",
+			"layout": "tile",
+			"theme": "paper",
+			"seconds": 4
+		},
+		"inbox": {
+			"name": "Inbox",
+			"description": "The product template: the words come in, the console's window rises into place, then its messages arrive one by one.",
+			"layout": "app",
+			"theme": "paper",
+			"seconds": 6,
+			"rows": {
+				"start": 1.4,
+				"every": 0.3
+			}
+		},
+		"band": {
+			"name": "Outline band",
+			"description": "The outline template: the words come in while the band of outlined wordmarks slides along the rule at a constant speed; the band loops.",
+			"layout": "outline",
+			"theme": "mono",
+			"seconds": 6,
+			"marquee": true
+		},
+		"announce": {
+			"name": "Announcement",
+			"description": "The announcement template inside its purple border: the dot badge, the words, the lockup and the sitting octopus come in.",
+			"layout": "announce",
+			"theme": "paper",
+			"seconds": 4
+		},
+		"card": {
+			"name": "Feature card",
+			"description": "The new-feature card: the lockup and the solid pill first, then the words, then the mono footer.",
+			"layout": "card",
+			"theme": "mist",
+			"seconds": 4,
+			"order": [
+				"lockup",
+				"badge",
+				"line:*",
+				"body",
+				"foot"
+			]
+		},
+		"logo": {
+			"name": "Logo reveal",
+			"description": "The lockup alone coming in on the brand's ease-out and holding: an intro or outro sting.",
+			"layout": "mark",
+			"theme": "paper",
+			"seconds": 3,
+			"order": [
+				"lockup",
+				"sticker:*"
+			]
+		},
+		"stat": {
+			"name": "Animated stat",
+			"description": "The big-number layout: the figure in the headline counts up from zero on the ease-out, then holds; the last frame says exactly what was passed.",
+			"layout": "funding",
+			"theme": "paper",
+			"seconds": 4,
+			"counter": {
+				"seconds": 1.6
+			}
+		},
+		"walkthrough": {
+			"name": "Walkthrough",
+			"description": "Your captures (--image a.png,b.png,...) in the browser window one after another, each fading in over the last.",
+			"layout": "feature",
+			"theme": "paper",
+			"seconds": 8,
+			"walk": true
+		},
+		"lower-third": {
+			"name": "Lower third",
+			"description": "A name (--headline) and a role (--body) on a white panel with the octopus, sliding in over a transparent frame, for laying over footage: WebM with alpha or PNG frames.",
+			"layout": "card",
+			"theme": "paper",
+			"seconds": 4,
+			"lowerThird": true,
+			"transparent": true
+		}
+	}
+}

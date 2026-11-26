@@ -1,0 +1,14 @@
+{
+	"$comment": "Illustrations: the brand's own art and layers without words, as scenes at any size. Each subject is a share-image layout (brand/assets/image.json) with its words, badge and lockup taken out, or the octopus art alone. SVG keeps real vector shapes: the reef is the Figma file's own vectors (art/reef.svg, inlined), the wordmark tile, outline band, hatching, guides and the console window are paths, and the octopus is the brand's rendered art (embedded as a picture: it is a 3D render, not a drawing). Rules and sources: brand/illustration.md.",
+	"subjects": {
+		"octopus": { "name": "Octopus", "description": "The octopus alone on a theme ground, sitting or hanging (--pose), with its soft shadow (PNG only).", "theme": "paper", "picture": false },
+		"reef": { "name": "Reef scene", "description": "The reef along the bottom with the sitting octopus in it (the reef layout without words).", "layout": "reef", "theme": "lavender", "picture": false },
+		"window": { "name": "Console window", "description": "The console's inbox in a window between two guides, the octopus hanging over its edge, the reef behind (the product layout without words). --image puts your capture in a browser window instead.", "layout": "app", "theme": "paper", "picture": true },
+		"tile": { "name": "Wordmark tile", "description": "The wordmark tiled in a panel with the sitting octopus on it (the tile layout without words).", "layout": "tile", "theme": "paper", "picture": false },
+		"pattern": { "name": "Tile pattern", "description": "The staggered wordmark tile over the whole frame, inside a line border (the lockup layout's ground).", "layout": "partner", "theme": "paper", "picture": false },
+		"outline": { "name": "Outline band", "description": "The band of outlined wordmarks on its rule between hatched strips, the octopus hanging over the rule (the outline layout without words).", "layout": "outline", "theme": "mono", "picture": false },
+		"hatch": { "name": "Hatched floor", "description": "A hatched floor with the octopus hanging over its edge (the hatched layout without words).", "layout": "hatch", "theme": "paper", "picture": false }
+	},
+	"poses": { "sit": "Sitting", "hang": "Hanging over an edge" },
+	"sizes": "Any image size (brand/assets/image.json sizes) or custom --width and --height; default square, 1080 by 1080."
+}

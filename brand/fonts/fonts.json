@@ -1,0 +1,5 @@
+{
+	"$comment": "The faces the asset commands draw with (image, deck, video, merch, illustrate). tokens.css sets Inter for every role, the display included, and IBM Plex Mono for keys, hosts and IDs; the share-image editor set its headlines in Funnel Display and its new-feature card in IBM Plex Sans, so those are drawn in Inter here (tokens win). Inter SemiBold and Plex Mono Medium and SemiBold come from the editor's server fonts (agd-playground src/fonts/inkbox-og), SIL Open Font License 1.1 (Inter-LICENSE.txt, IBM-Plex-OFL.txt).",
+	"sans": { "family": "Inter", "files": { "400": "Inter-Regular.ttf", "500": "Inter-Medium.ttf", "600": "Inter-SemiBold.ttf" } },
+	"mono": { "family": "IBM Plex Mono", "files": { "400": "IBMPlexMono-Regular.ttf", "500": "IBMPlexMono-Medium.ttf", "600": "IBMPlexMono-SemiBold.ttf" } }
+}

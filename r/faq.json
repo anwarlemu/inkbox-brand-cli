@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "name": "faq",
+  "useFor": "Use near the end of a page for objections. Keep answers to two or three sentences.",
+  "constraints": [
+    "Every item open by default",
+    "Nesting accordions"
+  ],
+  "documentation": "",
+  "exports": [
+    "Question",
+    "Faq"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/faq",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/faq.md",
+  "examples": [
+    {
+      "path": "examples/faq.tsx",
+      "content": "import { Faq } from \"@/components/blocks/faq\";\n\nexport function Preview() {\n  return (\n    <Faq\n      questions={[\n        { question: \"What is an agent identity?\", answer: \"An identity gives one agent its own handle, inbox, phone number and Agent Card.\" },\n        { question: \"Can I use my own domain?\", answer: \"Yes. Paid plans add custom email domains.\" },\n      ]}\n    />\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "faq"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/faq/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "FAQ",
+  "description": "Questions and answers in the library's accordion, the heading at the left on wide screens.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section-head",
+    "accordion",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/faq.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";\nimport { cn } from \"@/lib/utils\";\n\nexport type Question = { question: string; answer: React.ReactNode };\n\n/** Questions and answers in the library's accordion, the heading at the left on wide screens. */\nfunction Faq({ label, title = \"Questions\", description, questions, className }: { label?: string; title?: React.ReactNode; description?: React.ReactNode; questions: Question[]; className?: string }) {\n  return (\n    <section data-slot=\"faq\" className={cn(\"mx-auto grid max-w-(--ds-layout-column) gap-8 px-6 py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16\", className)}>\n      <SectionHead label={label} title={title} description={description} />\n      <Accordion type=\"single\" collapsible className=\"w-full\">\n        {questions.map((q) => (\n          <AccordionItem key={q.question} value={q.question}>\n            <AccordionTrigger>{q.question}</AccordionTrigger>\n            <AccordionContent>{q.answer}</AccordionContent>\n          </AccordionItem>\n        ))}\n      </Accordion>\n    </section>\n  );\n}\n\nexport { Faq };\n"
+    }
+  ]
+}

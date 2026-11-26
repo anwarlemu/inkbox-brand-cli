@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "name": "cta",
+  "useFor": "Use once, last before the footer. One default button.",
+  "constraints": [
+    "A purple or dark panel",
+    "More than two actions"
+  ],
+  "documentation": "",
+  "source": "Console empty state copy (Create your first agent)",
+  "exports": [
+    "Cta"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/cta",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/cta.md",
+  "examples": [
+    {
+      "path": "examples/cta.tsx",
+      "content": "import { Cta } from \"@/components/blocks/cta\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Preview() {\n  return (\n    <Cta\n      title=\"Create your first agent\"\n      description=\"Set up an identity to unlock mailbox, phone and vault features.\"\n      actions={<Button>Get started free</Button>}\n      // eslint-disable-next-line @next/next/no-img-element\n      media={<img src=\"/octopus.png\" alt=\"\" width={160} height={142} className=\"h-auto w-40\" />}\n    />\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "cta",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/cta/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Call to action",
+  "description": "The closing call: a lilac panel with a title, a line, the actions and an optional octopus.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/cta.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n/**\n * The closing call to action: a lilac panel with 24px corners, the title, a line and the actions, and an optional\n * picture (the octopus) at the right on wide screens.\n */\nfunction Cta({ title, description, actions, media, className }: { title: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode; media?: React.ReactNode; className?: string }) {\n  return (\n    <section data-slot=\"cta\" className={cn(\"mx-auto max-w-(--ds-layout-column) px-6 py-16\", className)}>\n      <div className={cn(\"grid items-center gap-8 rounded-dialog bg-subtle p-8 md:p-12\", media && \"md:grid-cols-[minmax(0,1fr)_auto]\")}>\n        <div className=\"grid gap-3\">\n          <h2 className=\"text-h2 leading-heading font-normal text-balance text-fg\">{title}</h2>\n          {description && <p className=\"max-w-(--ds-layout-text) text-body leading-body text-pretty text-fg-secondary\">{description}</p>}\n          {actions && <div className=\"mt-2 flex flex-wrap items-center gap-3\">{actions}</div>}\n        </div>\n        {media && <div className=\"hidden md:block\">{media}</div>}\n      </div>\n    </section>\n  );\n}\n\nexport { Cta };\n"
+    }
+  ]
+}

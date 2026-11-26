@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "server-error-page",
+  "useFor": "Use as the site's error page (500, 503).",
+  "constraints": [
+    "Stack traces or error codes in the message",
+    "Jokes in the message"
+  ],
+  "documentation": "",
+  "source": "Console empty state (Empty mascot and orbit), as the not-found page",
+  "exports": [
+    "ServerErrorPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/server-error-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/server-error-page.md",
+  "examples": [
+    {
+      "path": "examples/server-error-page.tsx",
+      "content": "import { ServerErrorPage } from \"@/components/site/server-error-page\";\n\nexport function Preview() {\n  return <ServerErrorPage />;\n}\n\nexport function WithStatus() {\n  return <ServerErrorPage statusHref=\"https://status.acme.com\" />;\n}\n",
+      "exports": [
+        "Preview",
+        "WithStatus"
+      ],
+      "requires": [
+        "server-error-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/server-error-page/Preview"
+        },
+        {
+          "name": "WithStatus",
+          "url": "https://inkbox-ds.vercel.app/preview/server-error-page/WithStatus"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Server error page",
+  "description": "The 500 template: the console's empty state with the octopus, a plain message, a retry and the way home.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "site-layout",
+    "button",
+    "empty"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/server-error-page.tsx",
+      "content": "import * as React from \"react\";\nimport { ArrowClockwiseIcon, EnvelopeIcon, GearSixIcon, PhoneIcon, WarningIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Button } from \"@/components/ui/button\";\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMascot, EmptyMedia, EmptyOrbit, EmptyTitle } from \"@/components/ui/empty\";\n\n/** The 500 page: the console's empty state with the octopus, a plain message, a retry and the way home. */\nfunction ServerErrorPage({ markSrc, mascotSrc = \"/octopus.png\", title = \"Something went wrong\", description = \"We could not load this page. Try again in a moment.\", retryHref = \"\", statusHref }: { markSrc?: string; mascotSrc?: string; title?: string; description?: string; retryHref?: string; statusHref?: string }) {\n  return (\n    <SiteLayout markSrc={markSrc}>\n      <section className=\"mx-auto max-w-(--ds-layout-column) px-6 py-16 md:py-24\">\n        <Empty className=\"min-h-100\">\n          <EmptyMedia variant=\"mascot\">\n            <EmptyOrbit>\n              <WarningIcon weight=\"fill\" />\n              <EnvelopeIcon weight=\"fill\" />\n              <GearSixIcon weight=\"fill\" />\n              <PhoneIcon weight=\"fill\" />\n              <ArrowClockwiseIcon weight=\"bold\" />\n            </EmptyOrbit>\n            <EmptyMascot src={mascotSrc} />\n          </EmptyMedia>\n          <EmptyHeader>\n            <EmptyTitle>{title}</EmptyTitle>\n            <EmptyDescription>{description}</EmptyDescription>\n          </EmptyHeader>\n          <EmptyContent className=\"flex-row flex-wrap justify-center\">\n            <Button asChild>\n              <a href={retryHref}>Try again</a>\n            </Button>\n            <Button asChild variant=\"outline\">\n              <a href=\"/\">Back to home</a>\n            </Button>\n            {statusHref ? (\n              <Button asChild variant=\"link\">\n                <a href={statusHref}>Status</a>\n              </Button>\n            ) : null}\n          </EmptyContent>\n        </Empty>\n      </section>\n    </SiteLayout>\n  );\n}\n\nexport { ServerErrorPage };\n"
+    }
+  ]
+}

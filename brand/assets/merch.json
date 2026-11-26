@@ -1,0 +1,1497 @@
+{
+	"$comment": "Merch print files only (no mockups). Item list, trim sizes, bleed and safe areas are common vendor print areas (the spyglass-ds and context-ds engines use the same conventions; confirm with the vendor template). Layouts are in inches from the trim. Only the approved lockups (logo.json: the octopus and wordmark, the wordmark alone, the octopus alone) and the brand's own patterns (the wordmark tile, the outline band, hatching, the reef) are used. The octopus is full-color art, so it prints only on full-color variants; one-color variants (embroidery, one-ink screen print) carry the wordmark alone. Colors come from the variant, as tokens. Only the words that are passed are printed (sample copy with --sample). Highlighted words are pink on purple and ink, and rose (the pink's dark partner, 5.9:1 on white) elsewhere. A band or a tile prints whole wordmarks only, inside the safe area; the reef, the hatching and a printed ground run into the bleed. Business cards, letterheads, a report cover, a certificate, an event badge, a name tag and a notebook cover are derived the same way (the brand made none of its own): see each item's source.",
+	"dpi": 300,
+	"variants": {
+		"paper": {
+			"ground": "white",
+			"ink": "ink",
+			"line": "text-faint",
+			"tile": "brand",
+			"fullColor": true,
+			"groundPrinted": true,
+			"highlight": "rose"
+		},
+		"lavender": {
+			"ground": "tag-purple",
+			"ink": "ink",
+			"line": "text-faint",
+			"tile": "brand",
+			"fullColor": true,
+			"groundPrinted": true,
+			"highlight": "rose"
+		},
+		"purple": {
+			"ground": "brand",
+			"ink": "white",
+			"line": {
+				"token": "text-faint",
+				"alpha": 0.6
+			},
+			"tile": "white",
+			"fullColor": true,
+			"groundPrinted": true,
+			"highlight": "pink"
+		},
+		"ink": {
+			"ground": "ink",
+			"ink": "white",
+			"line": {
+				"token": "text-faint",
+				"alpha": 0.38
+			},
+			"tile": "white",
+			"fullColor": true,
+			"groundPrinted": true,
+			"highlight": "pink"
+		},
+		"color": {
+			"ground": "",
+			"ink": "ink",
+			"line": "text-faint",
+			"tile": "brand",
+			"fullColor": true,
+			"groundPrinted": false,
+			"highlight": "rose"
+		},
+		"one-ink": {
+			"ground": "",
+			"ink": "ink",
+			"line": "ink",
+			"tile": "ink",
+			"fullColor": false,
+			"groundPrinted": false
+		},
+		"one-white": {
+			"ground": "",
+			"ink": "white",
+			"line": "white",
+			"tile": "white",
+			"fullColor": false,
+			"groundPrinted": false
+		},
+		"one-purple": {
+			"ground": "",
+			"ink": "brand",
+			"line": "brand",
+			"tile": "brand",
+			"fullColor": false,
+			"groundPrinted": false
+		}
+	},
+	"items": [
+		{
+			"id": "cap-front",
+			"name": "Cap front panel",
+			"size": [
+				4,
+				1.75
+			],
+			"bleed": 0,
+			"safe": 0.125,
+			"method": "embroidery",
+			"source": "Common front embroidery area on a structured six-panel cap: 4 by 1.75 in. Embroidery is thread, so one color per file and no bleed; the wordmark alone. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"one-ink",
+				"one-white",
+				"one-purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.4,
+						0.45,
+						3.2,
+						0.85
+					]
+				}
+			]
+		},
+		{
+			"id": "tee-front",
+			"name": "T-shirt front",
+			"size": [
+				12,
+				16
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Common adult tee front print area: 12 by 16 in (DTG standard). Garments are not trimmed, so no bleed. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"color",
+				"one-ink",
+				"one-white",
+				"one-purple"
+			],
+			"layers": [
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						3,
+						2,
+						6,
+						5.2
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						2,
+						7.8,
+						8,
+						1.6
+					],
+					"boxOne": [
+						2,
+						3.6,
+						8,
+						1.6
+					]
+				}
+			]
+		},
+		{
+			"id": "tee-back",
+			"name": "T-shirt back",
+			"size": [
+				12,
+				16
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Common adult tee back print area: 12 by 16 in (DTG standard). No bleed. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"color",
+				"one-ink",
+				"one-white"
+			],
+			"layers": [
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						1.2,
+						10.5,
+						4
+					],
+					"size": 1.25,
+					"align": "center",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "outline",
+					"box": [
+						0.5,
+						10.9,
+						11,
+						2.6
+					]
+				},
+				{
+					"type": "art",
+					"id": "hang",
+					"box": [
+						3.6,
+						6.75,
+						4.8,
+						4.8
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.75,
+						14.6,
+						10.5,
+						0.6
+					],
+					"size": 0.42,
+					"align": "center",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "hoodie-front",
+			"name": "Hoodie front",
+			"size": [
+				12,
+				10
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Pullover hoodie front, above the pouch pocket: 12 by 10 in is a common area (vendors range from 11.5 by 11.5 to 12 by 12 in). No bleed. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"color",
+				"one-ink",
+				"one-white"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						1.25,
+						3.7,
+						9.5,
+						2.2
+					]
+				}
+			]
+		},
+		{
+			"id": "tote",
+			"name": "Tote bag",
+			"size": [
+				12,
+				14
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "screen print or DTG",
+			"source": "Print area on a standard 15 by 16 in canvas tote: 12 by 14 in is common. No bleed. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"color",
+				"one-ink",
+				"one-white"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						12,
+						9.4
+					],
+					"fade": true
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						2,
+						10.6,
+						8,
+						1.6
+					],
+					"boxOne": [
+						2,
+						6,
+						8,
+						1.6
+					]
+				}
+			]
+		},
+		{
+			"id": "mug-wrap",
+			"name": "Mug wrap, 11 oz",
+			"size": [
+				9,
+				3.5
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "sublimation",
+			"source": "11 oz mug wrap: 9 by 3.5 in is a common print area (vendors range from 8.5 to 9.5 in wide), with 0.125 in bleed for the full wrap. The lockup sits on each side of the handle, the reef along the foot. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0,
+						2.3,
+						9,
+						1.2
+					],
+					"drop": 0.36
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.6,
+						0.8,
+						3.1,
+						0.9
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						5.3,
+						0.8,
+						3.1,
+						0.9
+					]
+				}
+			]
+		},
+		{
+			"id": "sticker",
+			"name": "Sticker, die-cut",
+			"size": [
+				3,
+				3
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "die-cut vinyl",
+			"source": "Die-cut sticker 3 by 3 in, cut along the rounded square (CutContour path in the SVG, a spot line the cutter reads; it is not printed), 0.125 in bleed past the cut and 0.125 in safe inside it. Confirm against the vendor's template before ordering.",
+			"cut": {
+				"radius": 0.5
+			},
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						2.1,
+						3,
+						0.9
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						0.55,
+						0.3,
+						1.9,
+						1.6
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.75,
+						2.2,
+						1.5,
+						0.5
+					],
+					"clear": true
+				}
+			]
+		},
+		{
+			"id": "poster",
+			"name": "Poster, 18 by 24 in",
+			"size": [
+				18,
+				24
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "Standard 18 by 24 in poster with 0.125 in bleed on every side and a 0.5 in safe margin. Confirm against the vendor's template before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						1,
+						1,
+						4.6,
+						1
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1,
+						3,
+						16,
+						7
+					],
+					"size": 2.3,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0,
+						17.4,
+						18,
+						6.7
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						5,
+						11.5,
+						8,
+						7
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						8,
+						1.28,
+						9,
+						0.6
+					],
+					"size": 0.42,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "business-card",
+			"name": "Business card, front",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "Derived: the brand has no business card of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.22,
+						0.22,
+						1.25,
+						0.27
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.22,
+						0.82,
+						2.4,
+						0.3
+					],
+					"size": 0.16,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.22,
+						1.1,
+						2.4,
+						0.2
+					],
+					"size": 0.095,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "email",
+					"box": [
+						0.22,
+						1.42,
+						2.4,
+						0.16
+					],
+					"size": 0.075,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.22,
+						1.6,
+						2.4,
+						0.16
+					],
+					"size": 0.075,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						2.55,
+						1.05,
+						0.8,
+						0.72
+					]
+				}
+			]
+		},
+		{
+			"id": "business-card-back",
+			"name": "Business card, back",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "Derived: the brand has no business card of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						1.45,
+						3.5,
+						0.55
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.85,
+						0.55,
+						1.8,
+						0.5
+					]
+				}
+			]
+		},
+		{
+			"id": "letterhead-letter",
+			"name": "Letterhead, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print",
+			"source": "Derived: the brand has no letterhead of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"color",
+				"one-ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						0.75,
+						0.6,
+						1.9,
+						0.42
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.5,
+						0.72,
+						3.25,
+						0.2
+					],
+					"size": 0.13,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						10.35,
+						8.5,
+						0.65
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						9.95,
+						7,
+						0.2
+					],
+					"size": 0.11,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "letterhead-a4",
+			"name": "Letterhead, A4",
+			"size": [
+				8.27,
+				11.69
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print",
+			"source": "Derived: the brand has no letterhead of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"color",
+				"one-ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"fallback": "wordmark",
+					"box": [
+						0.75,
+						0.6,
+						1.9,
+						0.42
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.3,
+						0.72,
+						3.22,
+						0.2
+					],
+					"size": 0.13,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						11.04,
+						8.27,
+						0.65
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						10.64,
+						6.8,
+						0.2
+					],
+					"size": 0.11,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "report-cover-letter",
+			"name": "Report cover, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "Derived: the brand has no report cover of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						8.5,
+						4.6
+					],
+					"fade": true
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.75,
+						5.2,
+						2.2,
+						0.48
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						6.2,
+						7,
+						2.4
+					],
+					"size": 0.6,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						0.75,
+						8.75,
+						7,
+						0.8
+					],
+					"size": 0.2,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						0.75,
+						10.1,
+						7,
+						0.22
+					],
+					"size": 0.13,
+					"align": "left",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "certificate-letter",
+			"name": "Certificate, US Letter landscape",
+			"size": [
+				11,
+				8.5
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "Derived: the brand has no certificate of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						4.3,
+						0.8,
+						2.4,
+						0.55
+					]
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1,
+						1.85,
+						9,
+						0.9
+					],
+					"size": 0.45,
+					"align": "center",
+					"maxLines": 2,
+					"highlight": true
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						1,
+						3.15,
+						9,
+						0.9
+					],
+					"size": 0.6,
+					"align": "center",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						1.5,
+						4.25,
+						8,
+						0.9
+					],
+					"size": 0.2,
+					"align": "center",
+					"maxLines": 3
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						1,
+						5.35,
+						9,
+						0.25
+					],
+					"size": 0.14,
+					"align": "center",
+					"face": "mono",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "outline",
+					"box": [
+						0.6,
+						6.2,
+						9.8,
+						2.2
+					]
+				}
+			]
+		},
+		{
+			"id": "event-badge",
+			"name": "Event badge, 4 by 3 in",
+			"size": [
+				4,
+				3
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital print",
+			"source": "Derived: the brand has no event badge of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.25,
+						0.3,
+						1.4,
+						0.32
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						2.0,
+						0.3,
+						1.75,
+						0.32
+					],
+					"size": 0.09,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.25,
+						1.05,
+						3.5,
+						0.5
+					],
+					"size": 0.3,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.25,
+						1.6,
+						3.5,
+						0.25
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						2.35,
+						4,
+						0.65
+					]
+				}
+			]
+		},
+		{
+			"id": "name-tag",
+			"name": "Name tag, 3.5 by 2.25 in",
+			"size": [
+				3.5,
+				2.25
+			],
+			"bleed": 0,
+			"safe": 0.125,
+			"method": "adhesive label",
+			"source": "Derived: the brand has no name tag of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.2,
+						0.18,
+						1.2,
+						0.27
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.2,
+						0.75,
+						3.1,
+						0.55
+					],
+					"size": 0.32,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.2,
+						1.38,
+						3.1,
+						0.25
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0,
+						1.8,
+						3.5,
+						0.45
+					]
+				}
+			]
+		},
+		{
+			"id": "notebook-cover",
+			"name": "Notebook cover, 5.5 by 8.5 in",
+			"size": [
+				5.5,
+				8.5
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "digital print",
+			"source": "Derived: the brand has no notebook of its own, so it is built only from its lockups, patterns, art and tokens, at the common print size. Confirm the size with the printer.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						5.5,
+						5.2
+					],
+					"fade": true
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						1.6,
+						5.3,
+						2.3,
+						2.0
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						1.4,
+						7.55,
+						2.7,
+						0.55
+					]
+				}
+			]
+		},
+		{
+			"id": "poster-11x17",
+			"name": "Poster, 11 by 17 in",
+			"size": [
+				11,
+				17
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "A convention, not a vendor's template: a 11 by 17 in poster with 0.125 in bleed and 0.5 in safe margin, the 18 by 24 layout scaled to it. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.611,
+						0.708,
+						2.811,
+						0.708
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.611,
+						2.125,
+						9.778,
+						4.958
+					],
+					"size": 1.406,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0.0,
+						12.325,
+						11.0,
+						4.746
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						3.056,
+						8.146,
+						4.889,
+						4.958
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						4.889,
+						0.907,
+						5.5,
+						0.425
+					],
+					"size": 0.257,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "poster-24x36",
+			"name": "Poster, 24 by 36 in",
+			"size": [
+				24,
+				36
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "A convention, not a vendor's template: a 24 by 36 in poster with 0.125 in bleed and 0.5 in safe margin, the 18 by 24 layout scaled to it. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						1.333,
+						1.5,
+						6.133,
+						1.5
+					],
+					"align": "left"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1.333,
+						4.5,
+						21.333,
+						10.5
+					],
+					"size": 3.067,
+					"align": "left",
+					"maxLines": 3,
+					"highlight": true
+				},
+				{
+					"type": "pattern",
+					"kind": "reef",
+					"box": [
+						0.0,
+						26.1,
+						24.0,
+						10.05
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						6.667,
+						17.25,
+						10.667,
+						10.5
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						10.667,
+						1.92,
+						12.0,
+						0.9
+					],
+					"size": 0.56,
+					"align": "right",
+					"face": "mono",
+					"maxLines": 1
+				}
+			]
+		},
+		{
+			"id": "sticker-sheet",
+			"name": "Sticker sheet, US Letter",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0.125,
+			"safe": 0.375,
+			"method": "kiss-cut vinyl sheet",
+			"source": "A convention, not a vendor's template: a letter-size sheet of the brand's stickers; the kiss-cut lines are drawn by the vendor's template round each one. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender"
+			],
+			"layers": [
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						0.75,
+						0.75,
+						3.25,
+						2.8
+					]
+				},
+				{
+					"type": "art",
+					"id": "hang",
+					"box": [
+						4.5,
+						0.6,
+						3.25,
+						3.25
+					]
+				},
+				{
+					"type": "logo",
+					"part": "full",
+					"box": [
+						0.75,
+						4.4,
+						7,
+						1.5
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.75,
+						6.6,
+						3.4,
+						0.9
+					]
+				},
+				{
+					"type": "logo",
+					"part": "mark",
+					"box": [
+						5.2,
+						6.2,
+						2.2,
+						1.8
+					]
+				},
+				{
+					"type": "pattern",
+					"kind": "hatch",
+					"box": [
+						0.75,
+						8.6,
+						7,
+						1.6
+					]
+				}
+			]
+		},
+		{
+			"id": "lanyard",
+			"name": "Lanyard, 0.75 by 36 in",
+			"size": [
+				36,
+				0.75
+			],
+			"bleed": 0.0625,
+			"safe": 0.1,
+			"method": "dye sublimation",
+			"source": "A convention, not a vendor's template: a 3/4 in lanyard strap printed flat, 36 in long. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"purple",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						1,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						7,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						13,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						19,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						25,
+						0.17,
+						2.2,
+						0.41
+					]
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						31,
+						0.17,
+						2.2,
+						0.41
+					]
+				}
+			]
+		},
+		{
+			"id": "socks",
+			"name": "Socks, one side",
+			"size": [
+				4.5,
+				16
+			],
+			"bleed": 0.125,
+			"safe": 0.375,
+			"method": "dye sublimation",
+			"source": "A convention, not a vendor's template: one side of a crew sock printed flat, 4.5 by 16 in, the cuff at the top. Confirm the size and cut with the vendor before ordering.",
+			"variants": [
+				"paper",
+				"lavender",
+				"purple"
+			],
+			"layers": [
+				{
+					"type": "pattern",
+					"kind": "tile",
+					"box": [
+						0,
+						0,
+						4.5,
+						9
+					],
+					"fade": true
+				},
+				{
+					"type": "logo",
+					"part": "wordmark",
+					"box": [
+						0.6,
+						10.2,
+						3.3,
+						0.8
+					]
+				},
+				{
+					"type": "art",
+					"id": "sit",
+					"box": [
+						1.1,
+						12,
+						2.3,
+						2.0
+					]
+				}
+			]
+		}
+	],
+	"sample": {
+		"headline": "Give every *AI agent* a way to be reached",
+		"url": "inkbox.ai",
+		"name": "Alex Acme",
+		"role": "Head of operations, Acme",
+		"email": "alex@acme.com",
+		"address": "Acme, 1 Main Street",
+		"date": "November 2026",
+		"body": "A short line about what this is."
+	}
+}

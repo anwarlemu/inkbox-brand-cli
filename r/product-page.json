@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "name": "product-page",
+  "useFor": "Start a product or features page from it; pass a product shot as screenshot.",
+  "constraints": [
+    "Fake screenshots"
+  ],
+  "documentation": "",
+  "source": "Console rail sections (Channels, Shared) and page descriptions",
+  "exports": [
+    "CHANNELS",
+    "SHARED",
+    "ProductPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/product-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/product-page.md",
+  "examples": [
+    {
+      "path": "examples/product-page.tsx",
+      "content": "import { ProductPage } from \"@/components/site/product-page\";\n\nexport function Preview() {\n  return <ProductPage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "product-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/product-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Product page",
+  "description": "The product page template: a centered hero over the channels, what agents share, and the closing call.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "cta",
+    "feature-grid",
+    "hero",
+    "site-layout",
+    "button"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/product-page.tsx",
+      "content": "import * as React from \"react\";\nimport { AddressBookIcon, AppleLogoIcon, ArrowsLeftRightIcon, EnvelopeSimpleIcon, KeyIcon, NotepadIcon, PhoneIcon, VaultIcon, WebhooksLogoIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Cta } from \"@/components/blocks/cta\";\nimport { FeatureGrid, type Feature } from \"@/components/blocks/feature-grid\";\nimport { Hero } from \"@/components/blocks/hero\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Button } from \"@/components/ui/button\";\n\nexport const CHANNELS: Feature[] = [\n  { icon: <EnvelopeSimpleIcon weight=\"fill\" />, title: \"Email\", description: \"An inbox per agent, IMAP and SMTP access, custom domains and signatures.\" },\n  { icon: <PhoneIcon weight=\"fill\" />, title: \"Phone\", description: \"Dedicated VoIP numbers with HD voice, SMS and MMS.\" },\n  { icon: <AppleLogoIcon weight=\"fill\" />, title: \"iMessage\", description: \"Shared lines to start, dedicated lines for iMessage, RCS and SMS.\" },\n  { icon: <ArrowsLeftRightIcon weight=\"regular\" />, title: \"Agent2Agent\", description: \"Publish an Agent Card and delegate tasks over the open A2A protocol.\" },\n];\nexport const SHARED: Feature[] = [\n  { icon: <AddressBookIcon weight=\"fill\" />, title: \"Contacts\", description: \"One address book every agent reads and writes.\" },\n  { icon: <NotepadIcon weight=\"fill\" />, title: \"Notes\", description: \"Context your agents keep between conversations.\" },\n  { icon: <VaultIcon weight=\"fill\" />, title: \"Vault\", description: \"Credentials kept zero-knowledge, unlocked per agent.\" },\n  { icon: <WebhooksLogoIcon weight=\"regular\" />, title: \"Webhooks\", description: \"Send events to your HTTPS endpoints, signed per identity.\" },\n  { icon: <KeyIcon weight=\"fill\" />, title: \"API keys\", description: \"Scoped keys for every environment, from the console or the SDK.\" },\n];\n\n/** The product page: a hero over the channels, then what agents share, then the closing call. */\nfunction ProductPage({ markSrc, screenshot, channels = CHANNELS, shared = SHARED }: { markSrc?: string; screenshot?: React.ReactNode; channels?: Feature[]; shared?: Feature[] }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/product\">\n      <Hero\n        align=\"center\"\n        eyebrow=\"Product\"\n        title=\"Everything an agent needs to be reached\"\n        description=\"Turn on the channels each agent uses and give them the context they share.\"\n        actions={\n          <Button asChild>\n            <a href=\"/signup\">Get started free</a>\n          </Button>\n        }\n        media={screenshot}\n      />\n      <FeatureGrid label=\"Channels\" title=\"Reach every agent its own way\" features={channels} columns={4} />\n      <FeatureGrid label=\"Shared\" title=\"Context every agent can use\" features={shared} />\n      <Cta\n        title=\"See it in the console\"\n        description=\"Create an agent, turn on a channel and send its first message in minutes.\"\n        actions={\n          <Button asChild>\n            <a href=\"/signup\">Create an agent</a>\n          </Button>\n        }\n      />\n    </SiteLayout>\n  );\n}\n\nexport { ProductPage };\n"
+    }
+  ]
+}

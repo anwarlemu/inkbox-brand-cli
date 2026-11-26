@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "legal-page",
+  "useFor": "Use for terms, privacy and cookies. The default text is a placeholder: have counsel write yours.",
+  "constraints": [
+    "Shipping the placeholder text"
+  ],
+  "documentation": "",
+  "exports": [
+    "LegalSection",
+    "SECTIONS",
+    "LegalPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/legal-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/legal-page.md",
+  "examples": [
+    {
+      "path": "examples/legal-page.tsx",
+      "content": "import { LegalPage } from \"@/components/site/legal-page\";\n\nexport function Preview() {\n  return <LegalPage />;\n}\n\nexport function Privacy() {\n  return (\n    <LegalPage\n      title=\"Privacy policy\"\n      sections={[\n        { id: \"data\", title: \"What we collect\", body: [\"Account details, the messages your agents send and receive, and usage needed to bill you.\"] },\n        { id: \"use\", title: \"How we use it\", body: [\"To run the service, keep it secure and support you. We do not sell your data.\"] },\n      ]}\n    />\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "Privacy"
+      ],
+      "requires": [
+        "legal-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/legal-page/Preview"
+        },
+        {
+          "name": "Privacy",
+          "url": "https://inkbox-ds.vercel.app/preview/legal-page/Privacy"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Legal page",
+  "description": "The legal page template: title, effective date, a section list and the text at reading width.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "site-layout"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/legal-page.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SiteLayout } from \"@/components/site/site-layout\";\n\nexport type LegalSection = { id: string; title: string; body: string[] };\n\nexport const SECTIONS: LegalSection[] = [\n  { id: \"agreement\", title: \"Agreement\", body: [\"These terms govern your use of the service. By creating an account you agree to them on behalf of yourself or your organization.\"] },\n  { id: \"accounts\", title: \"Accounts\", body: [\"You are responsible for the activity of the agents and people in your organization, and for keeping your API keys secret.\"] },\n  { id: \"acceptable-use\", title: \"Acceptable use\", body: [\"Do not use the service to send unsolicited messages, to impersonate others or to break the law.\", \"We may pause an identity that puts other users or the network at risk.\"] },\n  { id: \"billing\", title: \"Billing\", body: [\"Paid plans renew each cycle until canceled. Usage beyond included allowances is billed as described on the pricing page.\"] },\n  { id: \"changes\", title: \"Changes\", body: [\"We will tell you about material changes to these terms before they take effect.\"] },\n];\n\n/**\n * A legal page (terms, privacy, cookies): the title and the date it took effect, a list of sections at the left on\n * wide screens, and the text at reading width. The default text is a placeholder: have counsel write yours.\n */\nfunction LegalPage({ markSrc, title = \"Terms of service\", updated = \"Effective Jan 1, 2026\", sections = SECTIONS }: { markSrc?: string; title?: string; updated?: string; sections?: LegalSection[] }) {\n  return (\n    <SiteLayout markSrc={markSrc}>\n      <section className=\"mx-auto grid max-w-(--ds-layout-column) gap-10 px-6 py-16 md:py-24 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16\">\n        <nav aria-label=\"Sections\" className=\"hidden lg:block\">\n          <ul className=\"sticky top-24 grid gap-1\">\n            {sections.map((s) => (\n              <li key={s.id}>\n                <a href={`#${s.id}`} className=\"block rounded-pill px-3 py-1.5 text-body text-fg-secondary outline-none transition-colors duration-150 ease-out hover:bg-subtle hover:text-fg focus-visible:shadow-focus motion-reduce:transition-none\">\n                  {s.title}\n                </a>\n              </li>\n            ))}\n          </ul>\n        </nav>\n        <article className=\"grid max-w-(--ds-layout-text) gap-8\">\n          <header className=\"grid gap-2\">\n            <h1 className=\"text-display leading-display font-normal text-fg\">{title}</h1>\n            <p className=\"text-body text-fg-muted\">{updated}</p>\n          </header>\n          {sections.map((s, i) => (\n            <section key={s.id} id={s.id} className=\"grid scroll-mt-24 gap-3\">\n              <h2 className=\"text-h3 leading-heading font-normal text-fg\">\n                {i + 1}. {s.title}\n              </h2>\n              {s.body.map((p) => (\n                <p key={p} className=\"text-body-lg leading-relaxed text-fg-secondary\">\n                  {p}\n                </p>\n              ))}\n            </section>\n          ))}\n        </article>\n      </section>\n    </SiteLayout>\n  );\n}\n\nexport { LegalPage };\n"
+    }
+  ]
+}

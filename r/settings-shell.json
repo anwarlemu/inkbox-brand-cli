@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "settings-shell",
+  "useFor": "Start a settings screen from it; pass members, and billing and usage content.",
+  "constraints": [
+    "Settings without a save action",
+    "A tab per field"
+  ],
+  "documentation": "",
+  "source": "Console organizations page (app/(protected)/organizations/page.tsx: tabs profile, billing, usage; organization name, ID and members)",
+  "exports": [
+    "Member",
+    "MEMBERS",
+    "SettingsShell"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/settings-shell",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/settings-shell.md",
+  "examples": [
+    {
+      "path": "examples/settings-shell.tsx",
+      "content": "import { SettingsShell } from \"@/components/product/settings-shell\";\n\nexport function Preview() {\n  return <SettingsShell />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "settings-shell"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/settings-shell/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "product",
+  "title": "Settings shell",
+  "description": "Settings in the console's frame: Profile, Billing and Usage tabs, the organization card and the members table.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "app-shell",
+    "avatar",
+    "badge",
+    "button",
+    "card",
+    "field",
+    "input",
+    "table",
+    "tabs"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/product/settings-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CopyIcon, DotsThreeIcon, PlusIcon, UploadSimpleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { AppPageBody, AppPageHead, AppShell, type AppNavGroup } from \"@/components/product/app-shell\";\nimport { Avatar, AvatarFallback } from \"@/components/ui/avatar\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardAction, CardContent, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { Field, FieldLabel } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\nimport { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\n\nexport type Member = { name: string; email: string; role: string; joined: string };\n\nexport const MEMBERS: Member[] = [\n  { name: \"Jordan at Acme\", email: \"jordan@acme.com\", role: \"Admin\", joined: \"Jul 27, 2026\" },\n  { name: \"Sam at Acme\", email: \"sam@acme.com\", role: \"Member\", joined: \"Aug 3, 2026\" },\n];\n\n/**\n * Settings in the console's frame (the organization page): the page head with Profile, Billing and Usage tabs, the\n * organization card (logo, name field with Save, the ID with a copy button) and the members table with an invite\n * action. Billing and Usage take any content.\n */\nfunction SettingsShell({ organization = \"Acme\", organizationId = \"org_2f8d6b7f37b7d646\", members = MEMBERS, billing, usage, nav }: { organization?: string; organizationId?: string; members?: Member[]; billing?: React.ReactNode; usage?: React.ReactNode; nav?: AppNavGroup[] }) {\n  const [name, setName] = React.useState(organization);\n  return (\n    <AppShell nav={nav} current=\"My Organisation\">\n      <AppPageHead title=\"Organization settings\" description=\"Your organization's profile, members, billing and usage.\" />\n      <AppPageBody>\n        <Tabs defaultValue=\"profile\" className=\"grid gap-4\">\n          <TabsList>\n            <TabsTrigger value=\"profile\">Profile</TabsTrigger>\n            <TabsTrigger value=\"billing\">Billing</TabsTrigger>\n            <TabsTrigger value=\"usage\">Usage</TabsTrigger>\n          </TabsList>\n          <TabsContent value=\"profile\" className=\"grid gap-6\">\n            <Card>\n              <CardHeader>\n                <CardTitle className=\"font-medium\">Organization</CardTitle>\n                <CardAction>\n                  <Button size=\"sm\" disabled={!name.trim() || name === organization}>\n                    Save\n                  </Button>\n                </CardAction>\n              </CardHeader>\n              <CardContent className=\"grid gap-5\">\n                <div className=\"flex items-center gap-3\">\n                  <Avatar size=\"lg\">\n                    <AvatarFallback>{name.charAt(0) || \"A\"}</AvatarFallback>\n                  </Avatar>\n                  <Button variant=\"outline\" size=\"sm\">\n                    <UploadSimpleIcon />\n                    Upload logo\n                  </Button>\n                </div>\n                <div className=\"grid gap-5 md:grid-cols-2\">\n                  <Field>\n                    <FieldLabel htmlFor=\"org-name\">Organization name</FieldLabel>\n                    <Input id=\"org-name\" value={name} onChange={(e) => setName(e.target.value)} />\n                  </Field>\n                  <Field>\n                    <FieldLabel htmlFor=\"org-id\">Organization ID</FieldLabel>\n                    <div className=\"flex items-center gap-2\">\n                      <Input id=\"org-id\" value={organizationId} readOnly className=\"font-mono\" />\n                      <Button variant=\"ghost\" size=\"icon\" aria-label=\"Copy ID\" onClick={() => navigator.clipboard?.writeText(organizationId)}>\n                        <CopyIcon weight=\"duotone\" />\n                      </Button>\n                    </div>\n                  </Field>\n                </div>\n              </CardContent>\n            </Card>\n            <section className=\"grid gap-3\">\n              <div className=\"flex items-center justify-between gap-3\">\n                <h2 className=\"text-body leading-body font-medium text-fg\">Members</h2>\n                <Button variant=\"outline\" size=\"sm\">\n                  <PlusIcon />\n                  Invite member\n                </Button>\n              </div>\n              <div className=\"fade-x overflow-x-auto\">\n                <Table>\n                  <TableHeader>\n                    <TableRow>\n                      <TableHead>Member</TableHead>\n                      <TableHead>Role</TableHead>\n                      <TableHead>Joined</TableHead>\n                      <TableHead className=\"w-12\" />\n                    </TableRow>\n                  </TableHeader>\n                  <TableBody>\n                    {members.map((m) => (\n                      <TableRow key={m.email}>\n                        <TableCell>\n                          <span className=\"flex items-center gap-2.5\">\n                            <Avatar size=\"sm\">\n                              <AvatarFallback>{m.name.charAt(0)}</AvatarFallback>\n                            </Avatar>\n                            <span className=\"grid\">\n                              <span className=\"font-medium\">{m.name}</span>\n                              <span className=\"text-caption text-fg-muted\">{m.email}</span>\n                            </span>\n                          </span>\n                        </TableCell>\n                        <TableCell>\n                          <Badge variant={m.role === \"Admin\" ? \"purple\" : \"gray\"} size=\"sm\">\n                            {m.role}\n                          </Badge>\n                        </TableCell>\n                        <TableCell>{m.joined}</TableCell>\n                        <TableCell className=\"text-right\">\n                          <Button variant=\"ghost\" size=\"icon\" aria-label={`Actions for ${m.name}`}>\n                            <DotsThreeIcon weight=\"bold\" />\n                          </Button>\n                        </TableCell>\n                      </TableRow>\n                    ))}\n                  </TableBody>\n                </Table>\n              </div>\n            </section>\n          </TabsContent>\n          <TabsContent value=\"billing\">{billing ?? <p className=\"text-body text-fg-muted\">Your plan, payment method and invoices.</p>}</TabsContent>\n          <TabsContent value=\"usage\">{usage ?? <p className=\"text-body text-fg-muted\">Agents, mail storage, call minutes and messages this cycle.</p>}</TabsContent>\n        </Tabs>\n      </AppPageBody>\n    </AppShell>\n  );\n}\n\nexport { SettingsShell };\n"
+    }
+  ]
+}

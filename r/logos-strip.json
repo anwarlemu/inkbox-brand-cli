@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "name": "logos-strip",
+  "useFor": "Use under the hero for social proof. Names only, set as text: use Acme placeholders until the brand has permission to name a customer.",
+  "constraints": [
+    "Third-party logo files",
+    "Real customer names without permission",
+    "Color logos"
+  ],
+  "documentation": "",
+  "exports": [
+    "LogosStrip"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/logos-strip",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/logos-strip.md",
+  "examples": [
+    {
+      "path": "examples/logos-strip.tsx",
+      "content": "import { LogosStrip } from \"@/components/blocks/logos-strip\";\n\nexport function Preview() {\n  return <LogosStrip label=\"Teams building on it\" names={[\"Acme\", \"Acme Labs\", \"Acme Cloud\", \"Acme Health\", \"Acme Pay\"]} />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "logos-strip"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/logos-strip/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Logos strip",
+  "description": "Customer names as text wordmarks in a muted row.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/logos-strip.tsx",
+      "content": "import { cn } from \"@/lib/utils\";\n\n/**\n * A strip of customer names set as text wordmarks in the muted purple, for \"Trusted by\" rows. Names only: never paste\n * a third-party logo file; use placeholders (Acme) until the brand has permission and the files.\n */\nfunction LogosStrip({ label, names, className }: { label?: string; names: string[]; className?: string }) {\n  return (\n    <section data-slot=\"logos-strip\" className={cn(\"mx-auto grid max-w-(--ds-layout-column) gap-5 px-6 py-10\", className)}>\n      {label && <p className=\"text-center text-body-sm leading-tight text-fg-muted\">{label}</p>}\n      <ul className=\"flex flex-wrap items-center justify-center gap-x-10 gap-y-4\">\n        {names.map((n) => (\n          <li key={n} className=\"text-h4 leading-tight font-semibold text-fg-subtle\">\n            {n}\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n\nexport { LogosStrip };\n"
+    }
+  ]
+}

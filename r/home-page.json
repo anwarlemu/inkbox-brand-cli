@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "home-page",
+  "useFor": "Start a home page from it and replace the copy through props.",
+  "constraints": [
+    "Copying placeholder quotes into production"
+  ],
+  "documentation": "",
+  "source": "Copy from the brand share images (agd-playground inkbox-og content.ts) and the console's empty state and plans",
+  "exports": [
+    "HOME_FEATURES",
+    "HOME_QUESTIONS",
+    "HomePage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/home-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/home-page.md",
+  "examples": [
+    {
+      "path": "examples/home-page.tsx",
+      "content": "import { HomePage } from \"@/components/site/home-page\";\n\nexport function Preview() {\n  return <HomePage />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "home-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/home-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Home page",
+  "description": "The home page template: hero, names strip, channels as features, a quote, questions and the closing call.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "cta",
+    "faq",
+    "feature-grid",
+    "hero",
+    "logos-strip",
+    "testimonial",
+    "site-layout",
+    "button"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/home-page.tsx",
+      "content": "import * as React from \"react\";\nimport { AppleLogoIcon, ArrowsLeftRightIcon, EnvelopeSimpleIcon, PhoneIcon, VaultIcon, WebhooksLogoIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Cta } from \"@/components/blocks/cta\";\nimport { Faq, type Question } from \"@/components/blocks/faq\";\nimport { FeatureGrid, type Feature } from \"@/components/blocks/feature-grid\";\nimport { Hero } from \"@/components/blocks/hero\";\nimport { LogosStrip } from \"@/components/blocks/logos-strip\";\nimport { Testimonial } from \"@/components/blocks/testimonial\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Button } from \"@/components/ui/button\";\n\nexport const HOME_FEATURES: Feature[] = [\n  { icon: <EnvelopeSimpleIcon weight=\"fill\" />, title: \"Email\", description: \"Every agent gets an inbox of its own, with custom domains and signatures.\" },\n  { icon: <PhoneIcon weight=\"fill\" />, title: \"Phone\", description: \"A dedicated number for calls and texts, with included minutes and messages.\" },\n  { icon: <AppleLogoIcon weight=\"fill\" />, title: \"iMessage\", description: \"Reach people where they already text, on shared or dedicated lines.\" },\n  { icon: <ArrowsLeftRightIcon weight=\"regular\" />, title: \"Agent2Agent\", description: \"Delegate work to any agent over the open A2A protocol.\" },\n  { icon: <VaultIcon weight=\"fill\" />, title: \"Vault\", description: \"Keep the credentials your agents use in one zero-knowledge vault.\" },\n  { icon: <WebhooksLogoIcon weight=\"regular\" />, title: \"Webhooks\", description: \"Send events to your HTTPS endpoints the moment a message lands.\" },\n];\n\nexport const HOME_QUESTIONS: Question[] = [\n  { question: \"What is an agent identity?\", answer: \"An identity gives one agent its own handle, inbox, phone number and Agent Card, so people and other agents can reach it directly.\" },\n  { question: \"Can I use my own domain?\", answer: \"Yes. Paid plans add custom email domains, so your agents send and receive from your own address.\" },\n  { question: \"Is there a free plan?\", answer: \"Yes. The free plan includes three agent identities, an email inbox each and an agent-to-agent channel.\" },\n];\n\n/** The home page: hero, a names strip, the channels as features, a quote, questions and the closing call. */\nfunction HomePage({\n  markSrc,\n  heroImage = \"/octopus.png\",\n  title = \"Give every AI agent a way to be reached\",\n  description = \"Email, phone, iMessage and Agent2Agent for your agents, with contacts, notes and a vault they share.\",\n  customers = [\"Acme\", \"Acme Labs\", \"Acme Cloud\", \"Acme Health\", \"Acme Pay\"],\n  features = HOME_FEATURES,\n  questions = HOME_QUESTIONS,\n}: { markSrc?: string; heroImage?: string; title?: string; description?: string; customers?: string[]; features?: Feature[]; questions?: Question[] }) {\n  return (\n    <SiteLayout markSrc={markSrc}>\n      <Hero\n        eyebrow=\"Agent2Agent ships today\"\n        title={title}\n        description={description}\n        actions={\n          <>\n            <Button asChild>\n              <a href=\"/signup\">Get started free</a>\n            </Button>\n            <Button asChild variant=\"outline\">\n              <a href=\"/docs\">Read the docs</a>\n            </Button>\n          </>\n        }\n        media={\n          // eslint-disable-next-line @next/next/no-img-element\n          <img src={heroImage} alt=\"\" width={640} height={566} className=\"mx-auto h-auto w-full max-w-56 lg:max-w-80\" />\n        }\n      />\n      <LogosStrip label=\"Teams building on it\" names={customers} />\n      <FeatureGrid label=\"Channels\" title=\"One identity, every way to reach it\" description=\"Turn on the channels each agent needs. They share contacts, notes and a vault.\" features={features} />\n      <Testimonial quote=\"Our agents answer their own email now. Setup took an afternoon.\" role=\"Head of operations\" company=\"Acme\" />\n      <Faq questions={questions} />\n      <Cta\n        title=\"Create your first agent\"\n        description=\"Set up an identity to unlock mailbox, phone and vault features.\"\n        actions={\n          <Button asChild>\n            <a href=\"/signup\">Get started free</a>\n          </Button>\n        }\n        media={\n          // eslint-disable-next-line @next/next/no-img-element\n          <img src={heroImage} alt=\"\" width={160} height={142} className=\"h-auto w-40\" />\n        }\n      />\n    </SiteLayout>\n  );\n}\n\nexport { HomePage };\n"
+    }
+  ]
+}

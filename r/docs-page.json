@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "docs-page",
+  "useFor": "Use for product documentation and guides; put the article's content in children.",
+  "constraints": [
+    "More than one h1",
+    "A rail that cuts its links off: it scrolls and fades"
+  ],
+  "documentation": "",
+  "source": "The console's rail rows and labels (Figma 427:2715) and the library's text column",
+  "exports": [
+    "DocsGroup",
+    "DocsHeading",
+    "DocsPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/docs-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/docs-page.md",
+  "examples": [
+    {
+      "path": "examples/docs-page.tsx",
+      "content": "import { DocsPage } from \"@/components/site/docs-page\";\n\nexport function Preview() {\n  return (\n    <DocsPage\n      title=\"Send an email\"\n      description=\"Every agent has its own address. Send from it with one call.\"\n      groups={[\n        { title: \"Get started\", links: [{ label: \"Quickstart\", href: \"#\" }, { label: \"Send an email\", href: \"#\", current: true }] },\n        { title: \"Channels\", links: [{ label: \"Email\", href: \"#\" }, { label: \"Phone\", href: \"#\" }, { label: \"Agent2Agent\", href: \"#\" }] },\n      ]}\n      headings={[{ id: \"request\", label: \"Request\" }, { id: \"response\", label: \"Response\" }]}\n    >\n      <h2 id=\"request\" className=\"text-h4 text-fg\">Request</h2>\n      <p>Pass the recipient, a subject and the body. The message goes out from the agent's own address.</p>\n      <h2 id=\"response\" className=\"text-h4 text-fg\">Response</h2>\n      <p>The call returns the message id and its state.</p>\n    </DocsPage>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "docs-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/docs-page/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Docs page",
+  "description": "A documentation page: the console's rail of groups, the article in the text column and the page's headings at the right.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "site-layout",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/docs-page.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { cn } from \"@/lib/utils\";\n\nexport type DocsGroup = { title: string; links: { label: string; href: string; current?: boolean }[] };\nexport type DocsHeading = { id: string; label: string };\n\n/**\n * A documentation page: the console's rail of groups at the left, the article in the text column, and the headings of\n * the page at the right on wide screens. The rail scrolls on its own and fades at its edges.\n */\nfunction DocsPage({ markSrc, groups, title, description, headings = [], children }: { markSrc?: string; groups: DocsGroup[]; title: string; description?: string; headings?: DocsHeading[]; children: React.ReactNode }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/docs\">\n      <div className=\"mx-auto grid max-w-(--ds-layout-column) gap-10 px-6 py-12 lg:grid-cols-[14rem_minmax(0,1fr)_12rem]\">\n        <nav aria-label=\"Documentation\" className=\"fade-y max-h-[calc(100dvh-8rem)] overflow-y-auto lg:sticky lg:top-24\">\n          {groups.map((group) => (\n            <div key={group.title} className=\"mb-6\">\n              <p className=\"ds-label mb-2 text-body-sm text-fg-label\">{group.title}</p>\n              <ul className=\"grid gap-1\">\n                {group.links.map((link) => (\n                  <li key={link.href}>\n                    <a\n                      href={link.href}\n                      aria-current={link.current ? \"page\" : undefined}\n                      className={cn(\"block rounded-pill px-2.5 py-1.5 text-body text-icon-secondary outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:shadow-focus aria-[current=page]:bg-subtle-hover aria-[current=page]:font-medium aria-[current=page]:text-fg motion-reduce:transition-none\")}\n                    >\n                      {link.label}\n                    </a>\n                  </li>\n                ))}\n              </ul>\n            </div>\n          ))}\n        </nav>\n        <article className=\"grid min-w-0 content-start gap-4\">\n          <h1 className=\"text-h2 text-fg\">{title}</h1>\n          {description ? <p className=\"text-body-lg text-fg-secondary\">{description}</p> : null}\n          <div className=\"grid max-w-(--ds-layout-text) gap-4 text-body leading-relaxed text-fg-secondary\">{children}</div>\n        </article>\n        {headings.length ? (\n          <aside className=\"hidden lg:block\">\n            <p className=\"ds-label mb-2 text-body-sm text-fg-label\">On this page</p>\n            <ul className=\"grid gap-1.5\">\n              {headings.map((h) => (\n                <li key={h.id}>\n                  <a href={`#${h.id}`} className=\"text-body-sm text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:shadow-focus motion-reduce:transition-none\">\n                    {h.label}\n                  </a>\n                </li>\n              ))}\n            </ul>\n          </aside>\n        ) : null}\n      </div>\n    </SiteLayout>\n  );\n}\n\nexport { DocsPage };\n"
+    }
+  ]
+}

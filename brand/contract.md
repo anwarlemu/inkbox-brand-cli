@@ -1,0 +1,12 @@
+# {{brand}} design system
+- Read `.ds/agent-guide.md` before changing UI. It contains setup, component discovery, composition and verification instructions for any coding agent.
+- Follow the user's brief. Build new pages and controls when requested; when only restyling, preserve existing content, links, order and behavior.
+- Start with `{{cli}} manifest --json` (also `describe`). It lists every capability, template, size, component and rule. Then `{{cli}} components inspect <name> --json` and `{{cli}} components emit <name> --json` for real props, states and markup. `{{cli}} show <name> --json` is the full source. Do not guess props.
+- Use `{{cli}} init` to prepare new work, then `{{cli}} add <names...>` for the components it needs. Inspect planned writes with `--dry-run`. In an app with pages, these style only the components; the app's pages change only through `{{cli}} apply`.
+- Use `{{cli}} apply --dry-run` to preview a requested restyle, then `{{cli}} apply` and follow its review tasks. When the user names components or pages, pass exactly those (`{{cli}} apply button card /settings`); nothing else changes and checks cover only that selection.
+- Use component variants and brand tokens at their usage sites; preserve shared palettes, artwork, chart data and unrelated colors. `{{cli}} brand --json` reads tokens, fonts, logos and voice. `{{cli}} principles product` and `{{cli}} principles website` read the rules. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values. Make images, slides, video, merch and illustrations with `{{cli}} image`, `deck`, `video`, `merch` and `illustrate`; to revise one with the person, `{{cli}} design new`, then `design revise "..."` or `design edit`, never the PNG.
+- Apply the interaction and motion rules in `.ds/agent-guide.md`: rare events may be expressive, frequent events subtle, shortcuts instant; press feedback starts on pointer-down with stable sizing and shared padding. Audit all input latency.
+- Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
+- Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.
+- Review screenshots against the library. `{{cli}} review <url> --any` captures and reviews an untracked page; report manual review honestly when no reviewer is available.
+- A `ds-override: <reason>` comment only counts after the user approves it with `{{cli}} approve`.

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "dashboard-shell",
+  "useFor": "Start an overview screen from it; pass meters and rows.",
+  "constraints": [
+    "Charts with no labels",
+    "Colored stat cards"
+  ],
+  "documentation": "",
+  "source": "Console usage tab (components/billing/UsageTab.tsx meters) and Manage Agents table columns (config-identities)",
+  "exports": [
+    "Meter",
+    "AgentRow",
+    "METERS",
+    "AGENTS",
+    "DashboardShell"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/dashboard-shell",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/dashboard-shell.md",
+  "examples": [
+    {
+      "path": "examples/dashboard-shell.tsx",
+      "content": "import { DashboardShell } from \"@/components/product/dashboard-shell\";\n\nexport function Preview() {\n  return <DashboardShell />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "dashboard-shell"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/dashboard-shell/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "product",
+  "title": "Dashboard shell",
+  "description": "A dashboard in the console's frame: usage meters as cards and the agents table.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "app-shell",
+    "button",
+    "card",
+    "progress",
+    "table"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/product/dashboard-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { PencilSimpleIcon, PlusIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { AppPageBody, AppPageHead, AppShell, type AppNavGroup } from \"@/components/product/app-shell\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { Progress } from \"@/components/ui/progress\";\nimport { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";\n\nexport type Meter = { label: string; used: string; total: string; left: string; value: number };\nexport type AgentRow = { handle: string; email: string; created: string };\n\nexport const METERS: Meter[] = [\n  { label: \"Agents\", used: \"4\", total: \"10\", left: \"6\", value: 40 },\n  { label: \"Mail storage\", used: \"1.2 GiB\", total: \"20 GiB\", left: \"18.8 GiB\", value: 6 },\n  { label: \"Call minutes\", used: \"12\", total: \"30 min\", left: \"18 min\", value: 40 },\n  { label: \"SMS\", used: \"84\", total: \"300\", left: \"216\", value: 28 },\n];\nexport const AGENTS: AgentRow[] = [\n  { handle: \"@acme\", email: \"acme@inkboxmail.com\", created: \"Jul 27, 2026\" },\n  { handle: \"@support-desk\", email: \"support@inkboxmail.com\", created: \"Jul 29, 2026\" },\n  { handle: \"@ops-runner\", email: \"ops@inkboxmail.com\", created: \"Aug 2, 2026\" },\n];\n\n/**\n * A dashboard in the console's frame: the page head, the usage meters as cards (used of included, what is left, a\n * purple bar), and the agents table with a create action. Swap the meters and rows through props.\n */\nfunction DashboardShell({ title = \"Usage\", description = \"This billing cycle, across your organization.\", meters = METERS, agents = AGENTS, nav, current = \"Agent Workspace\" }: { title?: string; description?: string; meters?: Meter[]; agents?: AgentRow[]; nav?: AppNavGroup[]; current?: string }) {\n  const [active, setActive] = React.useState(current);\n  return (\n    <AppShell nav={nav} current={active} onSelect={setActive}>\n      <AppPageHead\n        title={title}\n        description={description}\n        actions={\n          <Button size=\"sm\">\n            <PlusIcon />\n            Create agent\n          </Button>\n        }\n      />\n      <AppPageBody className=\"gap-6\">\n        <ul className=\"grid gap-4 sm:grid-cols-2 xl:grid-cols-4\">\n          {meters.map((m) => (\n            <li key={m.label} className=\"grid\">\n              <Card>\n                <CardHeader>\n                  <CardDescription>{m.label}</CardDescription>\n                  <CardTitle className=\"text-h3 leading-heading\">\n                    {m.used}\n                    <span className=\"text-body text-fg-muted\">of {m.total}</span>\n                  </CardTitle>\n                </CardHeader>\n                <CardContent className=\"grid gap-2\">\n                  <Progress value={m.value} aria-label={`${m.label} used`} />\n                  <p className=\"text-body-sm text-fg-muted\">{m.left} left</p>\n                </CardContent>\n              </Card>\n            </li>\n          ))}\n        </ul>\n        <section className=\"grid gap-3\">\n          <h2 className=\"text-body-lg leading-heading font-medium text-fg\">Agents</h2>\n          <div className=\"fade-x overflow-x-auto\">\n            <Table>\n              <TableHeader>\n                <TableRow>\n                  <TableHead>Agent handle</TableHead>\n                  <TableHead>Email</TableHead>\n                  <TableHead>Created</TableHead>\n                  <TableHead className=\"w-12\" />\n                </TableRow>\n              </TableHeader>\n              <TableBody>\n                {agents.map((a) => (\n                  <TableRow key={a.handle}>\n                    <TableCell className=\"text-rose\">{a.handle}</TableCell>\n                    <TableCell>{a.email}</TableCell>\n                    <TableCell>{a.created}</TableCell>\n                    <TableCell className=\"text-right\">\n                      <Button variant=\"ghost\" size=\"icon\" aria-label={`Edit ${a.handle}`}>\n                        <PencilSimpleIcon weight=\"fill\" />\n                      </Button>\n                    </TableCell>\n                  </TableRow>\n                ))}\n              </TableBody>\n            </Table>\n          </div>\n        </section>\n      </AppPageBody>\n    </AppShell>\n  );\n}\n\nexport { DashboardShell };\n"
+    }
+  ]
+}

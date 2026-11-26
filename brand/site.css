@@ -1,0 +1,61 @@
+/* The base layer: what every Inkbox screen has before any component is styled, measured from the console design.
+   Defaults use :where() so the app's own rules still win; there are no markup touches. */
+
+/* Element defaults sit in the base layer, so a utility class on an element (a library component's text-fg-muted)
+   wins over them; their :where() selectors already let an app's own rules win. */
+@layer base {
+	html {
+		background-color: var(--ds-color-bg-page);
+	}
+
+	html,
+	body {
+		color: var(--ds-color-text-default);
+	}
+
+	body {
+		background-color: var(--ds-color-bg-default);
+		font-family: var(--ds-font-sans);
+		font-size: var(--ds-text-body);
+		line-height: var(--ds-leading-body);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	/* Titles are Inter at 400: a page or dialog title is 20px, never bold. */
+	:where(h1, h2, h3, h4, h5, h6) {
+		font-family: var(--ds-font-display);
+		font-weight: var(--ds-font-weight-heading);
+		color: inherit;
+		line-height: var(--ds-leading-heading);
+		text-wrap: balance;
+	}
+
+	:where(p, li, blockquote, figcaption, dd, td) {
+		text-wrap: pretty;
+	}
+
+	:where(code, kbd, pre, samp) {
+		font-family: var(--ds-font-mono);
+	}
+
+	:where(a) {
+		color: var(--ds-color-text-brand);
+	}
+
+	::selection {
+		background-color: var(--ds-color-ring-tint);
+	}
+
+	:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+		outline: 2px solid var(--ds-color-focus-ring);
+		outline-offset: 2px;
+	}
+}
+
+/* A section label in a rail: 13px in the action purple ("Channels", "Shared"). */
+.ds-label {
+	font-size: var(--ds-text-body-sm);
+	line-height: var(--ds-leading-tight);
+	color: var(--ds-color-text-label);
+}

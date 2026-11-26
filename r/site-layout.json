@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "site-layout",
+  "useFor": "Use as the outer frame of every website page; pass current with the page's href. The page templates use it.",
+  "constraints": [
+    "Pages without the header and footer",
+    "A second nav bar"
+  ],
+  "documentation": "",
+  "exports": [
+    "SITE_LINKS",
+    "FOOTER_GROUPS",
+    "SiteLayout"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/site-layout",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/site-layout.md",
+  "examples": [
+    {
+      "path": "examples/site-layout.tsx",
+      "content": "import { SiteLayout } from \"@/components/site/site-layout\";\n\nexport function Preview() {\n  return (\n    <SiteLayout current=\"/product\">\n      <section className=\"mx-auto max-w-(--ds-layout-column) px-6 py-16\">\n        <p className=\"text-body text-fg-secondary\">The page's sections go here.</p>\n      </section>\n    </SiteLayout>\n  );\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "site-layout"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/site-layout/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Site layout",
+  "description": "A website page's frame: the site header and footer around the page's sections, with the brand's links.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "site-footer",
+    "site-header",
+    "lockup",
+    "button"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/site-layout.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SiteFooter, type FooterGroup } from \"@/components/blocks/site-footer\";\nimport { SiteHeader, type SiteLink } from \"@/components/blocks/site-header\";\nimport { Lockup } from \"@/components/site/lockup\";\nimport { Button } from \"@/components/ui/button\";\n\nexport const SITE_LINKS: SiteLink[] = [\n  { label: \"Product\", href: \"/product\" },\n  { label: \"Pricing\", href: \"/pricing\" },\n  { label: \"Changelog\", href: \"/changelog\" },\n  { label: \"Blog\", href: \"/blog\" },\n  { label: \"About\", href: \"/about\" },\n];\n\nexport const FOOTER_GROUPS: FooterGroup[] = [\n  { title: \"Product\", links: [{ label: \"Email\", href: \"/product#email\" }, { label: \"Phone\", href: \"/product#phone\" }, { label: \"Agent2Agent\", href: \"/product#a2a\" }, { label: \"Pricing\", href: \"/pricing\" }] },\n  { title: \"Company\", links: [{ label: \"About\", href: \"/about\" }, { label: \"Blog\", href: \"/blog\" }, { label: \"Changelog\", href: \"/changelog\" }, { label: \"Contact\", href: \"/contact\" }] },\n  { title: \"Legal\", links: [{ label: \"Privacy policy\", href: \"/legal/privacy\" }, { label: \"Terms of service\", href: \"/legal/terms\" }] },\n];\n\n/**\n * A website page's frame: the top bar (lockup, links, Log in and Get started) and the foot around the page's sections.\n * Mark the current link with `current` (its href); swap any part through props.\n */\nfunction SiteLayout({ children, current, markSrc, links = SITE_LINKS, groups = FOOTER_GROUPS, actions, legal = \"© 2026 Inkbox\", tagline = \"Give every AI agent a way to be reached.\" }: { children: React.ReactNode; current?: string; markSrc?: string; links?: SiteLink[]; groups?: FooterGroup[]; actions?: React.ReactNode; legal?: string; tagline?: string }) {\n  return (\n    <div data-slot=\"site-layout\" className=\"flex min-h-dvh flex-col bg-page font-sans text-fg\">\n      <SiteHeader\n        logo={<Lockup markSrc={markSrc} />}\n        links={links.map((l) => ({ ...l, current: l.href === current }))}\n        actions={\n          actions ?? (\n            <>\n              <Button asChild variant=\"ghost\" size=\"sm\">\n                <a href=\"/login\">Log in</a>\n              </Button>\n              <Button asChild size=\"sm\">\n                <a href=\"/signup\">Get started</a>\n              </Button>\n            </>\n          )\n        }\n      />\n      <main className=\"flex-1\">{children}</main>\n      <SiteFooter logo={<Lockup markSrc={markSrc} />} tagline={tagline} groups={groups} legal={legal} legalLinks={[{ label: \"Privacy policy\", href: \"/legal/privacy\" }, { label: \"Terms of service\", href: \"/legal/terms\" }]} />\n    </div>\n  );\n}\n\nexport { SiteLayout };\n"
+    }
+  ]
+}

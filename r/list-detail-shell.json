@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "list-detail-shell",
+  "useFor": "Start any list and detail screen from it (events, messages, contacts); pass entries. On phones the two take turns.",
+  "constraints": [
+    "A modal for every detail on wide screens",
+    "Rows without a selected state"
+  ],
+  "documentation": "",
+  "source": "Console webhooks event catalog (app/(protected)/webhooks/page.tsx; Figma Webhooks - Event catalog, brand/reference/site-webhooks-desktop.jpg)",
+  "exports": [
+    "ListEntry",
+    "ENTRIES",
+    "ListDetailShell"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/list-detail-shell",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/list-detail-shell.md",
+  "examples": [
+    {
+      "path": "examples/list-detail-shell.tsx",
+      "content": "import { ListDetailShell } from \"@/components/product/list-detail-shell\";\n\nexport function Preview() {\n  return <ListDetailShell />;\n}\n",
+      "exports": [
+        "Preview"
+      ],
+      "requires": [
+        "list-detail-shell"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/list-detail-shell/Preview"
+        }
+      ]
+    }
+  ],
+  "type": "product",
+  "title": "List and detail shell",
+  "description": "A list beside its detail in the console's frame: selectable rows at the left, the chosen item with tags, fact cards and code at the right.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "app-shell",
+    "badge",
+    "button",
+    "card",
+    "code-block",
+    "tabs",
+    "utils"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/product/list-detail-shell.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ArrowLeftIcon, ArrowRightIcon, BellRingingIcon, LightningIcon, PlugsIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { AppPageBody, AppPageHead, AppShell, type AppNavGroup } from \"@/components/product/app-shell\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { CodeBlock, CodeBlockContent, CodeBlockHeader, CodeBlockTitle } from \"@/components/ui/code-block\";\nimport { Tabs, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\nimport { cn } from \"@/lib/utils\";\n\nexport type ListEntry = { id: string; name: string; meta: string; tag: string; tags?: string[]; description: string; facts?: { icon?: React.ReactNode; title: string; description: string }[]; code?: { title: string; language: string; code: string } };\n\nconst PAYLOAD = `{\n  \"event\": \"message.received\",\n  \"mailbox\": \"acme@inkboxmail.com\",\n  \"message_id\": \"msg_4c89b2fa3522\"\n}`;\n\nexport const ENTRIES: ListEntry[] = [\n  {\n    id: \"message.received\",\n    name: \"message.received\",\n    meta: \"0 configured destinations\",\n    tag: \"Email\",\n    tags: [\"Signed\", \"Fire-and-forget\"],\n    description: \"Delivered when a mailbox stores a new inbound message.\",\n    facts: [\n      { icon: <LightningIcon weight=\"fill\" />, title: \"Trigger\", description: \"Triggered after an inbound email is accepted and persisted to the mailbox.\" },\n      { icon: <BellRingingIcon weight=\"fill\" />, title: \"Delivery\", description: \"Fire-and-forget POST. Delivery failures are logged and do not block mail processing.\" },\n      { icon: <PlugsIcon weight=\"fill\" />, title: \"Response contract\", description: \"Any response body is ignored.\" },\n    ],\n    code: { title: \"Payload example\", language: \"json\", code: PAYLOAD },\n  },\n  { id: \"message.sent\", name: \"message.sent\", meta: \"1 configured destination\", tag: \"Email\", tags: [\"Signed\"], description: \"Delivered when an agent's outbound message is accepted for delivery.\" },\n  { id: \"message.delivered\", name: \"message.delivered\", meta: \"0 configured destinations\", tag: \"Email\", tags: [\"Signed\"], description: \"Delivered when the receiving server accepts an outbound message.\" },\n  { id: \"call.completed\", name: \"call.completed\", meta: \"2 configured destinations\", tag: \"Phone\", tags: [\"Signed\"], description: \"Delivered when a call ends, with its duration and recording state.\" },\n];\n\n/**\n * A list beside its detail in the console's frame (the webhooks event catalog): the page head and its tabs, a column of\n * selectable rows (a tag, the name, a muted line) and the chosen item at the right: its tags, title, description, fact\n * cards and a code block. On phones the list and the detail take turns, with a back button.\n */\nfunction ListDetailShell({ title = \"Webhooks\", description = \"Manage webhook subscriptions and review event payloads.\", tabs = [\"Manage webhooks\", \"Event catalog\", \"Delivery log\"], entries = ENTRIES, nav }: { title?: string; description?: string; tabs?: string[]; entries?: ListEntry[]; nav?: AppNavGroup[] }) {\n  const [selected, setSelected] = React.useState(entries[0]?.id);\n  const [detail, setDetail] = React.useState(false);\n  const item = entries.find((e) => e.id === selected) ?? entries[0];\n  return (\n    <AppShell nav={nav} current={title}>\n      <AppPageHead title={title} description={description} />\n      <AppPageBody>\n        {tabs.length > 0 && (\n          <Tabs defaultValue={tabs[1] ?? tabs[0]}>\n            <TabsList>\n              {tabs.map((t) => (\n                <TabsTrigger key={t} value={t}>\n                  {t}\n                </TabsTrigger>\n              ))}\n            </TabsList>\n          </Tabs>\n        )}\n        <div className=\"grid gap-4 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]\">\n          <ul aria-label={`${title} list`} className={cn(\"grid content-start gap-1 rounded-panel border border-line-subtle p-2\", detail && \"max-lg:hidden\")}>\n            {entries.map((e) => (\n              <li key={e.id}>\n                <button\n                  type=\"button\"\n                  aria-current={e.id === item?.id ? \"true\" : undefined}\n                  onClick={() => {\n                    setSelected(e.id);\n                    setDetail(true);\n                  }}\n                  className=\"grid w-full gap-1 rounded-control px-2.5 py-2 text-left outline-none transition-colors duration-150 ease-out hover:bg-subtle focus-visible:shadow-focus aria-[current=true]:bg-subtle motion-reduce:transition-none\"\n                >\n                  <span className=\"flex items-center gap-1.5\">\n                    <Badge variant=\"blue\" size=\"sm\">\n                      {e.tag}\n                    </Badge>\n                    <ArrowRightIcon aria-hidden className=\"size-3.5 text-icon-secondary\" />\n                  </span>\n                  <span className=\"text-body leading-body text-fg\">{e.name}</span>\n                  <span className=\"text-body-sm leading-tight text-fg-brand\">{e.meta}</span>\n                </button>\n              </li>\n            ))}\n          </ul>\n          {item && (\n            <section aria-label={item.name} className={cn(\"grid content-start gap-4 rounded-panel border border-line-subtle p-4 md:p-5\", !detail && \"max-lg:hidden\")}>\n              <Button variant=\"link\" className=\"w-fit lg:hidden\" onClick={() => setDetail(false)}>\n                <ArrowLeftIcon />\n                All events\n              </Button>\n              <div className=\"flex flex-wrap gap-1.5\">\n                <Badge variant=\"blue\" size=\"sm\">\n                  {item.tag}\n                </Badge>\n                {item.tags?.map((t) => (\n                  <Badge key={t} variant={t === \"Signed\" ? \"purple\" : \"gray\"} size=\"sm\">\n                    {t}\n                  </Badge>\n                ))}\n              </div>\n              <div className=\"grid gap-1.5 border-b border-line-subtle pb-4\">\n                <h2 className=\"text-h3 leading-heading font-normal text-fg\">{item.name}</h2>\n                <p className=\"text-body leading-body text-fg-muted\">{item.description}</p>\n              </div>\n              {item.facts && (\n                <ul className=\"grid gap-3 md:grid-cols-3\">\n                  {item.facts.map((f) => (\n                    <li key={f.title} className=\"grid\">\n                      <Card size=\"sm\">\n                        <CardHeader>\n                          <CardTitle>\n                            {f.icon}\n                            {f.title}\n                          </CardTitle>\n                          <CardDescription>{f.description}</CardDescription>\n                        </CardHeader>\n                      </Card>\n                    </li>\n                  ))}\n                </ul>\n              )}\n              {item.code && (\n                <div className=\"grid gap-2\">\n                  <p className=\"text-body leading-body text-fg\">{item.code.title}</p>\n                  <CodeBlock>\n                    <CodeBlockHeader>\n                      <CodeBlockTitle language={item.code.language}>{item.code.language.toUpperCase()}</CodeBlockTitle>\n                    </CodeBlockHeader>\n                    <CodeBlockContent code={item.code.code} language={item.code.language} />\n                  </CodeBlock>\n                </div>\n              )}\n            </section>\n          )}\n        </div>\n      </AppPageBody>\n    </AppShell>\n  );\n}\n\nexport { ListDetailShell };\n"
+    }
+  ]
+}

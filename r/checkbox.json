@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "checkbox",
+  "useFor": "Use for independent on or off choices that apply when a form is submitted (event subscriptions, consent). Pair each checkbox with a Label 8px to its right. Use the indeterminate state for a parent that covers some of its children. For a setting that applies at once use Switch.",
+  "constraints": [
+    "A pink checked box",
+    "A square checkbox",
+    "A square glyph or a glyph other than Phosphor's circles",
+    "A checkbox that acts immediately like a switch",
+    "An animated check glyph"
+  ],
+  "documentation": "",
+  "source": "The Inkbox console's round Checkbox (18px circle, brand purple), drawn with Phosphor Circle, CheckCircle (fill) and MinusCircle (fill), as the user asked on 2026-11-04",
+  "exports": [
+    "Checkbox"
+  ],
+  "client": true,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/checkbox",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/checkbox.md",
+  "examples": [
+    {
+      "path": "examples/checkbox.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Checkbox } from \"@/components/ui/checkbox\";\nimport { Label } from \"@/components/ui/label\";\n\nconst EVENTS = [\"message.received\", \"message.sent\", \"message.delivered\"];\n\nexport function Preview() {\n  const [chosen, setChosen] = React.useState<string[]>([\"message.received\"]);\n  const all = chosen.length === EVENTS.length ? true : chosen.length ? \"indeterminate\" : false;\n  return (\n    <div className=\"grid gap-2.5\">\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"all-events\" checked={all} onCheckedChange={(v) => setChosen(v === true ? EVENTS : [])} />\n        <Label htmlFor=\"all-events\" className=\"font-medium\">All email events</Label>\n      </div>\n      <div className=\"grid gap-2.5 pl-6.5\">\n        {EVENTS.map((e) => (\n          <div key={e} className=\"flex items-center gap-2\">\n            <Checkbox id={e} checked={chosen.includes(e)} onCheckedChange={(v) => setChosen((c) => (v === true ? [...c, e] : c.filter((x) => x !== e)))} />\n            <Label htmlFor={e} className=\"font-mono\">{e}</Label>\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid gap-2.5\">\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"c1\" />\n        <Label htmlFor=\"c1\">Unchecked</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"c2\" defaultChecked />\n        <Label htmlFor=\"c2\">Checked</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"c3\" checked=\"indeterminate\" />\n        <Label htmlFor=\"c3\">Some of them</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"c4\" disabled />\n        <Label htmlFor=\"c4\">Disabled</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <Checkbox id=\"c5\" aria-invalid />\n        <Label htmlFor=\"c5\">I accept the Terms of Service (required)</Label>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Preview",
+        "States"
+      ],
+      "requires": [
+        "checkbox",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/checkbox/Preview"
+        },
+        {
+          "name": "States",
+          "url": "https://inkbox-ds.vercel.app/preview/checkbox/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Checkbox",
+  "description": "Always a circle, drawn with Phosphor's circle glyphs on Chakra's checkbox: an empty circle when off, the filled brand-purple check circle when on and the filled minus circle when some are on.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@chakra-ui/react",
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/checkbox.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Checkbox as ChakraCheckbox } from \"@chakra-ui/react\";\nimport { CheckCircleIcon, CircleIcon, MinusCircleIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Inkbox checks are always circles, drawn with Phosphor's circle glyphs on Chakra's (unstyled) checkbox: an empty\n// circle in the strong edge color when off, the filled check circle in the brand purple when on and the filled minus\n// circle when some are on (darker under the pointer). The 22px glyph box draws an 18px circle, the console's size.\n// No glyph animation; the color changes at the fast step. Keyboard focus is the soft ring; aria-invalid draws the\n// empty circle in red. Its label sits 8px away in 14px ink.\ntype CheckboxProps = Omit<React.ComponentProps<typeof ChakraCheckbox.Root>, \"onCheckedChange\"> & { onCheckedChange?: (checked: boolean | \"indeterminate\") => void };\n\nfunction Checkbox({ className, onCheckedChange, ...props }: CheckboxProps) {\n  return (\n    <ChakraCheckbox.Root\n      unstyled\n      data-slot=\"checkbox\"\n      className={cn(\n        \"peer group/checkbox inline-flex size-5.5 shrink-0 cursor-pointer items-center justify-center rounded-pill text-line-strong outline-none transition-[color,box-shadow] duration-fast ease-out data-focus-visible:shadow-focus data-disabled:cursor-not-allowed data-disabled:opacity-50 data-invalid:text-danger aria-invalid:text-danger data-[state=checked]:text-brand data-[state=checked]:hover:text-primary-hover data-[state=indeterminate]:text-brand data-[state=indeterminate]:hover:text-primary-hover motion-reduce:transition-none\",\n        className,\n      )}\n      onCheckedChange={(details) => onCheckedChange?.(details.checked)}\n      {...props}\n    >\n      <ChakraCheckbox.HiddenInput />\n      <ChakraCheckbox.Control data-slot=\"checkbox-control\" className=\"flex size-full items-center justify-center rounded-pill\">\n        <CircleIcon aria-hidden className=\"size-full group-data-[state=checked]/checkbox:hidden group-data-[state=indeterminate]/checkbox:hidden\" />\n        <CheckCircleIcon aria-hidden weight=\"fill\" data-slot=\"checkbox-indicator\" className=\"hidden size-full group-data-[state=checked]/checkbox:block\" />\n        <MinusCircleIcon aria-hidden weight=\"fill\" data-slot=\"checkbox-indicator\" className=\"hidden size-full group-data-[state=indeterminate]/checkbox:block\" />\n      </ChakraCheckbox.Control>\n    </ChakraCheckbox.Root>\n  );\n}\n\nexport { Checkbox };\n"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "name": "careers-page",
+  "useFor": "Start a careers page from it with your own roles.",
+  "constraints": [
+    "Photos of people who have not agreed",
+    "Roles that are not open"
+  ],
+  "documentation": "",
+  "source": "Hiring copy from the brand share images (agd-playground inkbox-og content.ts); rows from the console's cards and badges",
+  "exports": [
+    "Role",
+    "CareersPage"
+  ],
+  "client": false,
+  "docsUrl": "https://inkbox-ds.vercel.app/components/careers-page",
+  "markdownUrl": "https://inkbox-ds.vercel.app/r/careers-page.md",
+  "examples": [
+    {
+      "path": "examples/careers-page.tsx",
+      "content": "import { CareersPage } from \"@/components/site/careers-page\";\nimport { VALUES } from \"@/components/site/about-page\";\n\nexport function Preview() {\n  return (\n    <CareersPage\n      description=\"Founding engineers, in San Francisco.\"\n      reasons={VALUES}\n      roles={[\n        { title: \"Founding engineer, platform\", team: \"Engineering\", location: \"San Francisco\", href: \"#\" },\n        { title: \"Founding engineer, voice\", team: \"Engineering\", location: \"San Francisco\", href: \"#\" },\n      ]}\n    />\n  );\n}\n\nexport function NoRoles() {\n  return <CareersPage roles={[]} />;\n}\n",
+      "exports": [
+        "Preview",
+        "NoRoles"
+      ],
+      "requires": [
+        "careers-page",
+        "about-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Preview",
+          "url": "https://inkbox-ds.vercel.app/preview/careers-page/Preview"
+        },
+        {
+          "name": "NoRoles",
+          "url": "https://inkbox-ds.vercel.app/preview/careers-page/NoRoles"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Careers page",
+  "description": "The careers template: the hiring call, reasons to join as cards, open roles as rows with their team, and a way in for everyone else.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "cta",
+    "feature-grid",
+    "hero",
+    "section-head",
+    "site-layout",
+    "badge",
+    "button",
+    "card"
+  ],
+  "packages": [
+    "@phosphor-icons/react"
+  ],
+  "files": [
+    {
+      "path": "components/site/careers-page.tsx",
+      "content": "import * as React from \"react\";\nimport { ArrowRightIcon } from \"@phosphor-icons/react/ssr\";\n\nimport { Cta } from \"@/components/blocks/cta\";\nimport { FeatureGrid, type Feature } from \"@/components/blocks/feature-grid\";\nimport { Hero } from \"@/components/blocks/hero\";\nimport { SectionHead } from \"@/components/blocks/section-head\";\nimport { SiteLayout } from \"@/components/site/site-layout\";\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card } from \"@/components/ui/card\";\n\nexport type Role = { title: string; team: string; location: string; href: string };\n\n/** The careers page: the hiring call, why work here as cards, the open roles as rows, and a way in for everyone else. */\nfunction CareersPage({ markSrc, title = \"Come build the inbox for AI agents\", description, reasons = [], roles, contactHref = \"/contact\" }: { markSrc?: string; title?: string; description?: string; reasons?: Feature[]; roles: Role[]; contactHref?: string }) {\n  return (\n    <SiteLayout markSrc={markSrc} current=\"/careers\">\n      <Hero eyebrow=\"Careers\" title={title} description={description} />\n      {reasons.length ? <FeatureGrid label=\"Why join\" title=\"How we work\" features={reasons} /> : null}\n      <section className=\"mx-auto grid max-w-(--ds-layout-column) gap-6 px-6 py-12\">\n        <SectionHead label=\"Open roles\" title={roles.length ? `${roles.length} open ${roles.length === 1 ? \"role\" : \"roles\"}` : \"No open roles right now\"} />\n        {roles.length ? (\n          <ul className=\"grid gap-3\">\n            {roles.map((role) => (\n              <li key={`${role.title}-${role.location}`}>\n                <Card className=\"flex-row flex-wrap items-center justify-between gap-4 p-5\">\n                  <div className=\"grid gap-1\">\n                    <p className=\"text-body font-medium text-fg\">{role.title}</p>\n                    <p className=\"text-body-sm text-fg-muted\">{role.location}</p>\n                  </div>\n                  <div className=\"flex items-center gap-3\">\n                    <Badge variant=\"secondary\">{role.team}</Badge>\n                    <Button asChild variant=\"outline\">\n                      <a href={role.href}>\n                        View role <ArrowRightIcon aria-hidden />\n                      </a>\n                    </Button>\n                  </div>\n                </Card>\n              </li>\n            ))}\n          </ul>\n        ) : null}\n      </section>\n      <Cta\n        title=\"Do not see your role?\"\n        description=\"Tell us what you would build.\"\n        actions={\n          <Button asChild>\n            <a href={contactHref}>Get in touch</a>\n          </Button>\n        }\n      />\n    </SiteLayout>\n  );\n}\n\nexport { CareersPage };\n"
+    }
+  ]
+}

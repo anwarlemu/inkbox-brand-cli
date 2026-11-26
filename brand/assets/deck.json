@@ -1,0 +1,159 @@
+{
+	"$comment": "Deck slides at 1920 by 1080, each built from a share-image template (brand/assets/image.json) drawn at the slide's size, so a deck shares the posts' layers: the reef, the outline band, hatching, the wordmark tile, the console window, the octopi and the lockup. Bullets is the one layout of its own: the title, points led by the filled check circle (Phosphor CheckCircle, the library's checks) and the lockup, between hatched strips. The words in slots are sample copy, drawn with --sample only. Agenda and timeline are the bullets layout with numbers or a rule; questions is the statement layout on lavender. Neither exists in the brand's files as such: they are built from its layouts and tokens.",
+	"width": 1920,
+	"height": 1080,
+	"slides": {
+		"cover": {
+			"name": "Cover",
+			"description": "The title and a line under it, top left, beside the wordmark tile with the sitting octopus, and the lockup (the tile template).",
+			"template": "tile",
+			"theme": "paper",
+			"slots": {
+				"title": "Give every *AI agent*\na way to be reached",
+				"body": "Email, phone numbers and Agent Cards for every agent."
+			}
+		},
+		"section": {
+			"name": "Section",
+			"description": "A section number in a dot badge and its title, set right over a hatched floor with the octopus hanging over its edge (the hatched template).",
+			"template": "hatch",
+			"theme": "paper",
+			"slots": {
+				"number": "01",
+				"title": "Agent-to-Agent"
+			}
+		},
+		"statement": {
+			"name": "Statement",
+			"description": "One sentence inside the solid purple border, with the lockup and the sitting octopus (the announcement template).",
+			"template": "announce",
+			"theme": "paper",
+			"slots": {
+				"title": "Every agent gets *an inbox of its own*"
+			}
+		},
+		"bullets": {
+			"name": "Bullets",
+			"description": "A title and up to six points, each led by a filled check circle, between hatched strips, with the lockup.",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "What every agent gets",
+				"items": "Its own email address | A phone number for calls and texts | An Agent Card other agents can find | A vault for its keys"
+			}
+		},
+		"agenda": {
+			"name": "Agenda",
+			"description": "A title and up to six numbered points, each led by its number in the mono on a purple dot, between hatched strips, with the lockup (the bullets slide's layout).",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "Agenda",
+				"items": "Why agents need an inbox | What Acme built | Questions"
+			}
+		},
+		"timeline": {
+			"name": "Timeline",
+			"description": "A title and up to six moments on a rule, a dot at each, between hatched strips, with the lockup (the bullets slide's layout). Write each as when, then what.",
+			"template": "bullets",
+			"theme": "paper",
+			"slots": {
+				"title": "How we got here",
+				"items": "Spring: the first inbox | Summer: phone numbers | Autumn: Agent Cards"
+			}
+		},
+		"stat": {
+			"name": "Stat",
+			"description": "A very large number and a line under it over the outline band, the octopus hanging over the rule (the big number template).",
+			"template": "funding",
+			"theme": "paper",
+			"slots": {
+				"stat": "1,000",
+				"title": "agents online at Acme"
+			}
+		},
+		"quote": {
+			"name": "Quote",
+			"description": "A quote in the headline face with the attribution as a credit, over the reef with the sitting octopus (the reef template). Attribute to a role, never a made-up person.",
+			"template": "reef",
+			"theme": "lavender",
+			"slots": {
+				"quote": "Our support agent answers its own email now.",
+				"attribution": "Head of operations, Acme"
+			}
+		},
+		"image": {
+			"name": "Image",
+			"description": "A title and a line over a browser window inside a hatched border: your capture with image, else the console's inbox (the feature template).",
+			"template": "feature",
+			"theme": "paper",
+			"slots": {
+				"title": "The inbox *built for agents*",
+				"body": "Every message, call and Agent Card in one console.",
+				"url": "inkbox.ai"
+			}
+		},
+		"qa": {
+			"name": "Questions",
+			"description": "One line for questions inside the solid purple border, with the lockup and the sitting octopus (the announcement template).",
+			"template": "announce",
+			"theme": "lavender",
+			"slots": {
+				"title": "Questions?"
+			}
+		},
+		"team": {
+			"name": "Team",
+			"description": "A title and up to six people as cards: a name and a role each, written \"name - role\" with | between (people who agreed to be shown; no photos).",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "The team",
+				"items": "Your name - Founder | A colleague - Engineer"
+			}
+		},
+		"comparison": {
+			"name": "Comparison",
+			"description": "A title and two columns, each a label over points led by the check circle.",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "Before and after",
+				"left": "Before",
+				"left-items": "Shared inboxes | Manual replies",
+				"right": "With an agent inbox",
+				"right-items": "An address per agent | Replies in seconds"
+			}
+		},
+		"chart": {
+			"name": "Chart",
+			"description": "A title and a bar, line or donut chart from \"label value\" rows, in the chart-series colors.",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "Messages by channel",
+				"data": "Email 42 | Phone 31 | Cards 27",
+				"kind": "bar"
+			}
+		},
+		"images": {
+			"name": "Picture grid",
+			"description": "A title and two to four of your captures in console windows (\"images\": a list of files).",
+			"template": "compose",
+			"theme": "paper",
+			"slots": {
+				"title": "What it looks like"
+			}
+		},
+		"end": {
+			"name": "End card",
+			"description": "The lockup centered over the staggered wordmark tile inside a line border, a line under it and the address (the lockup template).",
+			"template": "partner",
+			"theme": "paper",
+			"slots": {
+				"title": "Give every *AI agent*\na way to be reached",
+				"url": "inkbox.ai"
+			}
+		}
+	}
+}

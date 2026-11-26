@@ -151,6 +151,26 @@ person's own `--image`.
 | A component, section or page | `{{cli}} add <name>`; `{{cli}} list` shows every one |
 | Figma variables, pushes and checks | `{{cli}} figma <action>` |
 
+## Any layout, never only the templates
+
+The templates are starting points, not limits. When a person asks for an arrangement no template has, make it:
+
+- **Ads and posts from a brief:** `{{cli}} design ad brief.md` lays the brief's parts (headline, supporting line, label,
+  stat, quote, search prompt, plan, offer, features, pictures, button) out on the brand's grid in its own blocks. A
+  `## Layout` section says how in plain words, one row per line from the top, parts side by side split by commas:
+  `headline top left`, `stat left, quote right`, `three photos in a row`, `button bottom right`. Without one it makes
+  stacked, centered and two-column arrangements of every part. Each result passes the brand check and is a design file.
+- **Any graphic at any size:** `{{cli}} design new compose --size <size>`, then
+  `{{cli}} design compose add|move|span|remove|order <file> ...` puts any of the brand's blocks (`{{cli}} design --help`
+  lists them) on any cells. `{{cli}} design revise <file> "stat on the right, bigger headline"` takes plain words.
+- **A template, rearranged:** start from a template and revise or move its parts; nothing stays in the template's
+  arrangement unless the person wants it.
+- **Pages and sections:** `{{cli}} design page compose outline.json` builds a page from the brand's sections in any
+  order, and the library's components combine freely in code.
+
+Only the brand's rules are fixed (its colors, type, logo, contrast and clear space); the arrangement is whatever the
+person asks for.
+
 ## Revising a design
 
 When a person wants a picture they can react to ("make it bigger", "darker", "logo top right"), make a design file and

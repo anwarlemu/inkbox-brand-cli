@@ -6,6 +6,7 @@ import { allTemplates, canSay, DesignError, differences, docText, infoFor, neare
 import { applyEdits, create, layerFlag, type Applied, type Edit } from './ops.js';
 import { examples, parsePhrases, variety } from './phrases.js';
 import { PLATFORMS } from './platforms.js';
+import { drawAds, readAdBrief } from './ads.js';
 
 import { comparison, contactSheet, type Painter } from './sheet.js';
 import type { Adapter, DesignDoc, DrawnLayer, Finding, Format, TemplateInfo } from './types.js';
@@ -30,7 +31,7 @@ export type DesignIO = {
 type Args = { _: string[]; flags: Map<string, string[]>; json: boolean };
 
 const BOOLEAN = new Set(['json', 'force', 'help', 'dry-run', 'sample', 'front', 'back']);
-const FLAGS = ['template', 'size', 'theme', 'width', 'height', 'seed', 'set', 'option', 'image', 'layer', 'hide', 'show', 'reset', 'allow', 'out', 'format', 'scale', 'by', 'count', 'to', 'steps', 'replace', 'at', 'place', 'id', 'grid', 'flavor', ...BOOLEAN];
+const FLAGS = ['variants', 'template', 'size', 'theme', 'width', 'height', 'seed', 'set', 'option', 'image', 'layer', 'hide', 'show', 'reset', 'allow', 'out', 'format', 'scale', 'by', 'count', 'to', 'steps', 'replace', 'at', 'place', 'id', 'grid', 'flavor', ...BOOLEAN];
 const SHORT: Record<string, string> = { o: 'out', s: 'size', t: 'theme', f: 'format', i: 'image', h: 'help' };
 
 function parseArgs(argv: string[], slots: string[]): Args {
@@ -243,6 +244,35 @@ export async function runDesign(argv: string[], adapter: Adapter, io: DesignIO):
 type Command = (a: Args, adapter: Adapter, io: DesignIO) => Promise<number | void>;
 
 const COMMANDS: Record<string, Command> = {
+	/** Ads from a brief in any arrangement: its Layout words, or every part it gives stacked, centered and in two columns. */
+	async ad(a, adapter, io) {
+		const typed = a._[0];
+		if (!typed) throw new DesignError(`Name a brief: ${io.bin} design ad brief.md [-o ads] [--variants 1..4]. Sections: Platforms, Headline, Supporting line, Label, CTA, Stat (3x | label), Quote, Quote name, Quote role, Search prompt, Plan, Offer, Features, Chart, Look (dark or light theme), Layout (any arrangement in plain words, one row per line: "stat left, quote right"), Images.`);
+		const brief = readAdBrief(resolve(io.cwd, typed));
+		const outDir = resolve(io.cwd, one(a, 'out') ?? 'ads');
+		const v = one(a, 'variants');
+		const variants = v === undefined ? 3 : Number(v);
+		if (!Number.isInteger(variants) || variants < 1 || variants > 4) throw new DesignError('--variants takes 1 to 4.');
+		const { ads, refused } = await drawAds(adapter, brief, outDir, { variants });
+		const names = ads.map((r) => resolve(outDir, `${r.size}-${r.n}-${r.arrangement}.design.json`));
+		if (!a.flags.has('force')) {
+			const there = names.filter((f) => existsSync(f));
+			if (there.length) throw new DesignError(`${there.map((f) => shown(io.cwd, f)).join(', ')} already exist. Pass --force to replace them, or -o another folder.`);
+		}
+		const files: string[] = [];
+		for (const [i, r] of ads.entries()) {
+			save(names[i]!, docText(r.doc));
+			files.push(shown(io.cwd, names[i]!));
+			for (const [ext, data] of Object.entries(r.files)) save(`${stem(names[i]!)}.${ext}`, data);
+		}
+		const sheet = resolve(outDir, 'sheet.png');
+		save(sheet, await io.paint(contactSheet(ads.map((r) => ({ label: `${r.size} ${r.n}. ${r.arrangement}`, png: r.files.png! })), { notes: [`${brief.name ?? 'Ads'}: every ad passed the brand check; the words and pictures are the brief's only.`] })));
+		report(io, a, { ok: true, command: 'ad', ads: ads.map((r, i) => ({ size: r.size, n: r.n, arrangement: r.arrangement, design: files[i], draws: r.draws })), refused, sheet: shown(io.cwd, sheet) }, () => [
+			...ads.map((r, i) => `${files[i]}  ${r.arrangement}`),
+			`Sheet: ${shown(io.cwd, sheet)}`,
+			`Change one in plain words: ${io.bin} design revise ${files[0]} "bigger headline", or move its blocks: ${io.bin} design compose move ${files[0]} headline --at 0,2,12,3.`,
+		].join('\n'));
+	},
 	async new(a, adapter, io) {
 		const named = a._[0] ?? one(a, 'template');
 		if (!named) throw new DesignError(`Name a template: ${io.bin} design new <${allTemplates(adapter).map((t) => t.id).join('|')}>`);
@@ -545,6 +575,7 @@ function layerChanges(a: DrawnLayer[], b: DrawnLayer[]): string[] {
 const takes = (t: TemplateInfo) => ({ copy: t.copy, images: t.images, options: t.options, layers: t.layers, themes: t.themes, sizes: t.sizes, formats: t.formats ?? ['png', 'svg'] });
 
 const SUBCOMMANDS: [string, string][] = [
+	['ad <brief.md> [-o ads] [--variants 1..4]', 'Ads from a brief in any arrangement: a Layout section in plain words ("stat left, quote right"), or every part laid out stacked, centered and in two columns; nothing has to fit a template'],
 	['new <template> [--size] [--theme] [--headline "..."] [--image slot=file] [-o banner.design.json]', 'Write a design file and draw it'],
 	['revise <file> "bigger headline, logo top right, darker theme"', 'Change it in plain words; a part that is not understood changes nothing and lists what you can say'],
 	['edit <file> --set headline="..." --theme --size --layer logo.anchor=top-right --hide badge --seed 5 --template', 'Change it exactly'],

@@ -105,6 +105,9 @@ export type Adapter = {
 		grounds?: Record<string, string>;
 		sizes?: string[];
 		formats?: Format[];
+		/** The brand's own ground for a design laid out from scratch (`design ad`): blocks drawn under everything (its texture,
+		 * pattern or light) and their options. */
+		ground?(c: { size: string; width: number; height: number; grid: { cols: number; rows: number } }): { blocks: ComposeBlock[]; options?: Record<string, OptionValue> };
 		/** A template's design as blocks, to show any template can be recreated (conformance). */
 		recipe?(template: string, size: string, copy: Record<string, string>): (Pick<DesignState, 'blocks' | 'copy'> & Partial<Pick<DesignState, 'grid' | 'theme' | 'layers'>>) | undefined;
 	};

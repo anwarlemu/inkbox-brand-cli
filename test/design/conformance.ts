@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { applyEdits, checkDesign, composeInfo, create, wordsOf, errorsOf, parseDoc, parsePhrases, runDesign, stateOf, type Adapter, type DesignDoc, type DesignIO, type Edit, type Finding, type TemplateInfo } from '../../src/design/index.js';
+import { drawAds, parseAdBrief } from '../../src/design/ads.js';
 
 // What every brand's adapter has to do, run by each repo against its own: `designConformance(adapter, opts)`.
 
@@ -235,6 +236,21 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 				const first = adapter.compose!.blocks()[0]!;
 				const d = applyEdits(create(adapter, 'compose', info.sizes[0], []).doc, parsePhrases(`add a ${first.type}${first.copy.length ? ` "${first.sample?.[first.copy[0]!.id] ?? 'Ship faster'}"` : ''} top left`, { adapter, doc: create(adapter, 'compose', info.sizes[0], []).doc, info }).edits, adapter).doc;
 				expect(d.blocks!.map((x) => x.type)).toEqual([first.type]);
+			});
+			it('design ad: a brief is laid out in any arrangement, its Layout words first, every part drawn and on brand', { timeout }, async () => {
+				const dir = mkdtempSync(join(tmpdir(), 'design-ad-'));
+				const sizes = ['portrait', 'story', 'square', 'og'].filter((x) => composeInfo(adapter).sizes.includes(x)).slice(0, 2);
+				const brief = parseAdBrief(`Platforms: ${sizes.join(', ')}\nHeadline: Research that used to take a week.\nStat: 3x | faster research\nQuote: We found our next campaign in an afternoon.\nCTA: Start free\n## Layout\n- headline top left\n- stat left, quote right\n- button bottom right\n`, dir);
+				// What the brief asks for in words is what is drawn, at every size, with every part it gives.
+				const asked = await drawAds(adapter, brief, dir, { variants: 1 });
+				expect(asked.ads.map((a) => `${a.size} ${a.arrangement}`)).toEqual(sizes.map((x) => `${x} asked`));
+				const types = adapter.compose!.blocks().map((x) => x.type);
+				const want = ['headline', ...(types.includes('stat') ? ['stat'] : []), ...(types.includes('quote') ? ['quote'] : []), ...(types.includes('button') ? ['cta'] : [])];
+				for (const a of asked.ads) expect(a.draws).toEqual(expect.arrayContaining(want));
+				// Without Layout words, more than one arrangement of the same parts, none of them a template.
+				const free = await drawAds(adapter, { ...brief, layout: [] }, dir, { variants: 3 });
+				expect(new Set(free.ads.filter((a) => a.size === sizes[0]).map((a) => a.arrangement)).size).toBeGreaterThanOrEqual(2);
+				for (const a of free.ads) expect(a.doc.template).toBe('compose');
 			});
 			it('compose: every template can be recreated as blocks, whole and clean', { timeout }, async () => {
 				const problems: string[] = [];
